@@ -177,7 +177,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <tabBarItem key="tabBarItem" tag="2" image="tab_people" selectedImage="tab_people_selected" id="edr-fK-bgM">
+                    <tabBarItem key="tabBarItem" tag="2" image="tab_people" id="edr-fK-bgM">
                         <userDefinedRuntimeAttributes>
                             <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="TabBarItemPeople"/>
                         </userDefinedRuntimeAttributes>
@@ -477,7 +477,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <tabBarItem key="tabBarItem" tag="3" image="tab_rooms" selectedImage="tab_rooms" id="7eS-Ei-00V">
+                    <tabBarItem key="tabBarItem" tag="3" image="tab_rooms" id="7eS-Ei-00V">
                         <userDefinedRuntimeAttributes>
                             <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="TabBarItemRooms"/>
                         </userDefinedRuntimeAttributes>
@@ -595,9 +595,8 @@
         <image name="tab_groups_selected" width="25" height="25"/>
         <image name="tab_home" width="25" height="25"/>
         <image name="tab_home_selected" width="25" height="25"/>
-        <image name="tab_people" width="25" height="25"/>
-        <image name="tab_people_selected" width="25" height="25"/>
-        <image name="tab_rooms" width="25" height="25"/>
+        <image name="tab_people" width="23" height="23"/>
+        <image name="tab_rooms" width="23" height="23"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="Tfl-tq-LQp"/>
