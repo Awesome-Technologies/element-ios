@@ -30,10 +30,7 @@
 
 @interface PeopleViewController ()
 {
-    NSInteger          directRoomsSectionNumber;
-    
     ContactsDataSource *contactsDataSource;
-    NSInteger          contactsSectionNumber;
     
     RecentsDataSource *recentsDataSource;
 }
@@ -45,9 +42,6 @@
 - (void)finalizeInit
 {
     [super finalizeInit];
-    
-    directRoomsSectionNumber = 0;
-    contactsSectionNumber = 0;
     
     self.screenName = @"People";
 }
@@ -75,8 +69,6 @@
     
     // Change the table data source. It must be the people view controller itself.
     self.recentsTableView.dataSource = self;
-    
-    self.enableStickyHeaders = YES;
 }
 
 - (void)didReceiveMemoryWarning
@@ -113,7 +105,6 @@
     if (recentsDataSource)
     {
         // Take the lead on the shared data source.
-        recentsDataSource.areSectionsShrinkable = NO;
         [recentsDataSource setDelegate:self andRecentsDataSourceMode:RecentsDataSourceModePeople];
     }
 }
@@ -137,14 +128,6 @@
     {
         recentsDataSource = (RecentsDataSource*)listDataSource;
     }
-
-    if (!contactsDataSource)
-    {
-        // Prepare its contacts data source
-        contactsDataSource = [[ContactsDataSource alloc] initWithMatrixSession:listDataSource.mxSession];
-        contactsDataSource.contactCellAccessoryType = UITableViewCellAccessoryDisclosureIndicator;
-        contactsDataSource.delegate = self;
-    }
 }
 
 #pragma mark - MXKDataSourceDelegate
@@ -163,216 +146,41 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    // Retrieve the current number of sections related to the direct rooms.
-    // Sanity check: check whether the recents data source is correctly configured.
-    directRoomsSectionNumber = 0;
-    
-    if (recentsDataSource.recentsDataSourceMode == RecentsDataSourceModePeople)
-    {
-        directRoomsSectionNumber = [self.dataSource numberOfSectionsInTableView:self.recentsTableView];
-    }
-    
-    // Retrieve the current number of sections related to the contacts
-    contactsSectionNumber = [contactsDataSource numberOfSectionsInTableView:self.recentsTableView];
-    
-    return (directRoomsSectionNumber + contactsSectionNumber);
+    return [self.dataSource numberOfSectionsInTableView:self.recentsTableView];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSInteger count = 0;
-    
-    if (section < directRoomsSectionNumber)
-    {
-        count = [self.dataSource tableView:tableView numberOfRowsInSection:section];
-    }
-    else
-    {
-        section -= directRoomsSectionNumber;
-        if (section < contactsSectionNumber)
-        {
-            count = [contactsDataSource tableView:tableView numberOfRowsInSection:section];
-        }
-    }
-    
-    return count;
+    return [self.dataSource tableView:tableView numberOfRowsInSection:section];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSInteger section = indexPath.section;
-    
-    if (section < directRoomsSectionNumber)
-    {
-        return [self.dataSource tableView:tableView cellForRowAtIndexPath:indexPath];
-    }
-    else
-    {
-        section -= directRoomsSectionNumber;
-        if (section < contactsSectionNumber)
-        {
-            return [contactsDataSource tableView:tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:indexPath.row inSection:section]];
-        }
-    }
-    
-    // Return a fake cell to prevent app from crashing.
-    return [[UITableViewCell alloc] init];
+    return [self.dataSource tableView:tableView cellForRowAtIndexPath:indexPath];
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSInteger section = indexPath.section;
-    
-    if (section < directRoomsSectionNumber)
-    {
-        return [self.dataSource tableView:tableView canEditRowAtIndexPath:indexPath];
-    }
-    else
-    {
-        section -= directRoomsSectionNumber;
-        if (section < contactsSectionNumber)
-        {
-            return [contactsDataSource tableView:tableView canEditRowAtIndexPath:[NSIndexPath indexPathForRow:indexPath.row inSection:section]];
-        }
-    }
-    
-    return NO;
+    return [self.dataSource tableView:tableView canEditRowAtIndexPath:indexPath];
 }
 
 #pragma mark - UITableView delegate
 
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
-{
-    if (section >= directRoomsSectionNumber)
-    {
-        // Let the contact dataSource provide the height of the section header.
-        section -= directRoomsSectionNumber;
-        if (section < contactsSectionNumber)
-        {
-            return [contactsDataSource heightForHeaderInSection:section];
-        }
-        else
-        {
-            return 0.0;
-        }
-    }
-    
-    return [super tableView:tableView heightForHeaderInSection:section];
-}
-
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-{
-    if (section >= directRoomsSectionNumber)
-    {
-        // Let the contact dataSource provide the section header.
-        CGRect frame = [tableView rectForHeaderInSection:section];
-        section -= directRoomsSectionNumber;
-        if (section < contactsSectionNumber)
-        {
-            UIView *sectionHeader = [contactsDataSource viewForHeaderInSection:section withFrame:frame];
-            sectionHeader.tag = section + directRoomsSectionNumber;
-            
-            if (self.enableStickyHeaders)
-            {
-                while (sectionHeader.gestureRecognizers.count)
-                {
-                    UIGestureRecognizer *gestureRecognizer = sectionHeader.gestureRecognizers.lastObject;
-                    [sectionHeader removeGestureRecognizer:gestureRecognizer];
-                }
-                
-                // Handle tap gesture
-                UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnSectionHeader:)];
-                [tap setNumberOfTouchesRequired:1];
-                [tap setNumberOfTapsRequired:1];
-                [sectionHeader addGestureRecognizer:tap];
-            }
-            
-            return sectionHeader;
-        }
-        else
-        {
-            return nil;
-        }
-    }
-    
-    return [super tableView:tableView viewForHeaderInSection:section];
-}
-
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSInteger section = indexPath.section;
-    if (section >= directRoomsSectionNumber)
-    {
-        section -= directRoomsSectionNumber;
-        if (section < contactsSectionNumber)
-        {
-            if ([contactsDataSource contactAtIndexPath:[NSIndexPath indexPathForRow:indexPath.row inSection:section]])
-            {
-                // Return the default height of the contact cell
-                return 74.0;
-            }
-            
-            return 50;
-        }
-        else
-        {
-            return 0.0;
-        }
-    }
-    
     return [super tableView:tableView heightForRowAtIndexPath:indexPath];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSInteger section = indexPath.section;
-    if (section >= directRoomsSectionNumber)
-    {
-        section -= directRoomsSectionNumber;
-        if (section < contactsSectionNumber)
-        {
-            MXKContact *mxkContact = [contactsDataSource contactAtIndexPath:[NSIndexPath indexPathForRow:indexPath.row inSection:section]];
-            
-            if (mxkContact)
-            {
-                [[AppDelegate theDelegate].masterTabBarController selectContact:mxkContact];
-                
-                // Keep selected the cell by default.
-                return;
-            }
-        }
-        else
-        {
-            [tableView deselectRowAtIndexPath:indexPath animated:NO];
-            return;
-        }
-    }
-    
     return [super tableView:tableView didSelectRowAtIndexPath:indexPath];
 }
 
 #pragma mark - Override RecentsViewController
-
-- (UIView *)tableView:(UITableView *)tableView viewForStickyHeaderInSection:(NSInteger)section
+    
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    CGRect frame = [tableView rectForHeaderInSection:section];
-    frame.size.height = self.stickyHeaderHeight;
-    
-    if (section >= directRoomsSectionNumber)
-    {
-        // Let the contact dataSource provide this header.
-        section -= directRoomsSectionNumber;
-        if (section < contactsSectionNumber)
-        {
-            return [contactsDataSource viewForStickyHeaderInSection:section withFrame:frame];
-        }
-    }
-    else if (recentsDataSource)
-    {
-        return [recentsDataSource viewForStickyHeaderInSection:section withFrame:frame];
-    }
-    
-    return nil;
+    return 0;
 }
 
 - (void)refreshCurrentSelectedCell:(BOOL)forceVisible
@@ -384,40 +192,7 @@
     }
     
     // Update here the index of the current selected cell (if any) - Useful in landscape mode with split view controller.
-    NSIndexPath *currentSelectedCellIndexPath = nil;
-    MasterTabBarController *masterTabBarController = [AppDelegate theDelegate].masterTabBarController;
-    if (masterTabBarController.currentContactDetailViewController)
-    {
-        // Look for the rank of this selected contact
-        currentSelectedCellIndexPath = [contactsDataSource cellIndexPathWithContact:masterTabBarController.selectedContact];
-        
-        if (currentSelectedCellIndexPath)
-        {
-            // Select the right row
-            currentSelectedCellIndexPath = [NSIndexPath indexPathForRow:currentSelectedCellIndexPath.row inSection:(directRoomsSectionNumber + currentSelectedCellIndexPath.section)];
-            [self.recentsTableView selectRowAtIndexPath:currentSelectedCellIndexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
-            
-            if (forceVisible)
-            {
-                // Scroll table view to make the selected row appear at second position
-                NSInteger topCellIndexPathRow = currentSelectedCellIndexPath.row ? currentSelectedCellIndexPath.row - 1: currentSelectedCellIndexPath.row;
-                NSIndexPath* indexPath = [NSIndexPath indexPathForRow:topCellIndexPathRow inSection:currentSelectedCellIndexPath.section];
-                [self.recentsTableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionTop animated:NO];
-            }
-        }
-        else
-        {
-            NSIndexPath *indexPath = [self.recentsTableView indexPathForSelectedRow];
-            if (indexPath)
-            {
-                [self.recentsTableView deselectRowAtIndexPath:indexPath animated:NO];
-            }
-        }
-    }
-    else
-    {
-        [super refreshCurrentSelectedCell:forceVisible];
-    }
+    [super refreshCurrentSelectedCell:forceVisible];
 }
 
 #pragma mark -

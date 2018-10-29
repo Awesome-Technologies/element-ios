@@ -20,8 +20,6 @@
 
 #import "RecentsDataSource.h"
 
-#import "DirectoryServerPickerViewController.h"
-
 @interface RoomsViewController ()
 {
     RecentsDataSource *recentsDataSource;
@@ -137,86 +135,10 @@
     }
 }
 
-#pragma mark - Navigation
-
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    [super prepareForSegue:segue sender:sender];
-
-    UIViewController *pushedViewController = [segue destinationViewController];
-
-    if ([[segue identifier] isEqualToString:@"presentDirectoryServerPicker"])
-    {
-        UINavigationController *pushedNavigationViewController = (UINavigationController*)pushedViewController;
-        DirectoryServerPickerViewController* directoryServerPickerViewController = (DirectoryServerPickerViewController*)pushedNavigationViewController.viewControllers.firstObject;
-
-        MXKDirectoryServersDataSource *directoryServersDataSource = [[MXKDirectoryServersDataSource alloc] initWithMatrixSession:recentsDataSource.publicRoomsDirectoryDataSource.mxSession];
-        [directoryServersDataSource finalizeInitialization];
-
-        // Add directory servers from the app settings plist
-        NSArray<NSString*> *roomDirectoryServers = [[NSUserDefaults standardUserDefaults] objectForKey:@"roomDirectoryServers"];
-        directoryServersDataSource.roomDirectoryServers = roomDirectoryServers;
-
-        __weak typeof(self) weakSelf = self;
-
-        [directoryServerPickerViewController displayWithDataSource:directoryServersDataSource onComplete:^(id<MXKDirectoryServerCellDataStoring> cellData) {
-            if (weakSelf && cellData)
-            {
-                typeof(self) self = weakSelf;
-
-                // Use the selected directory server
-                if (cellData.thirdPartyProtocolInstance)
-                {
-                    self->recentsDataSource.publicRoomsDirectoryDataSource.thirdpartyProtocolInstance = cellData.thirdPartyProtocolInstance;
-                }
-                else if (cellData.homeserver)
-                {
-                    self->recentsDataSource.publicRoomsDirectoryDataSource.includeAllNetworks = cellData.includeAllNetworks;
-                    self->recentsDataSource.publicRoomsDirectoryDataSource.homeserver = cellData.homeserver;
-                }
-
-                // Refresh data
-                [self addSpinnerFooterView];
-
-                [self->recentsDataSource.publicRoomsDirectoryDataSource paginate:^(NSUInteger roomsAdded) {
-
-                    if (weakSelf)
-                    {
-                        typeof(self) self = weakSelf;
-
-                        // The table view is automatically filled
-                        [self removeSpinnerFooterView];
-
-                        // Make the directory section appear full-page
-                        [self.recentsTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:self->recentsDataSource.directorySection] atScrollPosition:UITableViewScrollPositionTop animated:YES];
-                    }
-
-                } failure:^(NSError *error) {
-
-                    if (weakSelf)
-                    {
-                        typeof(self) self = weakSelf;
-                        [self removeSpinnerFooterView];
-                    }
-                }];
-            }
-        }];
-
-        // Hide back button title
-        pushedViewController.navigationController.navigationItem.backBarButtonItem =[[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStylePlain target:nil action:nil];
-    }
-}
-
 #pragma mark - UITableView delegate
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    if (section == recentsDataSource.directorySection)
-    {
-        // Let the recents dataSource provide the height of this section header
-        return [recentsDataSource heightForHeaderInSection:section];
-    }
-
     return [super tableView:tableView heightForHeaderInSection:section];
 }
 
@@ -253,36 +175,48 @@
 - (void)openPublicRoomAtIndexPath:(NSIndexPath *)indexPath
 {
     MXPublicRoom *publicRoom = [recentsDataSource.publicRoomsDirectoryDataSource roomAtIndexPath:indexPath];
-
+    MXRoom *room = [recentsDataSource.publicRoomsDirectoryDataSource.mxSession roomWithRoomId:publicRoom.roomId];
+    
     // Check whether the user has already joined the selected public room
-    if ([recentsDataSource.publicRoomsDirectoryDataSource.mxSession roomWithRoomId:publicRoom.roomId])
-    {
-        // Open the public room
-        [[AppDelegate theDelegate].masterTabBarController selectRoomWithId:publicRoom.roomId andEventId:nil inMatrixSession:recentsDataSource.publicRoomsDirectoryDataSource.mxSession];
-    }
-    else
-    {
-        // Preview the public room
-        if (publicRoom.worldReadable)
+    [room members:^(MXRoomMembers *roomMembers) {
+        BOOL userIsRoomMember = NO;
+        for (MXRoomMember *roomMember in roomMembers.joinedMembers) {
+            if ([roomMember.userId isEqualToString:self->recentsDataSource.mxSession.myUser.userId]) {
+                userIsRoomMember = YES;
+                break;
+            }
+        }
+        if (userIsRoomMember)
         {
-            RoomPreviewData *roomPreviewData = [[RoomPreviewData alloc] initWithRoomId:publicRoom.roomId andSession:recentsDataSource.publicRoomsDirectoryDataSource.mxSession];
-
-            [self startActivityIndicator];
-
-            // Try to get more information about the room before opening its preview
-            [roomPreviewData peekInRoom:^(BOOL succeeded) {
-
-                [self stopActivityIndicator];
-
-                [[AppDelegate theDelegate].masterTabBarController showRoomPreview:roomPreviewData];
-            }];
+            // Open the public room
+            [[AppDelegate theDelegate].masterTabBarController selectRoomWithId:publicRoom.roomId andEventId:nil inMatrixSession:recentsDataSource.publicRoomsDirectoryDataSource.mxSession];
         }
         else
         {
-            RoomPreviewData *roomPreviewData = [[RoomPreviewData alloc] initWithPublicRoom:publicRoom andSession:recentsDataSource.publicRoomsDirectoryDataSource.mxSession];
-            [[AppDelegate theDelegate].masterTabBarController showRoomPreview:roomPreviewData];
+            // Preview the public room
+            if (publicRoom.worldReadable)
+            {
+                RoomPreviewData *roomPreviewData = [[RoomPreviewData alloc] initWithRoomId:publicRoom.roomId andSession:recentsDataSource.publicRoomsDirectoryDataSource.mxSession];
+                
+                [self startActivityIndicator];
+                
+                // Try to get more information about the room before opening its preview
+                [roomPreviewData peekInRoom:^(BOOL succeeded) {
+                    
+                    [self stopActivityIndicator];
+                    
+                    [[AppDelegate theDelegate].masterTabBarController showRoomPreview:roomPreviewData];
+                }];
+            }
+            else
+            {
+                RoomPreviewData *roomPreviewData = [[RoomPreviewData alloc] initWithPublicRoom:publicRoom andSession:recentsDataSource.publicRoomsDirectoryDataSource.mxSession];
+                [[AppDelegate theDelegate].masterTabBarController showRoomPreview:roomPreviewData];
+            }
         }
-    }
+    } failure:^(NSError *error) {
+        NSLog(@"%@", error.localizedDescription);
+    }];
 }
 
 - (void)triggerDirectoryPagination

@@ -126,12 +126,12 @@
 "room_creation_invite_another_user" = "Search / invite by User ID, Name or email";
 
 // Room recents
-"room_recents_directory_section" = "ROOM DIRECTORY";
+"room_recents_directory_section" = "Public Groups";
 "room_recents_directory_section_network" = "Network";
 "room_recents_favourites_section" = "FAVOURITES";
 "room_recents_people_section" = "PEOPLE";
-"room_recents_conversations_section" = "ROOMS";
-"room_recents_no_conversation" = "No rooms";
+"room_recents_conversations_section" = "Groups";
+"room_recents_no_conversation" = "No Groups";
 "room_recents_low_priority_section" = "LOW PRIORITY";
 "room_recents_server_notice_section" = "SYSTEM ALERTS";
 "room_recents_invites_section" = "INVITES";
