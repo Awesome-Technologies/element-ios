@@ -83,7 +83,7 @@
     
     self.defaultIdentityServerUrl = [[NSUserDefaults standardUserDefaults] objectForKey:@"identityserverurl"];
     
-    self.welcomeImageView.image = [UIImage imageNamed:@"logo"];
+    self.welcomeImageView.image = [UIImage imageNamed:@"Caritas_Logo"];
     
     [self.submitButton.layer setCornerRadius:5];
     self.submitButton.clipsToBounds = YES;

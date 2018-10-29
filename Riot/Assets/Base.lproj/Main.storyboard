@@ -266,14 +266,7 @@
             <objects>
                 <tabBarController id="xaQ-tG-rlO" customClass="MasterTabBarController" sceneMemberID="viewController">
                     <navigationItem key="navigationItem" id="m6O-wq-yrc">
-                        <barButtonItem key="leftBarButtonItem" image="settings_icon" id="QSE-cg-V2m">
-                            <userDefinedRuntimeAttributes>
-                                <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="MasterTabBarControllerSettingsBarButton"/>
-                            </userDefinedRuntimeAttributes>
-                            <connections>
-                                <segue destination="taU-5Q-sdv" kind="show" identifier="showSettings" id="3jh-kY-vVn"/>
-                            </connections>
-                        </barButtonItem>
+                        <barButtonItem key="leftBarButtonItem" image="Caritas_Logo_ohneSchrift" id="vhQ-s2-oaf"/>
                         <barButtonItem key="rightBarButtonItem" image="search_icon" id="pud-Fh-Usd">
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="MasterTabBarControllerSearchBarButton"/>
@@ -290,7 +283,6 @@
                     </tabBar>
                     <connections>
                         <outlet property="searchBarButtonIem" destination="pud-Fh-Usd" id="DiH-Re-nZE"/>
-                        <outlet property="settingsBarButtonItem" destination="QSE-cg-V2m" id="N6b-Ju-w9g"/>
                         <segue destination="vC3-pB-5Vb" kind="showDetail" identifier="showRoomDetails" id="tk8-vF-K4T"/>
                         <segue destination="ZlD-EU-ncw" kind="presentation" identifier="showAuth" id="fpJ-zM-Qpo"/>
                         <segue destination="pBa-To-3YT" kind="relationship" relationship="viewControllers" id="Sfs-mh-GOz"/>
@@ -593,10 +585,10 @@
         </scene>
     </scenes>
     <resources>
+        <image name="Caritas_Logo_ohneSchrift" width="21" height="21"/>
         <image name="apps-icon" width="24" height="24"/>
         <image name="logo" width="120" height="101"/>
         <image name="search_icon" width="22" height="22"/>
-        <image name="settings_icon" width="24" height="24"/>
         <image name="tab_favourites" width="25" height="25"/>
         <image name="tab_favourites_selected" width="25" height="25"/>
         <image name="tab_groups" width="25" height="25"/>

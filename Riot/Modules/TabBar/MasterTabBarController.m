@@ -116,6 +116,8 @@
 {
     self.tabBar.tintColor = kRiotColorGreen;
     self.tabBar.barTintColor = kRiotSecondaryBgColor;
+    UIImage *image = [self.navigationItem.leftBarButtonItem.image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    [self.navigationItem.leftBarButtonItem setImage:image];
     
     self.view.backgroundColor = kRiotPrimaryBgColor;
     
