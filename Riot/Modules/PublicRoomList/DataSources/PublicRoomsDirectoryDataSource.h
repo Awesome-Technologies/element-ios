@@ -126,5 +126,10 @@
  @return the cell height
  */
 - (CGFloat)cellHeightAtIndexPath:(NSIndexPath*)indexPath;
+    
+/**
+ Reset pagination to allow reload.
+ */
+- (void)resetPagination;
 
 @end

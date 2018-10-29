@@ -236,18 +236,24 @@ double const kPublicRoomsDirectoryDataExpiration = 10;
             self->publicRoomsRequest = nil;
 
             [self->rooms addObjectsFromArray:publicRoomsResponse.chunk];
+            
+            for (MXPublicRoom *room in publicRoomsResponse.chunk) {
+                MXRoomSummary *roomSummary = [self.mxSession roomSummaryWithRoomId:room.roomId];
+                if (roomSummary.membership == MXMembershipJoin) {
+                    [self->rooms removeObject:room];
+                }
+            }
+            
             self->nextBatch = publicRoomsResponse.nextBatch;
+            self->_roomsCount = self->rooms.count;
 
             if (!self->_searchPattern)
             {
-                // When there is no search, we can use totalRoomCountEstimate returned by the server
-                self->_roomsCount = publicRoomsResponse.totalRoomCountEstimate;
                 self->_moreThanRoomsCount = NO;
             }
             else
             {
-                // Else we can only display something like ">20 matching rooms"
-                self->_roomsCount = self->rooms.count;
+                // We can display something like ">20 matching rooms"
                 self->_moreThanRoomsCount = publicRoomsResponse.nextBatch ? YES : NO;
             }
 

@@ -78,12 +78,12 @@
 "room_creation_make_private" = "Mache privat";
 "room_creation_wait_for_creation" = "Ein wurde wurde bereits erstellt. Bitte warten.";
 // Room recents
-"room_recents_directory_section" = "RAUM VERZEICHNIS";
+"room_recents_directory_section" = "Öffentliche Gruppen";
 "room_recents_directory_section_network" = "Netzwerk";
 "room_recents_favourites_section" = "FAVORITEN";
 "room_recents_people_section" = "PERSONEN";
-"room_recents_conversations_section" = "RÄUME";
-"room_recents_no_conversation" = "Keine Räume";
+"room_recents_conversations_section" = "Deine Gruppen";
+"room_recents_no_conversation" = "Keine Gruppen";
 "room_recents_low_priority_section" = "NIEDRIGE PRIORITÄT";
 "room_recents_invites_section" = "EINLADUNGEN";
 "room_recents_start_chat_with" = "Starte Chat";
