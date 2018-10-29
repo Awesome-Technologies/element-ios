@@ -22,16 +22,10 @@
                 <outlet property="cancelAuthFallbackButton" destination="9qj-5c-Sfb" id="IH4-cc-kKx"/>
                 <outlet property="contentView" destination="rhx-dD-4EJ" id="XXc-2j-Gi6"/>
                 <outlet property="contentViewHeightConstraint" destination="6v6-fz-e8o" id="wHX-YX-3gE"/>
-                <outlet property="customServersContainer" destination="uOi-KN-l9I" id="3Im-yv-sKB"/>
-                <outlet property="customServersTickButton" destination="6yx-o1-vbD" id="sPS-ud-q3F"/>
                 <outlet property="forgotPasswordButton" destination="AJ2-lJ-NUq" id="DZw-3o-ioE"/>
-                <outlet property="homeServerContainer" destination="1YY-gb-LG4" id="ASO-JT-0iV"/>
                 <outlet property="homeServerLabel" destination="kHf-s1-cZa" id="nSI-4K-aQq"/>
-                <outlet property="homeServerSeparator" destination="ZZP-eI-bXP" id="Vip-yy-WPd"/>
                 <outlet property="homeServerTextField" destination="G8l-AP-iRs" id="F4s-Sf-TTZ"/>
-                <outlet property="identityServerContainer" destination="kjJ-Tb-SIW" id="xVi-uN-2to"/>
                 <outlet property="identityServerLabel" destination="5CT-Ht-Z3v" id="9h4-6J-n3X"/>
-                <outlet property="identityServerSeparator" destination="t08-ua-0mJ" id="Sbf-ps-zeK"/>
                 <outlet property="identityServerTextField" destination="PZC-Hd-Q6a" id="vKg-sd-dzJ"/>
                 <outlet property="mainNavigationItem" destination="rj9-wP-8QS" id="yNN-Dg-4Yw"/>
                 <outlet property="navigationBar" destination="k7D-Gy-yBR" id="6Uc-3Q-3dO"/>
@@ -39,7 +33,6 @@
                 <outlet property="optionsContainer" destination="Gg0-TE-OGb" id="RWa-Pl-eaL"/>
                 <outlet property="retryButton" destination="wIH-Kd-r7q" id="42j-Ad-zVS"/>
                 <outlet property="rightBarButtonItem" destination="Kwt-KN-aVL" id="Y3F-wA-tf8"/>
-                <outlet property="serverOptionsContainer" destination="FIn-2w-e6H" id="Z0e-NN-3LY"/>
                 <outlet property="skipButton" destination="wEJ-AF-rdH" id="smu-MS-2IY"/>
                 <outlet property="submitButton" destination="k3J-Eg-itz" id="fiZ-wK-6YM"/>
                 <outlet property="submitButtonMinLeadingConstraint" destination="bEB-EO-b14" id="Iz5-ks-nSX"/>
@@ -195,7 +188,7 @@
                                                 <action selector="onButtonPressed:" destination="-1" eventType="touchUpInside" id="Ocd-Ag-6hf"/>
                                             </connections>
                                         </button>
-                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FIn-2w-e6H">
+                                        <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FIn-2w-e6H">
                                             <rect key="frame" x="0.0" y="68" width="375" height="178"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6yx-o1-vbD">

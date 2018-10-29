@@ -77,11 +77,10 @@
     [super viewDidLoad];
     
     self.mainNavigationItem.title = nil;
-    self.rightBarButtonItem.title = NSLocalizedStringFromTable(@"auth_register", @"Vector", nil);
+    self.rightBarButtonItem.title = nil;
     
-    self.defaultHomeServerUrl = [[NSUserDefaults standardUserDefaults] objectForKey:@"homeserverurl"];
-    
-    self.defaultIdentityServerUrl = [[NSUserDefaults standardUserDefaults] objectForKey:@"identityserverurl"];
+    self.defaultHomeServerUrl = @"https://caritas.amp.care";
+    self.defaultIdentityServerUrl = @"https://caritas.amp.care";
     
     self.welcomeImageView.image = [UIImage imageNamed:@"Caritas_Logo"];
     
@@ -97,16 +96,8 @@
     [self.skipButton setTitle:NSLocalizedStringFromTable(@"auth_skip", @"Vector", nil) forState:UIControlStateHighlighted];
     self.skipButton.enabled = YES;
     
-    [self.customServersTickButton setImage:[UIImage imageNamed:@"selection_untick"] forState:UIControlStateNormal];
-    [self.customServersTickButton setImage:[UIImage imageNamed:@"selection_untick"] forState:UIControlStateHighlighted];
-    
-    [self hideCustomServers:YES];
-    
     // The view controller dismiss itself on successful login.
     self.delegate = self;
-    
-    self.homeServerTextField.placeholder = NSLocalizedStringFromTable(@"auth_home_server_placeholder", @"Vector", nil);
-    self.identityServerTextField.placeholder = NSLocalizedStringFromTable(@"auth_identity_server_placeholder", @"Vector", nil);
     
     // Custom used authInputsView
     [self registerAuthInputsViewClass:AuthInputsView.class forAuthType:MXKAuthenticationTypeLogin];
@@ -136,22 +127,6 @@
     self.authenticationScrollView.backgroundColor = kCaritasPrimaryBgColor;
     self.authFallbackContentView.backgroundColor = kCaritasPrimaryBgColor;
     
-    if (kCaritasPlaceholderTextColor)
-    {
-        if (self.homeServerTextField.placeholder)
-        {
-            self.homeServerTextField.attributedPlaceholder = [[NSAttributedString alloc]
-                                                             initWithString:self.homeServerTextField.placeholder
-                                                             attributes:@{NSForegroundColorAttributeName: kCaritasPlaceholderTextColor}];
-        }
-        if (self.identityServerTextField.placeholder)
-        {
-            self.identityServerTextField.attributedPlaceholder = [[NSAttributedString alloc]
-                                                             initWithString:self.identityServerTextField.placeholder
-                                                             attributes:@{NSForegroundColorAttributeName: kCaritasPlaceholderTextColor}];
-        }
-    }
-    
     self.submitButton.backgroundColor = kCaritasColorRed;
     self.skipButton.backgroundColor = kCaritasColorRed;
     
@@ -163,17 +138,6 @@
     [self.forgotPasswordButton setAttributedTitle:forgotPasswordTitle forState:UIControlStateNormal];
     [self.forgotPasswordButton setAttributedTitle:forgotPasswordTitle forState:UIControlStateHighlighted];
     [self updateForgotPwdButtonVisibility];
-    
-    NSAttributedString *serverOptionsTitle = [[NSAttributedString alloc] initWithString:NSLocalizedStringFromTable(@"auth_use_server_options", @"Vector", nil) attributes:@{NSForegroundColorAttributeName : kCaritasSecondaryTextColor, NSFontAttributeName: [UIFont systemFontOfSize:14]}];
-    [self.customServersTickButton setAttributedTitle:serverOptionsTitle forState:UIControlStateNormal];
-    [self.customServersTickButton setAttributedTitle:serverOptionsTitle forState:UIControlStateHighlighted];
-    
-    self.homeServerTextField.textColor = kCaritasPrimaryTextColor;
-    self.homeServerLabel.textColor = kCaritasSecondaryTextColor;
-    
-    self.identityServerTextField.textColor = kCaritasPrimaryTextColor;
-    self.identityServerLabel.textColor = kCaritasSecondaryTextColor;
-    
     self.defaultBarTintColor = kCaritasNavigationBarBgColor;
     self.barTitleColor = kCaritasColorWhite;
     self.activityIndicator.backgroundColor = kCaritasOverlayColor;
@@ -235,24 +199,10 @@
     
     super.authType = authType;
     
-    // Check a potential stored error.
-    if (loginError)
-    {
-        // Restore the default HS
-        NSLog(@"[AuthenticationVC] Switch back to default homeserver");
-        [self setHomeServerTextFieldText:nil];
-        loginError = nil;
-    }
-    
     if (authType == MXKAuthenticationTypeLogin)
     {
         [self.submitButton setTitle:NSLocalizedStringFromTable(@"auth_login", @"Vector", nil) forState:UIControlStateNormal];
         [self.submitButton setTitle:NSLocalizedStringFromTable(@"auth_login", @"Vector", nil) forState:UIControlStateHighlighted];
-    }
-    else if (authType == MXKAuthenticationTypeRegister)
-    {
-        [self.submitButton setTitle:NSLocalizedStringFromTable(@"auth_register", @"Vector", nil) forState:UIControlStateNormal];
-        [self.submitButton setTitle:NSLocalizedStringFromTable(@"auth_register", @"Vector", nil) forState:UIControlStateHighlighted];
     }
     else if (authType == MXKAuthenticationTypeForgotPassword)
     {
@@ -338,18 +288,7 @@
         // The right bar button is used to switch the authentication type.
         if (self.authType == MXKAuthenticationTypeLogin)
         {
-            self.rightBarButtonItem.title = NSLocalizedStringFromTable(@"auth_register", @"Vector", nil);
-        }
-        else if (self.authType == MXKAuthenticationTypeRegister)
-        {
-            self.rightBarButtonItem.title = NSLocalizedStringFromTable(@"auth_login", @"Vector", nil);
-            
-            // Restore the back button
-            if ([self.authInputsView isKindOfClass:AuthInputsView.class])
-            {
-                AuthInputsView *authInputsview = (AuthInputsView*)self.authInputsView;
-                [self updateRegistrationScreenWithThirdPartyIdentifiersHidden:authInputsview.thirdPartyIdentifiersHidden];
-            }
+            self.rightBarButtonItem.title = nil;
         }
         else if (self.authType == MXKAuthenticationTypeForgotPassword)
         {
@@ -361,11 +300,7 @@
 
 - (IBAction)onButtonPressed:(id)sender
 {
-    if (sender == self.customServersTickButton)
-    {
-        [self hideCustomServers:!self.customServersContainer.hidden];
-    }
-    else if (sender == self.forgotPasswordButton)
+    if (sender == self.forgotPasswordButton)
     {
         // Update UI to reset password
         self.authType = MXKAuthenticationTypeForgotPassword;
@@ -378,15 +313,9 @@
             // Cancel the current operation
             [self cancel];
         }
-        else if (self.authType == MXKAuthenticationTypeLogin)
-        {
-            self.authType = MXKAuthenticationTypeRegister;
-            self.rightBarButtonItem.title = NSLocalizedStringFromTable(@"auth_login", @"Vector", nil);
-        }
         else
         {
             self.authType = MXKAuthenticationTypeLogin;
-            self.rightBarButtonItem.title = NSLocalizedStringFromTable(@"auth_register", @"Vector", nil);
         }
     }
     else if (sender == self.mainNavigationItem.leftBarButtonItem)
@@ -479,10 +408,7 @@
 
 - (void)onFailureDuringAuthRequest:(NSError *)error
 {
-    // Homeserver migration: When the default homeserver url is different from matrix.org,
-    // the login (or forgot pwd) process with an existing matrix.org accounts will then fail.
-    // Patch: Falling back to matrix.org HS so we don't break everyone's logins
-    if ([self.homeServerTextField.text isEqualToString:self.defaultHomeServerUrl] && ![self.defaultHomeServerUrl isEqualToString:@"https://matrix.org"])
+    if (!loginError)
     {
         MXError *mxError = [[MXError alloc] initWithNSError:error];
         
@@ -490,12 +416,10 @@
         {
             if (mxError && [mxError.errcode isEqualToString:kMXErrCodeStringForbidden])
             {
-                // Falling back to matrix.org HS
-                NSLog(@"[AuthenticationVC] Retry login against matrix.org");
+                NSLog(@"[AuthenticationVC] Retry login");
                 
-                // Store the current error, and change the homeserver url
+                // Store the current error
                 loginError = error;
-                [self setHomeServerTextFieldText:@"https://matrix.org"];
                 
                 // Trigger a new request
                 [self onButtonPressed:self.submitButton];
@@ -509,12 +433,10 @@
                 // Sanity check
                 if ([self.authInputsView isKindOfClass:ForgotPasswordInputsView.class])
                 {
-                    // Falling back to matrix.org HS
-                    NSLog(@"[AuthenticationVC] Retry forgot password against matrix.org");
+                    NSLog(@"[AuthenticationVC] Retry forgot password");
                     
-                    // Store the current error, and change the homeserver url
+                    // Store the current error
                     loginError = error;
-                    [self setHomeServerTextFieldText:@"https://matrix.org"];
                     
                     // Trigger a new request
                     ForgotPasswordInputsView *authInputsView = (ForgotPasswordInputsView*)self.authInputsView;
@@ -525,14 +447,10 @@
         }
     }
     
-    // Check whether we were retrying against matrix.org HS
+    // Check whether we were trying to login again
     if (loginError)
     {
-        // This is not an existing matrix.org accounts
-        NSLog(@"[AuthenticationVC] This is not an existing matrix.org accounts");
-        
-        // Restore the default HS
-        [self setHomeServerTextFieldText:nil];
+        NSLog(@"[AuthenticationVC] Still no success");
         
         // Consider the original login error
         [super onFailureDuringAuthRequest:loginError];
@@ -606,13 +524,10 @@
 {
     self.skipButton.hidden = thirdPartyIdentifiersHidden;
     
-    self.serverOptionsContainer.hidden = !thirdPartyIdentifiersHidden;
     [self refreshContentViewHeightConstraint];
     
     if (thirdPartyIdentifiersHidden)
     {
-        [self.submitButton setTitle:NSLocalizedStringFromTable(@"auth_register", @"Vector", nil) forState:UIControlStateNormal];
-        [self.submitButton setTitle:NSLocalizedStringFromTable(@"auth_register", @"Vector", nil) forState:UIControlStateHighlighted];
         
         self.mainNavigationItem.leftBarButtonItem = nil;
     }
@@ -629,97 +544,9 @@
 - (void)refreshContentViewHeightConstraint
 {
     // Refresh content view height by considering the options container display.
-    CGFloat constant = self.optionsContainer.frame.origin.y + 10;
-    
-    if (!self.optionsContainer.isHidden)
-    {
-        constant += self.serverOptionsContainer.frame.origin.y;
-        
-        if (!self.serverOptionsContainer.isHidden)
-        {
-            CGRect customServersContainerFrame = self.customServersContainer.frame;
-            constant += customServersContainerFrame.origin.y;
-            
-            if (!self.customServersContainer.isHidden)
-            {
-                constant += customServersContainerFrame.size.height;
-            }
-        }
-    }
+    CGFloat constant = self.optionsContainer.frame.origin.y + 100;
     
     self.contentViewHeightConstraint.constant = constant;
-}
-
-- (void)hideCustomServers:(BOOL)hidden
-{
-    if (self.customServersContainer.isHidden == hidden)
-    {
-        return;
-    }
-    
-    if (hidden)
-    {
-        [self.homeServerTextField resignFirstResponder];
-        [self.identityServerTextField resignFirstResponder];
-        
-        // Report server url typed by the user as custom url.
-        NSString *homeServerURL = self.homeServerTextField.text;
-        if (homeServerURL.length && ![homeServerURL isEqualToString:self.defaultHomeServerUrl])
-        {
-            [[NSUserDefaults standardUserDefaults] setObject:homeServerURL forKey:@"customHomeServerURL"];
-        }
-        else
-        {
-            [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"customHomeServerURL"];
-        }
-        
-        NSString *identityServerURL = self.identityServerTextField.text;
-        if (identityServerURL.length && ![identityServerURL isEqualToString:self.defaultIdentityServerUrl])
-        {
-            [[NSUserDefaults standardUserDefaults] setObject:identityServerURL forKey:@"customIdentityServerURL"];
-        }
-        else
-        {
-            [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"customIdentityServerURL"];
-        }
-        
-        [[NSUserDefaults standardUserDefaults] synchronize];
-        
-        // Restore default configuration
-        [self setHomeServerTextFieldText:self.defaultHomeServerUrl];
-        [self setIdentityServerTextFieldText:self.defaultIdentityServerUrl];
-        
-        [self.customServersTickButton setImage:[UIImage imageNamed:@"selection_untick"] forState:UIControlStateNormal];
-        self.customServersContainer.hidden = YES;
-        
-        // Refresh content view height
-        self.contentViewHeightConstraint.constant -= self.customServersContainer.frame.size.height;
-    }
-    else
-    {
-        // Load custom configuration
-        NSString *customHomeServerURL = [[NSUserDefaults standardUserDefaults] objectForKey:@"customHomeServerURL"];
-        if (customHomeServerURL.length)
-        {
-            [self setHomeServerTextFieldText:customHomeServerURL];
-        }
-        NSString *customIdentityServerURL = [[NSUserDefaults standardUserDefaults] objectForKey:@"customIdentityServerURL"];
-        if (customIdentityServerURL.length)
-        {
-            [self setIdentityServerTextFieldText:customIdentityServerURL];
-        }
-        
-        [self.customServersTickButton setImage:[UIImage imageNamed:@"selection_tick"] forState:UIControlStateNormal];
-        self.customServersContainer.hidden = NO;
-        
-        // Refresh content view height
-        self.contentViewHeightConstraint.constant += self.customServersContainer.frame.size.height;
-
-        // Scroll to display server options
-        CGPoint offset = self.authenticationScrollView.contentOffset;
-        offset.y += self.customServersContainer.frame.size.height;
-        self.authenticationScrollView.contentOffset = offset;
-    }
 }
 
 - (void)showResourceLimitExceededError:(NSDictionary *)errorDict
@@ -764,9 +591,6 @@
 
 - (void)authenticationViewController:(MXKAuthenticationViewController *)authenticationViewController didLogWithUserId:(NSString *)userId
 {
-    // Hide the custom server details in order to save customized inputs
-    [self hideCustomServers:YES];
-    
     // Create DM with Riot-bot on new account creation.
     if (self.authType == MXKAuthenticationTypeRegister)
     {
