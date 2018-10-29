@@ -190,29 +190,6 @@
             </objects>
             <point key="canvasLocation" x="1929" y="-2817"/>
         </scene>
-        <!--Favourites View Controller-->
-        <scene sceneID="z6B-k5-ano">
-            <objects>
-                <viewController id="HnD-LA-psC" customClass="FavouritesViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="pOc-AC-QkD"/>
-                        <viewControllerLayoutGuide type="bottom" id="W6L-Au-CaZ"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="Caq-TK-JOm">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    </view>
-                    <tabBarItem key="tabBarItem" tag="1" image="tab_favourites" selectedImage="tab_favourites_selected" id="UVh-Xd-zDZ">
-                        <userDefinedRuntimeAttributes>
-                            <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="TabBarItemFavourites"/>
-                        </userDefinedRuntimeAttributes>
-                    </tabBarItem>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="4qY-qn-l6L" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="942" y="-2049"/>
-        </scene>
         <!--Unified Search View Controller-->
         <scene sceneID="ijO-nb-yi4">
             <objects>
@@ -233,33 +210,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="G2g-bd-dSj" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="476" y="-3899"/>
-        </scene>
-        <!--Home View Controller-->
-        <scene sceneID="SZi-Ac-WJp">
-            <objects>
-                <viewController id="pBa-To-3YT" customClass="HomeViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="m3s-18-JgR"/>
-                        <viewControllerLayoutGuide type="bottom" id="2lp-r9-RR5"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="hxX-1O-zT8">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    </view>
-                    <tabBarItem key="tabBarItem" title="" image="tab_home" selectedImage="tab_home_selected" id="hNI-yH-EXj">
-                        <userDefinedRuntimeAttributes>
-                            <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="TabBarItemHome"/>
-                        </userDefinedRuntimeAttributes>
-                    </tabBarItem>
-                    <navigationItem key="navigationItem" id="rA5-PM-GBU"/>
-                    <connections>
-                        <segue destination="WDS-Ip-RQ9" kind="presentation" identifier="presentStartChat" id="mhb-l9-pM3"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="pEk-LO-Ij0" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="942" y="-2818"/>
         </scene>
         <!--Master Tab Bar Controller-->
         <scene sceneID="iBe-Y5-gBt">
@@ -285,13 +235,10 @@
                         <outlet property="searchBarButtonIem" destination="pud-Fh-Usd" id="DiH-Re-nZE"/>
                         <segue destination="vC3-pB-5Vb" kind="showDetail" identifier="showRoomDetails" id="tk8-vF-K4T"/>
                         <segue destination="ZlD-EU-ncw" kind="presentation" identifier="showAuth" id="fpJ-zM-Qpo"/>
-                        <segue destination="pBa-To-3YT" kind="relationship" relationship="viewControllers" id="Sfs-mh-GOz"/>
                         <segue destination="vC3-pB-5Vb" kind="showDetail" identifier="showContactDetails" id="p4M-yR-DLA"/>
-                        <segue destination="HnD-LA-psC" kind="relationship" relationship="viewControllers" id="zON-Qp-EVq"/>
                         <segue destination="IGB-jr-yFz" kind="relationship" relationship="viewControllers" id="CeF-yL-aO0"/>
                         <segue destination="HPQ-zg-lZR" kind="relationship" relationship="viewControllers" id="y12-eg-vhO"/>
-                        <segue destination="SLx-Wj-p7E" kind="relationship" relationship="viewControllers" id="MLn-VT-30W"/>
-                        <segue destination="vC3-pB-5Vb" kind="showDetail" identifier="showGroupDetails" id="fIR-e3-ssz"/>
+                        <segue destination="taU-5Q-sdv" kind="relationship" relationship="viewControllers" id="Q1A-Ll-xJq"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="k1S-FF-3Zu" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -329,6 +276,7 @@
                             <outlet property="delegate" destination="taU-5Q-sdv" id="kIU-uT-h9Y"/>
                         </connections>
                     </tableView>
+                    <tabBarItem key="tabBarItem" image="tab_settings" id="zmo-WH-CHW"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="s7I-UT-YCd" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -430,7 +378,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo" translatesAutoresizingMaskIntoConstraints="NO" id="6LG-qc-7jf">
-                                <rect key="frame" x="127" y="283" width="120" height="101"/>
+                                <rect key="frame" x="127.5" y="283" width="120" height="101"/>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -444,25 +392,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pZm-ap-zdK" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-153" y="-1121"/>
-        </scene>
-        <!--Groups View Controller-->
-        <scene sceneID="Rqp-Ti-qpu">
-            <objects>
-                <viewController id="SLx-Wj-p7E" customClass="GroupsViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="N1j-ye-uQa"/>
-                        <viewControllerLayoutGuide type="bottom" id="FYD-2t-u4k"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="Sl8-9u-7yE">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                    </view>
-                    <tabBarItem key="tabBarItem" title="" image="tab_groups" selectedImage="tab_groups_selected" id="5x2-xc-uIB"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="xpc-LV-krz" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="942" y="-1299"/>
         </scene>
         <!--Rooms View Controller-->
         <scene sceneID="SDg-Pp-8Uj">
@@ -589,20 +518,15 @@
         <image name="apps-icon" width="24" height="24"/>
         <image name="logo" width="120" height="101"/>
         <image name="search_icon" width="22" height="22"/>
-        <image name="tab_favourites" width="25" height="25"/>
-        <image name="tab_favourites_selected" width="25" height="25"/>
-        <image name="tab_groups" width="25" height="25"/>
-        <image name="tab_groups_selected" width="25" height="25"/>
-        <image name="tab_home" width="25" height="25"/>
-        <image name="tab_home_selected" width="25" height="25"/>
         <image name="tab_people" width="23" height="23"/>
         <image name="tab_rooms" width="23" height="23"/>
+        <image name="tab_settings" width="23" height="23"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="Tfl-tq-LQp"/>
-        <segue reference="fIR-e3-ssz"/>
-        <segue reference="f5u-Y1-7nt"/>
-        <segue reference="vCz-dl-6xQ"/>
-        <segue reference="cUw-vU-gJq"/>
+        <segue reference="0ws-cL-0tk"/>
+        <segue reference="ziz-Xl-QVg"/>
+        <segue reference="mFs-HA-7Oo"/>
+        <segue reference="fNQ-S3-DbZ"/>
     </inferredMetricsTieBreakers>
 </document>

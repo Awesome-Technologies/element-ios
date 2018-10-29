@@ -20,7 +20,6 @@
 #import "UnifiedSearchViewController.h"
 
 #import "RecentsDataSource.h"
-#import "GroupsDataSource.h"
 
 #import "AppDelegate.h"
 
@@ -57,9 +56,6 @@
     
     // Observe kRiotDesignValuesDidChangeThemeNotification to handle user interface theme change.
     id kRiotDesignValuesDidChangeThemeNotificationObserver;
-    
-    // The groups data source
-    GroupsDataSource *groupsDataSource;
 }
 
 @property(nonatomic,getter=isHidden) BOOL hidden;
@@ -74,23 +70,23 @@
     // Do any additional setup after loading the view, typically from a nib.
 
     // Retrieve the all view controllers
-    _homeViewController = [self.viewControllers objectAtIndex:TABBAR_HOME_INDEX];
-    _favouritesViewController = [self.viewControllers objectAtIndex:TABBAR_FAVOURITES_INDEX];
     _peopleViewController = [self.viewControllers objectAtIndex:TABBAR_PEOPLE_INDEX];
     _roomsViewController = [self.viewControllers objectAtIndex:TABBAR_ROOMS_INDEX];
-    _groupsViewController = [self.viewControllers objectAtIndex:TABBAR_GROUPS_INDEX];
+    _settingsViewController = [self.viewControllers objectAtIndex:TABBAR_SETTINGS_INDEX];
     
     // Set the accessibility labels for all buttons #1842
-    [_settingsBarButtonItem setAccessibilityLabel:NSLocalizedStringFromTable(@"settings_title", @"Vector", nil)];
     [_searchBarButtonIem setAccessibilityLabel:NSLocalizedStringFromTable(@"search_default_placeholder", @"Vector", nil)];
-    [_homeViewController setAccessibilityLabel:NSLocalizedStringFromTable(@"title_home", @"Vector", nil)];
-    [_favouritesViewController setAccessibilityLabel:NSLocalizedStringFromTable(@"title_favourites", @"Vector", nil)];
     [_peopleViewController setAccessibilityLabel:NSLocalizedStringFromTable(@"title_people", @"Vector", nil)];
     [_roomsViewController setAccessibilityLabel:NSLocalizedStringFromTable(@"title_rooms", @"Vector", nil)];
-    [_groupsViewController setAccessibilityLabel:NSLocalizedStringFromTable(@"title_groups", @"Vector", nil)];
+    [_settingsViewController setAccessibilityLabel:NSLocalizedStringFromTable(@"settings_title", @"Vector", nil)];
+    
+    // Localizing tab bar items
+    _roomsViewController.tabBarItem.title = NSLocalizedStringFromTable(@"title_rooms", @"Vector", nil);
+    _peopleViewController.tabBarItem.title = NSLocalizedStringFromTable(@"title_people", @"Vector", nil);
+    _settingsViewController.tabBarItem.title = NSLocalizedStringFromTable(@"settings_title", @"Vector", nil);
     
     // Sanity check
-    NSAssert(_homeViewController && _favouritesViewController && _peopleViewController && _roomsViewController && _groupsViewController, @"Something wrong in Main.storyboard");
+    NSAssert(_peopleViewController && _roomsViewController && _settingsViewController, @"Something wrong in Main.storyboard");
 
     // Adjust the display of the icons in the tabbar.
     for (UITabBarItem *tabBarItem in self.tabBar.items)
@@ -200,11 +196,9 @@
 {
     mxSessionArray = nil;
     
-    _homeViewController = nil;
-    _favouritesViewController = nil;
     _peopleViewController = nil;
     _roomsViewController = nil;
-    _groupsViewController = nil;
+    _settingsViewController = nil;
     
     if (currentAlert)
     {
@@ -245,40 +239,19 @@
         // Init the recents data source
         recentsDataSource = [[RecentsDataSource alloc] initWithMatrixSession:mainSession];
         
-        [_homeViewController displayList:recentsDataSource];
-        [_favouritesViewController displayList:recentsDataSource];
         [_peopleViewController displayList:recentsDataSource];
         [_roomsViewController displayList:recentsDataSource];
         
         // Restore the right delegate of the shared recent data source.
-        id<MXKDataSourceDelegate> recentsDataSourceDelegate = _homeViewController;
-        RecentsDataSourceMode recentsDataSourceMode = RecentsDataSourceModeHome;
-        switch (self.selectedIndex)
+        id<MXKDataSourceDelegate> recentsDataSourceDelegate = _peopleViewController;
+        RecentsDataSourceMode recentsDataSourceMode = RecentsDataSourceModePeople;
+        if (self.selectedIndex == TABBAR_ROOMS_INDEX)
         {
-            case TABBAR_HOME_INDEX:
-                break;
-            case TABBAR_FAVOURITES_INDEX:
-                recentsDataSourceDelegate = _favouritesViewController;
-                recentsDataSourceMode = RecentsDataSourceModeFavourites;
-                break;
-            case TABBAR_PEOPLE_INDEX:
-                recentsDataSourceDelegate = _peopleViewController;
-                recentsDataSourceMode = RecentsDataSourceModePeople;
-                break;
-            case TABBAR_ROOMS_INDEX:
-                recentsDataSourceDelegate = _roomsViewController;
-                recentsDataSourceMode = RecentsDataSourceModeRooms;
-                break;
-                
-            default:
-                break;
+            recentsDataSourceDelegate = _roomsViewController;
+            recentsDataSourceMode = RecentsDataSourceModeRooms;
         }
-        [recentsDataSource setDelegate:recentsDataSourceDelegate andRecentsDataSourceMode:recentsDataSourceMode];
         
-        // Init the recents data source
-        groupsDataSource = [[GroupsDataSource alloc] initWithMatrixSession:mainSession];
-        [groupsDataSource finalizeInitialization];
-        [_groupsViewController displayList:groupsDataSource];
+        [recentsDataSource setDelegate:recentsDataSourceDelegate andRecentsDataSourceMode:recentsDataSourceMode];
         
         // Check whether there are others sessions
         NSArray* mxSessions = self.mxSessions;
@@ -299,7 +272,7 @@
 - (void)addMatrixSession:(MXSession *)mxSession
 {
     // Check whether the controller's view is loaded into memory.
-    if (_homeViewController)
+    if (_peopleViewController)
     {
         // Check whether the data sources have been initialized.
         if (!recentsDataSource)
@@ -341,8 +314,6 @@
         // Remove matrix sessions observer
         [[NSNotificationCenter defaultCenter] removeObserver:self name:kMXSessionStateDidChangeNotification object:nil];
         
-        [_homeViewController displayList:nil];
-        [_favouritesViewController displayList:nil];
         [_peopleViewController displayList:nil];
         [_roomsViewController displayList:nil];
         
@@ -468,14 +439,6 @@
     [self performSegueWithIdentifier:@"showContactDetails" sender:self];
 }
 
-- (void)selectGroup:(MXGroup*)group inMatrixSession:(MXSession*)matrixSession
-{
-    _selectedGroup = group;
-    _selectedGroupSession = matrixSession;
-    
-    [self performSegueWithIdentifier:@"showGroupDetails" sender:self];
-}
-
 - (void)releaseSelectedItem
 {
     _selectedRoomId = nil;
@@ -485,9 +448,6 @@
     _selectedRoomPreviewData = nil;
     
     _selectedContact = nil;
-    
-    _selectedGroup = nil;
-    _selectedGroupSession = nil;
     
     [self releaseCurrentDetailsViewController];
 }
@@ -533,7 +493,7 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([[segue identifier] isEqualToString:@"showRoomDetails"] || [[segue identifier] isEqualToString:@"showContactDetails"] || [[segue identifier] isEqualToString:@"showGroupDetails"])
+    if ([[segue identifier] isEqualToString:@"showRoomDetails"] || [[segue identifier] isEqualToString:@"showContactDetails"])
     {
         UINavigationController *navigationController = [segue destinationViewController];
         
@@ -598,17 +558,7 @@
             _currentContactDetailViewController.contact = _selectedContact;
             
             navigationController.viewControllers = @[_currentContactDetailViewController];
-
-            [self setupLeftBarButtonItem];
-        }
-        else
-        {
-            // Replace the rootviewcontroller with a group details view controller
-            _currentGroupDetailViewController = [GroupDetailsViewController groupDetailsViewController];
-            [_currentGroupDetailViewController setGroup:_selectedGroup withMatrixSession:_selectedGroupSession];
             
-            navigationController.viewControllers = @[_currentGroupDetailViewController];
-
             [self setupLeftBarButtonItem];
         }
     }
@@ -724,11 +674,6 @@
             _currentContactDetailViewController.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
             _currentContactDetailViewController.navigationItem.leftItemsSupplementBackButton = YES;
         }
-        else if (_currentGroupDetailViewController)
-        {
-            _currentGroupDetailViewController.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
-            _currentGroupDetailViewController.navigationItem.leftItemsSupplementBackButton = YES;
-        }
     }
 }
 
@@ -775,11 +720,6 @@
         [_currentContactDetailViewController destroy];
         _currentContactDetailViewController = nil;
     }
-    else if (_currentGroupDetailViewController)
-    {
-        [_currentGroupDetailViewController destroy];
-        _currentGroupDetailViewController = nil;
-    }
 }
 
 - (void)setHidden:(BOOL)hidden
@@ -795,9 +735,6 @@
 
 - (void)refreshTabBarBadges
 {
-    // Use a middle dot to signal missed notif in favourites
-    [self setMissedDiscussionsMark:(recentsDataSource.missedFavouriteDiscussionsCount? @"\u00B7": nil) onTabBarItem:TABBAR_FAVOURITES_INDEX withBadgeColor:(recentsDataSource.missedHighlightFavouriteDiscussionsCount ? kRiotColorPinkRed : kRiotColorGreen)];
-    
     // Update the badge on People and Rooms tabs
     [self setMissedDiscussionsCount:recentsDataSource.missedDirectDiscussionsCount onTabBarItem:TABBAR_PEOPLE_INDEX withBadgeColor:(recentsDataSource.missedHighlightDirectDiscussionsCount ? kRiotColorPinkRed : kRiotColorGreen)];
     [self setMissedDiscussionsCount:recentsDataSource.missedGroupDiscussionsCount onTabBarItem:TABBAR_ROOMS_INDEX withBadgeColor:(recentsDataSource.missedHighlightGroupDiscussionsCount ? kRiotColorPinkRed : kRiotColorGreen)];
@@ -919,10 +856,6 @@
         else if (item.tag == TABBAR_PEOPLE_INDEX)
         {
             [self.peopleViewController scrollToNextRoomWithMissedNotifications];
-        }
-        else if (item.tag == TABBAR_FAVOURITES_INDEX)
-        {
-            [self.favouritesViewController scrollToNextRoomWithMissedNotifications];
         }
     }
 }

@@ -18,26 +18,20 @@
 
 #import "AuthenticationViewController.h"
 
-#import "HomeViewController.h"
-#import "FavouritesViewController.h"
 #import "PeopleViewController.h"
 #import "RoomsViewController.h"
-#import "GroupsViewController.h"
+#import "SettingsViewController.h"
 
 #import "RoomViewController.h"
 #import "ContactDetailsViewController.h"
-#import "GroupDetailsViewController.h"
 
-#define TABBAR_HOME_INDEX         0
-#define TABBAR_FAVOURITES_INDEX   1
-#define TABBAR_PEOPLE_INDEX       2
-#define TABBAR_ROOMS_INDEX        3
-#define TABBAR_GROUPS_INDEX       4
-#define TABBAR_COUNT              5
+#define TABBAR_PEOPLE_INDEX       0
+#define TABBAR_ROOMS_INDEX        1
+#define TABBAR_SETTINGS_INDEX     2
+#define TABBAR_COUNT              3
 
 @interface MasterTabBarController : UITabBarController
 
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *settingsBarButtonItem;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *searchBarButtonIem;
 
 // Associated matrix sessions (empty by default).
@@ -97,14 +91,6 @@
 - (void)selectContact:(MXKContact*)contact;
 
 /**
- Open a GroupDetailsViewController to display the information of the provided group.
- 
- @param group
- @param mxSession the matrix session in which the group should be available.
- */
-- (void)selectGroup:(MXGroup*)group inMatrixSession:(MXSession*)matrixSession;
-
-/**
  Release the current selected item (if any).
  */
 - (void)releaseSelectedItem;
@@ -133,11 +119,9 @@
 // Reference to the current auth VC. It is not nil only when the auth screen is displayed.
 @property (nonatomic, readonly) AuthenticationViewController *authViewController;
 
-@property (nonatomic, readonly) HomeViewController *homeViewController;
-@property (nonatomic, readonly) FavouritesViewController *favouritesViewController;
 @property (nonatomic, readonly) PeopleViewController *peopleViewController;
 @property (nonatomic, readonly) RoomsViewController *roomsViewController;
-@property (nonatomic, readonly) GroupsViewController *groupsViewController;
+@property (nonatomic, readonly) SettingsViewController *settingsViewController;
 
 // References on the currently selected room and its view controller
 @property (nonatomic, readonly) RoomViewController *currentRoomViewController;
@@ -150,11 +134,6 @@
 // References on the currently selected contact and its view controller
 @property (nonatomic, readonly) ContactDetailsViewController *currentContactDetailViewController;
 @property (nonatomic, readonly) MXKContact *selectedContact;
-
-// References on the currently selected group and its view controller
-@property (nonatomic, readonly) GroupDetailsViewController *currentGroupDetailViewController;
-@property (nonatomic, readonly) MXGroup *selectedGroup;
-@property (nonatomic, readonly) MXSession *selectedGroupSession;
 
 @end
 

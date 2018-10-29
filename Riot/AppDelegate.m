@@ -159,10 +159,10 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     BOOL isErrorNotificationSuspended;
     
     /**
-     Completion block called when [self popToHomeViewControllerAnimated:] has been
+     Completion block called when [self popToPeopleViewControllerAnimated:] has been
      completed.
      */
-    void (^popToHomeViewControllerCompletion)();
+    void (^popToPeopleViewControllerCompletion)();
     
     /**
      The listeners to call events.
@@ -768,7 +768,7 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
         // Do it asynchronously to avoid hasardous dispatch_async after calling restoreInitialDisplay
         [self.window.rootViewController dismissViewControllerAnimated:NO completion:^{
             
-            [self popToHomeViewControllerAnimated:NO completion:^{
+            [self popToPeopleViewControllerAnimated:NO completion:^{
                 
                 if (completion)
                 {
@@ -800,7 +800,7 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     }
     else
     {
-        [self popToHomeViewControllerAnimated:NO completion:^{
+        [self popToPeopleViewControllerAnimated:NO completion:^{
             
             if (completion)
             {
@@ -978,7 +978,7 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
 
 #pragma mark
 
-- (void)popToHomeViewControllerAnimated:(BOOL)animated completion:(void (^)())completion
+- (void)popToPeopleViewControllerAnimated:(BOOL)animated completion:(void (^)())completion
 {
     UINavigationController *secondNavController = self.secondaryNavigationController;
     if (secondNavController)
@@ -991,15 +991,15 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     {
         // Listen to the masterNavigationController changes
         // We need to be sure that masterTabBarController is back to the screen
-        popToHomeViewControllerCompletion = completion;
+        popToPeopleViewControllerCompletion = completion;
         _masterNavigationController.delegate = self;
         
         [_masterNavigationController popToViewController:_masterTabBarController animated:animated];
     }
     else
     {
-        // Select the Home tab
-        _masterTabBarController.selectedIndex = TABBAR_HOME_INDEX;
+        // Select the People tab
+        _masterTabBarController.selectedIndex = TABBAR_PEOPLE_INDEX;
         
         if (completion)
         {
@@ -1024,10 +1024,10 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
         // Release the current selected item (room/contact/...).
         [_masterTabBarController releaseSelectedItem];
         
-        if (popToHomeViewControllerCompletion)
+        if (popToPeopleViewControllerCompletion)
         {
-            void (^popToHomeViewControllerCompletion2)() = popToHomeViewControllerCompletion;
-            popToHomeViewControllerCompletion = nil;
+            void (^popToHomeViewControllerCompletion2)() = popToPeopleViewControllerCompletion;
+            popToPeopleViewControllerCompletion = nil;
             
             // Dispatch the completion in order to let navigation stack refresh itself.
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -1807,7 +1807,6 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     NSString *roomIdOrAlias;
     NSString *eventId;
     NSString *userId;
-    NSString *groupId;
     
     // Check permalink to room or event
     if ([pathParams[0] isEqualToString:@"room"] && pathParams.count >= 2)
@@ -1817,11 +1816,6 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
         
         // Is it a link to an event of a room?
         eventId = (pathParams.count >= 3) ? pathParams[2] : nil;
-    }
-    else if ([pathParams[0] isEqualToString:@"group"] && pathParams.count >= 2)
-    {
-        // The link is the form of "/group/[groupId]"
-        groupId = pathParams[1];
     }
     else if (([pathParams[0] hasPrefix:@"#"] || [pathParams[0] hasPrefix:@"!"]) && pathParams.count >= 1)
     {
@@ -2036,44 +2030,6 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
 
         continueUserActivity = YES;
     }
-    else if (groupId)
-    {
-        // @FIXME: In case of multi-account, ask the user which one to use
-        MXKAccount* account = accountManager.activeAccounts.firstObject;
-        if (account)
-        {
-            MXGroup *group = [account.mxSession groupWithGroupId:groupId];
-            
-            if (!group)
-            {
-                // Create a group instance to display its preview
-                group = [[MXGroup alloc] initWithGroupId:groupId];
-            }
-            
-            // Display the group details
-            [self showGroup:group withMatrixSession:account.mxSession];
-            
-            continueUserActivity = YES;
-        }
-        else
-        {
-            // There is no account. The app will display the AuthenticationVC.
-            // Wait for a successful login
-            NSLog(@"[AppDelegate] Universal link: The user is not logged in. Wait for a successful login");
-            universalLinkFragmentPending = fragment;
-            
-            // Register an observer in order to handle new account
-            universalLinkWaitingObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kMXKAccountManagerDidAddAccountNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notif) {
-                
-                // Check that 'fragment' has not been cancelled
-                if ([universalLinkFragmentPending isEqualToString:fragment])
-                {
-                    NSLog(@"[AppDelegate] Universal link:  The user is now logged in. Retry the link");
-                    [self handleUniversalLinkFragment:fragment];
-                }
-            }];
-        }
-    }
     // Check whether this is a registration links.
     else if ([pathParams[0] isEqualToString:@"register"])
     {
@@ -2087,7 +2043,7 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
         // Unknown command: Do nothing except coming back to the main screen
         NSLog(@"[AppDelegate] Universal link: TODO: Do not know what to do with the link arguments: %@", pathParams);
         
-        [self popToHomeViewControllerAnimated:NO completion:nil];
+        [self popToPeopleViewControllerAnimated:NO completion:nil];
     }
     
     return continueUserActivity;
@@ -2550,7 +2506,7 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     }
     
     // Force back to Recents list if room details is displayed (Room details are not available until the end of initial sync)
-    [self popToHomeViewControllerAnimated:NO completion:nil];
+    [self popToPeopleViewControllerAnimated:NO completion:nil];
     
     if (clearCache)
     {
@@ -3355,18 +3311,6 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     }
 }
 
-#pragma mark - Matrix Groups handling
-
-- (void)showGroup:(MXGroup*)group withMatrixSession:(MXSession*)mxSession
-{
-    [self restoreInitialDisplay:^{
-        
-        // Select group to display its details (dispatch this action in order to let TabBarController end its refresh)
-        [_masterTabBarController selectGroup:group inMatrixSession:mxSession];
-        
-    }];
-}
-
 #pragma mark - MXKCallViewControllerDelegate
 
 - (void)dismissCallViewController:(MXKCallViewController *)callViewController completion:(void (^)())completion
@@ -3692,7 +3636,7 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
 
 - (BOOL)splitViewController:(UISplitViewController *)splitViewController collapseSecondaryViewController:(UIViewController *)secondaryViewController ontoPrimaryViewController:(UIViewController *)primaryViewController
 {
-    if (!self.masterTabBarController.currentRoomViewController && !self.masterTabBarController.currentContactDetailViewController && !self.masterTabBarController.currentGroupDetailViewController)
+    if (!self.masterTabBarController.currentRoomViewController && !self.masterTabBarController.currentContactDetailViewController)
     {
         // Return YES to indicate that we have handled the collapse by doing nothing; the secondary controller will be discarded.
         return YES;

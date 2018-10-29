@@ -19,8 +19,6 @@
 
 #import "AppDelegate.h"
 
-#import "HomeViewController.h"
-
 #import "FilesSearchCellData.h"
 #import "FilesSearchTableViewCell.h"
 
@@ -178,9 +176,6 @@
     // Data in the cells are actually Vector RoomBubbleCellData
     FilesSearchCellData *cellData = (FilesSearchCellData*)[self.dataSource cellDataAtIndex:indexPath.row];
     _selectedEvent = cellData.searchResult.result;
-
-    // Hide the keyboard handled by the search text input which belongs to HomeViewController
-    [((HomeViewController*)self.parentViewController).searchBar resignFirstResponder];
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 

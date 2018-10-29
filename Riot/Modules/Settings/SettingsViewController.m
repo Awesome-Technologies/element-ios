@@ -41,9 +41,6 @@
 #import "RiotDesignValues.h"
 #import "TableViewCellWithPhoneNumberTextField.h"
 
-#import "GroupsDataSource.h"
-#import "GroupTableViewCellWithSwitch.h"
-
 #import "GBDeviceInfo_iOS.h"
 
 #import "Riot-Swift.h"
@@ -63,7 +60,6 @@ enum
     SETTINGS_SECTION_OTHER_INDEX,
     SETTINGS_SECTION_LABS_INDEX,
     SETTINGS_SECTION_CRYPTOGRAPHY_INDEX,
-    SETTINGS_SECTION_FLAIR_INDEX,
     SETTINGS_SECTION_DEVICES_INDEX,
     SETTINGS_SECTION_DEACTIVATE_ACCOUNT_INDEX,
     SETTINGS_SECTION_COUNT
@@ -196,9 +192,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     NSMutableArray<MXDevice *> *devicesArray;
     DeviceView *deviceView;
     
-    // Flair: the groups data source
-    GroupsDataSource *groupsDataSource;
-    
     // Observe kAppDelegateDidTapStatusBarNotification to handle tap on clock status bar.
     id kAppDelegateDidTapStatusBarNotificationObserver;
     
@@ -272,7 +265,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     [self.tableView registerClass:MXKTableViewCellWithLabelAndSwitch.class forCellReuseIdentifier:[MXKTableViewCellWithLabelAndSwitch defaultReuseIdentifier]];
     [self.tableView registerClass:MXKTableViewCellWithLabelAndMXKImageView.class forCellReuseIdentifier:[MXKTableViewCellWithLabelAndMXKImageView defaultReuseIdentifier]];
     [self.tableView registerClass:TableViewCellWithPhoneNumberTextField.class forCellReuseIdentifier:[TableViewCellWithPhoneNumberTextField defaultReuseIdentifier]];
-    [self.tableView registerClass:GroupTableViewCellWithSwitch.class forCellReuseIdentifier:[GroupTableViewCellWithSwitch defaultReuseIdentifier]];
     [self.tableView registerNib:MXKTableViewCellWithTextView.nib forCellReuseIdentifier:[MXKTableViewCellWithTextView defaultReuseIdentifier]];
     
     // Enable self sizing cells
@@ -314,10 +306,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     {
         [self addMatrixSession:mxSession];
     }
-    
-    groupsDataSource = [[GroupsDataSource alloc] initWithMatrixSession:self.mainSession];
-    [groupsDataSource finalizeInitialization];
-    groupsDataSource.delegate = self;
     
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(onSave:)];
     self.navigationItem.rightBarButtonItem.accessibilityIdentifier=@"SettingsVCNavBarSaveButton";
@@ -361,13 +349,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
 
 - (void)destroy
 {
-    if (groupsDataSource)
-    {
-        groupsDataSource.delegate = nil;
-        [groupsDataSource destroy];
-        groupsDataSource = nil;
-    }
-    
     // Release the potential pushed view controller
     [self releasePushedViewController];
     
@@ -425,6 +406,8 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
+    [AppDelegate theDelegate].masterTabBarController.navigationItem.title = NSLocalizedStringFromTable(@"settings_title", @"Vector", nil);
 
     // Screen tracking
     [[Analytics sharedInstance] trackScreen:@"Settings"];
@@ -1257,17 +1240,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     {
         count = LABS_COUNT;
     }
-    else if (section == SETTINGS_SECTION_FLAIR_INDEX)
-    {
-        // Check whether some joined groups are available
-        if ([groupsDataSource numberOfSectionsInTableView:tableView])
-        {
-            if (groupsDataSource.joinedGroupsSection != -1)
-            {
-                count = [groupsDataSource tableView:tableView numberOfRowsInSection:groupsDataSource.joinedGroupsSection];
-            }
-        }
-    }
     else if (section == SETTINGS_SECTION_DEVICES_INDEX)
     {
         count = devicesArray.count;
@@ -2098,32 +2070,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
             cell = labelAndSwitchCell;
         }
     }
-    else if (section == SETTINGS_SECTION_FLAIR_INDEX)
-    {
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:groupsDataSource.joinedGroupsSection];
-        cell = [groupsDataSource tableView:tableView cellForRowAtIndexPath:indexPath];
-        
-        if ([cell isKindOfClass:GroupTableViewCellWithSwitch.class])
-        {
-            GroupTableViewCellWithSwitch* groupWithSwitchCell = (GroupTableViewCellWithSwitch*)cell;
-            id<MXKGroupCellDataStoring> groupCellData = [groupsDataSource cellDataAtIndex:indexPath];
-            
-            // Display the groupId in the description label, except if the group has no name
-            if (![groupWithSwitchCell.groupName.text isEqualToString:groupCellData.group.groupId])
-            {
-                groupWithSwitchCell.groupDescription.hidden = NO;
-                groupWithSwitchCell.groupDescription.text = groupCellData.group.groupId;
-            }
-            
-            // Update the toogle button
-            groupWithSwitchCell.toggleButton.on = groupCellData.group.summary.user.isPublicised;
-            groupWithSwitchCell.toggleButton.enabled = YES;
-            groupWithSwitchCell.toggleButton.tag = row;
-            
-            [groupWithSwitchCell.toggleButton removeTarget:self action:nil forControlEvents:UIControlEventTouchUpInside];
-            [groupWithSwitchCell.toggleButton addTarget:self action:@selector(toggleCommunityFlair:) forControlEvents:UIControlEventTouchUpInside];
-        }
-    }
     else if (section == SETTINGS_SECTION_DEVICES_INDEX)
     {
         MXKTableViewCell *deviceCell = [self getDefaultTableViewCell:tableView];
@@ -2269,14 +2215,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     {
         return NSLocalizedStringFromTable(@"settings_labs", @"Vector", nil);
     }
-    else if (section == SETTINGS_SECTION_FLAIR_INDEX)
-    {
-        // Check whether this section is visible
-        if (groupsDataSource.joinedGroupsSection != -1)
-        {
-            return NSLocalizedStringFromTable(@"settings_flair", @"Vector", nil);
-        }
-    }
     else if (section == SETTINGS_SECTION_DEVICES_INDEX)
     {
         // Check whether this section is visible
@@ -2388,13 +2326,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
             return SECTION_TITLE_PADDING_WHEN_HIDDEN;
         }
     }
-    else if (section == SETTINGS_SECTION_FLAIR_INDEX)
-    {
-        if (groupsDataSource.joinedGroupsSection == -1)
-        {
-            return SECTION_TITLE_PADDING_WHEN_HIDDEN;
-        }
-    }
     
     return 24;
 }
@@ -2420,14 +2351,7 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
             return SECTION_TITLE_PADDING_WHEN_HIDDEN;
         }
     }
-    else if (section == SETTINGS_SECTION_FLAIR_INDEX)
-    {
-        if (groupsDataSource.joinedGroupsSection == -1)
-        {
-            return SECTION_TITLE_PADDING_WHEN_HIDDEN;
-        }
-    }
-
+    
     return 24;
 }
 
@@ -3106,45 +3030,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     UISwitch *switchButton = (UISwitch*)sender;
 
     RiotSettings.shared.pinRoomsWithUnreadMessagesOnHome = switchButton.on;
-}
-
-- (void)toggleCommunityFlair:(id)sender
-{
-    UISwitch *switchButton = (UISwitch*)sender;
-    
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:switchButton.tag inSection:groupsDataSource.joinedGroupsSection];
-    id<MXKGroupCellDataStoring> groupCellData = [groupsDataSource cellDataAtIndex:indexPath];
-    MXGroup *group = groupCellData.group;
-    
-    if (group)
-    {
-        [self startActivityIndicator];
-        
-        __weak typeof(self) weakSelf = self;
-        
-        [self.mainSession updateGroupPublicity:group isPublicised:switchButton.on success:^{
-            
-            if (weakSelf)
-            {
-                typeof(self) self = weakSelf;
-                [self stopActivityIndicator];
-            }
-            
-        } failure:^(NSError *error) {
-            
-            if (weakSelf)
-            {
-                typeof(self) self = weakSelf;
-                [self stopActivityIndicator];
-                
-                // Come back to previous state button
-                [switchButton setOn:!switchButton.isOn animated:YES];
-                
-                // Notify user
-                [[AppDelegate theDelegate] showErrorAsAlert:error];
-            }
-        }];
-    }
 }
 
 - (void)markAllAsRead:(id)sender
@@ -4165,25 +4050,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
             [[AppDelegate theDelegate] reloadMatrixSessions:NO];
         });
     }
-}
-
-#pragma mark - MXKDataSourceDelegate
-
-- (Class<MXKCellRendering>)cellViewClassForCellData:(MXKCellData*)cellData
-{
-    // Return the class used to display a group with a toogle button
-    return GroupTableViewCellWithSwitch.class;
-}
-
-- (NSString *)cellReuseIdentifierForCellData:(MXKCellData*)cellData
-{
-    return GroupTableViewCellWithSwitch.defaultReuseIdentifier;
-}
-
-- (void)dataSource:(MXKDataSource *)dataSource didCellChange:(id)changes
-{
-    // Group data has been updated. Do a simple full reload
-    [self refreshSettings];
 }
 
 #pragma mark - DeactivateAccountViewControllerDelegate

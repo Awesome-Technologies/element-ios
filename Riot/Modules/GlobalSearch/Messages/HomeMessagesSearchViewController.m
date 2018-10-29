@@ -19,8 +19,6 @@
 
 #import "AppDelegate.h"
 
-#import "HomeViewController.h"
-
 // Use RoomViewController cells to display results
 #import "RoomBubbleCellData.h"
 #import "MessagesSearchResultAttachmentBubbleCell.h"
@@ -229,9 +227,6 @@
     // Data in the cells are actually Vector RoomBubbleCellData
     RoomBubbleCellData *cellData = (RoomBubbleCellData*)[self.dataSource cellDataAtIndex:indexPath.row];
     _selectedEvent = cellData.bubbleComponents[0].event;
-
-    // Hide the keyboard handled by the search text input which belongs to HomeViewController
-    [((HomeViewController*)self.parentViewController).searchBar resignFirstResponder];
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 
