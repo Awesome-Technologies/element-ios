@@ -103,12 +103,12 @@
 
 - (void)userInterfaceThemeDidChange
 {
-    self.defaultBarTintColor = kRiotSecondaryBgColor;
-    self.barTitleColor = kRiotPrimaryTextColor;
-    self.activityIndicator.backgroundColor = kRiotOverlayColor;
+    self.defaultBarTintColor = kCaritasNavigationBarBgColor;
+    self.barTitleColor = kCaritasColorWhite;
+    self.activityIndicator.backgroundColor = kCaritasOverlayColor;
     
     // Check the table view style to select its bg color.
-    self.contactsTableView.backgroundColor = ((self.contactsTableView.style == UITableViewStylePlain) ? kRiotPrimaryBgColor : kRiotSecondaryBgColor);
+    self.contactsTableView.backgroundColor = ((self.contactsTableView.style == UITableViewStylePlain) ? kCaritasPrimaryBgColor : kCaritasSecondaryBgColor);
     self.view.backgroundColor = self.contactsTableView.backgroundColor;
     
     if (self.contactsTableView.dataSource)
@@ -119,7 +119,7 @@
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-    return kRiotDesignStatusBarStyle;
+    return kCaritasDesignStatusBarStyle;
 }
 
 - (void)didReceiveMemoryWarning
@@ -287,13 +287,13 @@
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    cell.backgroundColor = kRiotPrimaryBgColor;
+    cell.backgroundColor = kCaritasPrimaryBgColor;
     
     // Update the selected background view
-    if (kRiotSelectedBgColor)
+    if (kCaritasSelectedBgColor)
     {
         cell.selectedBackgroundView = [[UIView alloc] init];
-        cell.selectedBackgroundView.backgroundColor = kRiotSelectedBgColor;
+        cell.selectedBackgroundView.backgroundColor = kCaritasSelectedBgColor;
     }
     else
     {

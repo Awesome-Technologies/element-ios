@@ -25,11 +25,11 @@
 {
     [super customizeTableViewCellRendering];
     
-    self.userNameLabel.textColor = kRiotPrimaryTextColor;
+    self.userNameLabel.textColor = kCaritasPrimaryTextColor;
     
-    self.roomNameLabel.textColor = kRiotSecondaryTextColor;
+    self.roomNameLabel.textColor = kCaritasSecondaryTextColor;
     
-    self.messageTextView.tintColor = kRiotColorGreen;
+    self.messageTextView.tintColor = kCaritasColorRed;
 }
 
 - (void)render:(MXKCellData *)cellData

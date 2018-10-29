@@ -133,7 +133,7 @@
 {
     [super customizeViewRendering];
     
-    self.displayNameTextField.textColor = (self.mxRoom.summary.displayname.length ? kRiotPrimaryTextColor : kRiotSecondaryTextColor);
+    self.displayNameTextField.textColor = kCaritasColorWhite;
 }
 
 - (void)setRoomPreviewData:(RoomPreviewData *)roomPreviewData
@@ -158,11 +158,6 @@
         if (!self.displayNameTextField.text.length)
         {
             self.displayNameTextField.text = [NSBundle mxk_localizedStringForKey:@"room_displayname_empty_room"];
-            self.displayNameTextField.textColor = kRiotSecondaryTextColor;
-        }
-        else
-        {
-            self.displayNameTextField.textColor = kRiotPrimaryTextColor;
         }
     }
 }

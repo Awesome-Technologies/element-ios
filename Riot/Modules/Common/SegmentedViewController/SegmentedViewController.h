@@ -38,7 +38,7 @@ limitations under the License.
 @property (nonatomic) NSUInteger selectedIndex;
 
 /**
- The tint color for the section header (kRiotColorGreen by default).
+ The tint color for the section header (kCaritasColorRed by default).
  */
 @property (nonatomic) UIColor *sectionHeaderTintColor;
 

@@ -58,14 +58,14 @@
 
 - (void)userInterfaceThemeDidChange
 {
-    self.view.backgroundColor = kRiotPrimaryBgColor;
-    self.defaultBarTintColor = kRiotSecondaryBgColor;
-    self.barTitleColor = kRiotPrimaryTextColor;
-    self.activityIndicator.backgroundColor = kRiotOverlayColor;
+    self.view.backgroundColor = kCaritasPrimaryBgColor;
+    self.defaultBarTintColor = kCaritasNavigationBarBgColor;
+    self.barTitleColor = kCaritasColorWhite;
+    self.activityIndicator.backgroundColor = kCaritasOverlayColor;
     
-    self.navigationBar.tintColor = kRiotSecondaryBgColor;
-    self.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: kRiotPrimaryTextColor};
-    self.backButton.tintColor = kRiotColorGreen;
+    self.navigationBar.tintColor = kCaritasSecondaryBgColor;
+    self.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: kCaritasPrimaryTextColor};
+    self.backButton.tintColor = kCaritasColorRed;
 }
 
 - (void)viewWillAppear:(BOOL)animated

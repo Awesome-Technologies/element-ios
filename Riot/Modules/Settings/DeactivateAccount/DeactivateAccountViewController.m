@@ -108,7 +108,7 @@ static CGFloat const kTextFontSize = 15.0;
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-    return kRiotDesignStatusBarStyle;
+    return kCaritasDesignStatusBarStyle;
 }
 
 #pragma mark - Private
@@ -122,22 +122,23 @@ static CGFloat const kTextFontSize = 15.0;
 
 - (void)userInterfaceThemeDidChange
 {
-    self.view.backgroundColor = kRiotPrimaryBgColor;
-    self.defaultBarTintColor = kRiotSecondaryBgColor;
-    self.activityIndicator.backgroundColor = kRiotOverlayColor;
+    self.view.backgroundColor = kCaritasPrimaryBgColor;
+    self.defaultBarTintColor = kCaritasNavigationBarBgColor;
+    self.activityIndicator.backgroundColor = kCaritasOverlayColor;
+    self.forgetMessageButton.imageView.tintColor = kCaritasPrimaryTextColor;
 }
 
 - (void)setupStringAttributes
 {
     self.normalStringAttributes = @{
                                     NSFontAttributeName: [UIFont systemFontOfSize:kTextFontSize],
-                                    NSForegroundColorAttributeName: kRiotPrimaryTextColor
+                                    NSForegroundColorAttributeName: kCaritasPrimaryTextColor
                                     };
     
     
     self.emphasizeStringAttributes = @{
                                        NSFontAttributeName: [UIFont systemFontOfSize:kTextFontSize weight:UIFontWeightBold],
-                                       NSForegroundColorAttributeName: kRiotPrimaryTextColor
+                                       NSForegroundColorAttributeName: kCaritasPrimaryTextColor
                                        };
 }
 
@@ -151,8 +152,7 @@ static CGFloat const kTextFontSize = 15.0;
 
 - (void)setupNavigationBar
 {
-    self.navigationController.navigationBar.titleTextAttributes = @{ NSForegroundColorAttributeName: kRiotColorRed };
-    
+    self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName:kCaritasColorWhite};
     UIBarButtonItem *cancelBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedStringFromTable(@"cancel", @"Vector", nil) style:UIBarButtonItemStylePlain target:self action:@selector(cancelButtonAction:)];
     self.navigationItem.rightBarButtonItem = cancelBarButtonItem;
 }
@@ -165,9 +165,9 @@ static CGFloat const kTextFontSize = 15.0;
     self.deactivateAcccountButton.titleLabel.baselineAdjustment = UIBaselineAdjustmentAlignCenters;
     
     self.deactivateAcccountButton.layer.masksToBounds = YES;
-    self.deactivateAcccountButton.backgroundColor = kRiotColorGreen;
+    self.deactivateAcccountButton.backgroundColor = kCaritasColorRed;
     [self.deactivateAcccountButton setTitle:NSLocalizedStringFromTable(@"deactivate_account_validate_action", @"Vector", nil) forState:UIControlStateNormal];    
-    [self.deactivateAcccountButton setTitleColor:kRiotColorSilver forState:UIControlStateDisabled];
+    [self.deactivateAcccountButton setTitleColor:kCaritasColorSilver forState:UIControlStateDisabled];
 }
 
 - (void)setupDeactivateAccountInfosLabel

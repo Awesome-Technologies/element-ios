@@ -137,36 +137,36 @@
 
 - (void)userInterfaceThemeDidChange
 {
-    self.defaultBarTintColor = kRiotSecondaryBgColor;
-    self.barTitleColor = kRiotPrimaryTextColor;
-    self.activityIndicator.backgroundColor = kRiotOverlayColor;
+    self.defaultBarTintColor = kCaritasNavigationBarBgColor;
+    self.barTitleColor = kCaritasColorWhite;
+    self.activityIndicator.backgroundColor = kCaritasOverlayColor;
     
-    self.overlayView.backgroundColor = kRiotOverlayColor;
+    self.overlayView.backgroundColor = kCaritasOverlayColor;
     self.overlayView.alpha = 1.0;
     
-    self.containerView.backgroundColor = kRiotPrimaryBgColor;
-    self.sendingContainer.backgroundColor = kRiotPrimaryBgColor;
+    self.containerView.backgroundColor = kCaritasPrimaryBgColor;
+    self.sendingContainer.backgroundColor = kCaritasPrimaryBgColor;
     
-    self.bugReportDescriptionTextView.keyboardAppearance = kRiotKeyboard;
+    self.bugReportDescriptionTextView.keyboardAppearance = kCaritasKeyboard;
     
-    self.titleLabel.textColor = kRiotPrimaryTextColor;
-    self.sendingLabel.textColor = kRiotPrimaryTextColor;
-    self.descriptionLabel.textColor = kRiotPrimaryTextColor;
-    self.bugReportDescriptionTextView.textColor = kRiotPrimaryTextColor;
-    self.bugReportDescriptionTextView.tintColor = kRiotColorGreen;
-    self.logsDescriptionLabel.textColor = kRiotPrimaryTextColor;
-    self.sendLogsLabel.textColor = kRiotPrimaryTextColor;
-    self.sendScreenshotLabel.textColor = kRiotPrimaryTextColor;
+    self.titleLabel.textColor = kCaritasPrimaryTextColor;
+    self.sendingLabel.textColor = kCaritasPrimaryTextColor;
+    self.descriptionLabel.textColor = kCaritasPrimaryTextColor;
+    self.bugReportDescriptionTextView.textColor = kCaritasPrimaryTextColor;
+    self.bugReportDescriptionTextView.tintColor = kCaritasColorRed;
+    self.logsDescriptionLabel.textColor = kCaritasPrimaryTextColor;
+    self.sendLogsLabel.textColor = kCaritasPrimaryTextColor;
+    self.sendScreenshotLabel.textColor = kCaritasPrimaryTextColor;
     
-    self.sendButton.tintColor = kRiotColorGreen;
-    self.cancelButton.tintColor = kRiotColorGreen;
+    self.sendButton.tintColor = kCaritasColorRed;
+    self.cancelButton.tintColor = kCaritasColorRed;
     
-    _bugReportDescriptionTextView.layer.borderColor = kRiotSecondaryBgColor.CGColor;
+    _bugReportDescriptionTextView.layer.borderColor = kCaritasSecondaryBgColor.CGColor;
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-    return kRiotDesignStatusBarStyle;
+    return kCaritasDesignStatusBarStyle;
 }
 
 - (void)destroy

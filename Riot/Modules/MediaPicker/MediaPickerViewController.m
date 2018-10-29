@@ -181,20 +181,20 @@ static void *RecordingContext = &RecordingContext;
 
 - (void)userInterfaceThemeDidChange
 {
-    self.defaultBarTintColor = kRiotSecondaryBgColor;
-    self.barTitleColor = kRiotPrimaryTextColor;
-    self.activityIndicator.backgroundColor = kRiotOverlayColor;
+    self.defaultBarTintColor = kCaritasNavigationBarBgColor;
+    self.barTitleColor = kCaritasColorWhite;
+    self.activityIndicator.backgroundColor = kCaritasOverlayColor;
     
-    self.cameraVideoCaptureProgressView.progressColor = kRiotPrimaryBgColor;
+    self.cameraVideoCaptureProgressView.progressColor = kCaritasPrimaryBgColor;
     self.cameraVideoCaptureProgressView.unprogressColor = [UIColor clearColor];
     
-    self.userAlbumsTableView.backgroundColor = kRiotPrimaryBgColor;
-    self.view.backgroundColor = kRiotPrimaryBgColor;
+    self.userAlbumsTableView.backgroundColor = kCaritasPrimaryBgColor;
+    self.view.backgroundColor = kCaritasPrimaryBgColor;
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-    return kRiotDesignStatusBarStyle;
+    return kCaritasDesignStatusBarStyle;
 }
 
 - (BOOL)prefersStatusBarHidden
@@ -342,12 +342,12 @@ static void *RecordingContext = &RecordingContext;
         if (self.cameraVideoCaptureProgressView.progressColor != [UIColor lightGrayColor])
         {
             self.cameraVideoCaptureProgressView.progressColor = [UIColor lightGrayColor];
-            self.cameraVideoCaptureProgressView.unprogressColor = kRiotPrimaryBgColor;
+            self.cameraVideoCaptureProgressView.unprogressColor = kCaritasPrimaryBgColor;
         }
     }
-    else if (self.cameraVideoCaptureProgressView.progressColor != kRiotPrimaryBgColor)
+    else if (self.cameraVideoCaptureProgressView.progressColor != kCaritasPrimaryBgColor)
     {
-        self.cameraVideoCaptureProgressView.progressColor = kRiotPrimaryBgColor;
+        self.cameraVideoCaptureProgressView.progressColor = kCaritasPrimaryBgColor;
         self.cameraVideoCaptureProgressView.unprogressColor = [UIColor lightGrayColor];
     }
     
@@ -1764,13 +1764,13 @@ static void *RecordingContext = &RecordingContext;
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    cell.backgroundColor = kRiotPrimaryBgColor;
+    cell.backgroundColor = kCaritasPrimaryBgColor;
     
     // Update the selected background view
-    if (kRiotSelectedBgColor)
+    if (kCaritasSelectedBgColor)
     {
         cell.selectedBackgroundView = [[UIView alloc] init];
-        cell.selectedBackgroundView.backgroundColor = kRiotSelectedBgColor;
+        cell.selectedBackgroundView.backgroundColor = kCaritasSelectedBgColor;
     }
     else
     {

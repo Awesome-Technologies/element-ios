@@ -51,11 +51,11 @@ static const CGFloat kButtonSize = 80.0;
     self = [super initWithFrame:CGRectZero];
     if (self)
     {
-        self.backgroundColor = kRiotPrimaryBgColor;
+        self.backgroundColor = kCaritasPrimaryBgColor;
         self.opaque = YES;
         
         self.callerImageView = [[MXKImageView alloc] init];
-        self.callerImageView.backgroundColor = kRiotPrimaryBgColor;
+        self.callerImageView.backgroundColor = kCaritasPrimaryBgColor;
         self.callerImageView.clipsToBounds = YES;
         self.callerImageView.mediaFolder = kMXMediaManagerAvatarThumbnailFolder;
         self.callerImageView.enableInMemoryCache = YES;
@@ -65,41 +65,41 @@ static const CGFloat kButtonSize = 80.0;
                              previewImage:placeholderImage];
         
         self.callerNameLabel = [[UILabel alloc] init];
-        self.callerNameLabel.backgroundColor = kRiotPrimaryBgColor;
-        self.callerNameLabel.textColor = kRiotPrimaryTextColor;
+        self.callerNameLabel.backgroundColor = kCaritasPrimaryBgColor;
+        self.callerNameLabel.textColor = kCaritasPrimaryTextColor;
         self.callerNameLabel.font = [UIFont systemFontOfSize:24.0 weight:UIFontWeightMedium];
         self.callerNameLabel.text = callerName;
         self.callerNameLabel.textAlignment = NSTextAlignmentCenter;
         
         self.callInfoLabel = [[UILabel alloc] init];
-        self.callInfoLabel.backgroundColor = kRiotPrimaryBgColor;
-        self.callInfoLabel.textColor = kRiotSecondaryTextColor;
+        self.callInfoLabel.backgroundColor = kCaritasPrimaryBgColor;
+        self.callInfoLabel.textColor = kCaritasSecondaryTextColor;
         self.callInfoLabel.font = [UIFont systemFontOfSize:18.0 weight:UIFontWeightRegular];
         self.callInfoLabel.text = callInfo;
         self.callInfoLabel.textAlignment = NSTextAlignmentCenter;
         
-        UIColor *answerButtonBorderColor = kRiotColorGreen;
+        UIColor *answerButtonBorderColor = kCaritasColorRed;
         
         self.answerButton = [[CircleButton alloc] initWithImage:[UIImage imageNamed:@"voice_call_icon"]
                                                     borderColor:answerButtonBorderColor];
-        self.answerButton.defaultBackgroundColor = kRiotPrimaryBgColor;
+        self.answerButton.defaultBackgroundColor = kCaritasPrimaryBgColor;
         [self.answerButton addTarget:self action:@selector(didTapAnswerButton) forControlEvents:UIControlEventTouchUpInside];
         
         self.answerTitleLabel = [[UILabel alloc] init];
-        self.answerTitleLabel.backgroundColor = kRiotPrimaryBgColor;
+        self.answerTitleLabel.backgroundColor = kCaritasPrimaryBgColor;
         self.answerTitleLabel.textColor = answerButtonBorderColor;
         self.answerTitleLabel.font = [UIFont systemFontOfSize:18.0 weight:UIFontWeightRegular];
         self.answerTitleLabel.text = NSLocalizedStringFromTable(@"accept", @"Vector", nil);
         
-        UIColor *rejectButtonBorderColor = kRiotColorPinkRed;
+        UIColor *rejectButtonBorderColor = kCaritasColorPinkRed;
         
         self.rejectButton = [[CircleButton alloc] initWithImage:[UIImage imageNamed:@"call_hangup_icon"]
                                                     borderColor:rejectButtonBorderColor];
-        self.rejectButton.defaultBackgroundColor = kRiotPrimaryBgColor;
+        self.rejectButton.defaultBackgroundColor = kCaritasPrimaryBgColor;
         [self.rejectButton addTarget:self action:@selector(didTapRejectButton) forControlEvents:UIControlEventTouchUpInside];
         
         self.rejectTitleLabel = [[UILabel alloc] init];
-        self.rejectTitleLabel.backgroundColor = kRiotPrimaryBgColor;
+        self.rejectTitleLabel.backgroundColor = kCaritasPrimaryBgColor;
         self.rejectTitleLabel.textColor = rejectButtonBorderColor;
         self.rejectTitleLabel.font = [UIFont systemFontOfSize:18.0 weight:UIFontWeightRegular];
         self.rejectTitleLabel.text = NSLocalizedStringFromTable(@"decline", @"Vector", nil);

@@ -25,7 +25,7 @@
 {
     [super customizeTableViewCellRendering];
     
-    _label.textColor = kRiotPrimaryTextColor;
+    _label.textColor = kCaritasPrimaryTextColor;
 }
 
 - (void)setEnabled:(BOOL)enabled

@@ -59,10 +59,10 @@ NSString *const kInviteRecentTableViewCellRoomKey = @"kInviteRecentTableViewCell
 {
     [super customizeTableViewCellRendering];
     
-    self.leftButton.backgroundColor = kRiotColorGreen;
-    self.rightButton.backgroundColor = kRiotColorGreen;
+    self.leftButton.backgroundColor = kCaritasColorRed;
+    self.rightButton.backgroundColor = kCaritasColorRed;
     
-    self.noticeBadgeView.backgroundColor = kRiotColorPinkRed;
+    self.noticeBadgeView.backgroundColor = kCaritasColorPinkRed;
 }
 
 - (void)onDeclinePressed:(id)sender

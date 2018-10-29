@@ -415,10 +415,10 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
         NSString *roomCount = [NSString stringWithFormat:@"   %tu", count];
         
         NSMutableAttributedString *mutableSectionTitle = [[NSMutableAttributedString alloc] initWithString:title
-                                                                                         attributes:@{NSForegroundColorAttributeName : kRiotPrimaryTextColor,
+                                                                                         attributes:@{NSForegroundColorAttributeName : kCaritasColorWhite,
                                                                                                       NSFontAttributeName: [UIFont boldSystemFontOfSize:15.0]}];
         [mutableSectionTitle appendAttributedString:[[NSMutableAttributedString alloc] initWithString:roomCount
-                                                                                    attributes:@{NSForegroundColorAttributeName : kRiotAuxiliaryColor,
+                                                                                    attributes:@{NSForegroundColorAttributeName : kCaritasAuxiliaryColor,
                                                                                                  NSFontAttributeName: [UIFont boldSystemFontOfSize:15.0]}]];
         
         sectionTitle = mutableSectionTitle;
@@ -426,7 +426,7 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
     else if (title)
     {
         sectionTitle = [[NSAttributedString alloc] initWithString:title
-                                               attributes:@{NSForegroundColorAttributeName : kRiotPrimaryTextColor,
+                                               attributes:@{NSForegroundColorAttributeName : kCaritasColorWhite,
                                                             NSFontAttributeName: [UIFont boldSystemFontOfSize:15.0]}];
     }
     
@@ -469,7 +469,7 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
     if (count)
     {
         UILabel *missedNotifAndUnreadBadgeLabel = [[UILabel alloc] init];
-        missedNotifAndUnreadBadgeLabel.textColor = kRiotPrimaryBgColor;
+        missedNotifAndUnreadBadgeLabel.textColor = kCaritasPrimaryBgColor;
         missedNotifAndUnreadBadgeLabel.font = [UIFont boldSystemFontOfSize:14];
         if (count > 1000)
         {
@@ -487,7 +487,7 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
         
         missedNotifAndUnreadBadgeBgView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, bgViewWidth, 20)];
         [missedNotifAndUnreadBadgeBgView.layer setCornerRadius:10];
-        missedNotifAndUnreadBadgeBgView.backgroundColor = kRiotAuxiliaryColor;
+        missedNotifAndUnreadBadgeBgView.backgroundColor = kCaritasAuxiliaryColor;
         
         [missedNotifAndUnreadBadgeBgView addSubview:missedNotifAndUnreadBadgeLabel];
         missedNotifAndUnreadBadgeLabel.center = missedNotifAndUnreadBadgeBgView.center;
@@ -516,7 +516,7 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
 - (UIView *)viewForHeaderInSection:(NSInteger)section withFrame:(CGRect)frame
 {
     UIView *sectionHeader = [[UIView alloc] initWithFrame:frame];
-    sectionHeader.backgroundColor = kRiotSecondaryBgColor;
+    sectionHeader.backgroundColor = kCaritasSecondaryBgColor;
     NSInteger sectionBitwise = 0;
     UIImageView *chevronView;
     UIView *accessoryView;
@@ -643,6 +643,7 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
             // Chevron
             UIImageView *chevronImageView = [[UIImageView alloc] initWithFrame:CGRectMake(containerWidth - 26, 5, 6, 12)];
             chevronImageView.image = [UIImage imageNamed:@"disclosure_icon"];
+            chevronImageView.tintColor = kCaritasColorWhite;
             chevronImageView.translatesAutoresizingMaskIntoConstraints = NO;
             [directorySectionContainer addSubview:chevronImageView];
 
@@ -754,8 +755,9 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
         }
         
         // Apply the current UI theme.
-        networkLabel.textColor = kRiotPrimaryTextColor;
-        directoryServerLabel.textColor = kRiotSecondaryTextColor;
+        networkLabel.textColor = kCaritasColorWhite;
+        directoryServerLabel.textColor = kCaritasColorWhite;
+        chevronView.tintColor = kCaritasColorWhite;
 
         // Set the current directory server name
         directoryServerLabel.text = _publicRoomsDirectoryDataSource.directoryServerDisplayname;
@@ -846,7 +848,7 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
         if (!tableViewCell)
         {
             tableViewCell = [[MXKTableViewCell alloc] init];
-            tableViewCell.textLabel.textColor = kRiotSecondaryTextColor;
+            tableViewCell.textLabel.textColor = kCaritasSecondaryTextColor;
             tableViewCell.textLabel.font = [UIFont systemFontOfSize:15.0];
             tableViewCell.selectionStyle = UITableViewCellSelectionStyleNone;
         }

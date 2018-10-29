@@ -156,21 +156,23 @@
 
 - (void)userInterfaceThemeDidChange
 {
-    self.defaultBarTintColor = kRiotSecondaryBgColor;
-    self.barTitleColor = kRiotPrimaryTextColor;
-    self.activityIndicator.backgroundColor = kRiotOverlayColor;
+    self.defaultBarTintColor = kCaritasNavigationBarBgColor;
+    self.barTitleColor = kCaritasColorWhite;
+    self.activityIndicator.backgroundColor = kCaritasOverlayColor;
     
     [self refreshSearchBarItemsColor:_searchBarView];
     
-    _searchBarHeaderBorder.backgroundColor = kRiotAuxiliaryColor;
+    _searchBarView.tintColor = kCaritasPrimaryTextColor;
+    
+    _searchBarHeaderBorder.backgroundColor = kCaritasAuxiliaryColor;
     
     // Check the table view style to select its bg color.
-    self.tableView.backgroundColor = ((self.tableView.style == UITableViewStylePlain) ? kRiotPrimaryBgColor : kRiotSecondaryBgColor);
+    self.tableView.backgroundColor = kCaritasPrimaryBgColor;
     self.view.backgroundColor = self.tableView.backgroundColor;
     
     // Update the gradient view above the screen
     CGFloat white = 1.0;
-    [kRiotPrimaryBgColor getWhite:&white alpha:nil];
+    [kCaritasPrimaryBgColor getWhite:&white alpha:nil];
     CGColorRef opaqueWhiteColor = [UIColor colorWithWhite:white alpha:1.0].CGColor;
     CGColorRef transparentWhiteColor = [UIColor colorWithWhite:white alpha:0].CGColor;
     tableViewMaskLayer.colors = [NSArray arrayWithObjects:(__bridge id)transparentWhiteColor, (__bridge id)transparentWhiteColor, (__bridge id)opaqueWhiteColor, nil];
@@ -183,7 +185,7 @@
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-    return kRiotDesignStatusBarStyle;
+    return kCaritasDesignStatusBarStyle;
 }
 
 // This method is called when the viewcontroller is added or removed from a container view controller.
@@ -576,7 +578,7 @@
     
     // Consider the grayscale components of the kRiotPrimaryBgColor.
     CGFloat white = 1.0;
-    [kRiotPrimaryBgColor getWhite:&white alpha:nil];
+    [kCaritasPrimaryBgColor getWhite:&white alpha:nil];
     
     CGColorRef opaqueWhiteColor = [UIColor colorWithWhite:white alpha:1.0].CGColor;
     CGColorRef transparentWhiteColor = [UIColor colorWithWhite:white alpha:0].CGColor;
@@ -1175,13 +1177,13 @@
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    cell.backgroundColor = kRiotPrimaryBgColor;
+    cell.backgroundColor = kCaritasPrimaryBgColor;
     
     // Update the selected background view
-    if (kRiotSelectedBgColor)
+    if (kCaritasSelectedBgColor)
     {
         cell.selectedBackgroundView = [[UIView alloc] init];
-        cell.selectedBackgroundView.backgroundColor = kRiotSelectedBgColor;
+        cell.selectedBackgroundView.backgroundColor = kCaritasSelectedBgColor;
     }
     else
     {
@@ -1215,7 +1217,7 @@
     if (section == invitedSection)
     {
         sectionHeader = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, 30)];
-        sectionHeader.backgroundColor = kRiotSecondaryBgColor;
+        sectionHeader.backgroundColor = kCaritasSecondaryBgColor;
         
         CGRect frame = sectionHeader.frame;
         frame.origin.x = 20;
@@ -1223,7 +1225,7 @@
         frame.size.width = sectionHeader.frame.size.width - 10;
         frame.size.height -= 10;
         UILabel *headerLabel = [[UILabel alloc] initWithFrame:frame];
-        headerLabel.textColor = kRiotPrimaryTextColor;
+        headerLabel.textColor = kCaritasPrimaryTextColor;
         headerLabel.font = [UIFont boldSystemFontOfSize:15.0];
         headerLabel.backgroundColor = [UIColor clearColor];
         
@@ -1327,7 +1329,7 @@
             
         }];
         
-        leaveAction.backgroundColor = [MXKTools convertImageToPatternColor:@"remove_icon" backgroundColor:kRiotSecondaryBgColor patternSize:CGSizeMake(74, 74) resourceSize:CGSizeMake(24, 24)];
+        leaveAction.backgroundColor = [MXKTools convertImageToPatternColor:@"remove_icon" backgroundColor:kCaritasSecondaryBgColor patternSize:CGSizeMake(74, 74) resourceSize:CGSizeMake(24, 24)];
         [actions insertObject:leaveAction atIndex:0];
     }
     
@@ -1684,19 +1686,19 @@
 - (void)refreshSearchBarItemsColor:(UISearchBar *)searchBar
 {
     // bar tint color
-    searchBar.barTintColor = searchBar.tintColor = kRiotColorGreen;
-    searchBar.tintColor = kRiotColorGreen;
+    searchBar.barTintColor = kCaritasDesignSearchBarTintColor;
+    searchBar.tintColor = kCaritasPrimaryTextColor;
     
     // FIXME: this all seems incredibly fragile and tied to gutwrenching the current UISearchBar internals.
     
     // text color
     UITextField *searchBarTextField = [searchBar valueForKey:@"_searchField"];
-    searchBarTextField.textColor = kRiotSecondaryTextColor;
+    searchBarTextField.textColor = kCaritasSecondaryTextColor;
     
     // Magnifying glass icon.
     UIImageView *leftImageView = (UIImageView *)searchBarTextField.leftView;
     leftImageView.image = [leftImageView.image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-    leftImageView.tintColor = kRiotColorGreen;
+    leftImageView.tintColor = kCaritasColorRed;
     
     // remove the gray background color
     UIView *effectBackgroundTop =  [searchBarTextField valueForKey:@"_effectBackgroundTop"];
@@ -1707,8 +1709,8 @@
     // place holder
     searchBarTextField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:searchBarTextField.placeholder
                                                                                attributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleSingle),
-                                                                                            NSUnderlineColorAttributeName: kRiotColorGreen,
-                                                                                            NSForegroundColorAttributeName: kRiotColorGreen}];
+                                                                                            NSUnderlineColorAttributeName: kCaritasColorRed,
+                                                                                            NSForegroundColorAttributeName: kCaritasColorRed}];
 }
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText

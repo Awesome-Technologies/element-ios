@@ -25,8 +25,8 @@
 {
     [super customizeTableViewCellRendering];
     
-    self.userNameLabel.textColor = kRiotPrimaryTextColor;
-    self.messageTextView.tintColor = kRiotColorGreen;
+    self.userNameLabel.textColor = kCaritasPrimaryTextColor;
+    self.messageTextView.tintColor = kCaritasColorRed;
 }
 
 @end

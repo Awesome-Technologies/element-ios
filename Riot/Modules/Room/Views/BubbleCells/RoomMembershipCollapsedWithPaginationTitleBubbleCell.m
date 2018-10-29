@@ -26,8 +26,8 @@
 {
     [super customizeTableViewCellRendering];
 
-    self.paginationLabel.textColor = kRiotColorGreen;
-    self.paginationSeparatorView.backgroundColor = kRiotColorGreen;
+    self.paginationLabel.textColor = kCaritasColorRed;
+    self.paginationSeparatorView.backgroundColor = kCaritasColorRed;
 }
 
 - (void)render:(MXKCellData *)cellData

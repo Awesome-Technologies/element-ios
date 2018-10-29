@@ -62,6 +62,7 @@
     [super viewWillAppear:animated];
     
     [AppDelegate theDelegate].masterTabBarController.navigationItem.title = NSLocalizedStringFromTable(@"title_rooms", @"Vector", nil);
+    [[AppDelegate theDelegate].masterTabBarController userInterfaceThemeDidChange];
     
     if ([self.dataSource isKindOfClass:RecentsDataSource.class])
     {

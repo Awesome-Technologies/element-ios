@@ -418,24 +418,29 @@
 
 - (void)userInterfaceThemeDidChange
 {
-    self.defaultBarTintColor = kRiotSecondaryBgColor;
-    self.barTitleColor = kRiotPrimaryTextColor;
-    self.activityIndicator.backgroundColor = kRiotOverlayColor;
+    self.defaultBarTintColor = kCaritasNavigationBarBgColor;
+    self.barTitleColor = kCaritasColorWhite;
+    self.activityIndicator.backgroundColor = kCaritasOverlayColor;
     
     // Prepare jump to last unread banner
-    self.jumpToLastUnreadBannerContainer.backgroundColor = kRiotPrimaryBgColor;
-    self.jumpToLastUnreadLabel.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedStringFromTable(@"room_jump_to_first_unread", @"Vector", nil) attributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleSingle), NSUnderlineColorAttributeName: kRiotPrimaryTextColor, NSForegroundColorAttributeName: kRiotPrimaryTextColor}];
+    self.jumpToLastUnreadBannerContainer.backgroundColor = kCaritasPrimaryBgColor;
+    self.jumpToLastUnreadLabel.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedStringFromTable(@"room_jump_to_first_unread", @"Vector", nil) attributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleSingle), NSUnderlineColorAttributeName: kCaritasPrimaryTextColor, NSForegroundColorAttributeName: kCaritasPrimaryTextColor}];
     
     
-    self.expandedHeaderContainer.backgroundColor = kRiotSecondaryBgColor;
-    self.previewHeaderContainer.backgroundColor = kRiotSecondaryBgColor;
+    self.expandedHeaderContainer.backgroundColor = kCaritasSecondaryBgColor;
+    self.previewHeaderContainer.backgroundColor = kCaritasSecondaryBgColor;
     
-    missedDiscussionsBadgeLabel.textColor = kRiotPrimaryBgColor;
+    missedDiscussionsBadgeLabel.textColor = kCaritasPrimaryBgColor;
     missedDiscussionsBadgeLabel.font = [UIFont boldSystemFontOfSize:14];
     missedDiscussionsBadgeLabel.backgroundColor = [UIColor clearColor];
     
+    RoomTitleView *roomTitleView = (RoomTitleView*)self.titleView;
+    if ([roomTitleView isMemberOfClass:[RoomTitleView class]]) {
+        roomTitleView.roomDetailsIconImageView.tintColor = kCaritasColorWhite;
+    }
+    
     // Check the table view style to select its bg color.
-    self.bubblesTableView.backgroundColor = ((self.bubblesTableView.style == UITableViewStylePlain) ? kRiotPrimaryBgColor : kRiotSecondaryBgColor);
+    self.bubblesTableView.backgroundColor = ((self.bubblesTableView.style == UITableViewStylePlain) ? kCaritasPrimaryBgColor : kCaritasSecondaryBgColor);
     self.view.backgroundColor = self.bubblesTableView.backgroundColor;
     
     if (self.bubblesTableView.dataSource)
@@ -446,7 +451,7 @@
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-    return kRiotDesignStatusBarStyle;
+    return kCaritasDesignStatusBarStyle;
 }
 
 - (void)didReceiveMemoryWarning
@@ -1330,7 +1335,7 @@
                     // Show it in red only for room widgets, not user's widgets
                     // TODO: Design must be reviewed
                     UIImage *icon = self.navigationItem.rightBarButtonItems[1].image;
-                    icon = [MXKTools paintImage:icon withColor:kRiotColorPinkRed];
+                    icon = [MXKTools paintImage:icon withColor:kCaritasColorPinkRed];
                     icon = [icon imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
 
                     self.navigationItem.rightBarButtonItems[1].image = icon;
@@ -1499,6 +1504,8 @@
         }
         
         self.expandedHeaderContainer.hidden = !isVisible;
+        
+        self.navigationController.navigationBar.barTintColor = kCaritasNavigationBarBgColor;
         
         // Consider the main navigation controller if the current view controller is embedded inside a split view controller.
         UINavigationController *mainNavigationController = self.navigationController;
@@ -3318,13 +3325,13 @@
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    cell.backgroundColor = kRiotPrimaryBgColor;
+    cell.backgroundColor = kCaritasPrimaryBgColor;
     
     // Update the selected background view
-    if (kRiotSelectedBgColor)
+    if (kCaritasSelectedBgColor)
     {
         cell.selectedBackgroundView = [[UIView alloc] init];
-        cell.selectedBackgroundView.backgroundColor = kRiotSelectedBgColor;
+        cell.selectedBackgroundView.backgroundColor = kCaritasSelectedBgColor;
     }
     else
     {
@@ -4210,11 +4217,11 @@
             // Set the right background color
             if (highlightCount)
             {
-                missedDiscussionsBadgeLabelBgView.backgroundColor = kRiotColorPinkRed;
+                missedDiscussionsBadgeLabelBgView.backgroundColor = kCaritasColorGrey;
             }
             else
             {
-                missedDiscussionsBadgeLabelBgView.backgroundColor = kRiotColorGreen;
+                missedDiscussionsBadgeLabelBgView.backgroundColor = kCaritasColorLightBlack;
             }
             
             if (!missedDiscussionsButton || [leftBarButtonItems indexOfObject:missedDiscussionsButton] == NSNotFound)

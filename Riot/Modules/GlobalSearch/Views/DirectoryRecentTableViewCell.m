@@ -29,8 +29,8 @@
 {
     [super customizeTableViewCellRendering];
     
-    self.titleLabel.textColor = kRiotPrimaryTextColor;
-    self.descriptionLabel.textColor = kRiotSecondaryTextColor;
+    self.titleLabel.textColor = kCaritasPrimaryTextColor;
+    self.descriptionLabel.textColor = kCaritasSecondaryTextColor;
 }
 
 - (void)render:(PublicRoomsDirectoryDataSource *)publicRoomsDirectoryDataSource

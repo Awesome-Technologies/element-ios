@@ -27,13 +27,13 @@
 {
     [super customizeViewRendering];
     
-    self.backgroundColor = kRiotSecondaryBgColor;
-    self.textView.backgroundColor = kRiotPrimaryBgColor;
-    self.defaultTextColor = kRiotPrimaryTextColor;
-    self.cancelButton.tintColor = kRiotColorGreen;
-    self.verifyButton.tintColor = kRiotColorGreen;
-    self.blockButton.tintColor = kRiotColorGreen;
-    self.confirmVerifyButton.tintColor = kRiotColorGreen;
+    self.backgroundColor = kCaritasSecondaryBgColor;
+    self.textView.backgroundColor = kCaritasPrimaryBgColor;
+    self.defaultTextColor = kCaritasPrimaryTextColor;
+    self.cancelButton.tintColor = kCaritasColorWhite;
+    self.verifyButton.tintColor = kCaritasColorWhite;
+    self.blockButton.tintColor = kCaritasColorWhite;
+    self.confirmVerifyButton.tintColor = kCaritasColorWhite;
 }
 
 @end

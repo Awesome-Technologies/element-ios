@@ -254,12 +254,12 @@ NSString *const kRoomSettingsAdvancedE2eEnabledCellViewIdentifier = @"kRoomSetti
 
 - (void)userInterfaceThemeDidChange
 {
-    self.defaultBarTintColor = kRiotSecondaryBgColor;
-    self.barTitleColor = kRiotPrimaryTextColor;
-    self.activityIndicator.backgroundColor = kRiotOverlayColor;
+    self.defaultBarTintColor = kCaritasNavigationBarBgColor;
+    self.barTitleColor = kCaritasColorWhite;
+    self.activityIndicator.backgroundColor = kCaritasOverlayColor;
     
     // Check the table view style to select its bg color.
-    self.tableView.backgroundColor = ((self.tableView.style == UITableViewStylePlain) ? kRiotPrimaryBgColor : kRiotSecondaryBgColor);
+    self.tableView.backgroundColor = kCaritasPrimaryBgColor;
     self.view.backgroundColor = self.tableView.backgroundColor;
     
     if (self.tableView.dataSource)
@@ -270,7 +270,7 @@ NSString *const kRoomSettingsAdvancedE2eEnabledCellViewIdentifier = @"kRoomSetti
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-    return kRiotDesignStatusBarStyle;
+    return kCaritasDesignStatusBarStyle;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -1923,7 +1923,7 @@ NSString *const kRoomSettingsAdvancedE2eEnabledCellViewIdentifier = @"kRoomSetti
     {
         // Customize label style
         UITableViewHeaderFooterView *tableViewHeaderFooterView = (UITableViewHeaderFooterView*)view;
-        tableViewHeaderFooterView.textLabel.textColor = kRiotPrimaryTextColor;
+        tableViewHeaderFooterView.textLabel.textColor = kCaritasPrimaryTextColor;
         tableViewHeaderFooterView.textLabel.font = [UIFont systemFontOfSize:15];
     }
 }
@@ -2038,7 +2038,7 @@ NSString *const kRoomSettingsAdvancedE2eEnabledCellViewIdentifier = @"kRoomSetti
             roomPhotoCell.mxkImageView.defaultBackgroundColor = [UIColor clearColor];
             
             roomPhotoCell.mxkLabel.text = NSLocalizedStringFromTable(@"room_details_photo", @"Vector", nil);
-            roomPhotoCell.mxkLabel.textColor = kRiotPrimaryTextColor;
+            roomPhotoCell.mxkLabel.textColor = kCaritasPrimaryTextColor;
             
             if ([updatedItemsDict objectForKey:kRoomSettingsAvatarKey])
             {
@@ -2073,16 +2073,16 @@ NSString *const kRoomSettingsAdvancedE2eEnabledCellViewIdentifier = @"kRoomSetti
                 topicTextView.text = mxRoomState.topic;
             }
             
-            topicTextView.tintColor = kRiotColorGreen;
+            topicTextView.tintColor = kCaritasColorRed;
             topicTextView.font = [UIFont systemFontOfSize:15];
             topicTextView.bounces = NO;
             topicTextView.delegate = self;
             
             // disable the edition if the user cannot update it
             topicTextView.editable = (oneSelfPowerLevel >= [powerLevels minimumPowerLevelForSendingEventAsStateEvent:kMXEventTypeStringRoomTopic]);
-            topicTextView.textColor = kRiotSecondaryTextColor;
+            topicTextView.textColor = kCaritasSecondaryTextColor;
             
-            topicTextView.keyboardAppearance = kRiotKeyboard;
+            topicTextView.keyboardAppearance = kCaritasKeyboard;
             
             cell = roomTopicCell;
         }
@@ -2095,14 +2095,14 @@ NSString *const kRoomSettingsAdvancedE2eEnabledCellViewIdentifier = @"kRoomSetti
             roomNameCell.mxkTextFieldTrailingConstraint.constant = 15;
             
             roomNameCell.mxkLabel.text = NSLocalizedStringFromTable(@"room_details_room_name", @"Vector", nil);
-            roomNameCell.mxkLabel.textColor = kRiotPrimaryTextColor;
+            roomNameCell.mxkLabel.textColor = kCaritasPrimaryTextColor;
             
             roomNameCell.accessoryType = UITableViewCellAccessoryNone;
             roomNameCell.accessoryView = nil;
             
             nameTextField = roomNameCell.mxkTextField;
             
-            nameTextField.tintColor = kRiotColorGreen;
+            nameTextField.tintColor = kCaritasColorRed;
             nameTextField.font = [UIFont systemFontOfSize:17];
             nameTextField.borderStyle = UITextBorderStyleNone;
             nameTextField.textAlignment = NSTextAlignmentRight;
@@ -2119,7 +2119,7 @@ NSString *const kRoomSettingsAdvancedE2eEnabledCellViewIdentifier = @"kRoomSetti
             
             // disable the edition if the user cannot update it
             nameTextField.userInteractionEnabled = (oneSelfPowerLevel >= [powerLevels minimumPowerLevelForSendingEventAsStateEvent:kMXEventTypeStringRoomName]);
-            nameTextField.textColor = kRiotSecondaryTextColor;
+            nameTextField.textColor = kCaritasSecondaryTextColor;
             
             // Add a "textFieldDidChange" notification method to the text field control.
             [nameTextField addTarget:self action:@selector(onTextFieldUpdate:) forControlEvents:UIControlEventEditingChanged];
@@ -2139,7 +2139,7 @@ NSString *const kRoomSettingsAdvancedE2eEnabledCellViewIdentifier = @"kRoomSetti
             
             NSArray *labels = roomTagCell.labels;
             UILabel *label = labels[0];
-            label.textColor = kRiotPrimaryTextColor;
+            label.textColor = kCaritasPrimaryTextColor;
             label.text = NSLocalizedStringFromTable(@"room_details_low_priority_tag", @"Vector", nil);
             
             if ([updatedItemsDict objectForKey:kRoomSettingsTagKey])
@@ -2168,7 +2168,7 @@ NSString *const kRoomSettingsAdvancedE2eEnabledCellViewIdentifier = @"kRoomSetti
             
             [leaveCell.mxkButton setTitle:title forState:UIControlStateNormal];
             [leaveCell.mxkButton setTitle:title forState:UIControlStateHighlighted];
-            [leaveCell.mxkButton setTintColor:kRiotColorGreen];
+            [leaveCell.mxkButton setTintColor:kCaritasColorRed];
             leaveCell.mxkButton.titleLabel.font = [UIFont systemFontOfSize:17];
             
             [leaveCell.mxkButton  removeTarget:self action:nil forControlEvents:UIControlEventTouchUpInside];
@@ -2210,7 +2210,7 @@ NSString *const kRoomSettingsAdvancedE2eEnabledCellViewIdentifier = @"kRoomSetti
             cell = [tableView dequeueReusableCellWithIdentifier:kRoomSettingsWarningCellViewIdentifier forIndexPath:indexPath];
             
             cell.textLabel.font = [UIFont systemFontOfSize:17];
-            cell.textLabel.textColor = kRiotColorPinkRed;
+            cell.textLabel.textColor = kCaritasColorPinkRed;
             cell.textLabel.numberOfLines = 0;
             cell.accessoryView = nil;
             cell.accessoryType = UITableViewCellAccessoryNone;
@@ -2347,17 +2347,17 @@ NSString *const kRoomSettingsAdvancedE2eEnabledCellViewIdentifier = @"kRoomSetti
             
             addAddressTextField = addAddressCell.mxkTextField;
             addAddressTextField.placeholder = [NSString stringWithFormat:NSLocalizedStringFromTable(@"room_details_new_address_placeholder", @"Vector", nil), self.mainSession.matrixRestClient.homeserverSuffix];
-            if (kRiotPlaceholderTextColor)
+            if (kCaritasPlaceholderTextColor)
             {
                 addAddressTextField.attributedPlaceholder = [[NSAttributedString alloc]
                                                              initWithString:addAddressTextField.placeholder
-                                                             attributes:@{NSForegroundColorAttributeName: kRiotPlaceholderTextColor}];
+                                                             attributes:@{NSForegroundColorAttributeName: kCaritasPlaceholderTextColor}];
             }
             addAddressTextField.userInteractionEnabled = YES;
             addAddressTextField.text = currentValue;
-            addAddressTextField.textColor = kRiotSecondaryTextColor;
+            addAddressTextField.textColor = kCaritasSecondaryTextColor;
             
-            addAddressTextField.tintColor = kRiotColorGreen;
+            addAddressTextField.tintColor = kCaritasColorRed;
             addAddressTextField.font = [UIFont systemFontOfSize:17];
             addAddressTextField.borderStyle = UITextBorderStyleNone;
             addAddressTextField.textAlignment = NSTextAlignmentLeft;
@@ -2373,7 +2373,7 @@ NSString *const kRoomSettingsAdvancedE2eEnabledCellViewIdentifier = @"kRoomSetti
             UITableViewCell *addressCell = [tableView dequeueReusableCellWithIdentifier:kRoomSettingsAddressCellViewIdentifier forIndexPath:indexPath];
             
             addressCell.textLabel.font = [UIFont systemFontOfSize:16];
-            addressCell.textLabel.textColor = kRiotPrimaryTextColor;
+            addressCell.textLabel.textColor = kCaritasPrimaryTextColor;
             addressCell.textLabel.lineBreakMode = NSLineBreakByTruncatingMiddle;
             addressCell.accessoryView = nil;
             addressCell.accessoryType = UITableViewCellAccessoryNone;
@@ -2423,7 +2423,7 @@ NSString *const kRoomSettingsAdvancedE2eEnabledCellViewIdentifier = @"kRoomSetti
         UITableViewCell *addressCell = [tableView dequeueReusableCellWithIdentifier:kRoomSettingsAddressCellViewIdentifier forIndexPath:indexPath];
         
         addressCell.textLabel.font = [UIFont systemFontOfSize:16];
-        addressCell.textLabel.textColor = kRiotPrimaryTextColor;
+        addressCell.textLabel.textColor = kCaritasPrimaryTextColor;
         addressCell.textLabel.lineBreakMode = NSLineBreakByTruncatingMiddle;
         addressCell.accessoryView = nil;
         addressCell.accessoryType = UITableViewCellAccessoryNone;
@@ -2445,11 +2445,11 @@ NSString *const kRoomSettingsAdvancedE2eEnabledCellViewIdentifier = @"kRoomSetti
             
             cell.textLabel.font = [UIFont systemFontOfSize:17];
             cell.textLabel.text = NSLocalizedStringFromTable(@"room_details_advanced_room_id", @"Vector", nil);
-            cell.textLabel.textColor = kRiotPrimaryTextColor;
+            cell.textLabel.textColor = kCaritasPrimaryTextColor;
             
             cell.detailTextLabel.font = [UIFont systemFontOfSize:15];
             cell.detailTextLabel.text = mxRoomState.roomId;
-            cell.detailTextLabel.textColor = kRiotSecondaryTextColor;
+            cell.detailTextLabel.textColor = kCaritasSecondaryTextColor;
             cell.detailTextLabel.lineBreakMode = NSLineBreakByTruncatingMiddle;
             
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -2461,7 +2461,7 @@ NSString *const kRoomSettingsAdvancedE2eEnabledCellViewIdentifier = @"kRoomSetti
                 MXKTableViewCellWithLabelAndSwitch *roomBlacklistUnverifiedDevicesCell = [self getLabelAndSwitchCell:tableView forIndexPath:indexPath];
                 
                 [roomBlacklistUnverifiedDevicesCell.mxkSwitch addTarget:self action:@selector(toggleBlacklistUnverifiedDevice:) forControlEvents:UIControlEventValueChanged];
-                roomBlacklistUnverifiedDevicesCell.mxkSwitch.onTintColor = kRiotColorGreen;
+                roomBlacklistUnverifiedDevicesCell.mxkSwitch.onTintColor = kCaritasColorRed;
                 
                 roomBlacklistUnverifiedDevicesCell.mxkLabel.text = NSLocalizedStringFromTable(@"room_details_advanced_e2e_encryption_blacklist_unverified_devices", @"Vector", nil);
                 
@@ -2508,7 +2508,7 @@ NSString *const kRoomSettingsAdvancedE2eEnabledCellViewIdentifier = @"kRoomSetti
                 cell.textLabel.font = [UIFont systemFontOfSize:17];
                 cell.textLabel.numberOfLines = 0;
                 cell.textLabel.text = NSLocalizedStringFromTable(@"room_details_advanced_e2e_encryption_enabled", @"Vector", nil);
-                cell.textLabel.textColor = kRiotPrimaryTextColor;
+                cell.textLabel.textColor = kCaritasPrimaryTextColor;
                 
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
             }
@@ -2542,7 +2542,7 @@ NSString *const kRoomSettingsAdvancedE2eEnabledCellViewIdentifier = @"kRoomSetti
                 cell.textLabel.font = [UIFont systemFontOfSize:17];
                 cell.textLabel.numberOfLines = 0;
                 cell.textLabel.text = NSLocalizedStringFromTable(@"room_details_advanced_e2e_encryption_disabled", @"Vector", nil);
-                cell.textLabel.textColor = kRiotPrimaryTextColor;
+                cell.textLabel.textColor = kCaritasPrimaryTextColor;
                 
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
             }
@@ -2585,9 +2585,9 @@ NSString *const kRoomSettingsAdvancedE2eEnabledCellViewIdentifier = @"kRoomSetti
     cell.mxkLabelLeadingConstraint.constant = cell.separatorInset.left;
     cell.mxkSwitchTrailingConstraint.constant = 15;
     
-    cell.mxkLabel.textColor = kRiotPrimaryTextColor;
+    cell.mxkLabel.textColor = kCaritasPrimaryTextColor;
     
-    cell.mxkSwitch.onTintColor = kRiotColorGreen;
+    cell.mxkSwitch.onTintColor = kCaritasColorRed;
     [cell.mxkSwitch removeTarget:self action:nil forControlEvents:UIControlEventValueChanged];
     
     // Reset the stored `directoryVisibilitySwitch` if the corresponding cell is reused.
@@ -2606,13 +2606,13 @@ NSString *const kRoomSettingsAdvancedE2eEnabledCellViewIdentifier = @"kRoomSetti
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    cell.backgroundColor = kRiotPrimaryBgColor;
+    cell.backgroundColor = kCaritasPrimaryBgColor;
     
     // Update the selected background view
-    if (kRiotSelectedBgColor)
+    if (kCaritasSelectedBgColor)
     {
         cell.selectedBackgroundView = [[UIView alloc] init];
-        cell.selectedBackgroundView.backgroundColor = kRiotSelectedBgColor;
+        cell.selectedBackgroundView.backgroundColor = kCaritasSelectedBgColor;
     }
     else
     {
@@ -2889,7 +2889,7 @@ NSString *const kRoomSettingsAdvancedE2eEnabledCellViewIdentifier = @"kRoomSetti
                 
             }];
             
-            removeAction.backgroundColor = [MXKTools convertImageToPatternColor:@"remove_icon" backgroundColor:kRiotSecondaryBgColor patternSize:CGSizeMake(44, 44) resourceSize:CGSizeMake(24, 24)];
+            removeAction.backgroundColor = [MXKTools convertImageToPatternColor:@"remove_icon" backgroundColor:kCaritasSecondaryBgColor patternSize:CGSizeMake(44, 44) resourceSize:CGSizeMake(24, 24)];
             [actions insertObject:removeAction atIndex:0];
         }
     }

@@ -52,8 +52,8 @@
     [super customizeTableViewCellRendering];
     
     // apply the vector colours
-    self.contactDisplayNameLabel.textColor = kRiotPrimaryTextColor;
-    self.contactInformationLabel.textColor = kRiotSecondaryTextColor;
+    self.contactDisplayNameLabel.textColor = kCaritasPrimaryTextColor;
+    self.contactInformationLabel.textColor = kCaritasSecondaryTextColor;
     
     // Clear the default background color of a MXKImageView instance
     self.thumbnailView.defaultBackgroundColor = [UIColor clearColor];
@@ -222,11 +222,11 @@
         }
         else if ((!contact.isMatrixContact && contact.phoneNumbers.count && !contact.emailAddresses.count))
         {
-            image = [AvatarGenerator imageFromText:@"#" withBackgroundColor:kRiotColorGreen];
+            image = [AvatarGenerator imageFromText:@"#" withBackgroundColor:kCaritasColorRed];
         }
         else
         {
-            image = [AvatarGenerator imageFromText:@"@" withBackgroundColor:kRiotColorGreen];
+            image = [AvatarGenerator imageFromText:@"@" withBackgroundColor:kCaritasColorRed];
         }
     }
     

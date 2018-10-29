@@ -71,10 +71,13 @@
     
     self.rightInputToolbarButton.hidden = YES;
     
-    [self.rightInputToolbarButton setTitleColor:kRiotColorGreen forState:UIControlStateNormal];
-    [self.rightInputToolbarButton setTitleColor:kRiotColorGreen forState:UIControlStateHighlighted];
+    [self.rightInputToolbarButton setTitleColor:kCaritasPrimaryTextColor forState:UIControlStateNormal];
+    [self.rightInputToolbarButton setTitleColor:kCaritasPrimaryTextColor forState:UIControlStateHighlighted];
     
     self.isEncryptionEnabled = _isEncryptionEnabled;
+    
+    self.attachMediaButton.imageView.tintColor = kCaritasPrimaryTextColor;
+    self.voiceCallButton.imageView.tintColor = kCaritasPrimaryTextColor;
 }
 
 #pragma mark - Override MXKView
@@ -86,7 +89,7 @@
     // Remove default toolbar background color
     self.backgroundColor = [UIColor clearColor];
     
-    self.separatorView.backgroundColor = kRiotAuxiliaryColor;
+    self.separatorView.backgroundColor = kCaritasAuxiliaryColor;
     
     // Custom the growingTextView display
     growingTextView.layer.cornerRadius = 0;
@@ -94,10 +97,10 @@
     growingTextView.backgroundColor = [UIColor clearColor];
     
     growingTextView.font = [UIFont systemFontOfSize:15];
-    growingTextView.textColor = kRiotPrimaryTextColor;
-    growingTextView.tintColor = kRiotColorGreen;
+    growingTextView.textColor = kCaritasPrimaryTextColor;
+    growingTextView.tintColor = kCaritasColorRed;
     
-    growingTextView.internalTextView.keyboardAppearance = kRiotKeyboard;
+    growingTextView.internalTextView.keyboardAppearance = kCaritasKeyboard;
 }
 
 #pragma mark -

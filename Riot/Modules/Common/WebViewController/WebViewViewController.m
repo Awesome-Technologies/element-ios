@@ -51,17 +51,17 @@
 
 - (void)userInterfaceThemeDidChange
 {
-    self.view.backgroundColor = kRiotPrimaryBgColor;
-    self.defaultBarTintColor = kRiotSecondaryBgColor;
-    self.barTitleColor = kRiotPrimaryTextColor;
-    self.activityIndicator.backgroundColor = kRiotOverlayColor;
+    self.view.backgroundColor = kCaritasPrimaryBgColor;
+    self.defaultBarTintColor = kCaritasNavigationBarBgColor;
+    self.barTitleColor = kCaritasColorWhite;
+    self.activityIndicator.backgroundColor = kCaritasOverlayColor;
     
-    webView.backgroundColor = kRiotPrimaryBgColor;
+    webView.backgroundColor = kCaritasPrimaryBgColor;
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-    return kRiotDesignStatusBarStyle;
+    return kCaritasDesignStatusBarStyle;
 }
 
 - (void)destroy

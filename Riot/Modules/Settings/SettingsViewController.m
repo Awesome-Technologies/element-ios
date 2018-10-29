@@ -322,23 +322,23 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
 
 - (void)userInterfaceThemeDidChange
 {
-    self.defaultBarTintColor = kRiotSecondaryBgColor;
-    self.barTitleColor = kRiotPrimaryTextColor;
-    self.activityIndicator.backgroundColor = kRiotOverlayColor;
+    self.defaultBarTintColor = kCaritasNavigationBarBgColor;
+    self.barTitleColor = kCaritasColorWhite;
+    self.activityIndicator.backgroundColor = kCaritasOverlayColor;
     
-    // Check the table view style to select its bg color.
-    self.tableView.backgroundColor = ((self.tableView.style == UITableViewStylePlain) ? kRiotPrimaryBgColor : kRiotSecondaryBgColor);
-    self.view.backgroundColor = self.tableView.backgroundColor;
+    self.view.backgroundColor = kCaritasPrimaryBgColor;
     
     if (self.tableView.dataSource)
     {
         [self refreshSettings];
     }
+    
+    [[AppDelegate theDelegate].masterTabBarController userInterfaceThemeDidChange];
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-    return kRiotDesignStatusBarStyle;
+    return kCaritasDesignStatusBarStyle;
 }
 
 - (void)didReceiveMemoryWarning
@@ -408,6 +408,7 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     [super viewWillAppear:animated];
     
     [AppDelegate theDelegate].masterTabBarController.navigationItem.title = NSLocalizedStringFromTable(@"settings_title", @"Vector", nil);
+    [[AppDelegate theDelegate].masterTabBarController userInterfaceThemeDidChange];
 
     // Screen tracking
     [[Analytics sharedInstance] trackScreen:@"Settings"];
@@ -938,30 +939,30 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     // Crypto information
     NSMutableAttributedString *cryptoInformationString = [[NSMutableAttributedString alloc]
                                                           initWithString:NSLocalizedStringFromTable(@"settings_crypto_device_name", @"Vector", nil)
-                                                          attributes:@{NSForegroundColorAttributeName : kRiotPrimaryTextColor,
+                                                          attributes:@{NSForegroundColorAttributeName : kCaritasPrimaryTextColor,
                                                                        NSFontAttributeName: [UIFont systemFontOfSize:17]}];
     [cryptoInformationString appendAttributedString:[[NSMutableAttributedString alloc]
                                                      initWithString:account.device.displayName ? account.device.displayName : @""
-                                                     attributes:@{NSForegroundColorAttributeName : kRiotPrimaryTextColor,
+                                                     attributes:@{NSForegroundColorAttributeName : kCaritasPrimaryTextColor,
                                                                   NSFontAttributeName: [UIFont systemFontOfSize:17]}]];
     
     [cryptoInformationString appendAttributedString:[[NSMutableAttributedString alloc]
                                                      initWithString:NSLocalizedStringFromTable(@"settings_crypto_device_id", @"Vector", nil)
-                                                     attributes:@{NSForegroundColorAttributeName : kRiotPrimaryTextColor,
+                                                     attributes:@{NSForegroundColorAttributeName : kCaritasPrimaryTextColor,
                                                                   NSFontAttributeName: [UIFont systemFontOfSize:17]}]];
     [cryptoInformationString appendAttributedString:[[NSMutableAttributedString alloc]
                                                      initWithString:account.device.deviceId ? account.device.deviceId : @""
-                                                     attributes:@{NSForegroundColorAttributeName : kRiotPrimaryTextColor,
+                                                     attributes:@{NSForegroundColorAttributeName : kCaritasPrimaryTextColor,
                                                                   NSFontAttributeName: [UIFont systemFontOfSize:17]}]];
     
     [cryptoInformationString appendAttributedString:[[NSMutableAttributedString alloc]
                                                      initWithString:NSLocalizedStringFromTable(@"settings_crypto_device_key", @"Vector", nil)
-                                                     attributes:@{NSForegroundColorAttributeName : kRiotPrimaryTextColor,
+                                                     attributes:@{NSForegroundColorAttributeName : kCaritasPrimaryTextColor,
                                                                   NSFontAttributeName: [UIFont systemFontOfSize:17]}]];
     NSString *fingerprint = account.mxSession.crypto.deviceEd25519Key;
     [cryptoInformationString appendAttributedString:[[NSMutableAttributedString alloc]
                                                      initWithString:fingerprint ? fingerprint : @""
-                                                     attributes:@{NSForegroundColorAttributeName : kRiotPrimaryTextColor,
+                                                     attributes:@{NSForegroundColorAttributeName : kCaritasPrimaryTextColor,
                                                                   NSFontAttributeName: [UIFont boldSystemFontOfSize:17]}]];
     
     return cryptoInformationString;
@@ -1267,12 +1268,12 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     cell.mxkTextFieldLeadingConstraint.constant = 16;
     cell.mxkTextFieldTrailingConstraint.constant = 15;
     
-    cell.mxkLabel.textColor = kRiotPrimaryTextColor;
+    cell.mxkLabel.textColor = kCaritasPrimaryTextColor;
     
     cell.mxkTextField.userInteractionEnabled = YES;
     cell.mxkTextField.borderStyle = UITextBorderStyleNone;
     cell.mxkTextField.textAlignment = NSTextAlignmentRight;
-    cell.mxkTextField.textColor = kRiotSecondaryTextColor;
+    cell.mxkTextField.textColor = kCaritasSecondaryTextColor;
     cell.mxkTextField.font = [UIFont systemFontOfSize:16];
     cell.mxkTextField.placeholder = nil;
     
@@ -1294,7 +1295,7 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     cell.mxkLabelLeadingConstraint.constant = cell.separatorInset.left;
     cell.mxkSwitchTrailingConstraint.constant = 15;
     
-    cell.mxkLabel.textColor = kRiotPrimaryTextColor;
+    cell.mxkLabel.textColor = kCaritasPrimaryTextColor;
     
     [cell.mxkSwitch removeTarget:self action:nil forControlEvents:UIControlEventTouchUpInside];
     
@@ -1320,7 +1321,7 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     }
     cell.textLabel.accessibilityIdentifier = nil;
     cell.textLabel.font = [UIFont systemFontOfSize:17];
-    cell.textLabel.textColor = kRiotPrimaryTextColor;
+    cell.textLabel.textColor = kCaritasPrimaryTextColor;
     
     return cell;
 }
@@ -1329,7 +1330,7 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
 {
     MXKTableViewCellWithTextView *textViewCell = [tableView dequeueReusableCellWithIdentifier:[MXKTableViewCellWithTextView defaultReuseIdentifier] forIndexPath:indexPath];
     
-    textViewCell.mxkTextView.textColor = kRiotPrimaryTextColor;
+    textViewCell.mxkTextView.textColor = kCaritasPrimaryTextColor;
     textViewCell.mxkTextView.font = [UIFont systemFontOfSize:17];
     textViewCell.mxkTextView.backgroundColor = [UIColor clearColor];
     textViewCell.mxkTextViewLeadingConstraint.constant = tableView.separatorInset.left;
@@ -1376,7 +1377,7 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
         
         [signOutCell.mxkButton setTitle:title forState:UIControlStateNormal];
         [signOutCell.mxkButton setTitle:title forState:UIControlStateHighlighted];
-        [signOutCell.mxkButton setTintColor:kRiotColorGreen];
+        [signOutCell.mxkButton setTintColor:kCaritasColorLinkBlue];
         signOutCell.mxkButton.titleLabel.font = [UIFont systemFontOfSize:17];
         
         [signOutCell.mxkButton  removeTarget:self action:nil forControlEvents:UIControlEventTouchUpInside];
@@ -1408,7 +1409,7 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
             
             profileCell.mxkLabel.text = NSLocalizedStringFromTable(@"settings_profile_picture", @"Vector", nil);
             profileCell.accessibilityIdentifier=@"SettingsVCProfilPictureStaticText";
-            profileCell.mxkLabel.textColor = kRiotPrimaryTextColor;
+            profileCell.mxkLabel.textColor = kCaritasPrimaryTextColor;
             
             // if the user defines a new avatar
             if (newAvatarImage)
@@ -1493,11 +1494,11 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
             {
                 newEmailCell.mxkLabel.text = nil;
                 newEmailCell.mxkTextField.placeholder = NSLocalizedStringFromTable(@"settings_email_address_placeholder", @"Vector", nil);
-                if (kRiotPlaceholderTextColor)
+                if (kCaritasPlaceholderTextColor)
                 {
                     newEmailCell.mxkTextField.attributedPlaceholder = [[NSAttributedString alloc]
                                                                  initWithString:newEmailCell.mxkTextField.placeholder
-                                                                 attributes:@{NSForegroundColorAttributeName: kRiotPlaceholderTextColor}];
+                                                                 attributes:@{NSForegroundColorAttributeName: kCaritasPlaceholderTextColor}];
                 }
                 newEmailCell.mxkTextField.text = newEmailTextField.text;
                 newEmailCell.mxkTextField.userInteractionEnabled = YES;
@@ -1525,7 +1526,7 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
                     newEmailTextField = newEmailCell.mxkTextField;
                 }
                 
-                UIImage *accessoryViewImage = [MXKTools paintImage:[UIImage imageNamed:@"plus_icon"] withColor:kRiotColorGreen];
+                UIImage *accessoryViewImage = [MXKTools paintImage:[UIImage imageNamed:@"plus_icon"] withColor:kCaritasColorRed];
                 newEmailCell.accessoryView = [[UIImageView alloc] initWithImage:accessoryViewImage];
             }
             
@@ -1618,7 +1619,7 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
                     newPhoneNumberCell = newPhoneCell;
                 }
                 
-                UIImage *accessoryViewImage = [MXKTools paintImage:[UIImage imageNamed:@"plus_icon"] withColor:kRiotColorGreen];
+                UIImage *accessoryViewImage = [MXKTools paintImage:[UIImage imageNamed:@"plus_icon"] withColor:kCaritasColorRed];
                 newPhoneCell.accessoryView = [[UIImageView alloc] initWithImage:accessoryViewImage];
                 
                 cell = newPhoneCell;
@@ -1638,7 +1639,7 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
         else if (row == userSettingsNightModeSepIndex)
         {
             UITableViewCell *sepCell = [[UITableViewCell alloc] init];
-            sepCell.backgroundColor = kRiotSecondaryBgColor;
+            sepCell.backgroundColor = kCaritasSecondaryBgColor;
             
             cell = sepCell;
         }
@@ -1756,7 +1757,7 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
             NSLocale *locale = [[NSLocale alloc] initWithLocaleIdentifier:language];
             languageDescription = [languageDescription capitalizedStringWithLocale:locale];
 
-            cell.textLabel.textColor = kRiotPrimaryTextColor;
+            cell.textLabel.textColor = kCaritasPrimaryTextColor;
 
             cell.textLabel.text = NSLocalizedStringFromTable(@"settings_ui_language", @"Vector", nil);
             cell.detailTextLabel.text = languageDescription;
@@ -1793,7 +1794,7 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
                                                               @"Vector",
                                                              nil);
 
-            cell.textLabel.textColor = kRiotPrimaryTextColor;
+            cell.textLabel.textColor = kCaritasPrimaryTextColor;
 
             cell.textLabel.text = NSLocalizedStringFromTable(@"settings_ui_theme", @"Vector", nil);
             cell.detailTextLabel.text = i18nTheme;
@@ -1841,7 +1842,7 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
             NSLocale *local = [[NSLocale alloc] initWithLocaleIdentifier:[[[NSBundle mainBundle] preferredLocalizations] objectAtIndex:0]];
             NSString *countryName = [local displayNameForKey:NSLocaleCountryCode value:countryCode];
             
-            cell.textLabel.textColor = kRiotPrimaryTextColor;
+            cell.textLabel.textColor = kCaritasPrimaryTextColor;
             
             cell.textLabel.text = NSLocalizedStringFromTable(@"settings_contacts_phonebook_country", @"Vector", nil);
             cell.detailTextLabel.text = countryName;
@@ -1964,7 +1965,7 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
             NSString *btnTitle = NSLocalizedStringFromTable(@"settings_mark_all_as_read", @"Vector", nil);
             [markAllBtnCell.mxkButton setTitle:btnTitle forState:UIControlStateNormal];
             [markAllBtnCell.mxkButton setTitle:btnTitle forState:UIControlStateHighlighted];
-            [markAllBtnCell.mxkButton setTintColor:kRiotColorGreen];
+            [markAllBtnCell.mxkButton setTintColor:kCaritasColorLinkBlue];
             markAllBtnCell.mxkButton.titleLabel.font = [UIFont systemFontOfSize:17];
             
             [markAllBtnCell.mxkButton removeTarget:self action:nil forControlEvents:UIControlEventTouchUpInside];
@@ -1989,7 +1990,7 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
             NSString *btnTitle = NSLocalizedStringFromTable(@"settings_clear_cache", @"Vector", nil);
             [clearCacheBtnCell.mxkButton setTitle:btnTitle forState:UIControlStateNormal];
             [clearCacheBtnCell.mxkButton setTitle:btnTitle forState:UIControlStateHighlighted];
-            [clearCacheBtnCell.mxkButton setTintColor:kRiotColorGreen];
+            [clearCacheBtnCell.mxkButton setTintColor:kCaritasColorLinkBlue];
             clearCacheBtnCell.mxkButton.titleLabel.font = [UIFont systemFontOfSize:17];
             
             [clearCacheBtnCell.mxkButton removeTarget:self action:nil forControlEvents:UIControlEventTouchUpInside];
@@ -2014,7 +2015,7 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
             NSString *btnTitle = NSLocalizedStringFromTable(@"settings_report_bug", @"Vector", nil);
             [reportBugBtnCell.mxkButton setTitle:btnTitle forState:UIControlStateNormal];
             [reportBugBtnCell.mxkButton setTitle:btnTitle forState:UIControlStateHighlighted];
-            [reportBugBtnCell.mxkButton setTintColor:kRiotColorGreen];
+            [reportBugBtnCell.mxkButton setTintColor:kCaritasColorLinkBlue];
             reportBugBtnCell.mxkButton.titleLabel.font = [UIFont systemFontOfSize:17];
 
             [reportBugBtnCell.mxkButton removeTarget:self action:nil forControlEvents:UIControlEventTouchUpInside];
@@ -2126,7 +2127,7 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
             NSString *btnTitle = NSLocalizedStringFromTable(@"settings_crypto_export", @"Vector", nil);
             [exportKeysBtnCell.mxkButton setTitle:btnTitle forState:UIControlStateNormal];
             [exportKeysBtnCell.mxkButton setTitle:btnTitle forState:UIControlStateHighlighted];
-            [exportKeysBtnCell.mxkButton setTintColor:kRiotColorGreen];
+            [exportKeysBtnCell.mxkButton setTintColor:kCaritasColorLinkBlue];
             exportKeysBtnCell.mxkButton.titleLabel.font = [UIFont systemFontOfSize:17];
 
             [exportKeysBtnCell.mxkButton removeTarget:self action:nil forControlEvents:UIControlEventTouchUpInside];
@@ -2153,7 +2154,7 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
         NSString *btnTitle = NSLocalizedStringFromTable(@"settings_deactivate_my_account", @"Vector", nil);
         [deactivateAccountBtnCell.mxkButton setTitle:btnTitle forState:UIControlStateNormal];
         [deactivateAccountBtnCell.mxkButton setTitle:btnTitle forState:UIControlStateHighlighted];
-        [deactivateAccountBtnCell.mxkButton setTintColor:kRiotColorRed];
+        [deactivateAccountBtnCell.mxkButton setTintColor:kCaritasColorRed];
         deactivateAccountBtnCell.mxkButton.titleLabel.font = [UIFont systemFontOfSize:17];
         
         [deactivateAccountBtnCell.mxkButton removeTarget:self action:nil forControlEvents:UIControlEventTouchUpInside];
@@ -2253,7 +2254,7 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     {
         // Customize label style
         UITableViewHeaderFooterView *tableViewHeaderFooterView = (UITableViewHeaderFooterView*)view;
-        tableViewHeaderFooterView.textLabel.textColor = kRiotPrimaryTextColor;
+        tableViewHeaderFooterView.textLabel.textColor = kCaritasPrimaryTextColor;
         tableViewHeaderFooterView.textLabel.font = [UIFont systemFontOfSize:15];
     }
 }
@@ -2281,15 +2282,15 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    cell.backgroundColor = kRiotPrimaryBgColor;
+    cell.backgroundColor = kCaritasPrimaryBgColor;
     
     if (cell.selectionStyle != UITableViewCellSelectionStyleNone)
     {        
         // Update the selected background view
-        if (kRiotSelectedBgColor)
+        if (kCaritasSelectedBgColor)
         {
             cell.selectedBackgroundView = [[UIView alloc] init];
-            cell.selectedBackgroundView.backgroundColor = kRiotSelectedBgColor;
+            cell.selectedBackgroundView.backgroundColor = kCaritasSelectedBgColor;
         }
         else
         {
@@ -2378,7 +2379,7 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
                 
             }];
             
-            leaveAction.backgroundColor = [MXKTools convertImageToPatternColor:@"remove_icon_pink" backgroundColor:kRiotSecondaryBgColor patternSize:CGSizeMake(50, cellHeight) resourceSize:CGSizeMake(24, 24)];
+            leaveAction.backgroundColor = [MXKTools convertImageToPatternColor:@"remove_icon_pink" backgroundColor:kCaritasSecondaryBgColor patternSize:CGSizeMake(50, cellHeight) resourceSize:CGSizeMake(24, 24)];
             [actions insertObject:leaveAction atIndex:0];
         }
     }
@@ -3609,7 +3610,7 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
 {
     __weak typeof(self) weakSelf = self;
 
-    __block UIAlertAction *autoAction, *lightAction, *darkAction, *blackAction;
+    __block UIAlertAction *autoAction, *caritasAction, *darkAction;
     NSString *themePickerMessage;
 
     void (^actionBlock)(UIAlertAction *action) = ^(UIAlertAction * action) {
@@ -3623,17 +3624,13 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
             {
                 newTheme = @"auto";
             }
-            else  if (action == lightAction)
-            {
-                newTheme = @"light";
-            }
-            else if (action == darkAction)
+            if (action == darkAction)
             {
                 newTheme = @"dark";
             }
-            else if (action == blackAction)
+            else if (action == caritasAction)
             {
-                newTheme = @"black";
+                newTheme = @"caritas";
             }
 
             NSString *theme = RiotSettings.shared.userInterfaceTheme;
@@ -3660,17 +3657,14 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
         // Explain what is "auto"
         themePickerMessage = NSLocalizedStringFromTable(@"settings_ui_theme_picker_message", @"Vector", nil);
     }
-
-    lightAction = [UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"settings_ui_theme_light", @"Vector", nil)
-                                          style:UIAlertActionStyleDefault
-                                        handler:actionBlock];
-
+    
     darkAction = [UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"settings_ui_theme_dark", @"Vector", nil)
-                                           style:UIAlertActionStyleDefault
-                                         handler:actionBlock];
-    blackAction = [UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"settings_ui_theme_black", @"Vector", nil)
-                                          style:UIAlertActionStyleDefault
-                                        handler:actionBlock];
+                                             style:UIAlertActionStyleDefault
+                                           handler:actionBlock];
+    
+    caritasAction = [UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"settings_ui_theme_caritas", @"Vector", nil)
+                                             style:UIAlertActionStyleDefault
+                                           handler:actionBlock];
 
 
     UIAlertController *themePicker = [UIAlertController alertControllerWithTitle:NSLocalizedStringFromTable(@"settings_ui_theme_picker_title", @"Vector", nil)
@@ -3681,9 +3675,8 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     {
         [themePicker addAction:autoAction];
     }
-    [themePicker addAction:lightAction];
+    [themePicker addAction:caritasAction];
     [themePicker addAction:darkAction];
-    [themePicker addAction:blackAction];
 
     // Cancel button
     [themePicker addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"cancel"]

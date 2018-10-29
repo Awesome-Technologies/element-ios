@@ -28,7 +28,7 @@
 {
     [super customizeTableViewCellRendering];
 
-    self.messageTextView.tintColor = kRiotColorGreen;
+    self.messageTextView.tintColor = kCaritasColorRed;
 }
 
 - (void)layoutSubviews

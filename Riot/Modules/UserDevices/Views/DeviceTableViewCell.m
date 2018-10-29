@@ -30,15 +30,15 @@
 {
     [super customizeTableViewCellRendering];
     
-    self.deviceName.textColor = kRiotPrimaryTextColor;
+    self.deviceName.textColor = kCaritasPrimaryTextColor;
     
     [self.verifyButton.layer setCornerRadius:5];
     self.verifyButton.clipsToBounds = YES;
-    self.verifyButton.backgroundColor = kRiotColorGreen;
+    self.verifyButton.backgroundColor = kCaritasColorRed;
     
     [self.blockButton.layer setCornerRadius:5];
     self.blockButton.clipsToBounds = YES;
-    self.blockButton.backgroundColor = kRiotColorGreen;
+    self.blockButton.backgroundColor = kCaritasColorRed;
 }
 
 - (void)render:(MXDeviceInfo *)deviceInfo

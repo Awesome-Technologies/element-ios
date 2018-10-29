@@ -26,11 +26,11 @@
 {
     [super customizeTableViewCellRendering];
     
-    self.title.textColor = kRiotPrimaryTextColor;
+    self.title.textColor = kCaritasPrimaryTextColor;
     
-    self.message.textColor = kRiotSecondaryTextColor;
+    self.message.textColor = kCaritasSecondaryTextColor;
     
-    self.date.tintColor = kRiotSecondaryTextColor;
+    self.date.tintColor = kCaritasSecondaryTextColor;
 }
 
 + (CGFloat)heightForCellData:(MXKCellData *)cellData withMaximumWidth:(CGFloat)maxWidth
@@ -95,7 +95,7 @@
                     self.attachmentImageView.enableInMemoryCache = YES;
                     [self.attachmentImageView setImageURL:url withType:mimetype andImageOrientation:bubbleData.attachment.thumbnailOrientation previewImage:preview];
                     
-                    self.attachmentImageView.backgroundColor = kRiotPrimaryBgColor;
+                    self.attachmentImageView.backgroundColor = kCaritasPrimaryBgColor;
                 }
             }
             

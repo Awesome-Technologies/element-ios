@@ -72,7 +72,7 @@
     self.repeatPasswordTextField.placeholder = NSLocalizedStringFromTable(@"auth_repeat_password_placeholder", @"Vector", nil);
     self.passWordTextField.placeholder = NSLocalizedStringFromTable(@"auth_password_placeholder", @"Vector", nil);
     
-    if (kRiotPlaceholderTextColor)
+    if (kCaritasPlaceholderTextColor)
     {
         // Apply placeholder color
         [self customizeViewRendering];
@@ -103,33 +103,34 @@
 {
     [super customizeViewRendering];
     
-    self.repeatPasswordTextField.textColor = kRiotPrimaryTextColor;
-    self.userLoginTextField.textColor = kRiotPrimaryTextColor;
-    self.passWordTextField.textColor = kRiotPrimaryTextColor;
+    self.repeatPasswordTextField.textColor = kCaritasPrimaryTextColor;
+    self.userLoginTextField.textColor = kCaritasPrimaryTextColor;
+    self.passWordTextField.textColor = kCaritasPrimaryTextColor;
     
-    self.emailTextField.textColor = kRiotPrimaryTextColor;
-    self.phoneTextField.textColor = kRiotPrimaryTextColor;
+    self.emailTextField.textColor = kCaritasPrimaryTextColor;
+    self.phoneTextField.textColor = kCaritasPrimaryTextColor;
     
-    self.isoCountryCodeLabel.textColor = kRiotPrimaryTextColor;
-    self.callingCodeLabel.textColor = kRiotPrimaryTextColor;
+    self.isoCountryCodeLabel.textColor = kCaritasPrimaryTextColor;
+    self.callingCodeLabel.textColor = kCaritasPrimaryTextColor;
+    self.countryCodeButton.imageView.tintColor = kCaritasPrimaryTextColor;
     
-    self.messageLabel.textColor = kRiotSecondaryTextColor;
+    self.messageLabel.textColor = kCaritasSecondaryTextColor;
     self.messageLabel.numberOfLines = 0;
     
-    if (kRiotPlaceholderTextColor)
+    if (kCaritasPlaceholderTextColor)
     {
         if (self.userLoginTextField.placeholder)
         {
             self.userLoginTextField.attributedPlaceholder = [[NSAttributedString alloc]
                                                              initWithString:self.userLoginTextField.placeholder
-                                                             attributes:@{NSForegroundColorAttributeName: kRiotPlaceholderTextColor}];
+                                                             attributes:@{NSForegroundColorAttributeName: kCaritasPlaceholderTextColor}];
         }
         
         if (self.repeatPasswordTextField.placeholder)
         {
             self.repeatPasswordTextField.attributedPlaceholder = [[NSAttributedString alloc]
                                                                   initWithString:self.repeatPasswordTextField.placeholder
-                                                                  attributes:@{NSForegroundColorAttributeName: kRiotPlaceholderTextColor}];
+                                                                  attributes:@{NSForegroundColorAttributeName: kCaritasPlaceholderTextColor}];
             
         }
         
@@ -137,21 +138,21 @@
         {
             self.passWordTextField.attributedPlaceholder = [[NSAttributedString alloc]
                                                             initWithString:self.passWordTextField.placeholder
-                                                            attributes:@{NSForegroundColorAttributeName: kRiotPlaceholderTextColor}];
+                                                            attributes:@{NSForegroundColorAttributeName: kCaritasPlaceholderTextColor}];
         }
         
         if (self.phoneTextField.placeholder)
         {
             self.phoneTextField.attributedPlaceholder = [[NSAttributedString alloc]
                                                          initWithString:self.phoneTextField.placeholder
-                                                         attributes:@{NSForegroundColorAttributeName: kRiotPlaceholderTextColor}];
+                                                         attributes:@{NSForegroundColorAttributeName: kCaritasPlaceholderTextColor}];
         }
         
         if (self.emailTextField.placeholder)
         {
             self.emailTextField.attributedPlaceholder = [[NSAttributedString alloc]
                                                          initWithString:self.emailTextField.placeholder
-                                                         attributes:@{NSForegroundColorAttributeName: kRiotPlaceholderTextColor}];
+                                                         attributes:@{NSForegroundColorAttributeName: kCaritasPlaceholderTextColor}];
         }
     }
 }
@@ -196,14 +197,14 @@
                 self.messageLabel.text = NSLocalizedStringFromTable(@"or", @"Vector", nil);
                 self.phoneTextField.placeholder = NSLocalizedStringFromTable(@"auth_phone_placeholder", @"Vector", nil);
                 
-                if (kRiotPlaceholderTextColor)
+                if (kCaritasPlaceholderTextColor)
                 {
                     self.userLoginTextField.attributedPlaceholder = [[NSAttributedString alloc]
                                                                      initWithString:self.userLoginTextField.placeholder
-                                                                     attributes:@{NSForegroundColorAttributeName: kRiotPlaceholderTextColor}];
+                                                                     attributes:@{NSForegroundColorAttributeName: kCaritasPlaceholderTextColor}];
                     self.phoneTextField.attributedPlaceholder = [[NSAttributedString alloc]
                                                                  initWithString:self.phoneTextField.placeholder
-                                                                 attributes:@{NSForegroundColorAttributeName: kRiotPlaceholderTextColor}];
+                                                                 attributes:@{NSForegroundColorAttributeName: kCaritasPlaceholderTextColor}];
                 }
                 
                 self.userLoginContainer.hidden = NO;
@@ -1015,11 +1016,11 @@
     {
         self.passWordTextField.returnKeyType = UIReturnKeyNext;
         
-        if (kRiotPlaceholderTextColor)
+        if (kCaritasPlaceholderTextColor)
         {
             self.userLoginTextField.attributedPlaceholder = [[NSAttributedString alloc]
                                                              initWithString:NSLocalizedStringFromTable(@"auth_user_name_placeholder", @"Vector", nil)
-                                                             attributes:@{NSForegroundColorAttributeName: kRiotPlaceholderTextColor}];
+                                                             attributes:@{NSForegroundColorAttributeName: kCaritasPlaceholderTextColor}];
         }
         else
         {
@@ -1047,11 +1048,11 @@
                 self.emailTextField.placeholder = NSLocalizedStringFromTable(@"auth_optional_email_placeholder", @"Vector", nil);
             }
             
-            if (kRiotPlaceholderTextColor)
+            if (kCaritasPlaceholderTextColor)
             {
                 self.emailTextField.attributedPlaceholder = [[NSAttributedString alloc]
                                                              initWithString:self.emailTextField.placeholder
-                                                             attributes:@{NSForegroundColorAttributeName: kRiotPlaceholderTextColor}];
+                                                             attributes:@{NSForegroundColorAttributeName: kCaritasPlaceholderTextColor}];
             }
             
             self.emailContainer.hidden = NO;
@@ -1075,11 +1076,11 @@
                 self.phoneTextField.placeholder = NSLocalizedStringFromTable(@"auth_optional_phone_placeholder", @"Vector", nil);
             }
             
-            if (kRiotPlaceholderTextColor)
+            if (kCaritasPlaceholderTextColor)
             {
                 self.phoneTextField.attributedPlaceholder = [[NSAttributedString alloc]
                                                              initWithString:self.phoneTextField.placeholder
-                                                             attributes:@{NSForegroundColorAttributeName: kRiotPlaceholderTextColor}];
+                                                             attributes:@{NSForegroundColorAttributeName: kCaritasPlaceholderTextColor}];
             }
             
             self.phoneContainer.hidden = NO;
@@ -1132,25 +1133,30 @@
 {
     if ([self.delegate respondsToSelector:@selector(authInputsView:presentViewController:)])
     {
+        // Generating colored UIImage as setting barTintColor on UISearchBar results in not the correct tintColor
+        CGRect rect = CGRectMake(0, 0, 1, 1);
+        UIGraphicsBeginImageContext(rect.size);
+        CGContextRef context = UIGraphicsGetCurrentContext();
+        CGContextSetFillColorWithColor(context, [kCaritasDesignSearchBarTintColor CGColor]);
+        CGContextFillRect(context, rect);
+        UIImage *backgroundImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        
         phoneNumberCountryPicker = [CountryPickerViewController countryPickerViewController];
         phoneNumberCountryPicker.delegate = self;
         phoneNumberCountryPicker.showCountryCallingCode = YES;
+        phoneNumberCountryPicker.searchBar.barStyle = kCaritasDesignSearchBarStyle;
+        phoneNumberCountryPicker.searchBar.tintColor = kCaritasPrimaryTextColor;
+        phoneNumberCountryPicker.searchBar.backgroundColor = [UIColor clearColor];
+        phoneNumberCountryPicker.searchBar.barTintColor = [UIColor clearColor];
+        [phoneNumberCountryPicker.searchBar setBackgroundImage:backgroundImage forBarPosition:UIBarPositionAny barMetrics:UIBarMetricsDefault];
         
         phoneNumberPickerNavigationController = [[RiotNavigationController alloc] init];
         
-        // Set Riot navigation bar colors
-        phoneNumberPickerNavigationController.navigationBar.barTintColor = kRiotPrimaryBgColor;
-        NSDictionary<NSString *,id> *titleTextAttributes = phoneNumberPickerNavigationController.navigationBar.titleTextAttributes;
-        if (titleTextAttributes)
-        {
-            NSMutableDictionary *textAttributes = [NSMutableDictionary dictionaryWithDictionary:titleTextAttributes];
-            textAttributes[NSForegroundColorAttributeName] = kRiotPrimaryTextColor;
-            phoneNumberPickerNavigationController.navigationBar.titleTextAttributes = textAttributes;
-        }
-        else if (kRiotPrimaryTextColor)
-        {
-            phoneNumberPickerNavigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: kRiotPrimaryTextColor};
-        }
+        // Set Caritas navigation bar colors
+        phoneNumberPickerNavigationController.navigationBar.barTintColor = kCaritasSecondaryBgColor;
+        phoneNumberPickerNavigationController.navigationBar.translucent = NO;
+        phoneNumberPickerNavigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: kCaritasColorWhite};
         
         [phoneNumberPickerNavigationController pushViewController:phoneNumberCountryPicker animated:NO];
         

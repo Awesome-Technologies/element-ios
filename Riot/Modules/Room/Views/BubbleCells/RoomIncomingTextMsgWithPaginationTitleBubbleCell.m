@@ -25,11 +25,11 @@
 {
     [super customizeTableViewCellRendering];
     
-    self.userNameLabel.textColor = kRiotPrimaryTextColor;
+    self.userNameLabel.textColor = kCaritasPrimaryTextColor;
     
-    self.paginationLabel.textColor = kRiotColorGreen;
-    self.paginationSeparatorView.backgroundColor = kRiotColorGreen;
-    self.messageTextView.tintColor = kRiotColorGreen;
+    self.paginationLabel.textColor = kCaritasColorRed;
+    self.paginationSeparatorView.backgroundColor = kCaritasColorRed;
+    self.messageTextView.tintColor = kCaritasColorRed;
 }
 
 - (void)render:(MXKCellData *)cellData

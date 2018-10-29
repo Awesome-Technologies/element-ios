@@ -24,11 +24,11 @@
 {
     [super customizeViewRendering];
     
-    self.backgroundColor = kRiotSecondaryBgColor;
-    self.textView.backgroundColor = kRiotPrimaryBgColor;
-    self.textView.textColor = kRiotPrimaryTextColor;
-    self.redactButton.tintColor = kRiotColorGreen;
-    self.closeButton.tintColor = kRiotColorGreen;
+    self.backgroundColor = kCaritasSecondaryBgColor;
+    self.textView.backgroundColor = kCaritasPrimaryBgColor;
+    self.textView.textColor = kCaritasPrimaryTextColor;
+    self.redactButton.tintColor = kCaritasColorRed;
+    self.closeButton.tintColor = kCaritasColorRed;
 }
 
 @end

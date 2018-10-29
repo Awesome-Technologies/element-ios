@@ -59,7 +59,7 @@
     self.passWordTextField.placeholder = NSLocalizedStringFromTable(@"auth_new_password_placeholder", @"Vector", nil);
     self.repeatPasswordTextField.placeholder = NSLocalizedStringFromTable(@"auth_repeat_new_password_placeholder", @"Vector", nil);
     
-    if (kRiotPlaceholderTextColor)
+    if (kCaritasPlaceholderTextColor)
     {
         // Apply placeholder color
         [self customizeViewRendering];
@@ -104,37 +104,37 @@
 {
     [super customizeViewRendering];
     
-    self.messageLabel.textColor = kRiotPrimaryTextColor;
+    self.messageLabel.textColor = kCaritasPrimaryTextColor;
     
-    self.emailTextField.textColor = kRiotPrimaryTextColor;
-    self.passWordTextField.textColor = kRiotPrimaryTextColor;
-    self.repeatPasswordTextField.textColor = kRiotPrimaryTextColor;
+    self.emailTextField.textColor = kCaritasPrimaryTextColor;
+    self.passWordTextField.textColor = kCaritasPrimaryTextColor;
+    self.repeatPasswordTextField.textColor = kCaritasPrimaryTextColor;
     
     self.messageLabel.numberOfLines = 0;
     
     [self.nextStepButton.layer setCornerRadius:5];
     self.nextStepButton.clipsToBounds = YES;
-    self.nextStepButton.backgroundColor = kRiotColorGreen;
+    self.nextStepButton.backgroundColor = kCaritasColorRed;
     
-    if (kRiotPlaceholderTextColor)
+    if (kCaritasPlaceholderTextColor)
     {
         if (self.emailTextField.placeholder)
         {
             self.emailTextField.attributedPlaceholder = [[NSAttributedString alloc]
                                                          initWithString:self.emailTextField.placeholder
-                                                         attributes:@{NSForegroundColorAttributeName: kRiotPlaceholderTextColor}];
+                                                         attributes:@{NSForegroundColorAttributeName: kCaritasPlaceholderTextColor}];
         }
         if (self.passWordTextField.placeholder)
         {
             self.passWordTextField.attributedPlaceholder = [[NSAttributedString alloc]
                                                          initWithString:self.passWordTextField.placeholder
-                                                         attributes:@{NSForegroundColorAttributeName: kRiotPlaceholderTextColor}];
+                                                         attributes:@{NSForegroundColorAttributeName: kCaritasPlaceholderTextColor}];
         }
         if (self.repeatPasswordTextField.placeholder)
         {
             self.repeatPasswordTextField.attributedPlaceholder = [[NSAttributedString alloc]
                                                             initWithString:self.repeatPasswordTextField.placeholder
-                                                            attributes:@{NSForegroundColorAttributeName: kRiotPlaceholderTextColor}];
+                                                            attributes:@{NSForegroundColorAttributeName: kCaritasPlaceholderTextColor}];
         }
     }
 }

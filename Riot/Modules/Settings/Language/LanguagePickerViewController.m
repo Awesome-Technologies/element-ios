@@ -68,16 +68,17 @@
 
 - (void)userInterfaceThemeDidChange
 {
-    self.defaultBarTintColor = kRiotSecondaryBgColor;
-    self.barTitleColor = kRiotPrimaryTextColor;
-    self.activityIndicator.backgroundColor = kRiotOverlayColor;
+    self.defaultBarTintColor = kCaritasNavigationBarBgColor;
+    self.barTitleColor = kCaritasColorWhite;
+    self.activityIndicator.backgroundColor = kCaritasOverlayColor;
     
-    self.searchBar.barStyle = kRiotDesignSearchBarStyle;
-    self.searchBar.tintColor = kRiotDesignSearchBarTintColor;
+    self.searchBar.barStyle = kCaritasDesignSearchBarStyle;
+    self.searchBar.barTintColor = kCaritasDesignSearchBarTintColor;
+    self.searchBar.tintColor = kCaritasPrimaryTextColor;
     
     // Use the primary bg color for the table view in plain style.
-    self.tableView.backgroundColor = kRiotPrimaryBgColor;
-    topview.backgroundColor = kRiotPrimaryBgColor;
+    self.tableView.backgroundColor = kCaritasPrimaryBgColor;
+    topview.backgroundColor = kCaritasPrimaryBgColor;
     
     if (self.tableView.dataSource)
     {
@@ -87,7 +88,7 @@
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-    return kRiotDesignStatusBarStyle;
+    return kCaritasDesignStatusBarStyle;
 }
 
 - (void)destroy
@@ -114,15 +115,15 @@
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    cell.textLabel.textColor = kRiotPrimaryTextColor;
-    cell.detailTextLabel.textColor = kRiotSecondaryTextColor;
-    cell.backgroundColor = kRiotPrimaryBgColor;
+    cell.textLabel.textColor = kCaritasPrimaryTextColor;
+    cell.detailTextLabel.textColor = kCaritasSecondaryTextColor;
+    cell.backgroundColor = kCaritasPrimaryBgColor;
     
     // Update the selected background view
-    if (kRiotSelectedBgColor)
+    if (kCaritasSelectedBgColor)
     {
         cell.selectedBackgroundView = [[UIView alloc] init];
-        cell.selectedBackgroundView.backgroundColor = kRiotSelectedBgColor;
+        cell.selectedBackgroundView.backgroundColor = kCaritasSelectedBgColor;
     }
     else
     {

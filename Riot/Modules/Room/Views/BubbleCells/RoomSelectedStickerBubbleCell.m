@@ -44,8 +44,8 @@
     arrowMaskLayer.path = path.CGPath;
     self.arrowView.layer.mask = arrowMaskLayer;
     
-    self.arrowView.backgroundColor = kRiotSecondaryBgColor;
-    self.descriptionView.backgroundColor = kRiotSecondaryBgColor;
+    self.arrowView.backgroundColor = kCaritasSecondaryBgColor;
+    self.descriptionView.backgroundColor = kCaritasSecondaryBgColor;
     [self.descriptionView.layer setCornerRadius:10];
 }
 

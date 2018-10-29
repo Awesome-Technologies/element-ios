@@ -111,10 +111,10 @@
 {
     [super customizeViewRendering];
     
-    self.separatorView.backgroundColor = kRiotSecondaryBgColor;
-    if (self.messageLabel.textColor != kRiotColorPinkRed)
+    self.separatorView.backgroundColor = kCaritasSecondaryBgColor;
+    if (self.messageLabel.textColor != kCaritasColorPinkRed)
     {
-        self.messageLabel.textColor = kRiotSecondaryTextColor;
+        self.messageLabel.textColor = kCaritasSecondaryTextColor;
     }
 }
 
@@ -144,18 +144,18 @@
         [tappableNotif addAttribute:NSLinkAttributeName value:@"onCancelLink" range:range];
         
         NSRange wholeString = NSMakeRange(0, tappableNotif.length);
-        [tappableNotif addAttribute:NSForegroundColorAttributeName value:kRiotColorPinkRed range:wholeString];
+        [tappableNotif addAttribute:NSForegroundColorAttributeName value:kCaritasColorPinkRed range:wholeString];
         [tappableNotif addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:15] range:wholeString];
         
         self.messageTextView.attributedText = tappableNotif;
-        self.messageTextView.tintColor = kRiotColorPinkRed;
+        self.messageTextView.tintColor = kCaritasColorPinkRed;
         self.messageTextView.hidden = NO;
         self.messageTextView.backgroundColor = [UIColor clearColor];
     }
     else
     {
         self.messageLabel.text = notification;
-        self.messageLabel.textColor = kRiotColorPinkRed;
+        self.messageLabel.textColor = kCaritasColorPinkRed;
         self.messageLabel.hidden = NO;
     }
     
@@ -186,7 +186,7 @@
     {
         self.iconImageView.image = [UIImage imageNamed:@"error"];
         self.messageLabel.text = labelText;
-        self.messageLabel.textColor = kRiotColorPinkRed;
+        self.messageLabel.textColor = kCaritasColorPinkRed;
         
         self.iconImageView.hidden = NO;
         self.messageLabel.hidden = NO;
@@ -259,16 +259,16 @@
 
     // Display the string in white on pink red
     NSRange wholeString = NSMakeRange(0, onGoingConferenceCallAttibutedString.length);
-    [onGoingConferenceCallAttibutedString addAttribute:NSForegroundColorAttributeName value:kRiotPrimaryBgColor range:wholeString];
-    [onGoingConferenceCallAttibutedString addAttribute:NSBackgroundColorAttributeName value:kRiotColorPinkRed range:wholeString];
+    [onGoingConferenceCallAttibutedString addAttribute:NSForegroundColorAttributeName value:kCaritasPrimaryBgColor range:wholeString];
+    [onGoingConferenceCallAttibutedString addAttribute:NSBackgroundColorAttributeName value:kCaritasColorPinkRed range:wholeString];
     [onGoingConferenceCallAttibutedString addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:15] range:wholeString];
 
     self.messageTextView.attributedText = onGoingConferenceCallAttibutedString;
-    self.messageTextView.tintColor = kRiotPrimaryBgColor;
+    self.messageTextView.tintColor = kCaritasPrimaryBgColor;
     self.messageTextView.hidden = NO;
 
-    self.backgroundColor = kRiotColorPinkRed;
-    self.messageTextView.backgroundColor = kRiotColorPinkRed;
+    self.backgroundColor = kCaritasColorPinkRed;
+    self.messageTextView.backgroundColor = kCaritasColorPinkRed;
 
     // Hide the separator to display correctly the red pink conf call banner
     self.separatorView.hidden = YES;
@@ -294,7 +294,7 @@
             notification = NSLocalizedStringFromTable(@"room_new_message_notification", @"Vector", nil);
         }
         self.messageLabel.text = [NSString stringWithFormat:notification, newMessagesCount];
-        self.messageLabel.textColor = kRiotColorPinkRed;
+        self.messageLabel.textColor = kCaritasColorPinkRed;
         self.messageLabel.hidden = NO;
     }
     else
@@ -355,7 +355,7 @@
         [roomReplacementAttributedString appendAttributedString:roomLinkAttributedString];
         
         NSRange wholeStringRange = NSMakeRange(0, roomReplacementAttributedString.length);
-        [roomReplacementAttributedString addAttribute:NSForegroundColorAttributeName value:kRiotPrimaryTextColor range:wholeStringRange];
+        [roomReplacementAttributedString addAttribute:NSForegroundColorAttributeName value:kCaritasPrimaryTextColor range:wholeStringRange];
         
         self.messageTextView.attributedText = roomReplacementAttributedString;
     }
@@ -364,7 +364,7 @@
         self.messageTextView.text = NSLocalizedStringFromTable(@"room_replacement_information", @"Vector", nil);
     }
     
-    self.messageTextView.tintColor = kRiotPrimaryTextColor;
+    self.messageTextView.tintColor = kCaritasPrimaryTextColor;
     self.messageTextView.hidden = NO;
     self.messageTextView.backgroundColor = [UIColor clearColor];
     
@@ -431,13 +431,13 @@
         message2 = [[NSAttributedString alloc] initWithString:NSLocalizedStringFromTable(@"room_resource_usage_limit_reached_message_2", @"Vector", nil)
                                                    attributes:@{
                                                                 NSFontAttributeName: [UIFont boldSystemFontOfSize:fontSize],
-                                                                NSForegroundColorAttributeName: kRiotPrimaryBgColor
+                                                                NSForegroundColorAttributeName: kCaritasPrimaryBgColor
                                                                 }];
     }
 
     NSDictionary *attributes = @{
                                  NSFontAttributeName: [UIFont systemFontOfSize:fontSize],
-                                 NSForegroundColorAttributeName: kRiotPrimaryBgColor
+                                 NSForegroundColorAttributeName: kCaritasPrimaryBgColor
                                  };
 
     NSDictionary *messageContact2LinkAttributes;
@@ -481,18 +481,18 @@
     [attributedText appendAttributedString:messageContact3];
 
     self.messageTextView.attributedText = attributedText;
-    self.messageTextView.tintColor = kRiotPrimaryBgColor;
+    self.messageTextView.tintColor = kCaritasPrimaryBgColor;
     self.messageTextView.hidden = NO;
 
     if (hardLimit)
     {
-        self.backgroundColor = kRiotColorPinkRed;
-        self.messageTextView.backgroundColor = kRiotColorPinkRed;
+        self.backgroundColor = kCaritasColorPinkRed;
+        self.messageTextView.backgroundColor = kCaritasColorPinkRed;
     }
     else
     {
-        self.backgroundColor = kRiotColorCuriousBlue;
-        self.messageTextView.backgroundColor = kRiotColorCuriousBlue;
+        self.backgroundColor = kCaritasColorCuriousBlue;
+        self.messageTextView.backgroundColor = kCaritasColorCuriousBlue;
     }
 
     // Hide the separator to display correctly the banner
@@ -534,7 +534,7 @@
     [self.messageTextView resignFirstResponder];
     self.messageTextView.hidden = YES;
     
-    self.messageLabel.textColor = kRiotSecondaryTextColor;
+    self.messageLabel.textColor = kCaritasSecondaryTextColor;
 
     objc_removeAssociatedObjects(self.messageTextView);
 }

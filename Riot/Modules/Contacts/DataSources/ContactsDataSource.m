@@ -594,7 +594,7 @@
         if (!tableViewCell)
         {
             tableViewCell = [[MXKTableViewCell alloc] init];
-            tableViewCell.textLabel.textColor = kRiotSecondaryTextColor;
+            tableViewCell.textLabel.textColor = kCaritasSecondaryTextColor;
             tableViewCell.textLabel.font = [UIFont systemFontOfSize:15.0];
             tableViewCell.selectionStyle = UITableViewCellSelectionStyleNone;
         }
@@ -741,10 +741,10 @@
         NSString *roomCount = [NSString stringWithFormat:roomCountFormat, count];
         
         NSMutableAttributedString *mutableSectionTitle = [[NSMutableAttributedString alloc] initWithString:title
-                                                                                         attributes:@{NSForegroundColorAttributeName : kRiotPrimaryTextColor,
+                                                                                         attributes:@{NSForegroundColorAttributeName : kCaritasColorWhite,
                                                                                                       NSFontAttributeName: [UIFont boldSystemFontOfSize:15.0]}];
         [mutableSectionTitle appendAttributedString:[[NSMutableAttributedString alloc] initWithString:roomCount
-                                                                                    attributes:@{NSForegroundColorAttributeName : kRiotAuxiliaryColor,
+                                                                                    attributes:@{NSForegroundColorAttributeName : kCaritasAuxiliaryColor,
                                                                                                  NSFontAttributeName: [UIFont boldSystemFontOfSize:15.0]}]];
         
         sectionTitle = mutableSectionTitle;
@@ -752,7 +752,7 @@
     else if (title)
     {
         sectionTitle = [[NSAttributedString alloc] initWithString:title
-                                               attributes:@{NSForegroundColorAttributeName : kRiotPrimaryTextColor,
+                                               attributes:@{NSForegroundColorAttributeName : kCaritasColorWhite,
                                                             NSFontAttributeName: [UIFont boldSystemFontOfSize:15.0]}];
     }
     
@@ -766,7 +766,7 @@
     NSInteger sectionBitwise = 0;
     
     sectionHeader = [[UIView alloc] initWithFrame:frame];
-    sectionHeader.backgroundColor = kRiotSecondaryBgColor;
+    sectionHeader.backgroundColor = kCaritasSecondaryBgColor;
     
     frame.origin.x = 20;
     frame.origin.y = 5;
@@ -969,10 +969,11 @@
         }
         
         // Apply UI theme
-        checkboxLabel.textColor = kRiotPrimaryTextColor;
+        checkboxLabel.textColor = kCaritasColorWhite;
         
         // Set the right value of the tick box
         localContactsCheckbox.image = hideNonMatrixEnabledContacts ? [UIImage imageNamed:@"selection_tick"] : [UIImage imageNamed:@"selection_untick"];
+        localContactsCheckbox.tintColor = UIColor.whiteColor;
         
         // Add the check box container
         [sectionHeader addSubview:localContactsCheckboxContainer];

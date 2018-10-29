@@ -38,9 +38,10 @@
 {
     [super customizeViewRendering];
     
-    self.displayNameTextField.textColor = (self.mxRoom.summary.displayname.length ? kRiotPrimaryTextColor : kRiotSecondaryTextColor);
-    self.roomTopic.textColor = kRiotTopicTextColor;
-    self.roomMembers.textColor = kRiotColorGreen;
+    self.displayNameTextField.textColor = kCaritasColorWhite;
+    self.roomTopic.textColor = kCaritasTopicTextColor;
+    self.roomMembers.textColor = kCaritasColorWhite;
+    
 }
 
 - (void)refreshDisplay
@@ -55,14 +56,13 @@
         if (!self.displayNameTextField.text.length)
         {
             self.displayNameTextField.text = [NSBundle mxk_localizedStringForKey:@"room_displayname_empty_room"];
-            self.displayNameTextField.textColor = kRiotSecondaryTextColor;
-        }
-        else
-        {
-            self.displayNameTextField.textColor = kRiotPrimaryTextColor;
         }
         
         self.roomTopic.text = [MXTools stripNewlineCharacters:self.mxRoom.summary.topic];
+        
+        self.displayNameTextField.textColor = kCaritasColorWhite;
+        self.roomTopic.textColor = kCaritasTopicTextColor;
+        self.roomMembers.textColor = kCaritasColorWhite;
         
         // Compute active members count
         MXWeakify(self);
@@ -130,7 +130,7 @@
     self.roomAvatar.layer.cornerRadius = self.roomAvatar.frame.size.width / 2;
     self.roomAvatar.clipsToBounds = YES;
     
-    self.roomAvatar.defaultBackgroundColor = kRiotSecondaryBgColor;
+    self.roomAvatar.defaultBackgroundColor = kCaritasSecondaryBgColor;
     
     // Force the layout of subviews to update the position of 'bottomBorderView' which is used to define the actual height of the preview container.
     [self layoutIfNeeded];

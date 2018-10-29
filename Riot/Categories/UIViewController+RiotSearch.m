@@ -94,8 +94,9 @@
         self.searchBar.text = @"";
         
         // Customize search bar
-        self.searchBar.barStyle = kRiotDesignSearchBarStyle;
-        self.searchBar.tintColor = kRiotDesignSearchBarTintColor;
+        self.searchBar.barStyle = kCaritasDesignSearchBarStyle;
+        self.searchBar.barTintColor = kCaritasDesignSearchBarTintColor;
+        self.searchBar.tintColor = kCaritasPrimaryTextColor;
         
         // Remove navigation buttons
         self.navigationItem.hidesBackButton = YES;
@@ -134,7 +135,7 @@
 
 - (void)addBackgroundImageViewToView:(UIView*)view
 {
-    UIImage *searchBgImage = [MXKTools paintImage:[UIImage imageNamed:@"search_bg"] withColor:kRiotKeyboardColor];
+    UIImage *searchBgImage = [MXKTools paintImage:[UIImage imageNamed:@"search_bg"] withColor:kCaritasKeyboardColor];
     UIImageView *backgroundImageView = [[UIImageView alloc] initWithImage:searchBgImage];
     backgroundImageView.translatesAutoresizingMaskIntoConstraints = NO;
 

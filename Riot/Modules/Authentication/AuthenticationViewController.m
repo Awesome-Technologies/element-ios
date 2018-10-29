@@ -130,53 +130,53 @@
 
 - (void)userInterfaceThemeDidChange
 {
-    self.view.backgroundColor = kRiotSecondaryBgColor;
+    self.view.backgroundColor = kCaritasSecondaryBgColor;
     
-    self.navigationBar.barTintColor = kRiotSecondaryBgColor;
-    self.authenticationScrollView.backgroundColor = kRiotPrimaryBgColor;
-    self.authFallbackContentView.backgroundColor = kRiotPrimaryBgColor;
+    self.navigationBar.barTintColor = kCaritasSecondaryBgColor;
+    self.authenticationScrollView.backgroundColor = kCaritasPrimaryBgColor;
+    self.authFallbackContentView.backgroundColor = kCaritasPrimaryBgColor;
     
-    if (kRiotPlaceholderTextColor)
+    if (kCaritasPlaceholderTextColor)
     {
         if (self.homeServerTextField.placeholder)
         {
             self.homeServerTextField.attributedPlaceholder = [[NSAttributedString alloc]
                                                              initWithString:self.homeServerTextField.placeholder
-                                                             attributes:@{NSForegroundColorAttributeName: kRiotPlaceholderTextColor}];
+                                                             attributes:@{NSForegroundColorAttributeName: kCaritasPlaceholderTextColor}];
         }
         if (self.identityServerTextField.placeholder)
         {
             self.identityServerTextField.attributedPlaceholder = [[NSAttributedString alloc]
                                                              initWithString:self.identityServerTextField.placeholder
-                                                             attributes:@{NSForegroundColorAttributeName: kRiotPlaceholderTextColor}];
+                                                             attributes:@{NSForegroundColorAttributeName: kCaritasPlaceholderTextColor}];
         }
     }
     
-    self.submitButton.backgroundColor = kRiotColorGreen;
-    self.skipButton.backgroundColor = kRiotColorGreen;
+    self.submitButton.backgroundColor = kCaritasColorRed;
+    self.skipButton.backgroundColor = kCaritasColorRed;
     
-    self.noFlowLabel.textColor = kRiotColorRed;
+    self.noFlowLabel.textColor = kCaritasColorRed;
     
     NSMutableAttributedString *forgotPasswordTitle = [[NSMutableAttributedString alloc] initWithString:NSLocalizedStringFromTable(@"auth_forgot_password", @"Vector", nil)];
     [forgotPasswordTitle addAttribute:NSUnderlineStyleAttributeName value:[NSNumber numberWithInteger:NSUnderlineStyleSingle] range:NSMakeRange(0, forgotPasswordTitle.length)];
-    [forgotPasswordTitle addAttribute:NSForegroundColorAttributeName value:kRiotColorGreen range:NSMakeRange(0, forgotPasswordTitle.length)];
+    [forgotPasswordTitle addAttribute:NSForegroundColorAttributeName value:kCaritasColorRed range:NSMakeRange(0, forgotPasswordTitle.length)];
     [self.forgotPasswordButton setAttributedTitle:forgotPasswordTitle forState:UIControlStateNormal];
     [self.forgotPasswordButton setAttributedTitle:forgotPasswordTitle forState:UIControlStateHighlighted];
     [self updateForgotPwdButtonVisibility];
     
-    NSAttributedString *serverOptionsTitle = [[NSAttributedString alloc] initWithString:NSLocalizedStringFromTable(@"auth_use_server_options", @"Vector", nil) attributes:@{NSForegroundColorAttributeName : kRiotSecondaryTextColor, NSFontAttributeName: [UIFont systemFontOfSize:14]}];
+    NSAttributedString *serverOptionsTitle = [[NSAttributedString alloc] initWithString:NSLocalizedStringFromTable(@"auth_use_server_options", @"Vector", nil) attributes:@{NSForegroundColorAttributeName : kCaritasSecondaryTextColor, NSFontAttributeName: [UIFont systemFontOfSize:14]}];
     [self.customServersTickButton setAttributedTitle:serverOptionsTitle forState:UIControlStateNormal];
     [self.customServersTickButton setAttributedTitle:serverOptionsTitle forState:UIControlStateHighlighted];
     
-    self.homeServerTextField.textColor = kRiotPrimaryTextColor;
-    self.homeServerLabel.textColor = kRiotSecondaryTextColor;
+    self.homeServerTextField.textColor = kCaritasPrimaryTextColor;
+    self.homeServerLabel.textColor = kCaritasSecondaryTextColor;
     
-    self.identityServerTextField.textColor = kRiotPrimaryTextColor;
-    self.identityServerLabel.textColor = kRiotSecondaryTextColor;
+    self.identityServerTextField.textColor = kCaritasPrimaryTextColor;
+    self.identityServerLabel.textColor = kCaritasSecondaryTextColor;
     
-    self.defaultBarTintColor = kRiotSecondaryBgColor;
-    self.barTitleColor = kRiotPrimaryTextColor;
-    self.activityIndicator.backgroundColor = kRiotOverlayColor;
+    self.defaultBarTintColor = kCaritasNavigationBarBgColor;
+    self.barTitleColor = kCaritasColorWhite;
+    self.activityIndicator.backgroundColor = kCaritasOverlayColor;
     
     [self.authInputsView customizeViewRendering];
     
@@ -185,7 +185,7 @@
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-    return kRiotDesignStatusBarStyle;
+    return kCaritasDesignStatusBarStyle;
 }
 
 - (void)viewWillAppear:(BOOL)animated

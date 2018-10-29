@@ -47,11 +47,11 @@
     // Remove default toolbar background color
     self.backgroundColor = [UIColor clearColor];
     
-    self.separatorView.backgroundColor = kRiotAuxiliaryColor;
+    self.separatorView.backgroundColor = kCaritasAuxiliaryColor;
 
     self.disabledReasonTextView.font = [UIFont systemFontOfSize:15];
-    self.disabledReasonTextView.textColor = kRiotPrimaryTextColor;
-    self.disabledReasonTextView.tintColor = kRiotColorGreen;
+    self.disabledReasonTextView.textColor = kCaritasPrimaryTextColor;
+    self.disabledReasonTextView.tintColor = kCaritasColorRed;
     self.disabledReasonTextView.editable = NO;
     self.disabledReasonTextView.scrollEnabled = NO;
 }

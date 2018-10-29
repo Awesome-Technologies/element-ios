@@ -25,8 +25,8 @@
 {
     [super customizeTableViewCellRendering];
     
-    self.userNameLabel.textColor = kRiotPrimaryTextColor;
-    self.messageTextView.tintColor = kRiotColorGreen;
+    self.userNameLabel.textColor = kCaritasPrimaryTextColor;
+    self.messageTextView.tintColor = kCaritasColorRed;
 }
 
 - (void)render:(MXKCellData *)cellData
@@ -48,7 +48,7 @@
         // Show a red border when the attachment sending failed
         if (bubbleCell->bubbleData.attachment.eventSentState == MXEventSentStateFailed)
         {
-            bubbleCell.attachmentView.layer.borderColor = kRiotColorPinkRed.CGColor;
+            bubbleCell.attachmentView.layer.borderColor = kCaritasColorPinkRed.CGColor;
             bubbleCell.attachmentView.layer.borderWidth = 1;
         }
         else

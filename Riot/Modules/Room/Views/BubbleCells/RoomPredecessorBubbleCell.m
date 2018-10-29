@@ -57,8 +57,8 @@ static CGFloat const kCustomBackgroundCornerRadius = 5.0;
 {
     [super customizeTableViewCellRendering];
     
-    self.messageTextView.tintColor = kRiotPrimaryTextColor;
-    self.customBackgroundView.backgroundColor = kRiotSecondaryBgColor;
+    self.messageTextView.tintColor = kCaritasPrimaryTextColor;
+    self.customBackgroundView.backgroundColor = kCaritasSecondaryBgColor;
 }
 
 @end

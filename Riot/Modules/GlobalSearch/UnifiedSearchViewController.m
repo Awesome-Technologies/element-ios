@@ -114,7 +114,7 @@
     UIImageView *backgroundImageView = self.backgroundImageView;
     if (backgroundImageView)
     {
-        UIImage *image = [MXKTools paintImage:backgroundImageView.image withColor:kRiotKeyboardColor];
+        UIImage *image = [MXKTools paintImage:backgroundImageView.image withColor:kCaritasKeyboardColor];
         backgroundImageView.image = image;
     }
 }
@@ -135,6 +135,8 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
+    self.searchBar.tintColor = kCaritasPrimaryTextColor;
 
     // Screen tracking
     [[Analytics sharedInstance] trackScreen:@"UnifiedSearch"];

@@ -130,7 +130,7 @@
     // Setup `MXKViewControllerHandling` properties
     self.enableBarTintColorStatusChange = NO;
     
-    self.sectionHeaderTintColor = kRiotColorGreen;
+    self.sectionHeaderTintColor = kCaritasColorRed;
 }
 
 - (void)viewDidLoad
@@ -172,16 +172,16 @@
 
 - (void)userInterfaceThemeDidChange
 {
-    self.defaultBarTintColor = kRiotSecondaryBgColor;
-    self.barTitleColor = kRiotPrimaryTextColor;
-    self.activityIndicator.backgroundColor = kRiotOverlayColor;
+    self.defaultBarTintColor = kCaritasNavigationBarBgColor;
+    self.barTitleColor = kCaritasColorWhite;
+    self.activityIndicator.backgroundColor = kCaritasOverlayColor;
     
-    self.view.backgroundColor = kRiotPrimaryBgColor;
+    self.view.backgroundColor = kCaritasPrimaryBgColor;
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-    return kRiotDesignStatusBarStyle;
+    return kCaritasDesignStatusBarStyle;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -246,7 +246,7 @@
         label.text = [sectionTitles objectAtIndex:index];
         label.font = [UIFont systemFontOfSize:17];
         label.textAlignment = NSTextAlignmentCenter;
-        label.textColor = _sectionHeaderTintColor;
+        label.textColor = kCaritasPrimaryTextColor;
         label.backgroundColor = [UIColor clearColor];
         label.accessibilityIdentifier = [NSString stringWithFormat:@"SegmentedVCSectionLabel%tu", index];
         

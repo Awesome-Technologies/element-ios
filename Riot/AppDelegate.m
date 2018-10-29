@@ -424,7 +424,7 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     [NSBundle mxk_setFallbackLanguage:@"en"];
 
     // Define the navigation bar text color
-    [[UINavigationBar appearance] setTintColor:kRiotColorGreen];
+    [[UINavigationBar appearance] setTintColor:kCaritasColorWhite];
     
     // Customize the localized string table
     [NSBundle mxk_customizeLocalizedStringTableName:@"Vector"];
@@ -446,8 +446,8 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     UINavigationController *secondNavController = self.secondaryNavigationController;
     if (secondNavController)
     {
-        secondNavController.navigationBar.barTintColor = kRiotPrimaryBgColor;
-        secondNavController.topViewController.view.backgroundColor = kRiotPrimaryBgColor;
+        secondNavController.navigationBar.barTintColor = kCaritasNavigationBarBgColor;
+        secondNavController.topViewController.view.backgroundColor = kCaritasPrimaryBgColor;
     }
     
     // on IOS 8 iPad devices, force to display the primary and the secondary viewcontroller
@@ -837,7 +837,7 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
             
             UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
             UIViewController *emptyDetailsViewController = [storyboard instantiateViewControllerWithIdentifier:@"EmptyDetailsViewControllerStoryboardId"];
-            emptyDetailsViewController.view.backgroundColor = kRiotPrimaryBgColor;
+            emptyDetailsViewController.view.backgroundColor = kCaritasPrimaryBgColor;
             
             splitViewController.viewControllers = @[mainViewController, emptyDetailsViewController];
         }
@@ -2782,7 +2782,7 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
             if (!launchAnimationContainerView && window)
             {
                 launchAnimationContainerView = [[UIView alloc] initWithFrame:window.bounds];
-                launchAnimationContainerView.backgroundColor = kRiotPrimaryBgColor;
+                launchAnimationContainerView.backgroundColor = kCaritasPrimaryBgColor;
                 launchAnimationContainerView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
                 [window addSubview:launchAnimationContainerView];
                 
@@ -3470,7 +3470,7 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     
     [_callStatusBarButton setTitle:buttonTitle forState:UIControlStateNormal];
     [_callStatusBarButton setTitle:buttonTitle forState:UIControlStateHighlighted];
-    _callStatusBarButton.titleLabel.textColor = kRiotPrimaryBgColor;
+    _callStatusBarButton.titleLabel.textColor = kCaritasPrimaryBgColor;
     
     if ([UIFont respondsToSelector:@selector(systemFontOfSize:weight:)])
     {
@@ -3481,7 +3481,7 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
         _callStatusBarButton.titleLabel.font = [UIFont boldSystemFontOfSize:17];
     }
     
-    [_callStatusBarButton setBackgroundColor:kRiotColorGreen];
+    [_callStatusBarButton setBackgroundColor:kCaritasColorRed];
     [_callStatusBarButton addTarget:self action:@selector(onCallStatusBarButtonPressed) forControlEvents:UIControlEventTouchUpInside];
     
     // Place button into the new window
@@ -3630,7 +3630,7 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     }
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
     UIViewController *emptyDetailsViewController = [storyboard instantiateViewControllerWithIdentifier:@"EmptyDetailsViewControllerStoryboardId"];
-    emptyDetailsViewController.view.backgroundColor = kRiotPrimaryBgColor;
+    emptyDetailsViewController.view.backgroundColor = kCaritasPrimaryBgColor;
     return emptyDetailsViewController;
 }
 

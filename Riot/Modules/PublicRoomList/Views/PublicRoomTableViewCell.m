@@ -36,9 +36,9 @@
 {
     [super customizeTableViewCellRendering];
     
-    self.roomDisplayName.textColor = kRiotPrimaryTextColor;
-    self.roomTopic.textColor = kRiotSecondaryTextColor;
-    self.memberCount.textColor = kRiotSecondaryTextColor;
+    self.roomDisplayName.textColor = kCaritasPrimaryTextColor;
+    self.roomTopic.textColor = kCaritasSecondaryTextColor;
+    self.memberCount.textColor = kCaritasSecondaryTextColor;
     
     _roomAvatar.defaultBackgroundColor = [UIColor clearColor];
 }

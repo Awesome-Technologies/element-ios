@@ -79,7 +79,7 @@
     UIImageView *backgroundImageView = self.backgroundImageView;
     if (backgroundImageView)
     {
-        UIImage *image = [MXKTools paintImage:backgroundImageView.image withColor:kRiotKeyboardColor];
+        UIImage *image = [MXKTools paintImage:backgroundImageView.image withColor:kCaritasKeyboardColor];
         backgroundImageView.image = image;
     }
 }

@@ -110,19 +110,43 @@
 
 - (void)userInterfaceThemeDidChange
 {
-    self.tabBar.tintColor = kRiotColorGreen;
-    self.tabBar.barTintColor = kRiotSecondaryBgColor;
     UIImage *image = [self.navigationItem.leftBarButtonItem.image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
     [self.navigationItem.leftBarButtonItem setImage:image];
     
-    self.view.backgroundColor = kRiotPrimaryBgColor;
+    [self.navigationController.navigationBar setBarTintColor:kCaritasNavigationBarBgColor];
+    [self.navigationController.navigationBar setTitleTextAttributes:
+     @{NSForegroundColorAttributeName:kCaritasColorWhite}];
+    
+    // Creating UIImage for red selection background in tab bar
+    CGFloat tabBarCountFloat = (CGFloat)TABBAR_COUNT;
+    CGSize tabBarItemSize = CGSizeMake(self.tabBar.frame.size.width / tabBarCountFloat, self.tabBar.frame.size.height);
+    
+    UIGraphicsBeginImageContextWithOptions(tabBarItemSize, YES, 0.0f);
+    CGContextRef ctx = UIGraphicsGetCurrentContext();
+    CGContextSaveGState(ctx);
+    
+    CGRect rect = CGRectMake(0, 0, tabBarItemSize.width, tabBarItemSize.height);
+    CGContextSetFillColorWithColor(ctx, kCaritasTabBarSelectionColor.CGColor);
+    CGContextFillRect(ctx, rect);
+    
+    CGContextRestoreGState(ctx);
+    UIImage *tabBarSelectionImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    // Setting red selection background
+    self.tabBar.selectionIndicatorImage = tabBarSelectionImage;
+    
+    self.tabBar.tintColor = kCaritasColorWhite;
+    self.tabBar.barTintColor = kCaritasPrimaryBgColor;
+    
+    self.view.backgroundColor = kCaritasPrimaryBgColor;
     
     [self setNeedsStatusBarAppearanceUpdate];
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-    return kRiotDesignStatusBarStyle;
+    return kCaritasDesignStatusBarStyle;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -131,6 +155,8 @@
     
     // Show the tab bar view controller content only when a user is logged in.
     self.hidden = ([MXKAccountManager sharedManager].accounts.count == 0);
+    
+    [self userInterfaceThemeDidChange];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -726,7 +752,7 @@
 {
     _hidden = hidden;
     
-    [self.view superview].backgroundColor = kRiotPrimaryBgColor;
+    [self.view superview].backgroundColor = kCaritasPrimaryBgColor;
     self.view.hidden = hidden;
     self.navigationController.navigationBar.hidden = hidden;
 }
@@ -736,8 +762,8 @@
 - (void)refreshTabBarBadges
 {
     // Update the badge on People and Rooms tabs
-    [self setMissedDiscussionsCount:recentsDataSource.missedDirectDiscussionsCount onTabBarItem:TABBAR_PEOPLE_INDEX withBadgeColor:(recentsDataSource.missedHighlightDirectDiscussionsCount ? kRiotColorPinkRed : kRiotColorGreen)];
-    [self setMissedDiscussionsCount:recentsDataSource.missedGroupDiscussionsCount onTabBarItem:TABBAR_ROOMS_INDEX withBadgeColor:(recentsDataSource.missedHighlightGroupDiscussionsCount ? kRiotColorPinkRed : kRiotColorGreen)];
+    [self setMissedDiscussionsCount:recentsDataSource.missedDirectDiscussionsCount onTabBarItem:TABBAR_PEOPLE_INDEX withBadgeColor:(recentsDataSource.missedHighlightDirectDiscussionsCount ? kCaritasColorGrey : kCaritasColorLightBlack)];
+    [self setMissedDiscussionsCount:recentsDataSource.missedGroupDiscussionsCount onTabBarItem:TABBAR_ROOMS_INDEX withBadgeColor:(recentsDataSource.missedHighlightGroupDiscussionsCount ? kCaritasColorGrey : kCaritasColorLightBlack)];
 }
 
 - (void)setMissedDiscussionsCount:(NSUInteger)count onTabBarItem:(NSUInteger)index withBadgeColor:(UIColor*)badgeColor

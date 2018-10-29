@@ -205,7 +205,7 @@ NSString *const kEventFormatterOnReRequestKeysLinkActionSeparator = @"/";
         calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
         
         // Use the secondary bg color to set the background color in the default CSS.
-        NSUInteger bgColor = [MXKTools rgbValueWithColor:kRiotSecondaryBgColor];
+        NSUInteger bgColor = [MXKTools rgbValueWithColor:kCaritasSecondaryBgColor];
         self.defaultCSS = [NSString stringWithFormat:@" \
                            pre,code { \
                            background-color: #%06lX; \
@@ -216,13 +216,13 @@ NSString *const kEventFormatterOnReRequestKeysLinkActionSeparator = @"/";
                            font-size: small; \
                            }", (unsigned long)bgColor];
         
-        self.defaultTextColor = kRiotPrimaryTextColor;
-        self.subTitleTextColor = kRiotSecondaryTextColor;
-        self.prefixTextColor = kRiotSecondaryTextColor;
-        self.bingTextColor = kRiotColorPinkRed;
-        self.encryptingTextColor = kRiotColorGreen;
-        self.sendingTextColor = kRiotSecondaryTextColor;
-        self.errorTextColor = kRiotColorRed;
+        self.defaultTextColor = kCaritasPrimaryTextColor;
+        self.subTitleTextColor = kCaritasSecondaryTextColor;
+        self.prefixTextColor = kCaritasSecondaryTextColor;
+        self.bingTextColor = kCaritasColorPinkRed;
+        self.encryptingTextColor = kCaritasColorRed;
+        self.sendingTextColor = kCaritasSecondaryTextColor;
+        self.errorTextColor = kCaritasColorRed;
         
         self.defaultTextFont = [UIFont systemFontOfSize:15];
         self.prefixTextFont = [UIFont boldSystemFontOfSize:15];

@@ -31,40 +31,41 @@ extern NSString *const kRiotDesignValuesDidChangeThemeNotification;
                      blue:((float)((rgbValue & 0x0000FF) >>  0))/255.0 \
                     alpha:1.0]
 
-#pragma mark - Riot Theme Colors (depends on the selected theme light or dark).
-extern UIColor *kRiotPrimaryBgColor;
-extern UIColor *kRiotSecondaryBgColor;
-extern UIColor *kRiotPrimaryTextColor;
-extern UIColor *kRiotSecondaryTextColor; //subtitle, sending messages color.
-extern UIColor *kRiotPlaceholderTextColor; // nil is used to keep the default color.
-extern UIColor *kRiotTopicTextColor;
-extern UIColor *kRiotSelectedBgColor; // nil is used to keep the default color.
-extern UIColor *kRiotAuxiliaryColor; // kRiotColorSilver by default.
-extern UIColor *kRiotOverlayColor; // fading behind dialog modals. This color includes the transparency value.
-extern UIColor *kRiotKeyboardColor;
+#pragma mark - Caritas Theme Colors (depends on the selected theme light or dark).
+extern UIColor *kCaritasNavigationBarBgColor;
+extern UIColor *kCaritasPrimaryBgColor;
+extern UIColor *kCaritasSecondaryBgColor;
+extern UIColor *kCaritasPrimaryTextColor;
+extern UIColor *kCaritasSecondaryTextColor; //subtitle, sending messages color.
+extern UIColor *kCaritasPlaceholderTextColor; // nil is used to keep the default color.
+extern UIColor *kCaritasTopicTextColor;
+extern UIColor *kCaritasSelectedBgColor; // nil is used to keep the default color.
+extern UIColor *kCaritasAuxiliaryColor; // kCaritasColorSilver by default.
+extern UIColor *kCaritasOverlayColor; // fading behind dialog modals. This color includes the transparency value.
+extern UIColor *kCaritasKeyboardColor;
+extern UIColor *kCaritasTabBarSelectionColor;
 
-#pragma mark - Riot Colors
-extern UIColor *kRiotColorGreen;
-extern UIColor *kRiotColorLightGreen;
-extern UIColor *kRiotColorLightOrange;
-extern UIColor *kRiotColorSilver;
-extern UIColor *kRiotColorPinkRed;
-extern UIColor *kRiotColorRed;
-extern UIColor *kRiotColorIndigo;
-extern UIColor *kRiotColorOrange;
-extern UIColor *kRiotColorBlue;
-extern UIColor *kRiotColorCuriousBlue;
+#pragma mark - Caritas Colors
+extern UIColor *kCaritasColorRed;
+extern UIColor *kCaritasColorWhite;
+extern UIColor *kCaritasColorGrey;
+extern UIColor *kCaritasColorLinkBlue;
+extern UIColor *kCaritasColorSilver;
+extern UIColor *kCaritasColorPinkRed;
+extern UIColor *kCaritasColorCuriousBlue;
+extern UIColor *kCaritasColorLightGrey;
+extern UIColor *kCaritasColorLightBlack;
 
 #pragma mark - Riot Standard Room Member Power Level
 extern NSInteger const kRiotRoomModeratorLevel;
 extern NSInteger const kRiotRoomAdminLevel;
 
 #pragma mark - Riot bar style
-extern UIStatusBarStyle kRiotDesignStatusBarStyle;
-extern UIBarStyle kRiotDesignSearchBarStyle;
-extern UIColor *kRiotDesignSearchBarTintColor;
+extern UIStatusBarStyle kCaritasDesignStatusBarStyle;
+extern UIBarStyle kCaritasDesignSearchBarStyle;
+extern UIColor *kCaritasDesignSearchBarTintColor;
 
-extern UIKeyboardAppearance kRiotKeyboard;
+extern UIKeyboardAppearance kCaritasKeyboard;
 
 /**
  `RiotDesignValues` class manages the Riot design parameters

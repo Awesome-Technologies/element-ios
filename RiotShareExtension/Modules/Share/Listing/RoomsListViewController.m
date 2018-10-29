@@ -90,7 +90,8 @@
     
     self.recentsSearchBar.searchBarStyle = UISearchBarStyleMinimal;
     self.recentsSearchBar.placeholder = NSLocalizedStringFromTable(@"search_default_placeholder", @"Vector", nil);
-    self.recentsSearchBar.tintColor = kRiotColorGreen;
+    self.recentsSearchBar.barTintColor = kCaritasDesignSearchBarTintColor;
+    self.recentsSearchBar.tintColor = kCaritasPrimaryTextColor;
     
     _tableSearchBar.tintColor = self.recentsSearchBar.tintColor;
 }

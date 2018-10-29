@@ -25,8 +25,8 @@
 {
     [super customizeTableViewCellRendering];
     
-    self.albumDisplayNameLabel.textColor = kRiotPrimaryTextColor;
-    self.albumCountLabel.textColor = kRiotSecondaryTextColor;
+    self.albumDisplayNameLabel.textColor = kCaritasPrimaryTextColor;
+    self.albumCountLabel.textColor = kCaritasSecondaryTextColor;
 }
 
 @end

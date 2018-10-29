@@ -229,16 +229,16 @@
 
 - (void)userInterfaceThemeDidChange
 {
-    self.defaultBarTintColor = kRiotSecondaryBgColor;
-    self.barTitleColor = kRiotPrimaryTextColor;
-    self.activityIndicator.backgroundColor = kRiotOverlayColor;
+    self.defaultBarTintColor = kCaritasNavigationBarBgColor;
+    self.barTitleColor = kCaritasColorWhite;
+    self.activityIndicator.backgroundColor = kCaritasOverlayColor;
     
-    self.headerView.backgroundColor = kRiotSecondaryBgColor;
-    self.contactNameLabel.textColor = kRiotPrimaryTextColor;
-    self.contactStatusLabel.textColor = kRiotColorGreen;
+    self.headerView.backgroundColor = kCaritasSecondaryBgColor;
+    self.contactNameLabel.textColor = kCaritasPrimaryTextColor;
+    self.contactStatusLabel.textColor = kCaritasColorRed;
     
     // Check the table view style to select its bg color.
-    self.tableView.backgroundColor = ((self.tableView.style == UITableViewStylePlain) ? kRiotPrimaryBgColor : kRiotSecondaryBgColor);
+    self.tableView.backgroundColor = kCaritasPrimaryBgColor;
     self.view.backgroundColor = self.tableView.backgroundColor;
     
     if (self.tableView.dataSource)
@@ -249,7 +249,7 @@
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-    return kRiotDesignStatusBarStyle;
+    return kCaritasDesignStatusBarStyle;
 }
 
 - (BOOL)prefersStatusBarHidden
@@ -733,8 +733,8 @@
             [cellWithButton.mxkButton setTitle:title forState:UIControlStateNormal];
             [cellWithButton.mxkButton setTitle:title forState:UIControlStateHighlighted];
             
-            [cellWithButton.mxkButton setTitleColor:kRiotPrimaryTextColor forState:UIControlStateNormal];
-            [cellWithButton.mxkButton setTitleColor:kRiotPrimaryTextColor forState:UIControlStateHighlighted];
+            [cellWithButton.mxkButton setTitleColor:kCaritasPrimaryTextColor forState:UIControlStateNormal];
+            [cellWithButton.mxkButton setTitleColor:kCaritasPrimaryTextColor forState:UIControlStateHighlighted];
             
             [cellWithButton.mxkButton addTarget:self action:@selector(onActionButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
             
@@ -777,13 +777,13 @@
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    cell.backgroundColor = kRiotPrimaryBgColor;
+    cell.backgroundColor = kCaritasPrimaryBgColor;
     
     // Update the selected background view
-    if (kRiotSelectedBgColor)
+    if (kCaritasSelectedBgColor)
     {
         cell.selectedBackgroundView = [[UIView alloc] init];
-        cell.selectedBackgroundView.backgroundColor = kRiotSelectedBgColor;
+        cell.selectedBackgroundView.backgroundColor = kCaritasSelectedBgColor;
     }
     else
     {

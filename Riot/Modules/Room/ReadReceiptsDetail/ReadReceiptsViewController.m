@@ -94,20 +94,20 @@
 
 - (void)userInterfaceThemeDidChange
 {
-    self.defaultBarTintColor = kRiotSecondaryBgColor;
-    self.barTitleColor = kRiotPrimaryTextColor;
-    self.activityIndicator.backgroundColor = kRiotOverlayColor;
+    self.defaultBarTintColor = kCaritasNavigationBarBgColor;
+    self.barTitleColor = kCaritasColorWhite;
+    self.activityIndicator.backgroundColor = kCaritasOverlayColor;
     
-    self.overlayView.backgroundColor = kRiotOverlayColor;
+    self.overlayView.backgroundColor = kCaritasOverlayColor;
     self.overlayView.alpha = 1.0;
     
-    self.titleLabel.textColor = kRiotPrimaryTextColor;
-    self.containerView.backgroundColor = kRiotPrimaryBgColor;
+    self.titleLabel.textColor = kCaritasPrimaryTextColor;
+    self.containerView.backgroundColor = kCaritasPrimaryBgColor;
     
     // Check the table view style to select its bg color.
-    self.receiptsTableView.backgroundColor = ((self.receiptsTableView.style == UITableViewStylePlain) ? kRiotPrimaryBgColor : kRiotSecondaryBgColor);
+    self.receiptsTableView.backgroundColor = ((self.receiptsTableView.style == UITableViewStylePlain) ? kCaritasPrimaryBgColor : kCaritasSecondaryBgColor);
     
-    self.closeButton.tintColor = kRiotColorGreen;
+    self.closeButton.tintColor = kCaritasColorRed;
     
     if (self.receiptsTableView.dataSource)
     {
@@ -118,7 +118,7 @@
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-    return kRiotDesignStatusBarStyle;
+    return kCaritasDesignStatusBarStyle;
 }
 
 - (void)destroy
@@ -196,8 +196,8 @@
 {
     MXKReadReceiptTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:[MXKReadReceiptTableViewCell defaultReuseIdentifier] forIndexPath:indexPath];
     
-    cell.displayNameLabel.textColor = kRiotPrimaryTextColor;
-    cell.receiptDescriptionLabel.textColor = kRiotSecondaryTextColor;
+    cell.displayNameLabel.textColor = kCaritasPrimaryTextColor;
+    cell.receiptDescriptionLabel.textColor = kCaritasSecondaryTextColor;
     
     if (indexPath.row < self.roomMembers.count)
     {
@@ -222,9 +222,9 @@
         NSString *receiptReadText = NSLocalizedStringFromTable(@"receipt_status_read", @"Vector", nil);
         NSString *receiptTimeText = [(MXKEventFormatter*)self.session.roomSummaryUpdateDelegate dateStringFromTimestamp:self.receipts[indexPath.row].ts withTime:YES];
         
-        NSMutableAttributedString *receiptDescription = [[NSMutableAttributedString alloc] initWithString:receiptReadText attributes:@{NSForegroundColorAttributeName : kRiotSecondaryTextColor, NSFontAttributeName : [UIFont  boldSystemFontOfSize:15]}];
+        NSMutableAttributedString *receiptDescription = [[NSMutableAttributedString alloc] initWithString:receiptReadText attributes:@{NSForegroundColorAttributeName : kCaritasSecondaryTextColor, NSFontAttributeName : [UIFont  boldSystemFontOfSize:15]}];
         
-        [receiptDescription appendAttributedString:[[NSAttributedString alloc] initWithString:receiptTimeText attributes:@{NSForegroundColorAttributeName : kRiotSecondaryTextColor, NSFontAttributeName : [UIFont  systemFontOfSize:15]}]];
+        [receiptDescription appendAttributedString:[[NSAttributedString alloc] initWithString:receiptTimeText attributes:@{NSForegroundColorAttributeName : kCaritasSecondaryTextColor, NSFontAttributeName : [UIFont  systemFontOfSize:15]}]];
         
         cell.receiptDescriptionLabel.attributedText = receiptDescription;
     }
@@ -238,13 +238,13 @@
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    cell.backgroundColor = kRiotPrimaryBgColor;
+    cell.backgroundColor = kCaritasPrimaryBgColor;
     
     // Update the selected background view
-    if (kRiotSelectedBgColor)
+    if (kCaritasSelectedBgColor)
     {
         cell.selectedBackgroundView = [[UIView alloc] init];
-        cell.selectedBackgroundView.backgroundColor = kRiotSelectedBgColor;
+        cell.selectedBackgroundView.backgroundColor = kCaritasSelectedBgColor;
     }
     else
     {

@@ -96,20 +96,20 @@
 
 - (void)userInterfaceThemeDidChange
 {
-    self.view.backgroundColor = kRiotPrimaryBgColor;
-    self.defaultBarTintColor = kRiotSecondaryBgColor;
-    self.barTitleColor = kRiotPrimaryTextColor;
-    self.activityIndicator.backgroundColor = kRiotOverlayColor;
+    self.view.backgroundColor = kCaritasPrimaryBgColor;
+    self.defaultBarTintColor = kCaritasNavigationBarBgColor;
+    self.barTitleColor = kCaritasColorWhite;
+    self.activityIndicator.backgroundColor = kCaritasOverlayColor;
     
-    self.callerNameLabel.textColor = kRiotPrimaryTextColor;
-    self.callStatusLabel.textColor = kRiotTopicTextColor;
+    self.callerNameLabel.textColor = kCaritasPrimaryTextColor;
+    self.callStatusLabel.textColor = kCaritasTopicTextColor;
     
-    self.localPreviewContainerView.layer.borderColor = kRiotColorGreen.CGColor;
+    self.localPreviewContainerView.layer.borderColor = kCaritasColorRed.CGColor;
     self.localPreviewContainerView.layer.borderWidth = 2;
     self.localPreviewContainerView.layer.cornerRadius = 5;
     self.localPreviewContainerView.clipsToBounds = YES;
     
-    self.remotePreviewContainerView.backgroundColor = kRiotPrimaryBgColor;
+    self.remotePreviewContainerView.backgroundColor = kCaritasPrimaryBgColor;
     
     if (gradientMaskLayer)
     {
@@ -121,7 +121,7 @@
     
     // Consider the grayscale components of the kRiotPrimaryBgColor.
     CGFloat white = 1.0;
-    [kRiotPrimaryBgColor getWhite:&white alpha:nil];
+    [kCaritasPrimaryBgColor getWhite:&white alpha:nil];
     
     CGColorRef opaqueWhiteColor = [UIColor colorWithWhite:white alpha:1.0].CGColor;
     CGColorRef transparentWhiteColor = [UIColor colorWithWhite:white alpha:0].CGColor;
@@ -284,17 +284,17 @@
                                                                UINavigationController *usersDevicesNavigationController = [[RiotNavigationController alloc] init];
                                                                
                                                                // Set Riot navigation bar colors
-                                                               usersDevicesNavigationController.navigationBar.barTintColor = kRiotPrimaryBgColor;
+                                                               usersDevicesNavigationController.navigationBar.barTintColor = kCaritasNavigationBarBgColor;
                                                                NSDictionary<NSString *,id> *titleTextAttributes = usersDevicesNavigationController.navigationBar.titleTextAttributes;
                                                                if (titleTextAttributes)
                                                                {
                                                                    NSMutableDictionary *textAttributes = [NSMutableDictionary dictionaryWithDictionary:titleTextAttributes];
-                                                                   textAttributes[NSForegroundColorAttributeName] = kRiotPrimaryTextColor;
+                                                                   textAttributes[NSForegroundColorAttributeName] = kCaritasPrimaryTextColor;
                                                                    usersDevicesNavigationController.navigationBar.titleTextAttributes = textAttributes;
                                                                }
-                                                               else if (kRiotPrimaryTextColor)
+                                                               else if (kCaritasPrimaryTextColor)
                                                                {
-                                                                   usersDevicesNavigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: kRiotPrimaryTextColor};
+                                                                   usersDevicesNavigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: kCaritasPrimaryTextColor};
                                                                }
                                                                
                                                                [usersDevicesNavigationController pushViewController:usersDevicesViewController animated:NO];

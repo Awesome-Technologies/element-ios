@@ -61,30 +61,30 @@
 {
     [super customizeViewRendering];
     
-    self.backgroundColor = kRiotPrimaryBgColor;
-    self.mainHeaderBackground.backgroundColor = kRiotSecondaryBgColor;
+    self.backgroundColor = kCaritasPrimaryBgColor;
+    self.mainHeaderBackground.backgroundColor = kCaritasSecondaryBgColor;
     
-    self.displayNameTextField.textColor = (self.mxRoom.summary.displayname.length ? kRiotPrimaryTextColor : kRiotSecondaryTextColor);
+    self.displayNameTextField.textColor = kCaritasColorWhite;
     
-    self.roomTopic.textColor = kRiotTopicTextColor;
+    self.roomTopic.textColor = kCaritasTopicTextColor;
     
-    self.roomMembers.textColor = kRiotColorGreen;
+    self.roomMembers.textColor = kCaritasColorWhite;
     
-    self.previewLabel.textColor = kRiotTopicTextColor;
+    self.previewLabel.textColor = kCaritasTopicTextColor;
     self.previewLabel.numberOfLines = 0;
     
-    self.subNoticeLabel.textColor = kRiotSecondaryTextColor;
+    self.subNoticeLabel.textColor = kCaritasSecondaryTextColor;
     self.subNoticeLabel.numberOfLines = 0;
     
-    self.bottomBorderView.backgroundColor = kRiotSecondaryBgColor;
+    self.bottomBorderView.backgroundColor = kCaritasSecondaryBgColor;
     
     [self.leftButton.layer setCornerRadius:5];
     self.leftButton.clipsToBounds = YES;
-    self.leftButton.backgroundColor = kRiotColorGreen;
+    self.leftButton.backgroundColor = kCaritasColorRed;
     
     [self.rightButton.layer setCornerRadius:5];
     self.rightButton.clipsToBounds = YES;
-    self.rightButton.backgroundColor = kRiotColorGreen;
+    self.rightButton.backgroundColor = kCaritasColorRed;
 }
 
 - (void)refreshDisplay
@@ -171,11 +171,6 @@
         if (!self.displayNameTextField.text.length)
         {
             self.displayNameTextField.text = [NSBundle mxk_localizedStringForKey:@"room_displayname_empty_room"];
-            self.displayNameTextField.textColor = kRiotSecondaryTextColor;
-        }
-        else
-        {
-            self.displayNameTextField.textColor = kRiotPrimaryTextColor;
         }
         
         // Display room topic
@@ -253,7 +248,7 @@
     self.roomAvatar.layer.cornerRadius = self.roomAvatar.frame.size.width / 2;
     self.roomAvatar.clipsToBounds = YES;
     
-    self.roomAvatar.defaultBackgroundColor = kRiotSecondaryBgColor;
+    self.roomAvatar.defaultBackgroundColor = kCaritasSecondaryBgColor;
     
     // Force the layout of subviews to update the position of 'bottomBorderView' which is used to define the actual height of the preview container.
     [self layoutIfNeeded];

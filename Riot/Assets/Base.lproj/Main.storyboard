@@ -29,7 +29,7 @@
         <!--Room-->
         <scene sceneID="UrN-g2-oG1">
             <objects>
-                <viewController storyboardIdentifier="RoomViewControllerStoryboardId" title="Room" hidesBottomBarWhenPushed="YES" id="msb-ol-2LB" customClass="RoomViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="RoomViewControllerStoryboardId" title="Room" extendedLayoutIncludesOpaqueBars="YES" hidesBottomBarWhenPushed="YES" id="msb-ol-2LB" customClass="RoomViewController" sceneMemberID="viewController">
                     <navigationItem key="navigationItem" id="3Zt-Wl-J6o">
                         <nil key="title"/>
                         <view key="titleView" contentMode="scaleToFill" id="aas-th-FW1" userLabel="Room title view container">
@@ -193,7 +193,7 @@
         <!--Unified Search View Controller-->
         <scene sceneID="ijO-nb-yi4">
             <objects>
-                <viewController id="nJt-uq-tV9" customClass="UnifiedSearchViewController" sceneMemberID="viewController">
+                <viewController extendedLayoutIncludesOpaqueBars="YES" id="nJt-uq-tV9" customClass="UnifiedSearchViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="V3l-gx-WNN"/>
                         <viewControllerLayoutGuide type="bottom" id="fYW-Kr-Hqf"/>
@@ -216,7 +216,7 @@
             <objects>
                 <tabBarController id="xaQ-tG-rlO" customClass="MasterTabBarController" sceneMemberID="viewController">
                     <navigationItem key="navigationItem" id="m6O-wq-yrc">
-                        <barButtonItem key="leftBarButtonItem" image="Caritas_Logo_ohneSchrift" id="vhQ-s2-oaf"/>
+                        <barButtonItem key="leftBarButtonItem" image="Caritas_Logo_NavBar" id="vhQ-s2-oaf"/>
                         <barButtonItem key="rightBarButtonItem" image="search_icon" id="pud-Fh-Usd">
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="MasterTabBarControllerSearchBarButton"/>
@@ -377,14 +377,18 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo" translatesAutoresizingMaskIntoConstraints="NO" id="6LG-qc-7jf">
-                                <rect key="frame" x="127.5" y="283" width="120" height="101"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Caritas_Logo" translatesAutoresizingMaskIntoConstraints="NO" id="6LG-qc-7jf">
+                                <rect key="frame" x="115" y="238.5" width="145" height="190"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="145" id="2Ah-vG-xNm"/>
+                                    <constraint firstAttribute="height" constant="190" id="NuX-YQ-7W2"/>
+                                </constraints>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="6LG-qc-7jf" firstAttribute="centerY" secondItem="FdE-yP-vzj" secondAttribute="centerY" id="AF1-hZ-uOX"/>
-                            <constraint firstItem="6LG-qc-7jf" firstAttribute="centerX" secondItem="FdE-yP-vzj" secondAttribute="centerX" id="WGk-oE-AqR"/>
+                            <constraint firstItem="6LG-qc-7jf" firstAttribute="centerY" secondItem="FdE-yP-vzj" secondAttribute="centerY" id="AIw-Mh-no3"/>
+                            <constraint firstItem="6LG-qc-7jf" firstAttribute="centerX" secondItem="FdE-yP-vzj" secondAttribute="centerX" id="YNa-Qc-lCB"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="c9s-dM-eEg"/>
@@ -514,19 +518,19 @@
         </scene>
     </scenes>
     <resources>
-        <image name="Caritas_Logo_ohneSchrift" width="21" height="21"/>
+        <image name="Caritas_Logo" width="307" height="400"/>
+        <image name="Caritas_Logo_NavBar" width="21" height="28"/>
         <image name="apps-icon" width="24" height="24"/>
-        <image name="logo" width="120" height="101"/>
         <image name="search_icon" width="22" height="22"/>
         <image name="tab_people" width="23" height="23"/>
         <image name="tab_rooms" width="23" height="23"/>
         <image name="tab_settings" width="23" height="23"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Tfl-tq-LQp"/>
+        <segue reference="bwO-oZ-2vj"/>
         <segue reference="0ws-cL-0tk"/>
-        <segue reference="ziz-Xl-QVg"/>
-        <segue reference="mFs-HA-7Oo"/>
-        <segue reference="fNQ-S3-DbZ"/>
+        <segue reference="f5u-Y1-7nt"/>
+        <segue reference="vCz-dl-6xQ"/>
+        <segue reference="cUw-vU-gJq"/>
     </inferredMetricsTieBreakers>
 </document>
