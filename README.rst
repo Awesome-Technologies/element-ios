@@ -1,12 +1,18 @@
-Riot-ios
-==========
+Build Status
+============
+|Build Status|
 
-Riot/iOS is an iOS Matrix client. 
+.. |Build Status| image:: https://app.bitrise.io/app/40c6dbdbcc7e7729/status.svg?token=w0kqHzGK81RuPm_Pjc2Ajg&branch=Caritas
+:target: https://app.bitrise.io/app/40c6dbdbcc7e7729
 
-.. image:: https://linkmaker.itunes.apple.com/images/badges/en-us/badge_appstore-lrg.svg
-   :target: https://itunes.apple.com/us/app/riot-open-source-collaboration/id1083446067?mt=8
+Build status is shown for Caritas branch.
 
-It is based on MatrixKit (https://github.com/matrix-org/matrix-ios-kit) and MatrixSDK (https://github.com/matrix-org/matrix-ios-sdk).
+Caritas Messenger
+=================
+
+The Caritas messenger is an iOS Matrix client for internal communication between the staff.
+
+It is based on the Riot-iOS (https://github.com/vector-im/riot-ios) app and therefore also MatrixKit (https://github.com/matrix-org/matrix-ios-kit) and MatrixSDK (https://github.com/matrix-org/matrix-ios-sdk).
 
 You can build the app from source as per below:
 
@@ -19,8 +25,8 @@ CocoaPods command::
         $ cd Riot
         $ pod install
 
-This will load all dependencies for the Riot source code, including MatrixKit 
-and MatrixSDK.  You will need an recent and updated (``pod update``) install of
+This will load all dependencies for the Riot source code, including MatrixKit
+and MatrixSDK.  You will need a recent and updated (``pod update``) install of
 CocoaPods.
 
 Then, open ``Riot.xcworkspace`` with Xcode
@@ -30,16 +36,17 @@ Then, open ``Riot.xcworkspace`` with Xcode
 Developing
 ==========
 
-Uncomment the right definitions of ``$matrixKitVersion`` for the version you want to develop and build against. For example, if you are trying to build the develop branch, uncomment ``$matrixKitVersion = 'develop'`` and make sure the more specific MatrixKit version is commented out. Once you are done editing the ``Podfile``, run ``pod install``.
+Main development happens on the Caritas branch. You can edit the podfile to adjust the used MatrixKit version. Once you are done editing the ``Podfile``, run ``pod install``.
 
-You may need to change the bundle identifier and app group identifier to be unique to get Xcode to build the app. Make sure to change the application group identifier everywhere by running a search for ``group.im.vector`` and changing every spot that identifier is used to your new identifier.
+You may need to change the bundle identifier and app group identifier to be unique to get Xcode to build the app. Make sure to change the application group identifier everywhere by running a search for ``group.care.amp.messenger.caritas`` and changing every spot that identifier is used to your new identifier.
 
 Copyright & License
-==================
+===================
 
 Copyright (c) 2014-2017 OpenMarket Ltd
 Copyright (c) 2017 Vector Creations Ltd
 Copyright (c) 2017-2018 New Vector Ltd
+Copyright (c) 2018 Awesome Technologies Innovationslabor GmbH
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this work except in compliance with the License. You may obtain a copy of the License in the LICENSE file, or at:
 
