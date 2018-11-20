@@ -20,7 +20,6 @@
 #import "AppDelegate.h"
 
 #import "AuthInputsView.h"
-#import "ForgotPasswordInputsView.h"
 
 @interface AuthenticationViewController ()
 {
@@ -102,7 +101,6 @@
     // Custom used authInputsView
     [self registerAuthInputsViewClass:AuthInputsView.class forAuthType:MXKAuthenticationTypeLogin];
     [self registerAuthInputsViewClass:AuthInputsView.class forAuthType:MXKAuthenticationTypeRegister];
-    [self registerAuthInputsViewClass:ForgotPasswordInputsView.class forAuthType:MXKAuthenticationTypeForgotPassword];
     
     // Initialize the auth inputs display
     AuthInputsView *authInputsView = [AuthInputsView authInputsView];
@@ -132,12 +130,6 @@
     
     self.noFlowLabel.textColor = kCaritasColorRed;
     
-    NSMutableAttributedString *forgotPasswordTitle = [[NSMutableAttributedString alloc] initWithString:NSLocalizedStringFromTable(@"auth_forgot_password", @"Vector", nil)];
-    [forgotPasswordTitle addAttribute:NSUnderlineStyleAttributeName value:[NSNumber numberWithInteger:NSUnderlineStyleSingle] range:NSMakeRange(0, forgotPasswordTitle.length)];
-    [forgotPasswordTitle addAttribute:NSForegroundColorAttributeName value:kCaritasColorRed range:NSMakeRange(0, forgotPasswordTitle.length)];
-    [self.forgotPasswordButton setAttributedTitle:forgotPasswordTitle forState:UIControlStateNormal];
-    [self.forgotPasswordButton setAttributedTitle:forgotPasswordTitle forState:UIControlStateHighlighted];
-    [self updateForgotPwdButtonVisibility];
     self.defaultBarTintColor = kCaritasNavigationBarBgColor;
     self.barTitleColor = kCaritasColorWhite;
     self.activityIndicator.backgroundColor = kCaritasOverlayColor;
@@ -217,8 +209,6 @@
             [self.submitButton setTitle:NSLocalizedStringFromTable(@"auth_send_reset_email", @"Vector", nil) forState:UIControlStateHighlighted];
         }
     }
-    
-    [self updateForgotPwdButtonVisibility];
 }
 
 - (void)setAuthInputsView:(MXKAuthInputsView *)authInputsView
@@ -276,12 +266,7 @@
 
 - (IBAction)onButtonPressed:(id)sender
 {
-    if (sender == self.forgotPasswordButton)
-    {
-        // Update UI to reset password
-        self.authType = MXKAuthenticationTypeForgotPassword;
-    }
-    else if (sender == self.rightBarButtonItem)
+    if (sender == self.rightBarButtonItem)
     {
         // Check whether a request is in progress
         if (!self.userInteractionEnabled)
@@ -402,25 +387,6 @@
                 return;
             }
         }
-        else if (self.authType == MXKAuthenticationTypeForgotPassword)
-        {
-            if (mxError && [mxError.errcode isEqualToString:kMXErrCodeStringNotFound])
-            {
-                // Sanity check
-                if ([self.authInputsView isKindOfClass:ForgotPasswordInputsView.class])
-                {
-                    NSLog(@"[AuthenticationVC] Retry forgot password");
-                    
-                    // Store the current error
-                    loginError = error;
-                    
-                    // Trigger a new request
-                    ForgotPasswordInputsView *authInputsView = (ForgotPasswordInputsView*)self.authInputsView;
-                    [authInputsView.nextStepButton sendActionsForControlEvents:UIControlEventTouchUpInside];
-                    return;
-                }
-            }
-        }
     }
     
     // Check whether we were trying to login again
@@ -476,22 +442,6 @@
     }
     
     [super onSuccessfulLogin:credentials];
-}
-
-- (void)updateForgotPwdButtonVisibility
-{
-    self.forgotPasswordButton.hidden = (self.authType != MXKAuthenticationTypeLogin);
-    
-    // Adjust minimum leading constraint of the submit button
-    if (self.forgotPasswordButton.isHidden)
-    {
-        self.submitButtonMinLeadingConstraint.constant = 19;
-    }
-    else
-    {
-        CGRect frame = self.forgotPasswordButton.frame;
-        self.submitButtonMinLeadingConstraint.constant =  frame.origin.x + frame.size.width + 10;
-    }
 }
 
 #pragma mark -

@@ -121,9 +121,7 @@
 		B1B5577D20EE84BF00210D55 /* CircleButton.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B5577B20EE84BE00210D55 /* CircleButton.m */; };
 		B1B5577E20EE84BF00210D55 /* IncomingCallView.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B5577C20EE84BF00210D55 /* IncomingCallView.m */; };
 		B1B5579920EF575B00210D55 /* AuthInputsView.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B5579320EF575A00210D55 /* AuthInputsView.m */; };
-		B1B5579A20EF575B00210D55 /* ForgotPasswordInputsView.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B5579420EF575A00210D55 /* ForgotPasswordInputsView.m */; };
 		B1B5579B20EF575B00210D55 /* AuthInputsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B1B5579620EF575A00210D55 /* AuthInputsView.xib */; };
-		B1B5579C20EF575B00210D55 /* ForgotPasswordInputsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B1B5579820EF575A00210D55 /* ForgotPasswordInputsView.xib */; };
 		B1B557A120EF58AD00210D55 /* ContactTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B5579E20EF58AC00210D55 /* ContactTableViewCell.m */; };
 		B1B557A220EF58AD00210D55 /* ContactTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B1B5579F20EF58AC00210D55 /* ContactTableViewCell.xib */; };
 		B1B557A720EF5A1B00210D55 /* DeviceTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B1B557A520EF5A1B00210D55 /* DeviceTableViewCell.xib */; };
@@ -567,11 +565,8 @@
 		B1B5577B20EE84BE00210D55 /* CircleButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CircleButton.m; sourceTree = "<group>"; };
 		B1B5577C20EE84BF00210D55 /* IncomingCallView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IncomingCallView.m; sourceTree = "<group>"; };
 		B1B5579320EF575A00210D55 /* AuthInputsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AuthInputsView.m; sourceTree = "<group>"; };
-		B1B5579420EF575A00210D55 /* ForgotPasswordInputsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ForgotPasswordInputsView.m; sourceTree = "<group>"; };
 		B1B5579520EF575A00210D55 /* AuthInputsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AuthInputsView.h; sourceTree = "<group>"; };
 		B1B5579620EF575A00210D55 /* AuthInputsView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AuthInputsView.xib; sourceTree = "<group>"; };
-		B1B5579720EF575A00210D55 /* ForgotPasswordInputsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ForgotPasswordInputsView.h; sourceTree = "<group>"; };
-		B1B5579820EF575A00210D55 /* ForgotPasswordInputsView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ForgotPasswordInputsView.xib; sourceTree = "<group>"; };
 		B1B5579E20EF58AC00210D55 /* ContactTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactTableViewCell.m; sourceTree = "<group>"; };
 		B1B5579F20EF58AC00210D55 /* ContactTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ContactTableViewCell.xib; sourceTree = "<group>"; };
 		B1B557A020EF58AC00210D55 /* ContactTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactTableViewCell.h; sourceTree = "<group>"; };
@@ -1697,9 +1692,6 @@
 				B1B5579520EF575A00210D55 /* AuthInputsView.h */,
 				B1B5579320EF575A00210D55 /* AuthInputsView.m */,
 				B1B5579620EF575A00210D55 /* AuthInputsView.xib */,
-				B1B5579720EF575A00210D55 /* ForgotPasswordInputsView.h */,
-				B1B5579420EF575A00210D55 /* ForgotPasswordInputsView.m */,
-				B1B5579820EF575A00210D55 /* ForgotPasswordInputsView.xib */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -2515,7 +2507,6 @@
 				B1B558D720EF768F00210D55 /* RoomOutgoingEncryptedTextMsgWithPaginationTitleBubbleCell.xib in Resources */,
 				B1B5590820EF768F00210D55 /* RoomMembershipWithPaginationTitleBubbleCell.xib in Resources */,
 				F083BDE81E7009ED00A9B29C /* message.mp3 in Resources */,
-				B1B5579C20EF575B00210D55 /* ForgotPasswordInputsView.xib in Resources */,
 				F083BE011E7009ED00A9B29C /* third_party_licenses.html in Resources */,
 				B1B5593920EF7BAC00210D55 /* TableViewCellWithCheckBoxes.xib in Resources */,
 				B1B557C120EF5B4500210D55 /* DisabledRoomInputToolbarView.xib in Resources */,
@@ -2804,7 +2795,6 @@
 				B1B5596F20EFA85D00210D55 /* EncryptionInfoView.m in Sources */,
 				B1B5574F20EE6C4D00210D55 /* RoomsViewController.m in Sources */,
 				B1B5572520EE6C4D00210D55 /* RoomMessagesSearchViewController.m in Sources */,
-				B1B5579A20EF575B00210D55 /* ForgotPasswordInputsView.m in Sources */,
 				B1B558CC20EF768F00210D55 /* RoomOutgoingEncryptedAttachmentWithoutSenderInfoBubbleCell.m in Sources */,
 				B16932EA20F3C39000746532 /* UnifiedSearchRecentsDataSource.m in Sources */,
 				B1B557DE20EF5FBB00210D55 /* FilesSearchTableViewCell.m in Sources */,

@@ -22,7 +22,6 @@
                 <outlet property="cancelAuthFallbackButton" destination="9qj-5c-Sfb" id="IH4-cc-kKx"/>
                 <outlet property="contentView" destination="rhx-dD-4EJ" id="XXc-2j-Gi6"/>
                 <outlet property="contentViewHeightConstraint" destination="6v6-fz-e8o" id="wHX-YX-3gE"/>
-                <outlet property="forgotPasswordButton" destination="AJ2-lJ-NUq" id="DZw-3o-ioE"/>
                 <outlet property="homeServerLabel" destination="kHf-s1-cZa" id="nSI-4K-aQq"/>
                 <outlet property="homeServerTextField" destination="G8l-AP-iRs" id="F4s-Sf-TTZ"/>
                 <outlet property="identityServerLabel" destination="5CT-Ht-Z3v" id="9h4-6J-n3X"/>
@@ -133,28 +132,8 @@
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Gg0-TE-OGb">
                                     <rect key="frame" x="0.0" y="360" width="375" height="300"/>
                                     <subviews>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AJ2-lJ-NUq">
-                                            <rect key="frame" x="19" y="33" width="122" height="30"/>
-                                            <accessibility key="accessibilityConfiguration" identifier="AuthenticationVCForgotPasswordButton"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="30" id="1mr-dZ-KtP"/>
-                                            </constraints>
-                                            <state key="normal">
-                                                <attributedString key="attributedTitle">
-                                                    <fragment content="Forgot password?">
-                                                        <attributes>
-                                                            <color key="NSColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                            <font key="NSFont" size="15" name="HelveticaNeue"/>
-                                                        </attributes>
-                                                    </fragment>
-                                                </attributedString>
-                                            </state>
-                                            <connections>
-                                                <action selector="onButtonPressed:" destination="-1" eventType="touchUpInside" id="UVJ-Re-xe2"/>
-                                            </connections>
-                                        </button>
                                         <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wEJ-AF-rdH">
-                                            <rect key="frame" x="11" y="33" width="106" height="30"/>
+                                            <rect key="frame" x="11" y="33" width="94" height="30"/>
                                             <color key="backgroundColor" red="0.028153735480000001" green="0.82494870580000002" blue="0.051896891280000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <accessibility key="accessibilityConfiguration" identifier="AuthenticationVCSkipButton"/>
                                             <constraints>
@@ -346,13 +325,11 @@
                                         <constraint firstItem="wEJ-AF-rdH" firstAttribute="centerY" secondItem="k3J-Eg-itz" secondAttribute="centerY" id="Vze-EI-oXj"/>
                                         <constraint firstAttribute="trailing" secondItem="k3J-Eg-itz" secondAttribute="trailing" constant="11" id="ZyA-Tq-Sfq"/>
                                         <constraint firstItem="k3J-Eg-itz" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Gg0-TE-OGb" secondAttribute="leading" constant="150" id="bEB-EO-b14"/>
-                                        <constraint firstItem="AJ2-lJ-NUq" firstAttribute="centerY" secondItem="k3J-Eg-itz" secondAttribute="centerY" id="dcE-Vs-7Rt"/>
                                         <constraint firstAttribute="trailing" secondItem="FIn-2w-e6H" secondAttribute="trailing" id="kFj-6g-v3H"/>
                                         <constraint firstAttribute="height" constant="300" id="lXv-gM-CjN"/>
                                         <constraint firstItem="k3J-Eg-itz" firstAttribute="top" secondItem="Gg0-TE-OGb" secondAttribute="top" constant="33" id="mor-t9-7Ke"/>
                                         <constraint firstItem="FIn-2w-e6H" firstAttribute="top" secondItem="k3J-Eg-itz" secondAttribute="bottom" constant="5" id="oTS-5o-MMW"/>
                                         <constraint firstItem="wEJ-AF-rdH" firstAttribute="leading" secondItem="Gg0-TE-OGb" secondAttribute="leading" constant="11" id="sax-RY-aOJ"/>
-                                        <constraint firstItem="AJ2-lJ-NUq" firstAttribute="leading" secondItem="Gg0-TE-OGb" secondAttribute="leading" constant="19" id="xFm-Bs-yzw"/>
                                     </constraints>
                                 </view>
                             </subviews>
