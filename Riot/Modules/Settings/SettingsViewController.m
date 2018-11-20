@@ -306,9 +306,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     {
         [self addMatrixSession:mxSession];
     }
-    
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(onSave:)];
-    self.navigationItem.rightBarButtonItem.accessibilityIdentifier=@"SettingsVCNavBarSaveButton";
 
     
     // Observe user interface theme change.
@@ -435,6 +432,11 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
         
     }];
     
+    UIBarButtonItem *saveButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(onSave:)];
+    [saveButton setEnabled:NO];
+    [AppDelegate theDelegate].masterTabBarController.navigationItem.rightBarButtonItem = saveButton;
+    [AppDelegate theDelegate].masterTabBarController.navigationItem.rightBarButtonItem.accessibilityIdentifier=@"SettingsVCNavBarSaveButton";
+    
     newPhoneNumberCountryPicker = nil;
 }
 
@@ -477,6 +479,8 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
         [[NSNotificationCenter defaultCenter] removeObserver:kAppDelegateDidTapStatusBarNotificationObserver];
         kAppDelegateDidTapStatusBarNotificationObserver = nil;
     }
+    
+    [AppDelegate theDelegate].masterTabBarController.navigationItem.rightBarButtonItem = nil;
 }
 
 #pragma mark - Internal methods
@@ -3133,7 +3137,7 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
         return;
     }
     
-    self.navigationItem.rightBarButtonItem.enabled = NO;
+    [AppDelegate theDelegate].masterTabBarController.navigationItem.rightBarButtonItem.enabled = NO;
     [self startActivityIndicator];
     isSavingInProgress = YES;
     __weak typeof(self) weakSelf = self;
@@ -3528,7 +3532,7 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
             }
         }
         
-        self.navigationItem.rightBarButtonItem.enabled = saveButtonEnabled;
+        [AppDelegate theDelegate].masterTabBarController.navigationItem.rightBarButtonItem.enabled = saveButtonEnabled;
     }
 }
 
