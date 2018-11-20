@@ -17,34 +17,26 @@
 
 #import <MatrixKit/MatrixKit.h>
 
-@interface AuthInputsView : MXKAuthInputsView <MXKCountryPickerViewControllerDelegate>
+@interface AuthInputsView : MXKAuthInputsView
 
 @property (weak, nonatomic) IBOutlet UITextField *userLoginTextField;
 @property (weak, nonatomic) IBOutlet UITextField *passWordTextField;
 @property (weak, nonatomic) IBOutlet UITextField *repeatPasswordTextField;
 @property (weak, nonatomic) IBOutlet UITextField *emailTextField;
-@property (weak, nonatomic) IBOutlet UITextField *phoneTextField;
 
 @property (weak, nonatomic) IBOutlet UIView *userLoginContainer;
 @property (weak, nonatomic) IBOutlet UIView *emailContainer;
-@property (weak, nonatomic) IBOutlet UIView *phoneContainer;
 @property (weak, nonatomic) IBOutlet UIView *passwordContainer;
 @property (weak, nonatomic) IBOutlet UIView *repeatPasswordContainer;
 
 @property (weak, nonatomic) IBOutlet UIView *userLoginSeparator;
 @property (weak, nonatomic) IBOutlet UIView *emailSeparator;
-@property (weak, nonatomic) IBOutlet UIView *phoneSeparator;
 @property (weak, nonatomic) IBOutlet UIView *passwordSeparator;
 @property (weak, nonatomic) IBOutlet UIView *repeatPasswordSeparator;
-
-@property (weak, nonatomic) IBOutlet UIButton *countryCodeButton;
-@property (weak, nonatomic) IBOutlet UILabel *isoCountryCodeLabel;
-@property (weak, nonatomic) IBOutlet UILabel *callingCodeLabel;
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *userLoginContainerTopConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *passwordContainerTopConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *emailContainerTopConstraint;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *phoneContainerTopConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *messageLabelTopConstraint;
 
 @property (weak, nonatomic) IBOutlet UILabel *messageLabel;
@@ -76,13 +68,6 @@
  Tell whether a second third-party identifier is waiting for being added to the new account.
  */
 @property (nonatomic, readonly) BOOL isThirdPartyIdentifierPending;
-
-/**
- The current selected country code
- */
-@property (nonatomic) NSString *isoCountryCode;
-
-- (IBAction)textFieldDidChange:(id)sender;
 
 - (void)resetThirdPartyIdentifiers;
 

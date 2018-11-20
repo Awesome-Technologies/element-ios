@@ -36,7 +36,7 @@
 "auth_skip" = "Überspringen";
 "auth_send_reset_email" = "Sende Rücksetz-E-Mail";
 "auth_return_to_login" = "Gehe zurück zum Anmeldefenster";
-"auth_user_id_placeholder" = "E-Mail oder Nutzername";
+"auth_user_id_placeholder" = "Nutzername";
 "auth_password_placeholder" = "Passwort";
 "auth_new_password_placeholder" = "Neues Passwort";
 "auth_user_name_placeholder" = "Nutzername";

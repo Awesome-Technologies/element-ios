@@ -223,35 +223,11 @@
 
 - (void)setAuthInputsView:(MXKAuthInputsView *)authInputsView
 {
-    // Keep the current country code if any.
-    if ([self.authInputsView isKindOfClass:AuthInputsView.class])
-    {
-        // We will reuse the current country code
-        defaultCountryCode = ((AuthInputsView*)self.authInputsView).isoCountryCode;
-    }
-    
     // Finalize the new auth inputs view
     if ([authInputsView isKindOfClass:AuthInputsView.class])
     {
         AuthInputsView *authInputsview = (AuthInputsView*)authInputsView;
         
-        // Retrieve the MCC from the SIM card information (Note: the phone book country code is not defined yet)
-        NSString *countryCode = [MXKAppSettings standardAppSettings].phonebookCountryCode;
-        if (!countryCode)
-        {
-            // If none, consider the preferred locale
-            NSLocale *local = [[NSLocale alloc] initWithLocaleIdentifier:[[[NSBundle mainBundle] preferredLocalizations] objectAtIndex:0]];
-            if ([local respondsToSelector:@selector(countryCode)])
-            {
-                countryCode = local.countryCode;
-            }
-            
-            if (!countryCode)
-            {
-                countryCode = defaultCountryCode;
-            }
-        }
-        authInputsview.isoCountryCode = countryCode;
         authInputsview.delegate = self;
     }
     

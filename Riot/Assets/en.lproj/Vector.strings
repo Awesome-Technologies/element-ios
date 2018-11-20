@@ -60,7 +60,7 @@
 "auth_skip" = "Skip";
 "auth_send_reset_email" = "Send Reset Email";
 "auth_return_to_login" = "Return to login screen";
-"auth_user_id_placeholder" = "Email or user name";
+"auth_user_id_placeholder" = "User name";
 "auth_password_placeholder" = "Password";
 "auth_new_password_placeholder" = "New password";
 "auth_user_name_placeholder" = "User name";
