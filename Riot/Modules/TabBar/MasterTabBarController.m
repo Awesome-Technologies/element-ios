@@ -75,7 +75,6 @@
     _settingsViewController = [self.viewControllers objectAtIndex:TABBAR_SETTINGS_INDEX];
     
     // Set the accessibility labels for all buttons #1842
-    [_searchBarButtonIem setAccessibilityLabel:NSLocalizedStringFromTable(@"search_default_placeholder", @"Vector", nil)];
     [_peopleViewController setAccessibilityLabel:NSLocalizedStringFromTable(@"title_people", @"Vector", nil)];
     [_roomsViewController setAccessibilityLabel:NSLocalizedStringFromTable(@"title_rooms", @"Vector", nil)];
     [_settingsViewController setAccessibilityLabel:NSLocalizedStringFromTable(@"settings_title", @"Vector", nil)];
@@ -613,15 +612,6 @@
             {
                 _authViewController.externalRegistrationParameters = authViewControllerRegistrationParameters;
                 authViewControllerRegistrationParameters = nil;
-            }
-        }
-        else if ([[segue identifier] isEqualToString:@"showUnifiedSearch"])
-        {
-            unifiedSearchViewController= segue.destinationViewController;
-            
-            for (MXSession *session in mxSessionArray)
-            {
-                [unifiedSearchViewController addMatrixSession:session];
             }
         }
     }

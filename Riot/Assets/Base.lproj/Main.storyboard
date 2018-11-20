@@ -217,14 +217,6 @@
                 <tabBarController id="xaQ-tG-rlO" customClass="MasterTabBarController" sceneMemberID="viewController">
                     <navigationItem key="navigationItem" id="m6O-wq-yrc">
                         <barButtonItem key="leftBarButtonItem" image="Caritas_Logo_NavBar" id="vhQ-s2-oaf"/>
-                        <barButtonItem key="rightBarButtonItem" image="search_icon" id="pud-Fh-Usd">
-                            <userDefinedRuntimeAttributes>
-                                <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="MasterTabBarControllerSearchBarButton"/>
-                            </userDefinedRuntimeAttributes>
-                            <connections>
-                                <segue destination="nJt-uq-tV9" kind="show" identifier="showUnifiedSearch" id="5no-rS-zX7"/>
-                            </connections>
-                        </barButtonItem>
                     </navigationItem>
                     <tabBar key="tabBar" contentMode="scaleToFill" id="7jP-3G-C0b">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="49"/>
@@ -232,7 +224,6 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </tabBar>
                     <connections>
-                        <outlet property="searchBarButtonIem" destination="pud-Fh-Usd" id="DiH-Re-nZE"/>
                         <segue destination="vC3-pB-5Vb" kind="showDetail" identifier="showRoomDetails" id="tk8-vF-K4T"/>
                         <segue destination="ZlD-EU-ncw" kind="presentation" identifier="showAuth" id="fpJ-zM-Qpo"/>
                         <segue destination="vC3-pB-5Vb" kind="showDetail" identifier="showContactDetails" id="p4M-yR-DLA"/>
@@ -528,7 +519,7 @@
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="bwO-oZ-2vj"/>
-        <segue reference="0ws-cL-0tk"/>
+        <segue reference="tk8-vF-K4T"/>
         <segue reference="f5u-Y1-7nt"/>
         <segue reference="vCz-dl-6xQ"/>
         <segue reference="cUw-vU-gJq"/>

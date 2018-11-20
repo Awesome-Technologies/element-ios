@@ -32,8 +32,6 @@
 
 @interface MasterTabBarController : UITabBarController
 
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *searchBarButtonIem;
-
 // Associated matrix sessions (empty by default).
 @property (nonatomic, readonly) NSArray *mxSessions;
 
