@@ -22,7 +22,7 @@
 #define CALL_STACK_JINGLE
 #endif
 
-@interface IntentHandler () <INStartAudioCallIntentHandling, INStartVideoCallIntentHandling, INSendMessageIntentHandling>
+@interface IntentHandler () <INSendMessageIntentHandling>
 
 @end
 
@@ -48,108 +48,6 @@
 - (id)handlerForIntent:(INIntent *)intent
 {
     return self;
-}
-
-#pragma mark - INStartAudioCallIntentHandling
-
-- (void)resolveContactsForStartAudioCall:(INStartAudioCallIntent *)intent withCompletion:(void (^)(NSArray<INPersonResolutionResult *> * _Nonnull))completion
-{
-    [self resolveContacts:intent.contacts withCompletion:completion];
-}
-
-- (void)confirmStartAudioCall:(INStartAudioCallIntent *)intent completion:(void (^)(INStartAudioCallIntentResponse * _Nonnull))completion
-{
-    INStartAudioCallIntentResponse *response = nil;
-    
-    MXKAccount *account = [MXKAccountManager sharedManager].activeAccounts.firstObject;
-    if (account)
-    {
-#if defined MX_CALL_STACK_OPENWEBRTC || defined MX_CALL_STACK_ENDPOINT || defined CALL_STACK_JINGLE
-        NSUserActivity *userActivity = [[NSUserActivity alloc] initWithActivityType:NSStringFromClass([INStartAudioCallIntent class])];
-        response = [[INStartAudioCallIntentResponse alloc] initWithCode:INStartAudioCallIntentResponseCodeReady userActivity:userActivity];
-#else
-        response = [[INStartAudioCallIntentResponse alloc] initWithCode:INStartAudioCallIntentResponseCodeFailureCallingServiceNotAvailable userActivity:nil];
-#endif
-    }
-    else
-    {
-        // User hasn't logged in
-        response = [[INStartAudioCallIntentResponse alloc] initWithCode:INStartAudioCallIntentResponseCodeFailureAppConfigurationRequired userActivity:nil];
-    }
-    
-    completion(response);
-}
-
-- (void)handleStartAudioCall:(INStartAudioCallIntent *)intent completion:(void (^)(INStartAudioCallIntentResponse * _Nonnull))completion
-{
-    INStartAudioCallIntentResponse *response = nil;
-    
-    INPerson *person = intent.contacts.firstObject;
-    if (person && person.customIdentifier)
-    {
-        NSUserActivity *userActivity = [[NSUserActivity alloc] initWithActivityType:NSStringFromClass(INStartAudioCallIntent.class)];
-        userActivity.userInfo = @{ @"roomID" : person.customIdentifier };
-        
-        response = [[INStartAudioCallIntentResponse alloc] initWithCode:INStartAudioCallIntentResponseCodeContinueInApp
-                                                           userActivity:userActivity];
-    }
-    else
-    {
-        response = [[INStartAudioCallIntentResponse alloc] initWithCode:INStartAudioCallIntentResponseCodeFailure userActivity:nil];
-    }
-
-    completion(response);
-}
-
-#pragma mark - INStartVideoCallIntentHandling
-
-- (void)resolveContactsForStartVideoCall:(INStartVideoCallIntent *)intent withCompletion:(void (^)(NSArray<INPersonResolutionResult *> * _Nonnull))completion
-{
-    [self resolveContacts:intent.contacts withCompletion:completion];
-}
-
-- (void)confirmStartVideoCall:(INStartVideoCallIntent *)intent completion:(void (^)(INStartVideoCallIntentResponse * _Nonnull))completion
-{
-    INStartVideoCallIntentResponse *response = nil;
-    
-    MXKAccount *account = [MXKAccountManager sharedManager].activeAccounts.firstObject;
-    if (account)
-    {
-#if defined MX_CALL_STACK_OPENWEBRTC || defined MX_CALL_STACK_ENDPOINT || defined CALL_STACK_JINGLE
-        NSUserActivity *userActivity = [[NSUserActivity alloc] initWithActivityType:NSStringFromClass([INStartVideoCallIntent class])];
-        response = [[INStartVideoCallIntentResponse alloc] initWithCode:INStartVideoCallIntentResponseCodeReady userActivity:userActivity];
-#else
-        response = [[INStartVideoCallIntentResponse alloc] initWithCode:INStartVideoCallIntentResponseCodeFailureCallingServiceNotAvailable userActivity:nil];
-#endif
-    }
-    else
-    {
-        // User hasn't logged in
-        response = [[INStartVideoCallIntentResponse alloc] initWithCode:INStartVideoCallIntentResponseCodeFailureRequiringAppLaunch userActivity:nil];
-    }
-    
-    completion(response);
-}
-
-- (void)handleStartVideoCall:(INStartVideoCallIntent *)intent completion:(void (^)(INStartVideoCallIntentResponse * _Nonnull))completion
-{
-    INStartVideoCallIntentResponse *response = nil;
-    
-    INPerson *person = intent.contacts.firstObject;
-    if (person && person.customIdentifier)
-    {
-        NSUserActivity *userActivity = [[NSUserActivity alloc] initWithActivityType:NSStringFromClass(INStartVideoCallIntent.class)];
-        userActivity.userInfo = @{ @"roomID" : person.customIdentifier };
-        
-        response = [[INStartVideoCallIntentResponse alloc] initWithCode:INStartVideoCallIntentResponseCodeContinueInApp
-                                                           userActivity:userActivity];
-    }
-    else
-    {
-        response = [[INStartVideoCallIntentResponse alloc] initWithCode:INStartVideoCallIntentResponseCodeFailure userActivity:nil];
-    }
-    
-    completion(response);
 }
 
 #pragma mark - INSendMessageIntentHandling
