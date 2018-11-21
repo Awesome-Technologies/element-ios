@@ -28,8 +28,6 @@
 			<array/>
 			<key>IntentsSupported</key>
 			<array>
-				<string>INStartAudioCallIntent</string>
-				<string>INStartVideoCallIntent</string>
 				<string>INSendMessageIntent</string>
 			</array>
 		</dict>
