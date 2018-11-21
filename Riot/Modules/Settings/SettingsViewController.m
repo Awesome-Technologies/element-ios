@@ -271,6 +271,9 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     self.tableView.rowHeight = UITableViewAutomaticDimension;
     self.tableView.estimatedRowHeight = 50;
     
+    // Make view not extend under nav/tab bar
+    self.edgesForExtendedLayout = UIRectEdgeNone;
+    
     // Add observer to handle removed accounts
     removedAccountObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kMXKAccountManagerDidRemoveAccountNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notif) {
         
