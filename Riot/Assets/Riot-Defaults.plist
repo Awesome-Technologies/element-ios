@@ -8,12 +8,8 @@
 	<true/>
 	<key>pushGatewayURL</key>
 	<string>https://caritas.amp.care/_matrix/push/v1/notify</string>
-	<key>pusherAppIdDev</key>
-	<string>caritas.amp.care.ios.dev</string>
-	<key>pusherAppIdProd</key>
-	<string>caritas.amp.care.ios.prod</string>
 	<key>pushKitAppIdProd</key>
-	<string>caritas.amp.care.ios.voip.prod</string>
+	<string>care.amp.messenger.caritas.ios</string>
 	<key>identityserverurl</key>
 	<string>https://caritas.amp.care</string>
 	<key>homeserverurl</key>
