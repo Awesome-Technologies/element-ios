@@ -50,7 +50,6 @@ enum
     SETTINGS_SECTION_NOTIFICATIONS_SETTINGS_INDEX,
     SETTINGS_SECTION_USER_INTERFACE_INDEX,
     SETTINGS_SECTION_IGNORED_USERS_INDEX,
-    SETTINGS_SECTION_ADVANCED_INDEX,
     SETTINGS_SECTION_OTHER_INDEX,
     SETTINGS_SECTION_LABS_INDEX,
     SETTINGS_SECTION_CRYPTOGRAPHY_INDEX,
@@ -729,10 +728,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
             count = 0;
         }
     }
-    else if (section == SETTINGS_SECTION_ADVANCED_INDEX)
-    {
-        count = 1;
-    }
     else if (section == SETTINGS_SECTION_OTHER_INDEX)
     {
         count = OTHER_COUNT;
@@ -1101,17 +1096,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
 
         cell = ignoredUserCell;
     }
-    else if (section == SETTINGS_SECTION_ADVANCED_INDEX)
-    {
-        MXKTableViewCellWithTextView *configCell = [self textViewCellForTableView:tableView atIndexPath:indexPath];
-        
-        NSString *configFormat = [NSString stringWithFormat:@"%@\n%@\n%@", [NSBundle mxk_localizedStringForKey:@"settings_config_user_id"], [NSBundle mxk_localizedStringForKey:@"settings_config_home_server"], [NSBundle mxk_localizedStringForKey:@"settings_config_identity_server"]];
-        
-        configCell.mxkTextView.text =[NSString stringWithFormat:configFormat, account.mxCredentials.userId, account.mxCredentials.homeServer, account.identityServerURL];
-        configCell.mxkTextView.accessibilityIdentifier=@"SettingsVCConfigStaticText";
-        
-        cell = configCell;
-    }
     else if (section == SETTINGS_SECTION_OTHER_INDEX)
     {
         if (row == OTHER_VERSION_INDEX)
@@ -1431,10 +1415,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
                 return NSLocalizedStringFromTable(@"settings_ignored_users", @"Vector", nil);
             }
         }
-    }
-    else if (section == SETTINGS_SECTION_ADVANCED_INDEX)
-    {
-        return NSLocalizedStringFromTable(@"settings_advanced", @"Vector", nil);
     }
     else if (section == SETTINGS_SECTION_OTHER_INDEX)
     {
