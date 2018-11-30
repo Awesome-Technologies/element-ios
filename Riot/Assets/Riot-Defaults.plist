@@ -41,8 +41,6 @@
 	<true/>
 	<key>showLeftMembersInRoomMemberList</key>
 	<false/>
-	<key>syncLocalContacts</key>
-	<false/>
 	<key>createConferenceCallsWithJitsi</key>
 	<true/>
 	<key>enableRageShake</key>

@@ -171,10 +171,6 @@
         
         [self refreshContactPresence];
     }
-    else
-    {
-        [self refreshLocalContactInformation];
-    }
 }
 
 + (CGFloat)heightForCellData:(MXKCellData*)cellData withMaximumWidth:(CGFloat)maxWidth
@@ -263,55 +259,6 @@
             }
         }
     }
-}
-
-- (void)refreshLocalContactInformation
-{
-    NSArray *identifiers = contact.matrixIdentifiers;
-    if (identifiers.count)
-    {
-        self.thumbnailBadgeView.image = [UIImage imageNamed:@"riot_icon"];
-        self.thumbnailBadgeView.hidden = NO;
-    }
-    else
-    {
-        self.thumbnailBadgeView.hidden = YES;
-    }
-    
-    // Display the first contact method in sub label.
-    NSString *subLabelText = nil;
-    if (contact.emailAddresses.count)
-    {
-        MXKEmail* email = contact.emailAddresses.firstObject;
-        subLabelText = email.emailAddress;
-    }
-    else if (contact.phoneNumbers.count)
-    {
-        MXKPhoneNumber *phoneNumber = contact.phoneNumbers.firstObject;
-        
-        if (phoneNumber.nbPhoneNumber)
-        {
-            subLabelText = [[NBPhoneNumberUtil sharedInstance] format:phoneNumber.nbPhoneNumber numberFormat:NBEPhoneNumberFormatINTERNATIONAL error:nil];
-        }
-        else
-        {
-            subLabelText = phoneNumber.textNumber;
-        }
-    }
-    
-    if (subLabelText.length)
-    {
-        self.contactInformationLabel.hidden = NO;
-    }
-    else
-    {
-        // Hide and fill the label with a fake string to harmonize the height of all the cells.
-        // This is a drawback of the self-sizing cell.
-        self.contactInformationLabel.hidden = YES;
-        subLabelText = @"No method";
-    }
-    
-    self.contactInformationLabel.text = subLabelText;
 }
 
 - (void)refreshContactPresence

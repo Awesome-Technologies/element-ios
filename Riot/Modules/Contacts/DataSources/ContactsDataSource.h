@@ -38,15 +38,10 @@ typedef enum : NSUInteger
 @protected
     // Section indexes
     NSInteger searchInputSection;
-    NSInteger filteredLocalContactsSection;
     NSInteger filteredMatrixContactsSection;
-    
-    // Tell whether the non-matrix-enabled contacts must be hidden or not. NO by default.
-    BOOL hideNonMatrixEnabledContacts;
     
     // Search results
     NSString *currentSearchText;
-    NSMutableArray<MXKContact*> *filteredLocalContacts;
     NSMutableArray<MXKContact*> *filteredMatrixContacts;
 }
 

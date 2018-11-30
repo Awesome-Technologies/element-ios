@@ -32,7 +32,6 @@
 
 #import "WebViewViewController.h"
 
-#import "CountryPickerViewController.h"
 #import "DeactivateAccountViewController.h"
 
 #import "RageShakeManager.h"
@@ -51,7 +50,6 @@ enum
     SETTINGS_SECTION_NOTIFICATIONS_SETTINGS_INDEX,
     SETTINGS_SECTION_USER_INTERFACE_INDEX,
     SETTINGS_SECTION_IGNORED_USERS_INDEX,
-    SETTINGS_SECTION_CONTACTS_INDEX,
     SETTINGS_SECTION_ADVANCED_INDEX,
     SETTINGS_SECTION_OTHER_INDEX,
     SETTINGS_SECTION_LABS_INDEX,
@@ -150,10 +148,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     NSInteger userSettingsChangePasswordIndex;
     NSInteger userSettingsNightModeSepIndex;
     NSInteger userSettingsNightModeIndex;
-    
-    // Dynamic rows in the local contacts section
-    NSInteger localContactsSyncIndex;
-    NSInteger localContactsPhoneBookCountryIndex;
     
     // Devices
     NSMutableArray<MXDevice *> *devicesArray;
@@ -735,19 +729,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
             count = 0;
         }
     }
-    else if (section == SETTINGS_SECTION_CONTACTS_INDEX)
-    {
-        localContactsSyncIndex = count++;
-        
-        if ([MXKAppSettings standardAppSettings].syncLocalContacts)
-        {
-            localContactsPhoneBookCountryIndex = count++;
-        }
-        else
-        {
-            localContactsPhoneBookCountryIndex = -1;
-        }
-    }
     else if (section == SETTINGS_SECTION_ADVANCED_INDEX)
     {
         count = 1;
@@ -1120,41 +1101,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
 
         cell = ignoredUserCell;
     }
-    else if (section == SETTINGS_SECTION_CONTACTS_INDEX)
-    {
-        if (row == localContactsSyncIndex)
-        {
-            MXKTableViewCellWithLabelAndSwitch* labelAndSwitchCell = [self getLabelAndSwitchCell:tableView forIndexPath:indexPath];
-
-            labelAndSwitchCell.mxkLabel.numberOfLines = 0;
-            labelAndSwitchCell.mxkLabel.text = NSLocalizedStringFromTable(@"settings_contacts_discover_matrix_users", @"Vector", nil);
-            labelAndSwitchCell.mxkSwitch.on = [MXKAppSettings standardAppSettings].syncLocalContacts;
-            labelAndSwitchCell.mxkSwitch.enabled = YES;
-            [labelAndSwitchCell.mxkSwitch addTarget:self action:@selector(toggleLocalContactsSync:) forControlEvents:UIControlEventTouchUpInside];
-
-            cell = labelAndSwitchCell;
-        }
-        else if (row == localContactsPhoneBookCountryIndex)
-        {
-            cell = [tableView dequeueReusableCellWithIdentifier:kSettingsViewControllerPhoneBookCountryCellId];
-            if (!cell)
-            {
-                cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:kSettingsViewControllerPhoneBookCountryCellId];
-            }
-            
-            NSString* countryCode = [[MXKAppSettings standardAppSettings] phonebookCountryCode];
-            NSLocale *local = [[NSLocale alloc] initWithLocaleIdentifier:[[[NSBundle mainBundle] preferredLocalizations] objectAtIndex:0]];
-            NSString *countryName = [local displayNameForKey:NSLocaleCountryCode value:countryCode];
-            
-            cell.textLabel.textColor = kCaritasPrimaryTextColor;
-            
-            cell.textLabel.text = NSLocalizedStringFromTable(@"settings_contacts_phonebook_country", @"Vector", nil);
-            cell.detailTextLabel.text = countryName;
-            
-            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-            cell.selectionStyle = UITableViewCellSelectionStyleDefault;
-        }
-    }
     else if (section == SETTINGS_SECTION_ADVANCED_INDEX)
     {
         MXKTableViewCellWithTextView *configCell = [self textViewCellForTableView:tableView atIndexPath:indexPath];
@@ -1486,10 +1432,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
             }
         }
     }
-    else if (section == SETTINGS_SECTION_CONTACTS_INDEX)
-    {
-        return NSLocalizedStringFromTable(@"settings_contacts", @"Vector", nil);
-    }
     else if (section == SETTINGS_SECTION_ADVANCED_INDEX)
     {
         return NSLocalizedStringFromTable(@"settings_advanced", @"Vector", nil);
@@ -1757,17 +1699,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
                 [self showDeviceDetails:devicesArray[row]];
             }
         }
-        else if (section == SETTINGS_SECTION_CONTACTS_INDEX)
-        {
-            if (row == localContactsPhoneBookCountryIndex)
-            {
-                CountryPickerViewController *countryPicker = [CountryPickerViewController countryPickerViewController];
-                countryPicker.view.tag = SETTINGS_SECTION_CONTACTS_INDEX;
-                countryPicker.delegate = self;
-                countryPicker.showCountryCallingCode = YES;
-                [self pushViewController:countryPicker];
-            }
-        }
         
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
     }
@@ -1796,27 +1727,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
             [self stopActivityIndicator];
         }
     }];
-}
-
-- (void)toggleLocalContactsSync:(id)sender
-{
-    UISwitch *switchButton = (UISwitch*)sender;
-
-    if (switchButton.on)
-    {
-        [MXKContactManager requestUserConfirmationForLocalContactsSyncInViewController:self completionHandler:^(BOOL granted) {
-
-            [MXKAppSettings standardAppSettings].syncLocalContacts = granted;
-            
-            [self.tableView reloadData];
-        }];
-    }
-    else
-    {
-        [MXKAppSettings standardAppSettings].syncLocalContacts = NO;
-        
-        [self.tableView reloadData];
-    }
 }
 
 - (void)toggleSendCrashReport:(id)sender
