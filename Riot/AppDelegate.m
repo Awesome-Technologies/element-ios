@@ -604,9 +604,6 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
         [account resume];
     }
     
-    // Refresh local contact from the contact book.
-    [self refreshLocalContacts];
-    
     _isAppForeground = YES;
 
     if (@available(iOS 11.0, *))
@@ -2117,16 +2114,6 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
             // Observe inApp notifications toggle change
             [account addObserver:self forKeyPath:@"enableInAppNotifications" options:0 context:nil];
         }
-        
-        // Load the local contacts on first account creation.
-        if ([MXKAccountManager sharedManager].accounts.count == 1)
-        {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                
-                [self refreshLocalContacts];
-                
-            });
-        }
     }];
     
     // Add observer to handle removed accounts
@@ -2942,42 +2929,6 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
         [self.masterTabBarController selectContact:contact];
 
     }];
-}
-
-- (void)refreshLocalContacts
-{
-    // Check whether the application is allowed to access the local contacts.
-    if (ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusAuthorized)
-    {
-        // Check the user permission for syncing local contacts. This permission was handled independently on previous application version.
-        if (![MXKAppSettings standardAppSettings].syncLocalContacts)
-        {
-            // Check whether it was not requested yet.
-            if (![MXKAppSettings standardAppSettings].syncLocalContactsPermissionRequested)
-            {
-                [MXKAppSettings standardAppSettings].syncLocalContactsPermissionRequested = YES;
-                
-                UIViewController *viewController = self.window.rootViewController.presentedViewController;
-                if (!viewController)
-                {
-                    viewController = self.window.rootViewController;
-                }
-                
-                [MXKContactManager requestUserConfirmationForLocalContactsSyncInViewController:viewController completionHandler:^(BOOL granted) {
-                    
-                    if (granted)
-                    {
-                        // Allow local contacts sync in order to discover matrix users.
-                        [MXKAppSettings standardAppSettings].syncLocalContacts = YES;
-                    }
-                    
-                }];
-            }
-        }
-        
-        // Refresh the local contacts list.
-        [[MXKContactManager sharedManager] refreshLocalContacts];
-    }
 }
 
 #pragma mark - SplitViewController delegate

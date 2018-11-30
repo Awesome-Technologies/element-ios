@@ -385,12 +385,6 @@
     
     [self registerOnContactChangeNotifications];
     
-    if (!_contact.isMatrixContact)
-    {
-        // Refresh matrix info of the contact
-        [[MXKContactManager sharedManager] updateMatrixIDsForLocalContact:_contact];
-    }
-    
     [self refreshContactDetails];
 }
 
@@ -423,18 +417,8 @@
         }
     }];
     
-    // Observe 'MXKContactManager' notifications
-    if (_contact.isMatrixContact)
-    {
-        // Observe 'MXKContactManager' notification on Matrix contacts to refresh details.
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onContactManagerNotification:)  name:kMXKContactManagerDidUpdateMatrixContactsNotification object:nil];
-    }
-    else
-    {
-        // Observe 'MXKContactManager' notifications on Local contacts to refresh details.
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onContactManagerNotification:)  name:kMXKContactManagerDidUpdateLocalContactsNotification object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onContactManagerNotification:)  name:kMXKContactManagerDidUpdateLocalContactMatrixIDsNotification object:nil];
-    }
+    // Observe 'MXKContactManager' notification on Matrix contacts to refresh details.
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onContactManagerNotification:)  name:kMXKContactManagerDidUpdateMatrixContactsNotification object:nil];
 }
 
 - (void)cancelRegistrationOnContactChangeNotifications
