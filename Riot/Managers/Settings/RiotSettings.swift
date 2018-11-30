@@ -27,7 +27,6 @@ final class RiotSettings: NSObject {
         static let enableRageShake = "enableRageShake"
         static let createConferenceCallsWithJitsi = "createConferenceCallsWithJitsi"
         static let userInterfaceTheme = "userInterfaceTheme"
-        static let notificationsShowDecryptedContent = "showDecryptedContent"
         static let pinRoomsWithMissedNotifications = "pinRoomsWithMissedNotif"
         static let pinRoomsWithUnreadMessages = "pinRoomsWithUnread"
     }
@@ -37,20 +36,6 @@ final class RiotSettings: NSObject {
     // MARK: - Public
     
     // MARK: Notifications
-    
-    /// Indicate if `showDecryptedContentInNotifications` settings has been set once.
-    var isShowDecryptedContentInNotificationsHasBeenSetOnce: Bool {
-        return UserDefaults.standard.object(forKey: UserDefaultsKeys.notificationsShowDecryptedContent) != nil
-    }
-    
-    /// Indicate if encrypted messages content should be displayed in notifications.
-    var showDecryptedContentInNotifications: Bool {
-        get {
-            return UserDefaults.standard.bool(forKey: UserDefaultsKeys.notificationsShowDecryptedContent)
-        } set {
-            UserDefaults.standard.set(newValue, forKey: UserDefaultsKeys.notificationsShowDecryptedContent)
-        }
-    }
     
     /// Indicate if rooms with missed notifications should be displayed first on home screen.
     var pinRoomsWithMissedNotificationsOnHome: Bool {

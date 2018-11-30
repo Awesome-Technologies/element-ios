@@ -1423,9 +1423,7 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
                                                    @"user_id": account.mxCredentials.userId
                                                    };
 
-                    BOOL isNotificationContentShown = !event.isEncrypted || RiotSettings.shared.showDecryptedContentInNotifications;
-
-                    if ((event.eventType == MXEventTypeRoomMessage || event.eventType == MXEventTypeRoomEncrypted) && isNotificationContentShown)
+                    if (event.eventType == MXEventTypeRoomMessage || event.eventType == MXEventTypeRoomEncrypted)
                     {
                         eventNotification.category = @"QUICK_REPLY";
                     }
@@ -1521,12 +1519,6 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
 
             NSString *msgType = event.content[@"msgtype"];
             NSString *content = event.content[@"body"];
-
-            if (event.isEncrypted && !RiotSettings.shared.showDecryptedContentInNotifications)
-            {
-                // Hide the content
-                msgType = nil;
-            }
 
             NSString *roomDisplayName = room.summary.displayname;
 
@@ -4049,15 +4041,6 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     NSString *defaultsPathFromApp = [[NSBundle mainBundle] pathForResource:userDefaults ofType:@"plist"];
     NSDictionary *defaults = [NSDictionary dictionaryWithContentsOfFile:defaultsPathFromApp];
     [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
-    
-    // Now use RiotSettings and NSUserDefaults to store `showDecryptedContentInNotifications` setting option
-    // Migrate this information from main MXKAccount to RiotSettings, if value is not in UserDefaults
-    
-    if (!RiotSettings.shared.isShowDecryptedContentInNotificationsHasBeenSetOnce)
-    {
-        MXKAccount *currentAccount = [MXKAccountManager sharedManager].activeAccounts.firstObject;
-        RiotSettings.shared.showDecryptedContentInNotifications = currentAccount.showDecryptedContentInNotifications;
-    }
 }
 
 @end

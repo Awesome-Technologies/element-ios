@@ -65,17 +65,8 @@ enum
 
 enum
 {
-    NOTIFICATION_SETTINGS_ENABLE_PUSH_INDEX = 0,
-    NOTIFICATION_SETTINGS_SHOW_DECODED_CONTENT,
-    NOTIFICATION_SETTINGS_GLOBAL_SETTINGS_INDEX,
-    NOTIFICATION_SETTINGS_PIN_MISSED_NOTIFICATIONS_INDEX,
+    NOTIFICATION_SETTINGS_PIN_MISSED_NOTIFICATIONS_INDEX = 0,
     NOTIFICATION_SETTINGS_PIN_UNREAD_INDEX,
-    //NOTIFICATION_SETTINGS_CONTAINING_MY_USER_NAME_INDEX,
-    //NOTIFICATION_SETTINGS_CONTAINING_MY_DISPLAY_NAME_INDEX,
-    //NOTIFICATION_SETTINGS_SENT_TO_ME_INDEX,
-    //NOTIFICATION_SETTINGS_INVITED_TO_ROOM_INDEX,
-    //NOTIFICATION_SETTINGS_PEOPLE_LEAVE_JOIN_INDEX,
-    //NOTIFICATION_SETTINGS_CALL_INVITATION_INDEX,
     NOTIFICATION_SETTINGS_COUNT
 };
 
@@ -1043,42 +1034,7 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     }
     else if (section == SETTINGS_SECTION_NOTIFICATIONS_SETTINGS_INDEX)
     {
-        if (row == NOTIFICATION_SETTINGS_ENABLE_PUSH_INDEX)
-        {
-            MXKTableViewCellWithLabelAndSwitch* labelAndSwitchCell = [self getLabelAndSwitchCell:tableView forIndexPath:indexPath];
-    
-            labelAndSwitchCell.mxkLabel.text = NSLocalizedStringFromTable(@"settings_enable_push_notif", @"Vector", nil);
-            labelAndSwitchCell.mxkSwitch.on = account.isPushKitNotificationActive;
-            labelAndSwitchCell.mxkSwitch.enabled = YES;
-            [labelAndSwitchCell.mxkSwitch addTarget:self action:@selector(togglePushNotifications:) forControlEvents:UIControlEventTouchUpInside];
-            
-            cell = labelAndSwitchCell;
-        }
-        else if (row == NOTIFICATION_SETTINGS_SHOW_DECODED_CONTENT)
-        {
-            MXKTableViewCellWithLabelAndSwitch* labelAndSwitchCell = [self getLabelAndSwitchCell:tableView forIndexPath:indexPath];
-            
-            labelAndSwitchCell.mxkLabel.text = NSLocalizedStringFromTable(@"settings_show_decrypted_content", @"Vector", nil);
-            labelAndSwitchCell.mxkSwitch.on = RiotSettings.shared.showDecryptedContentInNotifications;
-            labelAndSwitchCell.mxkSwitch.enabled = account.isPushKitNotificationActive;
-            [labelAndSwitchCell.mxkSwitch addTarget:self action:@selector(toggleShowDecodedContent:) forControlEvents:UIControlEventTouchUpInside];
-            
-            cell = labelAndSwitchCell;
-        }
-        else if (row == NOTIFICATION_SETTINGS_GLOBAL_SETTINGS_INDEX)
-        {
-            MXKTableViewCell *globalInfoCell = [self getDefaultTableViewCell:tableView];
-
-            NSString *appDisplayName = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleDisplayName"];
-
-            globalInfoCell.textLabel.text = [NSString stringWithFormat:NSLocalizedStringFromTable(@"settings_global_settings_info", @"Vector", nil), appDisplayName];
-            globalInfoCell.textLabel.numberOfLines = 0;
-            
-            globalInfoCell.selectionStyle = UITableViewCellSelectionStyleNone;
-            
-            cell = globalInfoCell;
-        }
-        else if (row == NOTIFICATION_SETTINGS_PIN_MISSED_NOTIFICATIONS_INDEX)
+        if (row == NOTIFICATION_SETTINGS_PIN_MISSED_NOTIFICATIONS_INDEX)
         {
             MXKTableViewCellWithLabelAndSwitch* labelAndSwitchCell = [self getLabelAndSwitchCell:tableView forIndexPath:indexPath];
             
@@ -1917,77 +1873,10 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     }];
 }
 
-- (void)togglePushNotifications:(id)sender
-{
-    // Check first whether the user allow notification from device settings
-    UIUserNotificationType currentUserNotificationTypes = UIApplication.sharedApplication.currentUserNotificationSettings.types;
-    if (currentUserNotificationTypes == UIUserNotificationTypeNone)
-    {
-        [currentAlert dismissViewControllerAnimated:NO completion:nil];
-        
-        __weak typeof(self) weakSelf = self;
-
-        NSString *appDisplayName = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleDisplayName"];
-        
-        currentAlert = [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:NSLocalizedStringFromTable(@"settings_on_denied_notification", @"Vector", nil), appDisplayName] message:nil preferredStyle:UIAlertControllerStyleAlert];
-        
-        [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"ok"]
-                                                         style:UIAlertActionStyleDefault
-                                                       handler:^(UIAlertAction * action) {
-                                                           
-                                                           if (weakSelf)
-                                                           {
-                                                               typeof(self) self = weakSelf;
-                                                               self->currentAlert = nil;
-                                                           }
-                                                           
-                                                       }]];
-        
-        [currentAlert mxk_setAccessibilityIdentifier: @"SettingsVCPushNotificationsAlert"];
-        [self presentViewController:currentAlert animated:YES completion:nil];
-        
-        // Keep off the switch
-        ((UISwitch*)sender).on = NO;
-    }
-    else if ([MXKAccountManager sharedManager].activeAccounts.count)
-    {
-        [self startActivityIndicator];
-        
-        MXKAccountManager *accountManager = [MXKAccountManager sharedManager];
-        MXKAccount* account = accountManager.activeAccounts.firstObject;
-        
-        if (accountManager.pushDeviceToken)
-        {
-            [account setEnablePushKitNotifications:!account.isPushKitNotificationActive];
-        }
-        else
-        {
-            // Obtain device token when user has just enabled access to notifications from system settings
-            [[AppDelegate theDelegate] registerForRemoteNotificationsWithCompletion:^(NSError * error) {
-                if (error)
-                {
-                    [(UISwitch *)sender setOn:NO animated:YES];
-                    [self stopActivityIndicator];
-                }
-                else
-                {
-                    [account setEnablePushKitNotifications:YES];
-                }
-            }];
-        }
-    }
-}
-
 - (void)toggleCallKit:(id)sender
 {
     UISwitch *switchButton = (UISwitch*)sender;
     [MXKAppSettings standardAppSettings].enableCallKit = switchButton.isOn;
-}
-
-- (void)toggleShowDecodedContent:(id)sender
-{
-    UISwitch *switchButton = (UISwitch*)sender;
-    RiotSettings.shared.showDecryptedContentInNotifications = switchButton.isOn;
 }
 
 - (void)toggleLocalContactsSync:(id)sender
