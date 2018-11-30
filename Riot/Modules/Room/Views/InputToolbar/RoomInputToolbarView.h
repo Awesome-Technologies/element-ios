@@ -54,15 +54,6 @@
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *messageComposerContainerTrailingConstraint;
 
 @property (weak, nonatomic) IBOutlet UIButton *attachMediaButton;
-@property (weak, nonatomic) IBOutlet UIButton *voiceCallButton;
-@property (weak, nonatomic) IBOutlet UIButton *hangupCallButton;
-
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *voiceCallButtonWidthConstraint;
-
-/**
- Tell whether the call option is supported. YES by default.
- */
-@property (nonatomic) BOOL supportCallOption;
 
 /**
  Tell whether the filled data will be sent encrypted. NO by default.
@@ -73,10 +64,5 @@
  Tell whether the input text will be a reply to a message.
  */
 @property (nonatomic, getter=isReplyToEnabled) BOOL replyToEnabled;
-
-/**
- Tell whether a call is active.
- */
-@property (nonatomic) BOOL activeCall;
 
 @end

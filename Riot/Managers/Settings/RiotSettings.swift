@@ -25,7 +25,6 @@ final class RiotSettings: NSObject {
     private enum UserDefaultsKeys {
         static let enableCrashReport = "enableCrashReport"
         static let enableRageShake = "enableRageShake"
-        static let createConferenceCallsWithJitsi = "createConferenceCallsWithJitsi"
         static let userInterfaceTheme = "userInterfaceTheme"
         static let pinRoomsWithMissedNotifications = "pinRoomsWithMissedNotif"
         static let pinRoomsWithUnreadMessages = "pinRoomsWithUnread"
@@ -85,16 +84,6 @@ final class RiotSettings: NSObject {
             return UserDefaults.standard.bool(forKey: UserDefaultsKeys.enableRageShake)
         } set {
             UserDefaults.standard.set(newValue, forKey: UserDefaultsKeys.enableRageShake)
-        }
-    }
-    
-    // MARK: Labs
-    
-    var createConferenceCallsWithJitsi: Bool {
-        get {
-            return UserDefaults.standard.bool(forKey: UserDefaultsKeys.createConferenceCallsWithJitsi)
-        } set {
-            UserDefaults.standard.set(newValue, forKey: UserDefaultsKeys.createConferenceCallsWithJitsi)
         }
     }
 }
