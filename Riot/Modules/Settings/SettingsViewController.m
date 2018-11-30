@@ -33,7 +33,6 @@
 #import "WebViewViewController.h"
 
 #import "CountryPickerViewController.h"
-#import "LanguagePickerViewController.h"
 #import "DeactivateAccountViewController.h"
 
 #import "RageShakeManager.h"
@@ -1631,11 +1630,7 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
         {
             if (row == USER_INTERFACE_LANGUAGE_INDEX)
             {
-                // Display the language picker
-                LanguagePickerViewController *languagePickerViewController = [LanguagePickerViewController languagePickerViewController];
-                languagePickerViewController.selectedLanguage = [NSBundle mxk_language];
-                languagePickerViewController.delegate = self;
-                [self pushViewController:languagePickerViewController];
+                [self showLanguagePicker];
             }
             else if (row == USER_INTERFACE_THEME_INDEX)
             {
@@ -2415,6 +2410,77 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     }
 }
 
+- (void)showLanguagePicker
+{
+    __weak typeof(self) weakSelf = self;
+    
+    // Screen tracking
+    [[Analytics sharedInstance] trackScreen:@"LanguagePicker"];
+    
+    UIAlertController *languagePicker = [UIAlertController alertControllerWithTitle:[NSBundle mxk_localizedStringForKey:@"language_picker_title"]
+                                                                         message:nil
+                                                                  preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    // Start by the default language chosen by the OS
+    __block NSString *defaultLanguage = [MXKLanguagePickerViewController defaultLanguage];
+    NSString *languageDescription = [NSString stringWithFormat:[NSBundle mxk_localizedStringForKey:@"language_picker_default_language"], [MXKLanguagePickerViewController languageDescription:defaultLanguage]];
+    
+    UIAlertAction *defaultLanguageAction = [UIAlertAction actionWithTitle:languageDescription style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action)
+    {
+        if (weakSelf)
+        {
+            typeof(self) self = weakSelf;
+            
+            [self didSelectLangugage:defaultLanguage];
+        }
+    }];
+    
+    [languagePicker addAction:defaultLanguageAction];
+    
+    // Then, add languages available in the app bundle
+    NSArray<NSString *> *localizations = [[NSBundle mainBundle] localizations];
+    for (NSString *language in localizations)
+    {
+        // Do not duplicate the default lang
+        if (![language isEqualToString:defaultLanguage])
+        {
+            languageDescription = [MXKLanguagePickerViewController languageDescription:language];
+            NSString *localisedLanguageDescription = [MXKLanguagePickerViewController languageLocalisedDescription:language];
+            
+            // Capitalise the description in the language locale
+            NSLocale *locale = [[NSLocale alloc] initWithLocaleIdentifier:language];
+            languageDescription = [languageDescription capitalizedStringWithLocale:locale];
+            localisedLanguageDescription = [localisedLanguageDescription capitalizedStringWithLocale:locale];
+            
+            if (languageDescription)
+            {
+                UIAlertAction *languageAction = [UIAlertAction actionWithTitle:languageDescription style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action)
+                {
+                    if (weakSelf)
+                    {
+                        typeof(self) self = weakSelf;
+                        
+                        [self didSelectLangugage:language];
+                    }
+                }];
+                
+                [languagePicker addAction:languageAction];
+            }
+        }
+    }
+    
+    // Cancel button
+    [languagePicker addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"cancel"]
+                                                    style:UIAlertActionStyleCancel
+                                                  handler:nil]];
+    
+    UIView *fromCell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:USER_INTERFACE_LANGUAGE_INDEX inSection:SETTINGS_SECTION_USER_INTERFACE_INDEX]];
+    [languagePicker popoverPresentationController].sourceView = fromCell;
+    [languagePicker popoverPresentationController].sourceRect = fromCell.bounds;
+    
+    [self presentViewController:languagePicker animated:YES completion:nil];
+}
+
 - (void)showThemePicker
 {
     __weak typeof(self) weakSelf = self;
@@ -2780,12 +2846,8 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     documentInteractionController = nil;
 }
 
-#pragma mark - MXKCountryPickerViewControllerDelegate
-
-- (void)languagePickerViewController:(MXKLanguagePickerViewController *)languagePickerViewController didSelectLangugage:(NSString *)language
+- (void)didSelectLangugage:(NSString *)language
 {
-    [languagePickerViewController withdrawViewControllerAnimated:YES completion:nil];
-
     if (![language isEqualToString:[NSBundle mxk_language]]
         || (language == nil && [NSBundle mxk_language]))
     {
