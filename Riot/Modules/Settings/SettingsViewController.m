@@ -36,10 +36,8 @@
 #import "LanguagePickerViewController.h"
 #import "DeactivateAccountViewController.h"
 
-#import "NBPhoneNumberUtil.h"
 #import "RageShakeManager.h"
 #import "RiotDesignValues.h"
-#import "TableViewCellWithPhoneNumberTextField.h"
 
 #import "GBDeviceInfo_iOS.h"
 
@@ -162,24 +160,12 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     UITextField* newPasswordTextField1;
     UITextField* newPasswordTextField2;
     UIAlertAction* savePasswordAction;
-
-    // New email address to bind
-    UITextField* newEmailTextField;
-    
-    // New phone number to bind
-    TableViewCellWithPhoneNumberTextField * newPhoneNumberCell;
-    CountryPickerViewController *newPhoneNumberCountryPicker;
-    NBPhoneNumber *newPhoneNumber;
     
     // Dynamic rows in the user settings section
     NSInteger userSettingsProfilePictureIndex;
     NSInteger userSettingsDisplayNameIndex;
     NSInteger userSettingsFirstNameIndex;
     NSInteger userSettingsSurnameIndex;
-    NSInteger userSettingsEmailStartIndex;  // The user can have several linked emails. Hence, the dynamic section items count
-    NSInteger userSettingsNewEmailIndex;    // This index also marks the end of the emails list
-    NSInteger userSettingsPhoneStartIndex;  // The user can have several linked phone numbers. Hence, the dynamic section items count
-    NSInteger userSettingsNewPhoneIndex;    // This index also marks the end of the phone numbers list
     NSInteger userSettingsChangePasswordIndex;
     NSInteger userSettingsNightModeSepIndex;
     NSInteger userSettingsNightModeIndex;
@@ -201,7 +187,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     // Postpone destroy operation when saving, pwd reset or email binding is in progress
     BOOL isSavingInProgress;
     BOOL isResetPwdInProgress;
-    BOOL is3PIDBindingInProgress;
     blockSettingsViewController_onReadyToDestroy onReadyToDestroyHandler;
     
     //
@@ -215,22 +200,9 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     NSURL *keyExportsFile;
     NSTimer *keyExportsFileDeletionTimer;
     
-    BOOL keepNewEmailEditing;
-    BOOL keepNewPhoneNumberEditing;
-    
     // The current pushed view controller
     UIViewController *pushedViewController;
 }
-
-/**
- Flag indicating whether the user is typing an email to bind.
- */
-@property (nonatomic) BOOL newEmailEditingEnabled;
-
-/**
- Flag indicating whether the user is typing a phone number to bind.
- */
-@property (nonatomic) BOOL newPhoneEditingEnabled;
 
 @property (weak, nonatomic) DeactivateAccountViewController *deactivateAccountViewController;
 
@@ -248,7 +220,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     
     isSavingInProgress = NO;
     isResetPwdInProgress = NO;
-    is3PIDBindingInProgress = NO;
 }
 
 - (void)viewDidLoad
@@ -264,7 +235,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     [self.tableView registerClass:MXKTableViewCellWithLabelAndTextField.class forCellReuseIdentifier:[MXKTableViewCellWithLabelAndTextField defaultReuseIdentifier]];
     [self.tableView registerClass:MXKTableViewCellWithLabelAndSwitch.class forCellReuseIdentifier:[MXKTableViewCellWithLabelAndSwitch defaultReuseIdentifier]];
     [self.tableView registerClass:MXKTableViewCellWithLabelAndMXKImageView.class forCellReuseIdentifier:[MXKTableViewCellWithLabelAndMXKImageView defaultReuseIdentifier]];
-    [self.tableView registerClass:TableViewCellWithPhoneNumberTextField.class forCellReuseIdentifier:[TableViewCellWithPhoneNumberTextField defaultReuseIdentifier]];
     [self.tableView registerNib:MXKTableViewCellWithTextView.nib forCellReuseIdentifier:[MXKTableViewCellWithTextView defaultReuseIdentifier]];
     
     // Enable self sizing cells
@@ -365,7 +335,7 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
         kRiotDesignValuesDidChangeThemeNotificationObserver = nil;
     }
 
-    if (isSavingInProgress || isResetPwdInProgress || is3PIDBindingInProgress)
+    if (isSavingInProgress || isResetPwdInProgress)
     {
         __weak typeof(self) weakSelf = self;
         onReadyToDestroyHandler = ^() {
@@ -418,9 +388,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     
     // Refresh display
     [self refreshSettings];
-
-    // Refresh linked emails and phone numbers in parallel
-    [self loadAccount3PIDs];
     
     // Refresh the current device information in parallel
     [self loadCurrentDeviceInformation];
@@ -439,8 +406,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     [saveButton setEnabled:NO];
     [AppDelegate theDelegate].masterTabBarController.navigationItem.rightBarButtonItem = saveButton;
     [AppDelegate theDelegate].masterTabBarController.navigationItem.rightBarButtonItem.accessibilityIdentifier=@"SettingsVCNavBarSaveButton";
-    
-    newPhoneNumberCountryPicker = nil;
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -528,8 +493,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     [currentPasswordTextField resignFirstResponder];
     [newPasswordTextField1 resignFirstResponder];
     [newPasswordTextField2 resignFirstResponder];
-    [newEmailTextField resignFirstResponder];
-    [newPhoneNumberCell.mxkTextField resignFirstResponder];
 }
 
 - (void)reset
@@ -562,367 +525,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
         [deviceView removeFromSuperview];
         deviceView = nil;
     }
-}
-
--(void)setNewEmailEditingEnabled:(BOOL)newEmailEditingEnabled
-{
-    if (newEmailEditingEnabled != _newEmailEditingEnabled)
-    {
-        // Update the flag
-        _newEmailEditingEnabled = newEmailEditingEnabled;
-
-        if (!newEmailEditingEnabled)
-        {
-            // Dismiss the keyboard
-            [newEmailTextField resignFirstResponder];
-            newEmailTextField = nil;
-        }
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            
-            // Refresh the corresponding table view cell with animation
-            [self.tableView reloadRowsAtIndexPaths:@[
-                                                     [NSIndexPath indexPathForRow:userSettingsNewEmailIndex inSection:SETTINGS_SECTION_USER_SETTINGS_INDEX]
-                                                     ]
-                                  withRowAnimation:UITableViewRowAnimationFade];
-            
-        });
-    }
-}
-
--(void)setNewPhoneEditingEnabled:(BOOL)newPhoneEditingEnabled
-{
-    if (newPhoneEditingEnabled != _newPhoneEditingEnabled)
-    {
-        // Update the flag
-        _newPhoneEditingEnabled = newPhoneEditingEnabled;
-        
-        if (!newPhoneEditingEnabled)
-        {
-            // Dismiss the keyboard
-            [newPhoneNumberCell.mxkTextField resignFirstResponder];
-            newPhoneNumberCell = nil;
-        }
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            
-            // Refresh the corresponding table view cell with animation
-            [self.tableView reloadRowsAtIndexPaths:@[
-                                                     [NSIndexPath indexPathForRow:userSettingsNewPhoneIndex inSection:SETTINGS_SECTION_USER_SETTINGS_INDEX]
-                                                     ]
-                                  withRowAnimation:UITableViewRowAnimationFade];
-            
-        });
-    }
-}
-
-- (void)showValidationEmailDialogWithMessage:(NSString*)message for3PID:(MXK3PID*)threePID
-{
-    __weak typeof(self) weakSelf = self;
-
-    [currentAlert dismissViewControllerAnimated:NO completion:nil];
-    currentAlert = [UIAlertController alertControllerWithTitle:[NSBundle mxk_localizedStringForKey:@"account_email_validation_title"] message:message preferredStyle:UIAlertControllerStyleAlert];
-    
-    [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"abort"]
-                                              style:UIAlertActionStyleDefault
-                                            handler:^(UIAlertAction * action) {
-                                                
-                                                if (weakSelf)
-                                                {
-                                                    typeof(self) self = weakSelf;
-                                                    self->currentAlert = nil;
-                                                    
-                                                    [self stopActivityIndicator];
-                                                    
-                                                    // Reset new email adding
-                                                    self.newEmailEditingEnabled = NO;
-                                                }
-                                                
-                                            }]];
-
-    __strong __typeof(threePID)strongThreePID = threePID;
-    
-    [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"continue"]
-                                                     style:UIAlertActionStyleDefault
-                                                   handler:^(UIAlertAction * action) {
-                                                       
-                                                       if (weakSelf)
-                                                       {
-                                                           typeof(self) self = weakSelf;
-                                                           self->is3PIDBindingInProgress = YES;
-                                                           
-                                                           // We always bind emails when registering, so let's do the same here
-                                                           [threePID add3PIDToUser:YES success:^{
-                                                               
-                                                               if (weakSelf)
-                                                               {
-                                                                   typeof(self) self = weakSelf;
-                                                                   self->is3PIDBindingInProgress = NO;
-                                                                   
-                                                                   // Check whether destroy has been called during email binding
-                                                                   if (self->onReadyToDestroyHandler)
-                                                                   {
-                                                                       // Ready to destroy
-                                                                       self->onReadyToDestroyHandler();
-                                                                       self->onReadyToDestroyHandler = nil;
-                                                                   }
-                                                                   else
-                                                                   {
-                                                                       self->currentAlert = nil;
-                                                                       
-                                                                       [self stopActivityIndicator];
-                                                                       
-                                                                       // Reset new email adding
-                                                                       self.newEmailEditingEnabled = NO;
-                                                                       
-                                                                       // Update linked emails
-                                                                       [self loadAccount3PIDs];
-                                                                   }
-                                                               }
-                                                               
-                                                           } failure:^(NSError *error) {
-                                                               
-                                                               NSLog(@"[SettingsViewController] Failed to bind email");
-                                                               
-                                                               if (weakSelf)
-                                                               {
-                                                                   typeof(self) self = weakSelf;
-                                                                   self->is3PIDBindingInProgress = NO;
-                                                                   
-                                                                   // Check whether destroy has been called during email binding
-                                                                   if (self->onReadyToDestroyHandler)
-                                                                   {
-                                                                       // Ready to destroy
-                                                                       self->onReadyToDestroyHandler();
-                                                                       self->onReadyToDestroyHandler = nil;
-                                                                   }
-                                                                   else
-                                                                   {
-                                                                       self->currentAlert = nil;
-                                                                       
-                                                                       // Display the same popup again if the error is M_THREEPID_AUTH_FAILED
-                                                                       MXError *mxError = [[MXError alloc] initWithNSError:error];
-                                                                       if (mxError && [mxError.errcode isEqualToString:kMXErrCodeStringThreePIDAuthFailed])
-                                                                       {
-                                                                           [self showValidationEmailDialogWithMessage:[NSBundle mxk_localizedStringForKey:@"account_email_validation_error"] for3PID:strongThreePID];
-                                                                       }
-                                                                       else
-                                                                       {
-                                                                           [self stopActivityIndicator];
-                                                                           
-                                                                           // Notify user
-                                                                           NSString *myUserId = self.mainSession.myUser.userId; // TODO: Hanlde multi-account
-                                                                           [[NSNotificationCenter defaultCenter] postNotificationName:kMXKErrorNotification object:error userInfo:myUserId ? @{kMXKErrorUserIdKey: myUserId} : nil];
-                                                                       }
-                                                                   }
-                                                               }
-                                                               
-                                                           }];
-                                                       }
-                                                       
-                                                   }]];
-
-    [currentAlert mxk_setAccessibilityIdentifier:@"SettingsVCEmailValidationAlert"];
-    [self presentViewController:currentAlert animated:YES completion:nil];
-}
-
-- (void)showValidationMsisdnDialogWithMessage:(NSString*)message for3PID:(MXK3PID*)threePID
-{
-    __weak typeof(self) weakSelf = self;
-    
-    [currentAlert dismissViewControllerAnimated:NO completion:nil];
-    currentAlert = [UIAlertController alertControllerWithTitle:[NSBundle mxk_localizedStringForKey:@"account_msisdn_validation_title"] message:message preferredStyle:UIAlertControllerStyleAlert];
-    
-    [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"abort"]
-                                                     style:UIAlertActionStyleDefault
-                                                   handler:^(UIAlertAction * action) {
-                                                       
-                                                       if (weakSelf)
-                                                       {
-                                                           typeof(self) self = weakSelf;
-                                                           self->currentAlert = nil;
-                                                           
-                                                           [self stopActivityIndicator];
-                                                           
-                                                           // Reset new phone adding
-                                                           self.newPhoneEditingEnabled = NO;
-                                                       }
-                                                       
-                                                   }]];
-    
-    [currentAlert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
-        textField.secureTextEntry = NO;
-        textField.placeholder = nil;
-        textField.keyboardType = UIKeyboardTypeDecimalPad;
-    }];
-    
-    [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"submit"]
-                                                     style:UIAlertActionStyleDefault
-                                                   handler:^(UIAlertAction * action) {
-                                                       
-                                                       if (weakSelf)
-                                                       {
-                                                           typeof(self) self = weakSelf;
-                                                           
-                                                           UITextField *textField = [self->currentAlert textFields].firstObject;
-                                                           NSString *smsCode = textField.text;
-                                                           
-                                                           self->currentAlert = nil;
-                                                           
-                                                           if (smsCode.length)
-                                                           {
-                                                               self->is3PIDBindingInProgress = YES;
-                                                               
-                                                               [threePID submitValidationToken:smsCode success:^{
-                                                                   
-                                                                   // We always bind the phone numbers when registering, so let's do the same here
-                                                                   [threePID add3PIDToUser:YES success:^{
-                                                                       
-                                                                       if (weakSelf)
-                                                                       {
-                                                                           typeof(self) self = weakSelf;
-                                                                           self->is3PIDBindingInProgress = NO;
-                                                                           
-                                                                           // Check whether destroy has been called during the binding
-                                                                           if (self->onReadyToDestroyHandler)
-                                                                           {
-                                                                               // Ready to destroy
-                                                                               self->onReadyToDestroyHandler();
-                                                                               self->onReadyToDestroyHandler = nil;
-                                                                           }
-                                                                           else
-                                                                           {
-                                                                               [self stopActivityIndicator];
-                                                                               
-                                                                               // Reset new phone adding
-                                                                               self.newPhoneEditingEnabled = NO;
-                                                                               
-                                                                               // Update linked 3pids
-                                                                               [self loadAccount3PIDs];
-                                                                           }
-                                                                       }
-                                                                       
-                                                                   } failure:^(NSError *error) {
-                                                                       
-                                                                       NSLog(@"[SettingsViewController] Failed to bind phone number");
-                                                                       
-                                                                       if (weakSelf)
-                                                                       {
-                                                                           typeof(self) self = weakSelf;
-                                                                           self->is3PIDBindingInProgress = NO;
-                                                                           
-                                                                           // Check whether destroy has been called during phone binding
-                                                                           if (self->onReadyToDestroyHandler)
-                                                                           {
-                                                                               // Ready to destroy
-                                                                               self->onReadyToDestroyHandler();
-                                                                               self->onReadyToDestroyHandler = nil;
-                                                                           }
-                                                                           else
-                                                                           {
-                                                                               [self stopActivityIndicator];
-                                                                               
-                                                                               NSString *myUserId = self.mainSession.myUser.userId; // TODO: Hanlde multi-account
-                                                                               [[NSNotificationCenter defaultCenter] postNotificationName:kMXKErrorNotification object:error userInfo:myUserId ? @{kMXKErrorUserIdKey: myUserId} : nil];
-                                                                           }
-                                                                       }
-                                                                       
-                                                                   }];
-                                                                   
-                                                               } failure:^(NSError *error) {
-                                                                   
-                                                                   NSLog(@"[SettingsViewController] Failed to submit the sms token");
-                                                                   
-                                                                   if (weakSelf)
-                                                                   {
-                                                                       typeof(self) self = weakSelf;
-                                                                       self->is3PIDBindingInProgress = NO;
-                                                                       
-                                                                       // Check whether destroy has been called during phone binding
-                                                                       if (self->onReadyToDestroyHandler)
-                                                                       {
-                                                                           // Ready to destroy
-                                                                           self->onReadyToDestroyHandler();
-                                                                           self->onReadyToDestroyHandler = nil;
-                                                                       }
-                                                                       else
-                                                                       {
-                                                                           // Ignore connection cancellation error
-                                                                           if (([error.domain isEqualToString:NSURLErrorDomain] && error.code == NSURLErrorCancelled))
-                                                                           {
-                                                                               [self stopActivityIndicator];
-                                                                               return;
-                                                                           }
-                                                                           
-                                                                           // Alert user
-                                                                           NSString *title = [error.userInfo valueForKey:NSLocalizedFailureReasonErrorKey];
-                                                                           NSString *msg = [error.userInfo valueForKey:NSLocalizedDescriptionKey];
-                                                                           if (!title)
-                                                                           {
-                                                                               if (msg)
-                                                                               {
-                                                                                   title = msg;
-                                                                                   msg = nil;
-                                                                               }
-                                                                               else
-                                                                               {
-                                                                                   title = [NSBundle mxk_localizedStringForKey:@"error"];
-                                                                               }
-                                                                           }
-                                                                           
-                                                                           
-                                                                           self->currentAlert = [UIAlertController alertControllerWithTitle:title message:msg preferredStyle:UIAlertControllerStyleAlert];
-                                                                           
-                                                                           [self->currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"ok"] style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                                               
-                                                                               if (weakSelf)
-                                                                               {
-                                                                                   typeof(self) self = weakSelf;
-                                                                                   self->currentAlert = nil;
-                                                                                   
-                                                                                   // Ask again the sms token
-                                                                                   [self showValidationMsisdnDialogWithMessage:message for3PID:threePID];
-                                                                               }
-                                                                               
-                                                                           }]];
-                                                                           
-                                                                           [self->currentAlert mxk_setAccessibilityIdentifier: @"SettingsVCErrorAlert"];
-                                                                           [self presentViewController:self->currentAlert animated:YES completion:nil];
-                                                                       }
-                                                                   }
-                                                                   
-                                                               }];
-                                                           }
-                                                           else
-                                                           {
-                                                               // Ask again the sms token
-                                                               [self showValidationMsisdnDialogWithMessage:message for3PID:threePID];
-                                                           }
-                                                       }
-                                                       
-                                                   }]];
-    
-    [currentAlert mxk_setAccessibilityIdentifier: @"SettingsVCMsisdnValidationAlert"];
-    [self presentViewController:currentAlert animated:YES completion:nil];
-}
-
-- (void)loadAccount3PIDs
-{
-    // Refresh the account 3PIDs list
-    MXKAccount* account = [MXKAccountManager sharedManager].activeAccounts.firstObject;
-    [account load3PIDs:^{
-
-        // Refresh all the table (A slide down animation is observed when we limit the refresh to the concerned section).
-        // Note: The use of 'reloadData' handles the case where the account has been logged out.
-        [self refreshSettings];
-
-    } failure:^(NSError *error) {
-        
-        // Display the data that has been loaded last time
-        // Note: The use of 'reloadData' handles the case where the account has been logged out.
-        [self refreshSettings];
-        
-    }];
 }
 
 - (void)loadCurrentDeviceInformation
@@ -1086,66 +688,10 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     }
 }
 
-- (void)editNewEmailTextField
-{
-    if (newEmailTextField && ![newEmailTextField becomeFirstResponder])
-    {
-        // Retry asynchronously
-        dispatch_async(dispatch_get_main_queue(), ^{
-            
-            [self editNewEmailTextField];
-            
-        });
-    }
-}
-
-- (void)editNewPhoneNumberTextField
-{
-    if (newPhoneNumberCell && ![newPhoneNumberCell.mxkTextField becomeFirstResponder])
-    {
-        // Retry asynchronously
-        dispatch_async(dispatch_get_main_queue(), ^{
-            
-            [self editNewPhoneNumberTextField];
-            
-        });
-    }
-}
-
 - (void)refreshSettings
 {
-    // Check whether a text input is currently edited
-    keepNewEmailEditing = newEmailTextField ? newEmailTextField.isFirstResponder : NO;
-    keepNewPhoneNumberEditing = newPhoneNumberCell ? newPhoneNumberCell.mxkTextField.isFirstResponder : NO;
-    
     // Trigger a full table reloadData
     [self.tableView reloadData];
-    
-    // Restore the previous edited field
-    if (keepNewEmailEditing)
-    {
-        [self editNewEmailTextField];
-        keepNewEmailEditing = NO;
-    }
-    else if (keepNewPhoneNumberEditing)
-    {
-        [self editNewPhoneNumberTextField];
-        keepNewPhoneNumberEditing = NO;
-    }
-}
-
-- (void)formatNewPhoneNumber
-{
-    if (newPhoneNumber)
-    {
-        NSString *formattedNumber = [[NBPhoneNumberUtil sharedInstance] format:newPhoneNumber numberFormat:NBEPhoneNumberFormatINTERNATIONAL error:nil];
-        NSString *prefix = newPhoneNumberCell.mxkLabel.text;
-        if ([formattedNumber hasPrefix:prefix])
-        {
-            // Format the display phone number
-            newPhoneNumberCell.mxkTextField.text = [formattedNumber substringFromIndex:prefix.length];
-        }
-    }
 }
 
 #pragma mark - Segues
@@ -1178,23 +724,15 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     }
     else if (section == SETTINGS_SECTION_USER_SETTINGS_INDEX)
     {
-        MXKAccount* account = [MXKAccountManager sharedManager].activeAccounts.firstObject;
-
-        userSettingsProfilePictureIndex = 0;
-        userSettingsDisplayNameIndex = 1;
-        userSettingsChangePasswordIndex = 2;
-        userSettingsEmailStartIndex = 3;
-        userSettingsNewEmailIndex = userSettingsEmailStartIndex + account.linkedEmails.count;
-        userSettingsPhoneStartIndex = userSettingsNewEmailIndex + 1;
-        userSettingsNewPhoneIndex = userSettingsPhoneStartIndex + account.linkedPhoneNumbers.count;
+        userSettingsProfilePictureIndex = count++;
+        userSettingsDisplayNameIndex = count++;
+        userSettingsChangePasswordIndex = count++;
 
         // Hide some unsupported account settings
         userSettingsFirstNameIndex = -1;
         userSettingsSurnameIndex = -1;
         userSettingsNightModeSepIndex = -1;
         userSettingsNightModeIndex = -1;
-
-        count = userSettingsNewPhoneIndex + 1;
     }
     else if (section == SETTINGS_SECTION_NOTIFICATIONS_SETTINGS_INDEX)
     {
@@ -1473,164 +1011,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
             surnameCell.mxkTextField.userInteractionEnabled = NO;
             
             cell = surnameCell;
-        }
-        else if (userSettingsEmailStartIndex <= row &&  row < userSettingsNewEmailIndex)
-        {
-            MXKTableViewCellWithLabelAndTextField *emailCell = [self getLabelAndTextFieldCell:tableView forIndexPath:indexPath];
-            
-            emailCell.mxkLabel.text = NSLocalizedStringFromTable(@"settings_email_address", @"Vector", nil);
-            emailCell.mxkTextField.text = account.linkedEmails[row - userSettingsEmailStartIndex];
-            emailCell.mxkTextField.userInteractionEnabled = NO;
-            
-            cell = emailCell;
-        }
-        else if (row == userSettingsNewEmailIndex)
-        {
-            MXKTableViewCellWithLabelAndTextField *newEmailCell = [self getLabelAndTextFieldCell:tableView forIndexPath:indexPath];
-
-            // Render the cell according to the `newEmailEditingEnabled` property
-            if (!_newEmailEditingEnabled)
-            {
-                newEmailCell.mxkLabel.text = NSLocalizedStringFromTable(@"settings_add_email_address", @"Vector", nil);
-                newEmailCell.mxkTextField.text = nil;
-                newEmailCell.mxkTextField.userInteractionEnabled = NO;
-                
-                newEmailCell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"plus_icon"]];
-            }
-            else
-            {
-                newEmailCell.mxkLabel.text = nil;
-                newEmailCell.mxkTextField.placeholder = NSLocalizedStringFromTable(@"settings_email_address_placeholder", @"Vector", nil);
-                if (kCaritasPlaceholderTextColor)
-                {
-                    newEmailCell.mxkTextField.attributedPlaceholder = [[NSAttributedString alloc]
-                                                                 initWithString:newEmailCell.mxkTextField.placeholder
-                                                                 attributes:@{NSForegroundColorAttributeName: kCaritasPlaceholderTextColor}];
-                }
-                newEmailCell.mxkTextField.text = newEmailTextField.text;
-                newEmailCell.mxkTextField.userInteractionEnabled = YES;
-                newEmailCell.mxkTextField.keyboardType = UIKeyboardTypeEmailAddress;
-                newEmailCell.mxkTextField.autocorrectionType = UITextAutocorrectionTypeNo;
-                newEmailCell.mxkTextField.spellCheckingType = UITextSpellCheckingTypeNo;
-                newEmailCell.mxkTextField.delegate = self;
-                newEmailCell.mxkTextField.accessibilityIdentifier=@"SettingsVCAddEmailTextField";
-
-                [newEmailCell.mxkTextField removeTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
-                [newEmailCell.mxkTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
-
-                [newEmailCell.mxkTextField removeTarget:self action:@selector(textFieldDidEnd:) forControlEvents:UIControlEventEditingDidEnd];
-                [newEmailCell.mxkTextField addTarget:self action:@selector(textFieldDidEnd:) forControlEvents:UIControlEventEditingDidEnd];
-
-                // When displaying the textfield the 1st time, open the keyboard
-                if (!newEmailTextField)
-                {
-                    newEmailTextField = newEmailCell.mxkTextField;
-                    [self editNewEmailTextField];
-                }
-                else
-                {
-                    // Update the current text field.
-                    newEmailTextField = newEmailCell.mxkTextField;
-                }
-                
-                UIImage *accessoryViewImage = [MXKTools paintImage:[UIImage imageNamed:@"plus_icon"] withColor:kCaritasColorRed];
-                newEmailCell.accessoryView = [[UIImageView alloc] initWithImage:accessoryViewImage];
-            }
-            
-            newEmailCell.mxkTextField.tag = row;
-
-            cell = newEmailCell;
-        }
-        else if (userSettingsPhoneStartIndex <= row &&  row < userSettingsNewPhoneIndex)
-        {
-            MXKTableViewCellWithLabelAndTextField *phoneCell = [self getLabelAndTextFieldCell:tableView forIndexPath:indexPath];
-            
-            phoneCell.mxkLabel.text = NSLocalizedStringFromTable(@"settings_phone_number", @"Vector", nil);
-            
-            NSString *e164 = [NSString stringWithFormat:@"+%@", account.linkedPhoneNumbers[row - userSettingsPhoneStartIndex]];
-            NBPhoneNumber *phoneNb = [[NBPhoneNumberUtil sharedInstance] parse:e164 defaultRegion:nil error:nil];
-            phoneCell.mxkTextField.text = [[NBPhoneNumberUtil sharedInstance] format:phoneNb numberFormat:NBEPhoneNumberFormatINTERNATIONAL error:nil];
-            phoneCell.mxkTextField.userInteractionEnabled = NO;
-            
-            cell = phoneCell;
-        }
-        else if (row == userSettingsNewPhoneIndex)
-        {
-            // Render the cell according to the `newPhoneEditingEnabled` property
-            if (!_newPhoneEditingEnabled)
-            {
-                MXKTableViewCellWithLabelAndTextField *newPhoneCell = [self getLabelAndTextFieldCell:tableView forIndexPath:indexPath];
-                
-                newPhoneCell.mxkLabel.text = NSLocalizedStringFromTable(@"settings_add_phone_number", @"Vector", nil);
-                newPhoneCell.mxkTextField.text = nil;
-                newPhoneCell.mxkTextField.userInteractionEnabled = NO;
-                newPhoneCell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"plus_icon"]];
-                
-                cell = newPhoneCell;
-            }
-            else
-            {
-                TableViewCellWithPhoneNumberTextField * newPhoneCell = [self.tableView dequeueReusableCellWithIdentifier:[TableViewCellWithPhoneNumberTextField defaultReuseIdentifier] forIndexPath:indexPath];
-                
-                [newPhoneCell.countryCodeButton removeTarget:self action:nil forControlEvents:UIControlEventTouchUpInside];
-                [newPhoneCell.countryCodeButton addTarget:self action:@selector(selectPhoneNumberCountry:) forControlEvents:UIControlEventTouchUpInside];
-                newPhoneCell.countryCodeButton.accessibilityIdentifier = @"SettingsVCPhoneCountryButton";
-                
-                newPhoneCell.mxkLabel.font = newPhoneCell.mxkTextField.font = [UIFont systemFontOfSize:16];
-                
-                newPhoneCell.mxkTextField.userInteractionEnabled = YES;
-                newPhoneCell.mxkTextField.keyboardType = UIKeyboardTypePhonePad;
-                newPhoneCell.mxkTextField.autocorrectionType = UITextAutocorrectionTypeNo;
-                newPhoneCell.mxkTextField.spellCheckingType = UITextSpellCheckingTypeNo;
-                newPhoneCell.mxkTextField.delegate = self;
-                newPhoneCell.mxkTextField.accessibilityIdentifier=@"SettingsVCAddPhoneTextField";
-                
-                [newPhoneCell.mxkTextField removeTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
-                [newPhoneCell.mxkTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
-                
-                [newPhoneCell.mxkTextField removeTarget:self action:@selector(textFieldDidEnd:) forControlEvents:UIControlEventEditingDidEnd];
-                [newPhoneCell.mxkTextField addTarget:self action:@selector(textFieldDidEnd:) forControlEvents:UIControlEventEditingDidEnd];
-                
-                newPhoneCell.mxkTextField.tag = row;
-                
-                // When displaying the textfield the 1st time, open the keyboard
-                if (!newPhoneNumberCell)
-                {
-                    NSString *countryCode = [MXKAppSettings standardAppSettings].phonebookCountryCode;
-                    if (!countryCode)
-                    {
-                        // If none, consider the preferred locale
-                        NSLocale *local = [[NSLocale alloc] initWithLocaleIdentifier:[[[NSBundle mainBundle] preferredLocalizations] objectAtIndex:0]];
-                        if ([local respondsToSelector:@selector(countryCode)])
-                        {
-                            countryCode = local.countryCode;
-                        }
-                        
-                        if (!countryCode)
-                        {
-                            countryCode = @"GB";
-                        }
-                    }
-                    newPhoneCell.isoCountryCode = countryCode;
-                    newPhoneCell.mxkTextField.text = nil;
-                    
-                    newPhoneNumberCell = newPhoneCell;
-
-                    [self editNewPhoneNumberTextField];
-                }
-                else
-                {
-                    newPhoneCell.isoCountryCode = newPhoneNumberCell.isoCountryCode;
-                    newPhoneCell.mxkTextField.text = newPhoneNumberCell.mxkTextField.text;
-                    
-                    newPhoneNumberCell = newPhoneCell;
-                }
-                
-                UIImage *accessoryViewImage = [MXKTools paintImage:[UIImage imageNamed:@"plus_icon"] withColor:kCaritasColorRed];
-                newPhoneCell.accessoryView = [[UIImageView alloc] initWithImage:accessoryViewImage];
-                
-                cell = newPhoneCell;
-            }
         }
         else if (row == userSettingsChangePasswordIndex)
         {
@@ -2268,15 +1648,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.section == SETTINGS_SECTION_USER_SETTINGS_INDEX)
-    {
-        NSInteger row = indexPath.row;
-        if ((userSettingsEmailStartIndex <= row &&  row < userSettingsNewEmailIndex) ||
-            (userSettingsPhoneStartIndex <= row &&  row < userSettingsNewPhoneIndex))
-        {
-            return YES;
-        }
-    }
     return NO;
 }
 
@@ -2361,37 +1732,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     }
     
     return 24;
-}
-
-- (NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    NSMutableArray* actions;
-    
-    // Add the swipe to delete user's email or phone number
-    if (indexPath.section == SETTINGS_SECTION_USER_SETTINGS_INDEX)
-    {
-        NSInteger row = indexPath.row;
-        if ((userSettingsEmailStartIndex <= row &&  row < userSettingsNewEmailIndex) ||
-            (userSettingsPhoneStartIndex <= row &&  row < userSettingsNewPhoneIndex))
-        {
-            actions = [[NSMutableArray alloc] init];
-            
-            UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-            CGFloat cellHeight = cell ? cell.frame.size.height : 50;
-            
-            // Patch: Force the width of the button by adding whitespace characters into the title string.
-            UITableViewRowAction *leaveAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDestructive title:@"    "  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
-                
-                [self onRemove3PID:indexPath];
-                
-            }];
-            
-            leaveAction.backgroundColor = [MXKTools convertImageToPatternColor:@"remove_icon_pink" backgroundColor:kCaritasSecondaryBgColor patternSize:CGSizeMake(50, cellHeight) resourceSize:CGSizeMake(24, 24)];
-            [actions insertObject:leaveAction atIndex:0];
-        }
-    }
-    
-    return actions;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -2528,30 +1868,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
             {
                 [self displayPasswordAlert];
             }
-            else if (row == userSettingsNewEmailIndex)
-            {
-                if (!self.newEmailEditingEnabled)
-                {
-                    // Enable the new email text field
-                    self.newEmailEditingEnabled = YES;
-                }
-                else if (newEmailTextField)
-                {
-                    [self onAddNewEmail:newEmailTextField];
-                }
-            }
-            else if (row == userSettingsNewPhoneIndex)
-            {
-                if (!self.newPhoneEditingEnabled)
-                {
-                    // Enable the new phone text field
-                    self.newPhoneEditingEnabled = YES;
-                }
-                else if (newPhoneNumberCell.mxkTextField)
-                {
-                    [self onAddNewPhone:newPhoneNumberCell.mxkTextField];
-                }
-            }
         }
         else if (section == SETTINGS_SECTION_DEVICES_INDEX)
         {
@@ -2599,115 +1915,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
             [self stopActivityIndicator];
         }
     }];
-}
-
-- (void)onRemove3PID:(NSIndexPath*)path
-{
-    NSUInteger section = path.section;
-    NSUInteger row = path.row;
-    
-    if (section == SETTINGS_SECTION_USER_SETTINGS_INDEX)
-    {
-        NSString *address, *medium;
-        MXKAccount* account = [MXKAccountManager sharedManager].activeAccounts.firstObject;
-        NSString *promptMsg;
-        
-        if (userSettingsEmailStartIndex <= row &&  row < userSettingsNewEmailIndex)
-        {
-            medium = kMX3PIDMediumEmail;
-            row = row - userSettingsEmailStartIndex;
-            NSArray<NSString *> *linkedEmails = account.linkedEmails;
-            if (row < linkedEmails.count)
-            {
-                address = linkedEmails[row];
-                promptMsg = [NSString stringWithFormat:NSLocalizedStringFromTable(@"settings_remove_email_prompt_msg", @"Vector", nil), address];
-            }
-        }
-        else if (userSettingsPhoneStartIndex <= row &&  row < userSettingsNewPhoneIndex)
-        {
-            medium = kMX3PIDMediumMSISDN;
-            row = row - userSettingsPhoneStartIndex;
-            NSArray<NSString *> *linkedPhones = account.linkedPhoneNumbers;
-            if (row < linkedPhones.count)
-            {
-                address = linkedPhones[row];
-                NSString *e164 = [NSString stringWithFormat:@"+%@", address];
-                NBPhoneNumber *phoneNb = [[NBPhoneNumberUtil sharedInstance] parse:e164 defaultRegion:nil error:nil];
-                NSString *phoneMunber = [[NBPhoneNumberUtil sharedInstance] format:phoneNb numberFormat:NBEPhoneNumberFormatINTERNATIONAL error:nil];
-                
-                promptMsg = [NSString stringWithFormat:NSLocalizedStringFromTable(@"settings_remove_phone_prompt_msg", @"Vector", nil), phoneMunber];
-            }
-        }
-        
-        if (address && medium)
-        {
-            __weak typeof(self) weakSelf = self;
-            
-            if (currentAlert)
-            {
-                [currentAlert dismissViewControllerAnimated:NO completion:nil];
-                currentAlert = nil;
-            }
-            
-            // Remove ?
-            currentAlert = [UIAlertController alertControllerWithTitle:NSLocalizedStringFromTable(@"settings_remove_prompt_title", @"Vector", nil) message:promptMsg preferredStyle:UIAlertControllerStyleAlert];
-            
-            [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"cancel"]
-                                                             style:UIAlertActionStyleCancel
-                                                           handler:^(UIAlertAction * action) {
-                                                               
-                                                               if (weakSelf)
-                                                               {
-                                                                   typeof(self) self = weakSelf;
-                                                                   self->currentAlert = nil;
-                                                               }
-                                                               
-                                                           }]];
-            
-            [currentAlert addAction:[UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"remove", @"Vector", nil)
-                                                             style:UIAlertActionStyleDefault
-                                                           handler:^(UIAlertAction * action) {
-                                                               
-                                                               if (weakSelf)
-                                                               {
-                                                                   typeof(self) self = weakSelf;
-                                                                   self->currentAlert = nil;
-                                                                   
-                                                                   [self startActivityIndicator];
-                                                                   
-                                                                   [self.mainSession.matrixRestClient remove3PID:address medium:medium success:^{
-                                                                       
-                                                                       if (weakSelf)
-                                                                       {
-                                                                           typeof(self) self = weakSelf;
-                                                                           
-                                                                           [self stopActivityIndicator];
-                                                                           
-                                                                           // Update linked 3pids
-                                                                           [self loadAccount3PIDs];
-                                                                       }
-                                                                       
-                                                                   } failure:^(NSError *error) {
-                                                                       
-                                                                       NSLog(@"[SettingsViewController] Remove 3PID: %@ failed", address);
-                                                                       if (weakSelf)
-                                                                       {
-                                                                           typeof(self) self = weakSelf;
-                                                                           
-                                                                           [self stopActivityIndicator];
-                                                                           
-                                                                           NSString *myUserId = self.mainSession.myUser.userId; // TODO: Hanlde multi-account
-                                                                           [[NSNotificationCenter defaultCenter] postNotificationName:kMXKErrorNotification object:error userInfo:myUserId ? @{kMXKErrorUserIdKey: myUserId} : nil];
-                                                                       }
-                                                                   }];
-                                                               }
-                                                               
-                                                           }]];
-            
-            [currentAlert mxk_setAccessibilityIdentifier: @"SettingsVCRemove3PIDAlert"];
-            [self presentViewController:currentAlert animated:YES completion:nil];
-        }
-    }
 }
 
 - (void)togglePushNotifications:(id)sender
@@ -3083,15 +2290,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     [bugReportViewController showInViewController:self];
 }
 
-- (void)selectPhoneNumberCountry:(id)sender
-{
-    newPhoneNumberCountryPicker = [CountryPickerViewController countryPickerViewController];
-    newPhoneNumberCountryPicker.view.tag = SETTINGS_SECTION_USER_SETTINGS_INDEX;
-    newPhoneNumberCountryPicker.delegate = self;
-    newPhoneNumberCountryPicker.showCountryCallingCode = YES;
-    [self pushViewController:newPhoneNumberCountryPicker];
-}
-
 //- (void)onRuleUpdate:(id)sender
 //{
 //    MXPushRule* pushRule = nil;
@@ -3216,27 +2414,27 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     else if (uploadedAvatarURL)
     {
         [account setUserAvatarUrl:uploadedAvatarURL
-                             success:^{
-                                 
-                                 if (weakSelf)
-                                 {
-                                     typeof(self) self = weakSelf;
-                                     self->uploadedAvatarURL = nil;
-                                     [self onSave:nil];
-                                 }
-                                 
-                             }
-                             failure:^(NSError *error) {
-                                 
-                                 NSLog(@"[SettingsViewController] Failed to set avatar url");
-                                
-                                 if (weakSelf)
-                                 {
-                                     typeof(self) self = weakSelf;
-                                     [self handleErrorDuringProfileChangeSaving:error];
-                                 }
-                                 
-                             }];
+                          success:^{
+                              
+                              if (weakSelf)
+                              {
+                                  typeof(self) self = weakSelf;
+                                  self->uploadedAvatarURL = nil;
+                                  [self onSave:nil];
+                              }
+                              
+                          }
+                          failure:^(NSError *error) {
+                              
+                              NSLog(@"[SettingsViewController] Failed to set avatar url");
+                              
+                              if (weakSelf)
+                              {
+                                  typeof(self) self = weakSelf;
+                                  [self handleErrorDuringProfileChangeSaving:error];
+                              }
+                              
+                          }];
         
         return;
     }
@@ -3320,202 +2518,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
         [currentAlert mxk_setAccessibilityIdentifier: @"SettingsVCSaveChangesFailedAlert"];
         [rootViewController presentViewController:currentAlert animated:YES completion:nil];
     }
-}
-
-- (IBAction)onAddNewEmail:(id)sender
-{
-    // Ignore empty field
-    if (!newEmailTextField.text.length)
-    {
-        // Reset new email adding
-        self.newEmailEditingEnabled = NO;
-        return;
-    }
-    
-    // Email check
-    if (![MXTools isEmailAddress:newEmailTextField.text])
-    {
-         __weak typeof(self) weakSelf = self;
-        
-        [currentAlert dismissViewControllerAnimated:NO completion:nil];
-        
-        currentAlert = [UIAlertController alertControllerWithTitle:[NSBundle mxk_localizedStringForKey:@"account_error_email_wrong_title"] message:[NSBundle mxk_localizedStringForKey:@"account_error_email_wrong_description"] preferredStyle:UIAlertControllerStyleAlert];
-        
-        [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"ok"]
-                                                         style:UIAlertActionStyleDefault
-                                                       handler:^(UIAlertAction * action) {
-                                                           
-                                                           if (weakSelf)
-                                                           {
-                                                               typeof(self) self = weakSelf;
-                                                               
-                                                               self->currentAlert = nil;
-                                                           }
-                                                           
-                                                       }]];
-        
-        [currentAlert mxk_setAccessibilityIdentifier: @"SettingsVCAddEmailAlert"];
-        [self presentViewController:currentAlert animated:YES completion:nil];
-
-        return;
-    }
-
-    [self startActivityIndicator];
-
-    // Dismiss the keyboard
-    [newEmailTextField resignFirstResponder];
-
-    MXSession* session = [[AppDelegate theDelegate].mxSessions objectAtIndex:0];
-
-    MXK3PID *new3PID = [[MXK3PID alloc] initWithMedium:kMX3PIDMediumEmail andAddress:newEmailTextField.text];
-    [new3PID requestValidationTokenWithMatrixRestClient:session.matrixRestClient isDuringRegistration:NO nextLink:nil success:^{
-
-        [self showValidationEmailDialogWithMessage:[NSBundle mxk_localizedStringForKey:@"account_email_validation_message"] for3PID:new3PID];
-
-    } failure:^(NSError *error) {
-
-        [self stopActivityIndicator];
-
-        NSLog(@"[SettingsViewController] Failed to request email token");
-        
-        // Translate the potential MX error.
-        MXError *mxError = [[MXError alloc] initWithNSError:error];
-        if (mxError && ([mxError.errcode isEqualToString:kMXErrCodeStringThreePIDInUse] || [mxError.errcode isEqualToString:kMXErrCodeStringServerNotTrusted]))
-        {
-            NSMutableDictionary *userInfo;
-            if (error.userInfo)
-            {
-                userInfo = [NSMutableDictionary dictionaryWithDictionary:error.userInfo];
-            }
-            else
-            {
-                userInfo = [NSMutableDictionary dictionary];
-            }
-            
-            userInfo[NSLocalizedFailureReasonErrorKey] = nil;
-            
-            if ([mxError.errcode isEqualToString:kMXErrCodeStringThreePIDInUse])
-            {
-                userInfo[NSLocalizedDescriptionKey] = NSLocalizedStringFromTable(@"auth_email_in_use", @"Vector", nil);
-                userInfo[@"error"] = NSLocalizedStringFromTable(@"auth_email_in_use", @"Vector", nil);
-            }
-            else
-            {
-                userInfo[NSLocalizedDescriptionKey] = NSLocalizedStringFromTable(@"auth_untrusted_id_server", @"Vector", nil);
-                userInfo[@"error"] = NSLocalizedStringFromTable(@"auth_untrusted_id_server", @"Vector", nil);
-            }
-            
-            error = [NSError errorWithDomain:error.domain code:error.code userInfo:userInfo];
-        }
-
-        // Notify user
-        NSString *myUserId = session.myUser.userId; // TODO: Hanlde multi-account
-        [[NSNotificationCenter defaultCenter] postNotificationName:kMXKErrorNotification object:error userInfo:myUserId ? @{kMXKErrorUserIdKey: myUserId} : nil];
-
-    }];
-}
-
-- (IBAction)onAddNewPhone:(id)sender
-{
-    // Ignore empty field
-    if (!newPhoneNumberCell.mxkTextField.text.length)
-    {
-        // Disable the new phone edition if the text field is empty
-        self.newPhoneEditingEnabled = NO;
-        return;
-    }
-    
-    // Phone check
-    if (![[NBPhoneNumberUtil sharedInstance] isValidNumber:newPhoneNumber])
-    {
-        [currentAlert dismissViewControllerAnimated:NO completion:nil];
-        __weak typeof(self) weakSelf = self;
-        
-        currentAlert = [UIAlertController alertControllerWithTitle:[NSBundle mxk_localizedStringForKey:@"account_error_msisdn_wrong_title"] message:[NSBundle mxk_localizedStringForKey:@"account_error_msisdn_wrong_description"] preferredStyle:UIAlertControllerStyleAlert];
-        
-        [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"ok"]
-                                                         style:UIAlertActionStyleDefault
-                                                       handler:^(UIAlertAction * action) {
-                                                           
-                                                           if (weakSelf)
-                                                           {
-                                                               typeof(self) self = weakSelf;
-                                                               self->currentAlert = nil;
-                                                           }
-                                                           
-                                                       }]];
-        
-        [currentAlert mxk_setAccessibilityIdentifier: @"SettingsVCAddMsisdnAlert"];
-        [self presentViewController:currentAlert animated:YES completion:nil];
-        
-        return;
-    }
-    
-    [self startActivityIndicator];
-    
-    // Dismiss the keyboard
-    [newPhoneNumberCell.mxkTextField resignFirstResponder];
-    
-    MXSession* session = [[AppDelegate theDelegate].mxSessions objectAtIndex:0];
-    
-    NSString *e164 = [[NBPhoneNumberUtil sharedInstance] format:newPhoneNumber numberFormat:NBEPhoneNumberFormatE164 error:nil];
-    NSString *msisdn;
-    if ([e164 hasPrefix:@"+"])
-    {
-        msisdn = [e164 substringFromIndex:1];
-    }
-    else if ([e164 hasPrefix:@"00"])
-    {
-        msisdn = [e164 substringFromIndex:2];
-    }
-    
-    MXK3PID *new3PID = [[MXK3PID alloc] initWithMedium:kMX3PIDMediumMSISDN andAddress:msisdn];
-    
-    [new3PID requestValidationTokenWithMatrixRestClient:session.matrixRestClient isDuringRegistration:NO nextLink:nil success:^{
-        
-        [self showValidationMsisdnDialogWithMessage:[NSBundle mxk_localizedStringForKey:@"account_msisdn_validation_message"] for3PID:new3PID];
-        
-    } failure:^(NSError *error) {
-        
-        [self stopActivityIndicator];
-        
-        NSLog(@"[SettingsViewController] Failed to request msisdn token");
-        
-        // Translate the potential MX error.
-        MXError *mxError = [[MXError alloc] initWithNSError:error];
-        if (mxError && ([mxError.errcode isEqualToString:kMXErrCodeStringThreePIDInUse] || [mxError.errcode isEqualToString:kMXErrCodeStringServerNotTrusted]))
-        {
-            NSMutableDictionary *userInfo;
-            if (error.userInfo)
-            {
-                userInfo = [NSMutableDictionary dictionaryWithDictionary:error.userInfo];
-            }
-            else
-            {
-                userInfo = [NSMutableDictionary dictionary];
-            }
-            
-            userInfo[NSLocalizedFailureReasonErrorKey] = nil;
-            
-            if ([mxError.errcode isEqualToString:kMXErrCodeStringThreePIDInUse])
-            {
-                userInfo[NSLocalizedDescriptionKey] = NSLocalizedStringFromTable(@"auth_phone_in_use", @"Vector", nil);
-                userInfo[@"error"] = NSLocalizedStringFromTable(@"auth_phone_in_use", @"Vector", nil);
-            }
-            else
-            {
-                userInfo[NSLocalizedDescriptionKey] = NSLocalizedStringFromTable(@"auth_untrusted_id_server", @"Vector", nil);
-                userInfo[@"error"] = NSLocalizedStringFromTable(@"auth_untrusted_id_server", @"Vector", nil);
-            }
-            
-            error = [NSError errorWithDomain:error.domain code:error.code userInfo:userInfo];
-        }
-        
-        // Notify user
-        NSString *myUserId = session.myUser.userId;
-        [[NSNotificationCenter defaultCenter] postNotificationName:kMXKErrorNotification object:error userInfo:myUserId ? @{kMXKErrorUserIdKey: myUserId} : nil];
-        
-    }];
 }
 
 - (void)updateSaveButtonStatus
@@ -3749,28 +2751,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
         newDisplayName = [textField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
         [self updateSaveButtonStatus];
     }
-    else if (textField.tag == userSettingsNewPhoneIndex)
-    {
-        newPhoneNumber = [[NBPhoneNumberUtil sharedInstance] parse:textField.text defaultRegion:newPhoneNumberCell.isoCountryCode error:nil];
-        
-        [self formatNewPhoneNumber];
-    }
-}
-
-- (IBAction)textFieldDidEnd:(id)sender
-{
-    UITextField* textField = (UITextField*)sender;
-
-    // Disable the new email edition if the user leaves the text field empty
-    if (textField.tag == userSettingsNewEmailIndex && textField.text.length == 0 && !keepNewEmailEditing)
-    {
-        self.newEmailEditingEnabled = NO;
-    }
-    else if (textField.tag == userSettingsNewPhoneIndex && textField.text.length == 0 && !keepNewPhoneNumberEditing && !newPhoneNumberCountryPicker)
-    {
-        // Disable the new phone edition if the user leaves the text field empty
-        self.newPhoneEditingEnabled = NO;
-    }
 }
 
 #pragma mark - UITextField delegate
@@ -3795,10 +2775,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     if (textField.tag == userSettingsDisplayNameIndex)
     {
         [textField resignFirstResponder];
-    }
-    else if (textField.tag == userSettingsNewEmailIndex)
-    {
-        [self onAddNewEmail:textField];
     }
     
     return YES;
@@ -3850,24 +2826,24 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
                             self->currentAlert = [UIAlertController alertControllerWithTitle:nil message:NSLocalizedStringFromTable(@"settings_password_updated", @"Vector", nil) preferredStyle:UIAlertControllerStyleAlert];
                             
                             [self->currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"ok"]
-                                                                             style:UIAlertActionStyleDefault
-                                                                           handler:^(UIAlertAction * action) {
-                                                                               
-                                                                               if (weakSelf)
-                                                                               {
-                                                                                   typeof(self) self = weakSelf;
-                                                                                   self->currentAlert = nil;
-                                                                                   
-                                                                                   // Check whether destroy has been called durign pwd change
-                                                                                   if (self->onReadyToDestroyHandler)
-                                                                                   {
-                                                                                       // Ready to destroy
-                                                                                       self->onReadyToDestroyHandler();
-                                                                                       self->onReadyToDestroyHandler = nil;
-                                                                                   }
-                                                                               }
-                                                                               
-                                                                           }]];
+                                                                                   style:UIAlertActionStyleDefault
+                                                                                 handler:^(UIAlertAction * action) {
+                                                                                     
+                                                                                     if (weakSelf)
+                                                                                     {
+                                                                                         typeof(self) self = weakSelf;
+                                                                                         self->currentAlert = nil;
+                                                                                         
+                                                                                         // Check whether destroy has been called durign pwd change
+                                                                                         if (self->onReadyToDestroyHandler)
+                                                                                         {
+                                                                                             // Ready to destroy
+                                                                                             self->onReadyToDestroyHandler();
+                                                                                             self->onReadyToDestroyHandler = nil;
+                                                                                         }
+                                                                                     }
+                                                                                     
+                                                                                 }]];
                             
                             [self->currentAlert mxk_setAccessibilityIdentifier:@"SettingsVCOnPasswordUpdatedAlert"];
                             [self presentViewController:self->currentAlert animated:YES completion:nil];
@@ -4002,28 +2978,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
 - (void)documentInteractionControllerDidDismissOptionsMenu:(UIDocumentInteractionController *)controller
 {
     documentInteractionController = nil;
-}
-
-#pragma mark - MXKCountryPickerViewControllerDelegate
-
-- (void)countryPickerViewController:(MXKCountryPickerViewController *)countryPickerViewController didSelectCountry:(NSString *)isoCountryCode
-{
-    if (countryPickerViewController.view.tag == SETTINGS_SECTION_CONTACTS_INDEX)
-    {
-        [MXKAppSettings standardAppSettings].phonebookCountryCode = isoCountryCode;
-    }
-    else if (countryPickerViewController.view.tag == SETTINGS_SECTION_USER_SETTINGS_INDEX)
-    {
-        if (newPhoneNumberCell)
-        {
-            newPhoneNumberCell.isoCountryCode = isoCountryCode;
-            
-            newPhoneNumber = [[NBPhoneNumberUtil sharedInstance] parse:newPhoneNumberCell.mxkTextField.text defaultRegion:isoCountryCode error:nil];
-            [self formatNewPhoneNumber];
-        }
-    }
-    
-    [countryPickerViewController withdrawViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - MXKCountryPickerViewControllerDelegate
