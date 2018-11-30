@@ -79,11 +79,6 @@
     [_roomsViewController setAccessibilityLabel:NSLocalizedStringFromTable(@"title_rooms", @"Vector", nil)];
     [_settingsViewController setAccessibilityLabel:NSLocalizedStringFromTable(@"settings_title", @"Vector", nil)];
     
-    // Localizing tab bar items
-    _roomsViewController.tabBarItem.title = NSLocalizedStringFromTable(@"title_rooms", @"Vector", nil);
-    _peopleViewController.tabBarItem.title = NSLocalizedStringFromTable(@"title_people", @"Vector", nil);
-    _settingsViewController.tabBarItem.title = NSLocalizedStringFromTable(@"settings_title", @"Vector", nil);
-    
     // Sanity check
     NSAssert(_peopleViewController && _roomsViewController && _settingsViewController, @"Something wrong in Main.storyboard");
 
@@ -139,6 +134,11 @@
     self.tabBar.barTintColor = kCaritasPrimaryBgColor;
     
     self.view.backgroundColor = kCaritasPrimaryBgColor;
+    
+    // Localizing tab bar items
+    _roomsViewController.tabBarItem.title = NSLocalizedStringFromTable(@"title_rooms", @"Vector", nil);
+    _peopleViewController.tabBarItem.title = NSLocalizedStringFromTable(@"title_people", @"Vector", nil);
+    _settingsViewController.tabBarItem.title = NSLocalizedStringFromTable(@"settings_title", @"Vector", nil);
     
     [self setNeedsStatusBarAppearanceUpdate];
 }
