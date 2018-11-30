@@ -1971,6 +1971,9 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     // Disable Call Kit functionality
     [MXKAppSettings standardAppSettings].enableCallKit = NO;
     
+    // Enable lazy loading of members
+    [MXKAppSettings standardAppSettings].syncWithLazyLoadOfRoomMembers = YES;
+    
     // Disable long press on event in bubble cells
     [MXKRoomBubbleTableViewCell disableLongPressGestureOnEvent:YES];
     
