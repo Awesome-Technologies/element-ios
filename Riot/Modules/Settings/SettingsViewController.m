@@ -50,7 +50,6 @@ enum
     SETTINGS_SECTION_SIGN_OUT_INDEX = 0,
     SETTINGS_SECTION_USER_SETTINGS_INDEX,
     SETTINGS_SECTION_NOTIFICATIONS_SETTINGS_INDEX,
-    SETTINGS_SECTION_CALLS_INDEX,
     SETTINGS_SECTION_USER_INTERFACE_INDEX,
     SETTINGS_SECTION_IGNORED_USERS_INDEX,
     SETTINGS_SECTION_CONTACTS_INDEX,
@@ -68,13 +67,6 @@ enum
     NOTIFICATION_SETTINGS_PIN_MISSED_NOTIFICATIONS_INDEX = 0,
     NOTIFICATION_SETTINGS_PIN_UNREAD_INDEX,
     NOTIFICATION_SETTINGS_COUNT
-};
-
-enum
-{
-    CALLS_ENABLE_CALLKIT_INDEX = 0,
-    CALLS_DESCRIPTION_INDEX,
-    CALLS_COUNT
 };
 
 enum
@@ -103,7 +95,6 @@ enum
 enum
 {
     LABS_USE_ROOM_MEMBERS_LAZY_LOADING_INDEX = 0,
-    LABS_USE_JITSI_WIDGET_INDEX = 0,
     LABS_CRYPTO_INDEX,
     LABS_COUNT
 };
@@ -729,13 +720,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     {
         count = NOTIFICATION_SETTINGS_COUNT;
     }
-    else if (section == SETTINGS_SECTION_CALLS_INDEX)
-    {
-        if ([MXCallKitAdapter callKitAvailable])
-        {
-            count = CALLS_COUNT;
-        }
-    }
     else if (section == SETTINGS_SECTION_USER_INTERFACE_INDEX)
     {
         count = USER_INTERFACE_COUNT;
@@ -1057,28 +1041,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
             cell = labelAndSwitchCell;
         }
     }
-    else if (section == SETTINGS_SECTION_CALLS_INDEX)
-    {
-        if (row == CALLS_ENABLE_CALLKIT_INDEX)
-        {
-            MXKTableViewCellWithLabelAndSwitch* labelAndSwitchCell = [self getLabelAndSwitchCell:tableView forIndexPath:indexPath];
-            labelAndSwitchCell.mxkLabel.text = NSLocalizedStringFromTable(@"settings_enable_callkit", @"Vector", nil);
-            labelAndSwitchCell.mxkSwitch.on = [MXKAppSettings standardAppSettings].isCallKitEnabled;
-            labelAndSwitchCell.mxkSwitch.enabled = YES;
-            [labelAndSwitchCell.mxkSwitch addTarget:self action:@selector(toggleCallKit:) forControlEvents:UIControlEventTouchUpInside];
-            
-            cell = labelAndSwitchCell;
-        }
-        else if (row == CALLS_DESCRIPTION_INDEX)
-        {
-            MXKTableViewCell *globalInfoCell = [self getDefaultTableViewCell:tableView];
-            globalInfoCell.textLabel.text = NSLocalizedStringFromTable(@"settings_callkit_info", @"Vector", nil);
-            globalInfoCell.textLabel.numberOfLines = 0;
-            globalInfoCell.selectionStyle = UITableViewCellSelectionStyleNone;
-            
-            cell = globalInfoCell;
-        }
-    }
     else if (section == SETTINGS_SECTION_USER_INTERFACE_INDEX)
     {
         if (row == USER_INTERFACE_LANGUAGE_INDEX)
@@ -1383,17 +1345,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
 
             cell = labelAndSwitchCell;
         }
-        else if (row == LABS_USE_JITSI_WIDGET_INDEX)
-        {
-            MXKTableViewCellWithLabelAndSwitch* labelAndSwitchCell = [self getLabelAndSwitchCell:tableView forIndexPath:indexPath];
-
-            labelAndSwitchCell.mxkLabel.text = NSLocalizedStringFromTable(@"settings_labs_create_conference_with_jitsi", @"Vector", nil);
-            labelAndSwitchCell.mxkSwitch.on = RiotSettings.shared.createConferenceCallsWithJitsi;
-
-            [labelAndSwitchCell.mxkSwitch addTarget:self action:@selector(toggleJitsiForConference:) forControlEvents:UIControlEventTouchUpInside];
-
-            cell = labelAndSwitchCell;
-        }
         else if (row == LABS_CRYPTO_INDEX)
         {
             MXSession* session = [[AppDelegate theDelegate].mxSessions objectAtIndex:0];
@@ -1519,13 +1470,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     else if (section == SETTINGS_SECTION_NOTIFICATIONS_SETTINGS_INDEX)
     {
         return NSLocalizedStringFromTable(@"settings_notifications_settings", @"Vector", nil);
-    }
-    else if (section == SETTINGS_SECTION_CALLS_INDEX)
-    {
-        if ([MXCallKitAdapter callKitAvailable])
-        {
-            return NSLocalizedStringFromTable(@"settings_calls_settings", @"Vector", nil);
-        }
     }
     else if (section == SETTINGS_SECTION_USER_INTERFACE_INDEX)
     {
@@ -1654,13 +1598,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
             }
         }
     }
-    else if (section == SETTINGS_SECTION_CALLS_INDEX)
-    {
-        if (![MXCallKitAdapter callKitAvailable])
-        {
-            return SECTION_TITLE_PADDING_WHEN_HIDDEN;
-        }
-    }
     
     return 24;
 }
@@ -1677,13 +1614,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
                 // Hide this section
                 return SECTION_TITLE_PADDING_WHEN_HIDDEN;
             }
-        }
-    }
-    else if (section == SETTINGS_SECTION_CALLS_INDEX)
-    {
-        if (![MXCallKitAdapter callKitAvailable])
-        {
-            return SECTION_TITLE_PADDING_WHEN_HIDDEN;
         }
     }
     
@@ -1873,12 +1803,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     }];
 }
 
-- (void)toggleCallKit:(id)sender
-{
-    UISwitch *switchButton = (UISwitch*)sender;
-    [MXKAppSettings standardAppSettings].enableCallKit = switchButton.isOn;
-}
-
 - (void)toggleLocalContactsSync:(id)sender
 {
     UISwitch *switchButton = (UISwitch*)sender;
@@ -1992,19 +1916,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
                 }
             }];
         }
-    }
-}
-
-
-- (void)toggleJitsiForConference:(id)sender
-{
-    if (sender && [sender isKindOfClass:UISwitch.class])
-    {
-        UISwitch *switchButton = (UISwitch*)sender;
-        
-        RiotSettings.shared.createConferenceCallsWithJitsi = switchButton.isOn;
-
-        [self.tableView reloadData];
     }
 }
 

@@ -19,7 +19,6 @@
 #import <MatrixKit/MatrixKit.h>
 
 #import "MasterTabBarController.h"
-#import "JitsiViewController.h"
 
 #import "RageShakeManager.h"
 #import "Analytics.h"
@@ -37,7 +36,7 @@ extern NSString *const kAppDelegateDidTapStatusBarNotification;
  */
 extern NSString *const kAppDelegateNetworkStatusDidChangeNotification;
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate, MXKCallViewControllerDelegate, UISplitViewControllerDelegate, UINavigationControllerDelegate, JitsiViewControllerDelegate>
+@interface AppDelegate : UIResponder <UIApplicationDelegate, UISplitViewControllerDelegate, UINavigationControllerDelegate>
 {
     BOOL isPushRegistered;
     
@@ -157,29 +156,6 @@ extern NSString *const kAppDelegateNetworkStatusDidChangeNotification;
  @return YES in case of processing success.
  */
 - (BOOL)handleUniversalLinkFragment:(NSString*)fragment;
-
-#pragma mark - Jitsi call
-
-/**
- Open the Jitsi view controller from a widget.
- 
- @param jitsiWidget the jitsi widget.
- @param video to indicate voice or video call.
- */
-- (void)displayJitsiViewControllerWithWidget:(Widget*)jitsiWidget andVideo:(BOOL)video;
-
-/**
- The current Jitsi view controller being displayed.
- */
-@property (nonatomic, readonly) JitsiViewController *jitsiViewController;
-
-#pragma mark - Call status handling
-
-/**
- Call status window displayed when user goes back to app during a call.
- */
-@property (nonatomic, readonly) UIWindow* callStatusBarWindow;
-@property (nonatomic, readonly) UIButton* callStatusBarButton;
 
 @end
 

@@ -51,8 +51,6 @@
 
 #import "ReadReceiptsViewController.h"
 
-#import "JitsiViewController.h"
-
 #import "RoomEmptyBubbleCell.h"
 
 #import "RoomIncomingTextMsgBubbleCell.h"
@@ -179,11 +177,6 @@
 
     // Observers to manage MXSession state (and sync errors)
     id kMXSessionStateDidChangeObserver;
-
-    // Observers to manage ongoing conference call banner
-    id kMXCallStateDidChangeObserver;
-    id kMXCallManagerConferenceStartedObserver;
-    id kMXCallManagerConferenceFinishedObserver;
 
     // Observers to manage widgets
     id kMXKWidgetManagerDidUpdateWidgetObserver;
@@ -477,7 +470,6 @@
     }
     
     [self listenTypingNotifications];
-    [self listenCallNotifications];
     [self listenWidgetNotifications];
     [self listenTombstoneEventNotifications];
     [self listenMXSessionStateChangeNotifications];
@@ -527,7 +519,6 @@
         kAppDelegateDidTapStatusBarNotificationObserver = nil;
     }
     
-    [self removeCallNotificationsListeners];
     [self removeWidgetNotificationsListeners];
     [self removeTombstoneEventNotificationsListener];
     [self removeMXSessionStateChangeNotificationsListener];
@@ -1172,7 +1163,6 @@
         mxEventDidDecryptNotificationObserver = nil;
     }
     
-    [self removeCallNotificationsListeners];
     [self removeWidgetNotificationsListeners];
     [self removeTombstoneEventNotificationsListener];
     [self removeMXSessionStateChangeNotificationsListener];
@@ -1387,27 +1377,8 @@
     {
         RoomInputToolbarView *roomInputToolbarView = (RoomInputToolbarView*)self.inputToolbarView;
         
-        // Check whether the call option is supported
-        roomInputToolbarView.supportCallOption = self.roomDataSource.mxSession.callManager && self.roomDataSource.room.summary.membersCount.joined >= 2;
-        
         // Get user picture view in input toolbar
         userPictureView = roomInputToolbarView.pictureView;
-        
-        // Show the hangup button if there is an active call or an active jitsi
-        // conference call in the current room
-        MXCall *callInRoom = [self.roomDataSource.mxSession.callManager callInRoom:self.roomDataSource.roomId];
-        if ((callInRoom && callInRoom.state != MXCallStateEnded)
-            || [[AppDelegate theDelegate].jitsiViewController.widget.roomId isEqualToString:self.roomDataSource.roomId])
-        {
-            roomInputToolbarView.activeCall = YES;
-        }
-        else
-        {
-            roomInputToolbarView.activeCall = NO;
-            
-            // Hide the call button if there is an active call in another room
-            roomInputToolbarView.supportCallOption &= ([[AppDelegate theDelegate] callStatusBarWindow] == nil);
-        }
         
         // Check whether the encryption is enabled in the room
         if (self.roomDataSource.room.summary.isEncrypted)
@@ -3074,143 +3045,6 @@
     }
 }
 
-- (void)roomInputToolbarView:(MXKRoomInputToolbarView*)toolbarView placeCallWithVideo:(BOOL)video
-{
-    __weak __typeof(self) weakSelf = self;
-
-    NSString *appDisplayName = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleDisplayName"];
-
-    // Check app permissions first
-    [MXKTools checkAccessForCall:video
-     manualChangeMessageForAudio:[NSString stringWithFormat:[NSBundle mxk_localizedStringForKey:@"microphone_access_not_granted_for_call"], appDisplayName]
-     manualChangeMessageForVideo:[NSString stringWithFormat:[NSBundle mxk_localizedStringForKey:@"camera_access_not_granted_for_call"], appDisplayName]
-       showPopUpInViewController:self completionHandler:^(BOOL granted) {
-
-           if (weakSelf)
-           {
-               typeof(self) self = weakSelf;
-
-               if (granted)
-               {
-                   [self roomInputToolbarView:toolbarView placeCallWithVideo2:video];
-               }
-               else
-               {
-                   NSLog(@"RoomViewController: Warning: The application does not have the perssion to place the call");
-               }
-           }
-       }];
-}
-
-- (void)roomInputToolbarView:(MXKRoomInputToolbarView*)toolbarView placeCallWithVideo2:(BOOL)video
-{
-     __weak __typeof(self) weakSelf = self;
-
-    // If there is already a jitsi widget, join it
-    Widget *jitsiWidget = [customizedRoomDataSource jitsiWidget];
-    if (jitsiWidget)
-    {
-        [[AppDelegate theDelegate] displayJitsiViewControllerWithWidget:jitsiWidget andVideo:video];
-    }
-
-    // If enabled, create the conf using jitsi widget and open it directly
-    else if (RiotSettings.shared.createConferenceCallsWithJitsi
-             && self.roomDataSource.room.summary.membersCount.joined > 2)
-    {
-        [self startActivityIndicator];
-
-        [[WidgetManager sharedManager] createJitsiWidgetInRoom:self.roomDataSource.room
-                                                     withVideo:video
-                                                       success:^(Widget *jitsiWidget)
-         {
-             if (weakSelf)
-             {
-                 typeof(self) self = weakSelf;
-                 [self stopActivityIndicator];
-
-                 [[AppDelegate theDelegate] displayJitsiViewControllerWithWidget:jitsiWidget andVideo:video];
-             }
-         }
-                                                       failure:^(NSError *error)
-         {
-             if (weakSelf)
-             {
-                 typeof(self) self = weakSelf;
-                 [self stopActivityIndicator];
-
-                 [self showJitsiErrorAsAlert:error];
-             }
-         }];
-    }
-    // Classic conference call is not supported in encrypted rooms
-    else if (self.roomDataSource.room.summary.isEncrypted && self.roomDataSource.room.summary.membersCount.joined > 2)
-    {
-        [currentAlert dismissViewControllerAnimated:NO completion:nil];
-
-        currentAlert = [UIAlertController alertControllerWithTitle:[NSBundle mxk_localizedStringForKey:@"room_no_conference_call_in_encrypted_rooms"]  message:nil preferredStyle:UIAlertControllerStyleAlert];
-
-        [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"ok"]
-                                                         style:UIAlertActionStyleDefault
-                                                       handler:^(UIAlertAction * action)
-                                 {
-                                     if (weakSelf)
-                                     {
-                                         typeof(self) self = weakSelf;
-                                         self->currentAlert = nil;
-                                     }
-
-                                 }]];
-
-        [currentAlert mxk_setAccessibilityIdentifier:@"RoomVCCallAlert"];
-        [self presentViewController:currentAlert animated:YES completion:nil];
-    }
-
-    // In case of conference call, check that the user has enough power level
-    else if (self.roomDataSource.room.summary.membersCount.joined > 2 &&
-             ![MXCallManager canPlaceConferenceCallInRoom:self.roomDataSource.room roomState:self.roomDataSource.roomState])
-    {
-        [currentAlert dismissViewControllerAnimated:NO completion:nil];
-
-        currentAlert = [UIAlertController alertControllerWithTitle:[NSBundle mxk_localizedStringForKey:@"room_no_power_to_create_conference_call"]  message:nil preferredStyle:UIAlertControllerStyleAlert];
-
-        [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"ok"]
-                                                         style:UIAlertActionStyleDefault
-                                                       handler:^(UIAlertAction * action)
-                                 {
-                                     if (weakSelf)
-                                     {
-                                         typeof(self) self = weakSelf;
-                                         self->currentAlert = nil;
-                                     }
-                                 }]];
-
-        [currentAlert mxk_setAccessibilityIdentifier:@"RoomVCCallAlert"];
-        [self presentViewController:currentAlert animated:YES completion:nil];
-    }
-
-    // Classic 1:1 or group call can be done
-    else
-    {
-        [self.roomDataSource.room placeCallWithVideo:video success:nil failure:nil];
-    }
-}
-
-- (void)roomInputToolbarViewHangupCall:(MXKRoomInputToolbarView *)toolbarView
-{
-    MXCall *callInRoom = [self.roomDataSource.mxSession.callManager callInRoom:self.roomDataSource.roomId];
-    if (callInRoom)
-    {
-        [callInRoom hangup];
-    }
-    else if ([[AppDelegate theDelegate].jitsiViewController.widget.roomId isEqualToString:self.roomDataSource.roomId])
-    {
-        [[AppDelegate theDelegate].jitsiViewController hangup];
-    }
-
-    [self refreshActivitiesViewDisplay];
-    [self refreshRoomInputToolbar];
-}
-
 - (void)roomInputToolbarView:(MXKRoomInputToolbarView*)toolbarView heightDidChanged:(CGFloat)height completion:(void (^)(BOOL finished))completion
 {
     if (self.roomInputToolbarContainerHeightConstraint.constant != height)
@@ -3763,57 +3597,6 @@
     }
 }
 
-#pragma mark - Call notifications management
-
-- (void)removeCallNotificationsListeners
-{
-    if (kMXCallStateDidChangeObserver)
-    {
-        [[NSNotificationCenter defaultCenter] removeObserver:kMXCallStateDidChangeObserver];
-        kMXCallStateDidChangeObserver = nil;
-    }
-    if (kMXCallManagerConferenceStartedObserver)
-    {
-        [[NSNotificationCenter defaultCenter] removeObserver:kMXCallManagerConferenceStartedObserver];
-        kMXCallManagerConferenceStartedObserver = nil;
-    }
-    if (kMXCallManagerConferenceFinishedObserver)
-    {
-        [[NSNotificationCenter defaultCenter] removeObserver:kMXCallManagerConferenceFinishedObserver];
-        kMXCallManagerConferenceFinishedObserver = nil;
-    }
-}
-
-- (void)listenCallNotifications
-{
-    kMXCallStateDidChangeObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kMXCallStateDidChange object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notif) {
-        
-        MXCall *call = notif.object;
-        if ([call.room.roomId isEqualToString:customizedRoomDataSource.roomId])
-        {
-            [self refreshActivitiesViewDisplay];
-            [self refreshRoomInputToolbar];
-        }
-    }];
-    kMXCallManagerConferenceStartedObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kMXCallManagerConferenceStarted object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notif) {
-        
-        NSString *roomId = notif.object;
-        if ([roomId isEqualToString:customizedRoomDataSource.roomId])
-        {
-            [self refreshActivitiesViewDisplay];
-        }
-    }];
-    kMXCallManagerConferenceFinishedObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kMXCallManagerConferenceFinished object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notif) {
-        
-        NSString *roomId = notif.object;
-        if ([roomId isEqualToString:customizedRoomDataSource.roomId])
-        {
-            [self refreshActivitiesViewDisplay];
-            [self refreshRoomInputToolbar];
-        }
-    }];
-}
-
 
 #pragma mark - Server notices management
 
@@ -3911,8 +3694,6 @@
             [roomActivitiesView removeGestureRecognizer:roomActivitiesView.gestureRecognizers[0]];
         }
 
-        Widget *jitsiWidget = [customizedRoomDataSource jitsiWidget];
-
         if ([self.roomDataSource.mxSession.syncError.errcode isEqualToString:kMXErrCodeStringResourceLimitExceeded])
         {
             [roomActivitiesView showResourceLimitExceededError:self.roomDataSource.mxSession.syncError.userInfo onAdminContactTapped:^(NSURL *adminContact) {
@@ -3938,100 +3719,6 @@
             [roomActivitiesView displayRoomReplacementWithRoomLinkTappedHandler:^{
                 [[AppDelegate theDelegate] handleUniversalLinkFragment:roomLinkFragment];
             }];
-        }
-        else if (customizedRoomDataSource.roomState.isOngoingConferenceCall)
-        {
-            // Show the "Ongoing conference call" banner only if the user is not in the conference
-            MXCall *callInRoom = [self.roomDataSource.mxSession.callManager callInRoom:self.roomDataSource.roomId];
-            if (callInRoom && callInRoom.state != MXCallStateEnded)
-            {
-                if ([self checkUnsentMessages] == NO)
-                {
-                    [self refreshTypingNotification];
-                }
-            }
-            else
-            {
-                [roomActivitiesView displayOngoingConferenceCall:^(BOOL video) {
-                    
-                    NSLog(@"[RoomVC] onOngoingConferenceCallPressed");
-                    
-                    // Make sure there is not yet a call
-                    if (![customizedRoomDataSource.mxSession.callManager callInRoom:customizedRoomDataSource.roomId])
-                    {
-                        [customizedRoomDataSource.room placeCallWithVideo:video success:nil failure:nil];
-                    }
-                } onClosePressed:nil];
-            }
-        }
-        else if (jitsiWidget)
-        {
-            // The room has an active jitsi widget
-            // Show it in the banner if the user is not already in
-            AppDelegate *appDelegate = [AppDelegate theDelegate];
-            if ([appDelegate.jitsiViewController.widget.widgetId isEqualToString:jitsiWidget.widgetId])
-            {
-                if ([self checkUnsentMessages] == NO)
-                {
-                    [self refreshTypingNotification];
-                }
-            }
-            else
-            {
-                [roomActivitiesView displayOngoingConferenceCall:^(BOOL video) {
-
-                    NSLog(@"[RoomVC] onOngoingConferenceCallPressed (jitsi)");
-
-                    __weak __typeof(self) weakSelf = self;
-                    NSString *appDisplayName = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleDisplayName"];
-
-                    // Check app permissions first
-                    [MXKTools checkAccessForCall:video
-                     manualChangeMessageForAudio:[NSString stringWithFormat:[NSBundle mxk_localizedStringForKey:@"microphone_access_not_granted_for_call"], appDisplayName]
-                     manualChangeMessageForVideo:[NSString stringWithFormat:[NSBundle mxk_localizedStringForKey:@"camera_access_not_granted_for_call"], appDisplayName]
-                       showPopUpInViewController:self completionHandler:^(BOOL granted) {
-
-                           if (weakSelf)
-                           {
-                               if (granted)
-                               {
-                                   // Present the Jitsi view controller
-                                   [appDelegate displayJitsiViewControllerWithWidget:jitsiWidget andVideo:video];
-                               }
-                               else
-                               {
-                                   NSLog(@"[RoomVC] onOngoingConferenceCallPressed: Warning: The application does not have the perssion to join the call");
-                               }
-                           }
-                       }];
-
-                } onClosePressed:^{
-
-                    [self startActivityIndicator];
-
-                    // Close the widget
-                    __weak __typeof(self) weakSelf = self;
-                    [[WidgetManager sharedManager] closeWidget:jitsiWidget.widgetId inRoom:self.roomDataSource.room success:^{
-
-                        if (weakSelf)
-                        {
-                            typeof(self) self = weakSelf;
-                            [self stopActivityIndicator];
-
-                            // The banner will automatically leave thanks to kWidgetManagerDidUpdateWidgetNotification
-                        }
-
-                    } failure:^(NSError *error) {
-                        if (weakSelf)
-                        {
-                            typeof(self) self = weakSelf;
-
-                            [self showJitsiErrorAsAlert:error];
-                            [self stopActivityIndicator];
-                        }
-                    }];
-                }];
-            }
         }
         else if ([self checkUnsentMessages] == NO)
         {
