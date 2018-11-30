@@ -226,23 +226,15 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
 {
     if (!_build)
     {
-        NSString *buildBranch = nil;
-        NSString *buildNumber = nil;
-        // Check whether GIT_BRANCH and BUILD_NUMBER were provided during compilation in command line argument.
-#ifdef GIT_BRANCH
-        buildBranch = MAKE_NS_STRING(GIT_BRANCH);
-#endif
-#ifdef BUILD_NUMBER
-        buildNumber = [NSString stringWithFormat:@"#%d", BUILD_NUMBER];
-#endif
-        if (buildBranch && buildNumber)
+        NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
+        NSString *buildNumber = [infoDict objectForKey:@"CFBundleVersion"];
+        if (buildNumber)
         {
-            _build = [NSString stringWithFormat:@"%@ %@", buildBranch, buildNumber];
-        } else if (buildNumber){
-            _build = buildNumber;
-        } else
+            _build = [NSString stringWithFormat:@"#%@", buildNumber];
+        }
+        else
         {
-            _build = buildBranch ? buildBranch : NSLocalizedStringFromTable(@"settings_config_no_build_info", @"Vector", nil);
+            _build = NSLocalizedStringFromTable(@"settings_config_no_build_info", @"Vector", nil);
         }
     }
     return _build;
