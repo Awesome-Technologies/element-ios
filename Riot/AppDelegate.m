@@ -27,6 +27,7 @@
 #import "EventFormatter.h"
 
 #import "RoomViewController.h"
+#import "RoomInputToolbarView.h"
 
 #import "DirectoryViewController.h"
 #import "SettingsViewController.h"
@@ -2852,6 +2853,23 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
                          isDirect:(invite.count != 0)
                            preset:kMXRoomPresetTrustedPrivateChat
                           success:^(MXRoom *room) {
+                              
+                              [room enableEncryptionWithAlgorithm:kMXCryptoMegolmAlgorithm success:^{
+                                  
+                                  NSLog(@"[AppDelegate] Encrypting new chat succeeded");
+                                  
+                                  RoomViewController *currentRoomViewController = [[AppDelegate theDelegate].masterTabBarController currentRoomViewController];
+                                  if (currentRoomViewController) {
+                                      RoomInputToolbarView *inputToolbarView = (RoomInputToolbarView *)[currentRoomViewController inputToolbarView];
+                                      [inputToolbarView setIsEncryptionEnabled:YES];
+                                  }
+                              } failure:^(NSError *error) {
+                                  
+                                  NSLog(@"[AppDelegate] Encrypting new chat failed");
+                                  
+                                  // Alert user
+                                  [self showErrorAsAlert:error];
+                              }];
                               
                               // Open created room
                               [self showRoom:room.roomId andEventId:nil withMatrixSession:mxSession];
