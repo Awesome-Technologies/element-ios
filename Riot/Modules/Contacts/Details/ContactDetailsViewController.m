@@ -19,6 +19,8 @@
 
 #import "AppDelegate.h"
 
+#import "RoomInputToolbarView.h"
+
 #import "RoomMemberTitleView.h"
 
 #import "AvatarGenerator.h"
@@ -1029,6 +1031,23 @@
                                                               isDirect:YES
                                                                 preset:kMXRoomPresetTrustedPrivateChat
                                                                success:^(MXRoom *room) {
+                                                                   
+                                                                   [room enableEncryptionWithAlgorithm:kMXCryptoMegolmAlgorithm success:^{
+                                                                       
+                                                                       NSLog(@"[ContactDetailsViewController] Encrypting new room succeeded");
+                                                                       RoomViewController *currentRoomViewController = [[AppDelegate theDelegate].masterTabBarController currentRoomViewController];
+                                                                       if (currentRoomViewController) {
+                                                                           RoomInputToolbarView *inputToolbarView = (RoomInputToolbarView *)[currentRoomViewController inputToolbarView];
+                                                                           [inputToolbarView setIsEncryptionEnabled:YES];
+                                                                       }
+                                                                       
+                                                                   } failure:^(NSError *error) {
+                                                                       
+                                                                       NSLog(@"[ContactDetailsViewController] Encrypting new room failed");
+                                                                       
+                                                                       // Alert user
+                                                                       [[AppDelegate theDelegate] showErrorAsAlert:error];
+                                                                   }];
                                                                    
                                                                    roomCreationRequest = nil;
                                                                    

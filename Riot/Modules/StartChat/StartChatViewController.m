@@ -18,6 +18,7 @@
 #import "StartChatViewController.h"
 
 #import "AppDelegate.h"
+#import "RoomInputToolbarView.h"
 
 @interface StartChatViewController ()
 {
@@ -578,6 +579,21 @@
                                                       isDirect:isDirect
                                                         preset:preset
                                                        success:^(MXRoom *room) {
+                                                           [room enableEncryptionWithAlgorithm:kMXCryptoMegolmAlgorithm success:^{
+                                                               
+                                                               NSLog(@"[StartChatViewController] Encrypting new chat succeeded");
+                                                               
+                                                               RoomViewController *currentRoomViewController = [[AppDelegate theDelegate].masterTabBarController currentRoomViewController];
+                                                               if (currentRoomViewController) {
+                                                                   RoomInputToolbarView *inputToolbarView = (RoomInputToolbarView *)[currentRoomViewController inputToolbarView];
+                                                                   [inputToolbarView setIsEncryptionEnabled:YES];
+                                                               }
+                                                               
+                                                           } failure:^(NSError *error) {                                                                       NSLog(@"[StartChatViewController] Encrypting new room failed");
+                                                               
+                                                               // Alert user
+                                                               [[AppDelegate theDelegate] showErrorAsAlert:error];
+                                                           }];
                                                            
                                                            roomCreationRequest = nil;
                                                            

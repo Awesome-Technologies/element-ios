@@ -27,6 +27,7 @@
 #import <MatrixKit/MatrixKit.h>
 
 #import "RoomViewController.h"
+#import "RoomInputToolbarView.h"
 
 #import "InviteRecentTableViewCell.h"
 #import "DirectoryRecentTableViewCell.h"
@@ -1719,6 +1720,23 @@
                                                   success:^(MXRoom *room) {
                                                       MXStrongifyAndReturnIfNil(self);
                                                       
+                                                      [room enableEncryptionWithAlgorithm:kMXCryptoMegolmAlgorithm success:^{
+                                                          
+                                                          NSLog(@"[RecentsViewController] Encrypting new room succeeded");
+                                                          
+                                                          RoomViewController *currentRoomViewController = [[AppDelegate theDelegate].masterTabBarController currentRoomViewController];
+                                                          if (currentRoomViewController) {
+                                                              RoomInputToolbarView *inputToolbarView = (RoomInputToolbarView *)[currentRoomViewController inputToolbarView];
+                                                              [inputToolbarView setIsEncryptionEnabled:YES];
+                                                          }
+                                                          
+                                                      } failure:^(NSError *error) {
+                                                          
+                                                          NSLog(@"[RecentsViewController] Encrypting new room failed");
+                                                          
+                                                          // Alert user
+                                                          [[AppDelegate theDelegate] showErrorAsAlert:error];
+                                                      }];
                                                       self->currentRequest = nil;
                                                       [self stopActivityIndicator];
                                                       if (self->currentAlert)
