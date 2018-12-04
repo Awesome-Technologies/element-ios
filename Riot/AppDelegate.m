@@ -2231,6 +2231,9 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
 
         // Enable listening of incoming key share requests
         [self enableRoomKeyRequestObserver:mxSession];
+        
+        // Do not blacklist unverified devices
+        [mxSession.crypto setGlobalBlacklistUnverifiedDevices:NO];
     }
 }
 

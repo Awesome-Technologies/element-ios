@@ -51,7 +51,6 @@ enum
     SETTINGS_SECTION_USER_INTERFACE_INDEX,
     SETTINGS_SECTION_IGNORED_USERS_INDEX,
     SETTINGS_SECTION_OTHER_INDEX,
-    SETTINGS_SECTION_CRYPTOGRAPHY_INDEX,
     SETTINGS_SECTION_DEVICES_INDEX,
     SETTINGS_SECTION_DEACTIVATE_ACCOUNT_INDEX,
     SETTINGS_SECTION_COUNT
@@ -85,13 +84,6 @@ enum
     OTHER_CLEAR_CACHE_INDEX,
     OTHER_REPORT_BUG_INDEX,
     OTHER_COUNT
-};
-
-enum {
-    CRYPTOGRAPHY_INFO_INDEX = 0,
-    CRYPTOGRAPHY_BLACKLIST_UNVERIFIED_DEVICES_INDEX,
-    CRYPTOGRAPHY_EXPORT_INDEX,
-    CRYPTOGRAPHY_COUNT
 };
 
 #define SECTION_TITLE_PADDING_WHEN_HIDDEN 0.01f
@@ -157,14 +149,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     
     //
     UIAlertController *resetPwdAlertController;
-
-    // The view used to export e2e keys
-    MXKEncryptionKeysExportView *exportView;
-
-    // The document interaction Controller used to export e2e keys
-    UIDocumentInteractionController *documentInteractionController;
-    NSURL *keyExportsFile;
-    NSTimer *keyExportsFileDeletionTimer;
     
     // The current pushed view controller
     UIViewController *pushedViewController;
@@ -287,13 +271,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
 {
     // Release the potential pushed view controller
     [self releasePushedViewController];
-    
-    if (documentInteractionController)
-    {
-        [documentInteractionController dismissPreviewAnimated:NO];
-        [documentInteractionController dismissMenuAnimated:NO];
-        documentInteractionController = nil;
-    }
     
     if (kRiotDesignValuesDidChangeThemeNotificationObserver)
     {
@@ -506,43 +483,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     } failure:nil];
 }
 
-- (NSAttributedString*)cryptographyInformation
-{
-    // TODO Handle multi accounts
-    MXKAccount* account = [MXKAccountManager sharedManager].activeAccounts.firstObject;
-    
-    // Crypto information
-    NSMutableAttributedString *cryptoInformationString = [[NSMutableAttributedString alloc]
-                                                          initWithString:NSLocalizedStringFromTable(@"settings_crypto_device_name", @"Vector", nil)
-                                                          attributes:@{NSForegroundColorAttributeName : kCaritasPrimaryTextColor,
-                                                                       NSFontAttributeName: [UIFont systemFontOfSize:17]}];
-    [cryptoInformationString appendAttributedString:[[NSMutableAttributedString alloc]
-                                                     initWithString:account.device.displayName ? account.device.displayName : @""
-                                                     attributes:@{NSForegroundColorAttributeName : kCaritasPrimaryTextColor,
-                                                                  NSFontAttributeName: [UIFont systemFontOfSize:17]}]];
-    
-    [cryptoInformationString appendAttributedString:[[NSMutableAttributedString alloc]
-                                                     initWithString:NSLocalizedStringFromTable(@"settings_crypto_device_id", @"Vector", nil)
-                                                     attributes:@{NSForegroundColorAttributeName : kCaritasPrimaryTextColor,
-                                                                  NSFontAttributeName: [UIFont systemFontOfSize:17]}]];
-    [cryptoInformationString appendAttributedString:[[NSMutableAttributedString alloc]
-                                                     initWithString:account.device.deviceId ? account.device.deviceId : @""
-                                                     attributes:@{NSForegroundColorAttributeName : kCaritasPrimaryTextColor,
-                                                                  NSFontAttributeName: [UIFont systemFontOfSize:17]}]];
-    
-    [cryptoInformationString appendAttributedString:[[NSMutableAttributedString alloc]
-                                                     initWithString:NSLocalizedStringFromTable(@"settings_crypto_device_key", @"Vector", nil)
-                                                     attributes:@{NSForegroundColorAttributeName : kCaritasPrimaryTextColor,
-                                                                  NSFontAttributeName: [UIFont systemFontOfSize:17]}]];
-    NSString *fingerprint = account.mxSession.crypto.deviceEd25519Key;
-    [cryptoInformationString appendAttributedString:[[NSMutableAttributedString alloc]
-                                                     initWithString:fingerprint ? fingerprint : @""
-                                                     attributes:@{NSForegroundColorAttributeName : kCaritasPrimaryTextColor,
-                                                                  NSFontAttributeName: [UIFont boldSystemFontOfSize:17]}]];
-    
-    return cryptoInformationString;
-}
-
 - (void)loadDevices
 {
     // Refresh the account devices list
@@ -727,14 +667,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     else if (section == SETTINGS_SECTION_DEVICES_INDEX)
     {
         count = devicesArray.count;
-    }
-    else if (section == SETTINGS_SECTION_CRYPTOGRAPHY_INDEX)
-    {
-        // Check whether this section is visible.
-        if (self.mainSession.crypto)
-        {
-            count = CRYPTOGRAPHY_COUNT;
-        }
     }
     else if (section == SETTINGS_SECTION_DEACTIVATE_ACCOUNT_INDEX)
     {
@@ -1266,53 +1198,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
         
         cell = deviceCell;
     }
-    else if (section == SETTINGS_SECTION_CRYPTOGRAPHY_INDEX)
-    {
-        if (row == CRYPTOGRAPHY_INFO_INDEX)
-        {
-            MXKTableViewCellWithTextView *cryptoCell = [self textViewCellForTableView:tableView atIndexPath:indexPath];
-            
-            cryptoCell.mxkTextView.attributedText = [self cryptographyInformation];
-
-            cell = cryptoCell;
-        }
-        else if (row == CRYPTOGRAPHY_BLACKLIST_UNVERIFIED_DEVICES_INDEX)
-        {
-            MXKTableViewCellWithLabelAndSwitch* labelAndSwitchCell = [self getLabelAndSwitchCell:tableView forIndexPath:indexPath];
-
-            labelAndSwitchCell.mxkLabel.text = NSLocalizedStringFromTable(@"settings_crypto_blacklist_unverified_devices", @"Vector", nil);
-            labelAndSwitchCell.mxkSwitch.on = account.mxSession.crypto.globalBlacklistUnverifiedDevices;
-            labelAndSwitchCell.mxkSwitch.enabled = YES;
-            [labelAndSwitchCell.mxkSwitch addTarget:self action:@selector(toggleBlacklistUnverifiedDevices:) forControlEvents:UIControlEventTouchUpInside];
-
-            cell = labelAndSwitchCell;
-        }
-        else if (row == CRYPTOGRAPHY_EXPORT_INDEX)
-        {
-            MXKTableViewCellWithButton *exportKeysBtnCell = [tableView dequeueReusableCellWithIdentifier:[MXKTableViewCellWithButton defaultReuseIdentifier]];
-            if (!exportKeysBtnCell)
-            {
-                exportKeysBtnCell = [[MXKTableViewCellWithButton alloc] init];
-            }
-            else
-            {
-                // Fix https://github.com/vector-im/riot-ios/issues/1354
-                exportKeysBtnCell.mxkButton.titleLabel.text = nil;
-            }
-
-            NSString *btnTitle = NSLocalizedStringFromTable(@"settings_crypto_export", @"Vector", nil);
-            [exportKeysBtnCell.mxkButton setTitle:btnTitle forState:UIControlStateNormal];
-            [exportKeysBtnCell.mxkButton setTitle:btnTitle forState:UIControlStateHighlighted];
-            [exportKeysBtnCell.mxkButton setTintColor:kCaritasColorLinkBlue];
-            exportKeysBtnCell.mxkButton.titleLabel.font = [UIFont systemFontOfSize:17];
-
-            [exportKeysBtnCell.mxkButton removeTarget:self action:nil forControlEvents:UIControlEventTouchUpInside];
-            [exportKeysBtnCell.mxkButton addTarget:self action:@selector(exportEncryptionKeys:) forControlEvents:UIControlEventTouchUpInside];
-            exportKeysBtnCell.mxkButton.accessibilityIdentifier = nil;
-
-            cell = exportKeysBtnCell;
-        }
-    }
     else if (section == SETTINGS_SECTION_DEACTIVATE_ACCOUNT_INDEX)
     {
         MXKTableViewCellWithButton *deactivateAccountBtnCell = [tableView dequeueReusableCellWithIdentifier:[MXKTableViewCellWithButton defaultReuseIdentifier]];
@@ -1379,22 +1264,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
         if (devicesArray.count > 0)
         {
             return NSLocalizedStringFromTable(@"settings_devices", @"Vector", nil);
-        }
-    }
-    else if (section == SETTINGS_SECTION_CRYPTOGRAPHY_INDEX)
-    {
-        // Check whether this section is visible
-        if (self.mainSession.crypto)
-        {
-            return NSLocalizedStringFromTable(@"settings_cryptography", @"Vector", nil);
-        }
-    }
-    else if (section == SETTINGS_SECTION_CRYPTOGRAPHY_INDEX)
-    {
-        // Check whether this section is visible
-        if (self.mainSession.crypto)
-        {
-            return NSLocalizedStringFromTable(@"settings_cryptography", @"Vector", nil);
         }
     }
     else if (section == SETTINGS_SECTION_DEACTIVATE_ACCOUNT_INDEX)
@@ -1692,16 +1561,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
 
         [self.tableView reloadData];
     }
-}
-
-- (void)toggleBlacklistUnverifiedDevices:(id)sender
-{
-    UISwitch *switchButton = (UISwitch*)sender;
-
-    MXKAccount* account = [MXKAccountManager sharedManager].activeAccounts.firstObject;
-    account.mxSession.crypto.globalBlacklistUnverifiedDevices = switchButton.on;
-
-    [self.tableView reloadData];
 }
 
 - (void)togglePinRoomsWithMissedNotif:(id)sender
@@ -2021,69 +1880,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     [navigationController pushViewController:mediaPicker animated:NO];
     
     [self presentViewController:navigationController animated:YES completion:nil];
-}
-
-- (void)exportEncryptionKeys:(UITapGestureRecognizer *)recognizer
-{
-    [currentAlert dismissViewControllerAnimated:NO completion:nil];
-
-    exportView = [[MXKEncryptionKeysExportView alloc] initWithMatrixSession:self.mainSession];
-    currentAlert = exportView.alertController;
-
-    // Use a temporary file for the export
-    keyExportsFile = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"riot-keys.txt"]];
-
-    // Make sure the file is empty
-    [self deleteKeyExportFile];
-
-    // Show the export dialog
-    __weak typeof(self) weakSelf = self;
-    [exportView showInViewController:self toExportKeysToFile:keyExportsFile onComplete:^(BOOL success) {
-
-        if (weakSelf)
-        {
-             typeof(self) self = weakSelf;
-            self->currentAlert = nil;
-            self->exportView = nil;
-
-            if (success)
-            {
-                // Let another app handling this file
-                self->documentInteractionController = [UIDocumentInteractionController interactionControllerWithURL:keyExportsFile];
-                [self->documentInteractionController setDelegate:self];
-
-                if ([self->documentInteractionController presentOptionsMenuFromRect:self.view.bounds inView:self.view animated:YES])
-                {
-                    // We want to delete the temp keys file after it has been processed by the other app.
-                    // We use [UIDocumentInteractionControllerDelegate didEndSendingToApplication] for that
-                    // but it is not reliable for all cases (see http://stackoverflow.com/a/21867096).
-                    // So, arm a timer to auto delete the file after 10mins.
-                    keyExportsFileDeletionTimer = [NSTimer scheduledTimerWithTimeInterval:600 target:self selector:@selector(deleteKeyExportFile) userInfo:self repeats:NO];
-                }
-                else
-                {
-                    self->documentInteractionController = nil;
-                    [self deleteKeyExportFile];
-                }
-            }
-        }
-    }];
-}
-
-- (void)deleteKeyExportFile
-{
-    // Cancel the deletion timer if it is still here
-    if (keyExportsFileDeletionTimer)
-    {
-        [keyExportsFileDeletionTimer invalidate];
-        keyExportsFileDeletionTimer = nil;
-    }
-
-    // And delete the file
-    if (keyExportsFile && [[NSFileManager defaultManager] fileExistsAtPath:keyExportsFile.path])
-    {
-        [[NSFileManager defaultManager] removeItemAtPath:keyExportsFile.path error:nil];
-    }
 }
 
 - (void)showLanguagePicker
@@ -2507,19 +2303,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
     [resetPwdAlertController addAction:cancel];
     [resetPwdAlertController addAction:savePasswordAction];
     [self presentViewController:resetPwdAlertController animated:YES completion:nil];
-}
-
-#pragma mark - UIDocumentInteractionControllerDelegate
-
-- (void)documentInteractionController:(UIDocumentInteractionController *)controller didEndSendingToApplication:(NSString *)application
-{
-    // If iOS wants to call this method, this is the right time to remove the file
-    [self deleteKeyExportFile];
-}
-
-- (void)documentInteractionControllerDidDismissOptionsMenu:(UIDocumentInteractionController *)controller
-{
-    documentInteractionController = nil;
 }
 
 - (void)didSelectLangugage:(NSString *)language
