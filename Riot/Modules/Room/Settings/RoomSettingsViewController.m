@@ -92,8 +92,6 @@ NSString *const kRoomSettingsHistoryVisibilityKey = @"kRoomSettingsHistoryVisibi
 NSString *const kRoomSettingsNewAliasesKey = @"kRoomSettingsNewAliasesKey";
 NSString *const kRoomSettingsRemovedAliasesKey = @"kRoomSettingsRemovedAliasesKey";
 NSString *const kRoomSettingsCanonicalAliasKey = @"kRoomSettingsCanonicalAliasKey";
-NSString *const kRoomSettingsEncryptionKey = @"kRoomSettingsEncryptionKey";
-NSString *const kRoomSettingsEncryptionBlacklistUnverifiedDevicesKey = @"kRoomSettingsEncryptionBlacklistUnverifiedDevicesKey";
 
 NSString *const kRoomSettingsNameCellViewIdentifier = @"kRoomSettingsNameCellViewIdentifier";
 NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellViewIdentifier";
@@ -101,8 +99,6 @@ NSString *const kRoomSettingsWarningCellViewIdentifier = @"kRoomSettingsWarningC
 NSString *const kRoomSettingsNewAddressCellViewIdentifier = @"kRoomSettingsNewAddressCellViewIdentifier";
 NSString *const kRoomSettingsAddressCellViewIdentifier = @"kRoomSettingsAddressCellViewIdentifier";
 NSString *const kRoomSettingsAdvancedCellViewIdentifier = @"kRoomSettingsAdvancedCellViewIdentifier";
-NSString *const kRoomSettingsAdvancedEnableE2eCellViewIdentifier = @"kRoomSettingsAdvancedEnableE2eCellViewIdentifier";
-NSString *const kRoomSettingsAdvancedE2eEnabledCellViewIdentifier = @"kRoomSettingsAdvancedE2eEnabledCellViewIdentifier";
 
 @interface RoomSettingsViewController ()
 {
@@ -1718,55 +1714,6 @@ NSString *const kRoomSettingsAdvancedE2eEnabledCellViewIdentifier = @"kRoomSetti
             
             return;
         }
-        
-        // Room encryption
-        if ([updatedItemsDict objectForKey:kRoomSettingsEncryptionKey])
-        {
-            pendingOperation = [mxRoom enableEncryptionWithAlgorithm:kMXCryptoMegolmAlgorithm success:^{
-                
-                if (weakSelf)
-                {
-                    typeof(self) self = weakSelf;
-                    
-                    self->pendingOperation = nil;
-                    
-                    [self->updatedItemsDict removeObjectForKey:kRoomSettingsEncryptionKey];
-                    [self onSave:nil];
-                }
-                
-            } failure:^(NSError *error) {
-                
-                NSLog(@"[RoomSettingsViewController] Enabling encrytion failed. Error: %@", error);
-                
-                if (weakSelf)
-                {
-                    typeof(self) self = weakSelf;
-                    
-                    self->pendingOperation = nil;
-                    
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        
-                        NSString* message = error.localizedDescription;
-                        if (!message.length)
-                        {
-                            message = NSLocalizedStringFromTable(@"room_details_fail_to_enable_encryption", @"Vector", nil);
-                        }
-                        [self onSaveFailed:message withKeys:@[kRoomSettingsEncryptionKey]];
-                        
-                    });
-                }
-                
-            }];
-            
-            return;
-        }
-        
-        // Room settings on blacklist unverified devices
-        if ([updatedItemsDict objectForKey:kRoomSettingsEncryptionBlacklistUnverifiedDevicesKey])
-        {
-            BOOL blacklistUnverifiedDevices = [((NSNumber*)updatedItemsDict[kRoomSettingsEncryptionBlacklistUnverifiedDevicesKey]) boolValue];
-            [mxRoom.mxSession.crypto setBlacklistUnverifiedDevicesInRoom:mxRoom.roomId blacklist:blacklistUnverifiedDevices];
-        }
     }
     
     [self getNavigationItem].rightBarButtonItem.enabled = NO;
@@ -1871,16 +1818,6 @@ NSString *const kRoomSettingsAdvancedE2eEnabledCellViewIdentifier = @"kRoomSetti
     else if (section == ROOM_SETTINGS_ADVANCED_SECTION_INDEX)
     {
         count = 1;
-        
-        if (mxRoom.mxSession.crypto)
-        {
-            count++;
-            
-            if (mxRoom.summary.isEncrypted)
-            {
-                count++;
-            }
-        }
     }
     
     return count;
@@ -2453,99 +2390,6 @@ NSString *const kRoomSettingsAdvancedE2eEnabledCellViewIdentifier = @"kRoomSetti
             cell.detailTextLabel.lineBreakMode = NSLineBreakByTruncatingMiddle;
             
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        }
-        else if (mxRoom.summary.isEncrypted)
-        {
-            if (indexPath.row == 1)
-            {
-                MXKTableViewCellWithLabelAndSwitch *roomBlacklistUnverifiedDevicesCell = [self getLabelAndSwitchCell:tableView forIndexPath:indexPath];
-                
-                [roomBlacklistUnverifiedDevicesCell.mxkSwitch addTarget:self action:@selector(toggleBlacklistUnverifiedDevice:) forControlEvents:UIControlEventValueChanged];
-                roomBlacklistUnverifiedDevicesCell.mxkSwitch.onTintColor = kCaritasColorRed;
-                
-                roomBlacklistUnverifiedDevicesCell.mxkLabel.text = NSLocalizedStringFromTable(@"room_details_advanced_e2e_encryption_blacklist_unverified_devices", @"Vector", nil);
-                
-                // For the switch value, use by order:
-                // - the MXCrypto.globalBlacklistUnverifiedDevices if its value is YES
-                //   In this case, the switch is disabled.
-                // - the changed value made by the user
-                // - the value used by the crypto
-                BOOL blacklistUnverifiedDevices;
-                if (mxRoom.mxSession.crypto.globalBlacklistUnverifiedDevices)
-                {
-                    blacklistUnverifiedDevices = YES;
-                    roomBlacklistUnverifiedDevicesCell.mxkSwitch.enabled = NO;
-                }
-                else
-                {
-                    roomBlacklistUnverifiedDevicesCell.mxkSwitch.enabled = YES;
-                    
-                    if ([updatedItemsDict objectForKey:kRoomSettingsEncryptionBlacklistUnverifiedDevicesKey])
-                    {
-                        blacklistUnverifiedDevices = [((NSNumber*)updatedItemsDict[kRoomSettingsEncryptionBlacklistUnverifiedDevicesKey]) boolValue];
-                    }
-                    else
-                    {
-                        blacklistUnverifiedDevices = [mxRoom.mxSession.crypto isBlacklistUnverifiedDevicesInRoom:mxRoom.roomId];
-                    }
-                }
-                
-                roomBlacklistUnverifiedDevicesCell.mxkSwitch.on = blacklistUnverifiedDevices;
-                
-                cell = roomBlacklistUnverifiedDevicesCell;
-                
-                // Force layout before reusing a cell (fix switch displayed outside the screen)
-                [cell layoutIfNeeded];
-            }
-            else if (indexPath.row == 2)
-            {
-                cell = [tableView dequeueReusableCellWithIdentifier:kRoomSettingsAdvancedE2eEnabledCellViewIdentifier];
-                if (!cell)
-                {
-                    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:kRoomSettingsAdvancedE2eEnabledCellViewIdentifier];
-                }
-                
-                cell.textLabel.font = [UIFont systemFontOfSize:17];
-                cell.textLabel.numberOfLines = 0;
-                cell.textLabel.text = NSLocalizedStringFromTable(@"room_details_advanced_e2e_encryption_enabled", @"Vector", nil);
-                cell.textLabel.textColor = kCaritasPrimaryTextColor;
-                
-                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-            }
-        }
-        else
-        {
-            // Check user's power level to know whether the user is allowed to turn on the encryption mode
-            MXRoomPowerLevels *powerLevels = [mxRoomState powerLevels];
-            NSInteger oneSelfPowerLevel = [powerLevels powerLevelOfUserWithUserID:self.mainSession.myUser.userId];
-            
-            if (oneSelfPowerLevel >= [powerLevels minimumPowerLevelForSendingEventAsStateEvent:kMXEventTypeStringRoomEncryption])
-            {
-                MXKTableViewCellWithLabelAndSwitch *roomEncryptionCell = [self getLabelAndSwitchCell:tableView forIndexPath:indexPath];
-                
-                [roomEncryptionCell.mxkSwitch addTarget:self action:@selector(toggleEncryption:) forControlEvents:UIControlEventValueChanged];
-                
-                roomEncryptionCell.mxkLabel.text = NSLocalizedStringFromTable(@"room_details_advanced_enable_e2e_encryption", @"Vector", nil);
-                
-                roomEncryptionCell.mxkSwitch.on = ([updatedItemsDict objectForKey:kRoomSettingsEncryptionKey] != nil);
-                
-                cell = roomEncryptionCell;
-            }
-            else
-            {
-                cell = [tableView dequeueReusableCellWithIdentifier:kRoomSettingsAdvancedE2eEnabledCellViewIdentifier];
-                if (!cell)
-                {
-                    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:kRoomSettingsAdvancedE2eEnabledCellViewIdentifier];
-                }
-                
-                cell.textLabel.font = [UIFont systemFontOfSize:17];
-                cell.textLabel.numberOfLines = 0;
-                cell.textLabel.text = NSLocalizedStringFromTable(@"room_details_advanced_e2e_encryption_disabled", @"Vector", nil);
-                cell.textLabel.textColor = kCaritasPrimaryTextColor;
-                
-                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-            }
         }
     }
     
@@ -3175,75 +3019,6 @@ NSString *const kRoomSettingsAdvancedE2eEnabledCellViewIdentifier = @"kRoomSetti
     else
     {
         [updatedItemsDict setObject:[NSNumber numberWithBool:theSwitch.on] forKey:kRoomSettingsDirectChatKey];
-    }
-    
-    [self getNavigationItem].rightBarButtonItem.enabled = (updatedItemsDict.count != 0);
-}
-
-- (void)toggleEncryption:(UISwitch*)theSwitch
-{
-    if (theSwitch.on)
-    {
-        // Prompt here user before turning on the data encryption
-        __weak typeof(self) weakSelf = self;
-        
-        [currentAlert dismissViewControllerAnimated:NO completion:nil];
-        
-        currentAlert = [UIAlertController alertControllerWithTitle:NSLocalizedStringFromTable(@"warning", @"Vector", nil)
-                                                           message:NSLocalizedStringFromTable(@"room_details_advanced_e2e_encryption_prompt_message", @"Vector", nil)
-                                                    preferredStyle:UIAlertControllerStyleAlert];
-        
-        [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"cancel"]
-                                                         style:UIAlertActionStyleCancel
-                                                       handler:^(UIAlertAction * action) {
-                                                           
-                                                           if (weakSelf)
-                                                           {
-                                                               typeof(self) self = weakSelf;
-                                                               self->currentAlert = nil;
-                                                           }
-                                                           
-                                                           // Reset switch change
-                                                           theSwitch.on = NO;
-                                                           
-                                                       }]];
-        
-        [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"ok"]
-                                                         style:UIAlertActionStyleDefault
-                                                       handler:^(UIAlertAction * action) {
-                                                           
-                                                           if (weakSelf)
-                                                           {
-                                                               typeof(self) self = weakSelf;
-                                                               self->currentAlert = nil;
-                                                               
-                                                               [self->updatedItemsDict setObject:@(YES) forKey:kRoomSettingsEncryptionKey];
-                                                               
-                                                               [self getNavigationItem].rightBarButtonItem.enabled = self->updatedItemsDict.count;
-                                                           }
-                                                           
-                                                       }]];
-        
-        [currentAlert mxk_setAccessibilityIdentifier:@"RoomSettingsVCEnableEncryptionAlert"];
-        [self presentViewController:currentAlert animated:YES completion:nil];
-    }
-    else
-    {
-        [updatedItemsDict removeObjectForKey:kRoomSettingsEncryptionKey];
-    }
-    
-    [self getNavigationItem].rightBarButtonItem.enabled = (updatedItemsDict.count != 0);
-}
-
-- (void)toggleBlacklistUnverifiedDevice:(UISwitch*)theSwitch
-{
-    if ([mxRoom.mxSession.crypto isBlacklistUnverifiedDevicesInRoom:mxRoom.roomId] != theSwitch.on)
-    {
-        updatedItemsDict[kRoomSettingsEncryptionBlacklistUnverifiedDevicesKey] = @(theSwitch.on);
-    }
-    else
-    {
-        [updatedItemsDict removeObjectForKey:kRoomSettingsEncryptionBlacklistUnverifiedDevicesKey];
     }
     
     [self getNavigationItem].rightBarButtonItem.enabled = (updatedItemsDict.count != 0);
