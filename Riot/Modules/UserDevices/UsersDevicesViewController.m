@@ -160,7 +160,6 @@
         deviceCell.selectionStyle = UITableViewCellSelectionStyleNone;
 
         [deviceCell render:device];
-        deviceCell.delegate = self;
 
         cell = deviceCell;
     }
@@ -203,73 +202,6 @@
     MXDeviceInfo *device = [self deviceAtIndexPath:indexPath];
 
     return [DeviceTableViewCell cellHeightWithDeviceInfo:device andCellWidth:self.tableView.frame.size.width];
-}
-
-#pragma mark - DeviceTableViewCellDelegate
-
-- (void)deviceTableViewCell:(DeviceTableViewCell *)deviceTableViewCell updateDeviceVerification:(MXDeviceVerification)verificationStatus
-{
-    if (verificationStatus == MXDeviceVerified)
-    {
-        // Prompt the user before marking as verified the device.
-        EncryptionInfoView *encryptionInfoView = [[EncryptionInfoView alloc] initWithDeviceInfo:deviceTableViewCell.deviceInfo andMatrixSession:mxSession];
-        [encryptionInfoView onButtonPressed:encryptionInfoView.verifyButton];
-
-        encryptionInfoView.delegate = self;
-
-        // Add shadow on added view
-        encryptionInfoView.layer.cornerRadius = 5;
-        encryptionInfoView.layer.shadowOffset = CGSizeMake(0, 1);
-        encryptionInfoView.layer.shadowOpacity = 0.5f;
-
-        // Add the view and define edge constraints
-        [self.view addSubview:encryptionInfoView];
-
-        [self.view addConstraint:[NSLayoutConstraint constraintWithItem:encryptionInfoView
-                                                              attribute:NSLayoutAttributeTop
-                                                              relatedBy:NSLayoutRelationEqual
-                                                                 toItem:self.topLayoutGuide
-                                                              attribute:NSLayoutAttributeBottom
-                                                             multiplier:1.0f
-                                                               constant:10.0f]];
-
-        [self.view addConstraint:[NSLayoutConstraint constraintWithItem:encryptionInfoView
-                                                              attribute:NSLayoutAttributeBottom
-                                                              relatedBy:NSLayoutRelationEqual
-                                                                 toItem:self.bottomLayoutGuide
-                                                              attribute:NSLayoutAttributeTop
-                                                             multiplier:1.0f
-                                                               constant:-10.0f]];
-
-        [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.view
-                                                              attribute:NSLayoutAttributeLeading
-                                                              relatedBy:NSLayoutRelationEqual
-                                                                 toItem:encryptionInfoView
-                                                              attribute:NSLayoutAttributeLeading
-                                                             multiplier:1.0f
-                                                               constant:-10.0f]];
-
-        [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.view
-                                                              attribute:NSLayoutAttributeTrailing
-                                                              relatedBy:NSLayoutRelationEqual
-                                                                 toItem:encryptionInfoView
-                                                              attribute:NSLayoutAttributeTrailing
-                                                             multiplier:1.0f
-                                                               constant:10.0f]];
-        [self.view setNeedsUpdateConstraints];
-    }
-    else
-    {
-        [mxSession.crypto setDeviceVerification:verificationStatus
-                                      forDevice:deviceTableViewCell.deviceInfo.deviceId
-                                         ofUser:deviceTableViewCell.deviceInfo.userId
-                                        success:^{
-
-                                            deviceTableViewCell.deviceInfo.verified = verificationStatus;
-                                            [self.tableView reloadData];
-
-                                        } failure:nil];
-    }
 }
 
 #pragma mark - MXKEncryptionInfoViewDelegate

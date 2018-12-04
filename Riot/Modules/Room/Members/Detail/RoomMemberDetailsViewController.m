@@ -817,10 +817,6 @@
         {
             MXDeviceInfo *deviceInfo = devicesArray[indexPath.row];
             [deviceCell render:deviceInfo];
-            deviceCell.delegate = self;
-            
-            // Display here the Verify and Block buttons except if the device is the current one.
-            deviceCell.verifyButton.hidden = deviceCell.blockButton.hidden = [deviceInfo.deviceId isEqualToString:self.mxRoom.mxSession.matrixRestClient.credentials.deviceId];
         }
         cell = deviceCell;
     }
@@ -1140,68 +1136,6 @@
         isStatusBarHidden = YES;
         // Trigger status bar update
         [self setNeedsStatusBarAppearanceUpdate];
-    }
-}
-
-#pragma mark - 
-
-- (void)deviceTableViewCell:(DeviceTableViewCell*)deviceTableViewCell updateDeviceVerification:(MXDeviceVerification)verificationStatus
-{
-    if (verificationStatus == MXDeviceVerified)
-    {
-        // Prompt the user before marking as verified the device.
-        encryptionInfoView = [[EncryptionInfoView alloc] initWithDeviceInfo:deviceTableViewCell.deviceInfo andMatrixSession:self.mxRoom.mxSession];
-        [encryptionInfoView onButtonPressed:encryptionInfoView.verifyButton];
-        
-        // Add shadow on added view
-        encryptionInfoView.layer.cornerRadius = 5;
-        encryptionInfoView.layer.shadowOffset = CGSizeMake(0, 1);
-        encryptionInfoView.layer.shadowOpacity = 0.5f;
-        
-        // Add the view and define edge constraints
-        [self.view addSubview:encryptionInfoView];
-        
-        [self.view addConstraint:[NSLayoutConstraint constraintWithItem:encryptionInfoView
-                                                              attribute:NSLayoutAttributeTop
-                                                              relatedBy:NSLayoutRelationEqual
-                                                                 toItem:self.tableView
-                                                              attribute:NSLayoutAttributeTop
-                                                             multiplier:1.0f
-                                                               constant:10.0f]];
-        
-        [self.view addConstraint:[NSLayoutConstraint constraintWithItem:encryptionInfoView
-                                                              attribute:NSLayoutAttributeBottom
-                                                              relatedBy:NSLayoutRelationEqual
-                                                                 toItem:self.tableView
-                                                              attribute:NSLayoutAttributeBottom
-                                                             multiplier:1.0f
-                                                               constant:-10.0f]];
-        
-        [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.tableView
-                                                              attribute:NSLayoutAttributeLeading
-                                                              relatedBy:NSLayoutRelationEqual
-                                                                 toItem:encryptionInfoView
-                                                              attribute:NSLayoutAttributeLeading
-                                                             multiplier:1.0f
-                                                               constant:-10.0f]];
-        
-        [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.tableView
-                                                              attribute:NSLayoutAttributeTrailing
-                                                              relatedBy:NSLayoutRelationEqual
-                                                                 toItem:encryptionInfoView
-                                                              attribute:NSLayoutAttributeTrailing
-                                                             multiplier:1.0f
-                                                               constant:10.0f]];
-        [self.view setNeedsUpdateConstraints];
-    }
-    else
-    {
-        [self.mxRoom.mxSession.crypto setDeviceVerification:verificationStatus
-                                                  forDevice:deviceTableViewCell.deviceInfo.deviceId
-                                                     ofUser:self.mxRoomMember.userId
-                                                    success:^{
-                                                        [self updateMemberInfo];
-                                                    } failure:nil];
     }
 }
 

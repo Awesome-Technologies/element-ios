@@ -20,7 +20,7 @@
 #import "RiotDesignValues.h"
 #import "MXRoom+Riot.h"
 
-#define DEVICE_TABLEVIEW_ROW_CELL_HEIGHT_WITHOUT_LABEL_HEIGHT 59
+#define DEVICE_TABLEVIEW_ROW_CELL_HEIGHT_WITHOUT_LABEL_HEIGHT 33
 
 @implementation DeviceTableViewCell
 
@@ -31,14 +31,6 @@
     [super customizeTableViewCellRendering];
     
     self.deviceName.textColor = kCaritasPrimaryTextColor;
-    
-    [self.verifyButton.layer setCornerRadius:5];
-    self.verifyButton.clipsToBounds = YES;
-    self.verifyButton.backgroundColor = kCaritasColorRed;
-    
-    [self.blockButton.layer setCornerRadius:5];
-    self.blockButton.clipsToBounds = YES;
-    self.blockButton.backgroundColor = kCaritasColorRed;
 }
 
 - (void)render:(MXDeviceInfo *)deviceInfo
@@ -47,82 +39,16 @@
     
     self.deviceName.numberOfLines = 0;
     self.deviceName.text = (deviceInfo.displayName.length ? [NSString stringWithFormat:@"%@ (%@)", deviceInfo.displayName, deviceInfo.deviceId] : [NSString stringWithFormat:@"(%@)", deviceInfo.deviceId]);
-    
-    switch (deviceInfo.verified)
-    {
-        case MXDeviceUnknown:
-        case MXDeviceUnverified:
-        {
-            self.deviceStatus.image = [UIImage imageNamed:@"e2e_warning"];
-            
-            [_verifyButton setTitle:[NSBundle mxk_localizedStringForKey:@"room_event_encryption_info_verify"] forState:UIControlStateNormal];
-            [_verifyButton setTitle:[NSBundle mxk_localizedStringForKey:@"room_event_encryption_info_verify"] forState:UIControlStateHighlighted];
-            [_blockButton setTitle:[NSBundle mxk_localizedStringForKey:@"room_event_encryption_info_block"] forState:UIControlStateNormal];
-            [_blockButton setTitle:[NSBundle mxk_localizedStringForKey:@"room_event_encryption_info_block"] forState:UIControlStateHighlighted];
-            break;
-        }
-        case MXDeviceVerified:
-        {
-            self.deviceStatus.image = [UIImage imageNamed:@"e2e_verified"];
-            
-            [_verifyButton setTitle:[NSBundle mxk_localizedStringForKey:@"room_event_encryption_info_unverify"] forState:UIControlStateNormal];
-            [_verifyButton setTitle:[NSBundle mxk_localizedStringForKey:@"room_event_encryption_info_unverify"] forState:UIControlStateHighlighted];
-            [_blockButton setTitle:[NSBundle mxk_localizedStringForKey:@"room_event_encryption_info_block"] forState:UIControlStateNormal];
-            [_blockButton setTitle:[NSBundle mxk_localizedStringForKey:@"room_event_encryption_info_block"] forState:UIControlStateHighlighted];
-            
-            break;
-        }
-        case MXDeviceBlocked:
-        {
-            self.deviceStatus.image = [UIImage imageNamed:@"e2e_blocked"];
-            
-            [_verifyButton setTitle:[NSBundle mxk_localizedStringForKey:@"room_event_encryption_info_verify"] forState:UIControlStateNormal];
-            [_verifyButton setTitle:[NSBundle mxk_localizedStringForKey:@"room_event_encryption_info_verify"] forState:UIControlStateHighlighted];
-            [_blockButton setTitle:[NSBundle mxk_localizedStringForKey:@"room_event_encryption_info_unblock"] forState:UIControlStateNormal];
-            [_blockButton setTitle:[NSBundle mxk_localizedStringForKey:@"room_event_encryption_info_unblock"] forState:UIControlStateHighlighted];
-            
-            break;
-        }
-        default:
-            break;
-    }
 }
 
 + (CGFloat)cellHeightWithDeviceInfo:(MXDeviceInfo*)deviceInfo andCellWidth:(CGFloat)width
 {
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, width, 50)];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, width, 24)];
     label.numberOfLines = 0;
     label.text = (deviceInfo.displayName.length ? [NSString stringWithFormat:@"%@ (%@)", deviceInfo.displayName, deviceInfo.deviceId] : [NSString stringWithFormat:@"(%@)", deviceInfo.deviceId]);
     [label sizeToFit];
     
     return label.frame.size.height + DEVICE_TABLEVIEW_ROW_CELL_HEIGHT_WITHOUT_LABEL_HEIGHT;
-}
-
-#pragma mark - Actions
-
-- (IBAction)onButtonPressed:(id)sender
-{
-    if (self.delegate)
-    {
-        MXDeviceVerification verificationStatus;
-        
-        if (sender == _verifyButton)
-        {
-            verificationStatus = ((_deviceInfo.verified == MXDeviceVerified) ? MXDeviceUnverified : MXDeviceVerified);
-        }
-        else if (sender == _blockButton)
-        {
-            verificationStatus = ((_deviceInfo.verified == MXDeviceBlocked) ? MXDeviceUnverified : MXDeviceBlocked);
-        }
-        else
-        {
-            // Unexpected case
-            NSLog(@"[DeviceTableViewCell] Invalid button pressed.");
-            return;
-        }
-        
-        [self.delegate deviceTableViewCell:self updateDeviceVerification:verificationStatus];
-    }
 }
 
 @end
