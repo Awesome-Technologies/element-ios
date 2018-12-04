@@ -46,33 +46,7 @@ NSString *const kRoomEncryptedDataBubbleCellTapOnEncryptionIcon = @"kRoomEncrypt
     }
     else
     {
-        MXDeviceInfo *deviceInfo = [session.crypto eventDeviceInfo:event];
-        
-        if (deviceInfo)
-        {
-            switch (deviceInfo.verified)
-            {
-                case MXDeviceUnknown:
-                case MXDeviceUnverified:
-                {
-                    encryptionIcon = @"e2e_warning";
-                    break;
-                }
-                case MXDeviceVerified:
-                {
-                    encryptionIcon = @"e2e_verified";
-                    break;
-                }
-                default:
-                    break;
-            }
-        }
-    }
-    
-    if (!encryptionIcon)
-    {
-        // Use the warning icon by default
-        encryptionIcon = @"e2e_warning";
+        encryptionIcon = @"e2e_verified";
     }
     
     return [UIImage imageNamed:encryptionIcon];
