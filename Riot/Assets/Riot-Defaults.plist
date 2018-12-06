@@ -27,9 +27,9 @@
 	<key>piwik</key>
 	<dict>
 		<key>url</key>
-		<string>https://piwik.riot.im/piwik.php</string>
+		<string>https://matomo.awesome-technologies.de/piwik.php</string>
 		<key>siteId</key>
-		<string>1</string>
+		<string>2</string>
 	</dict>
 	<key>showAllEventsInRoomHistory</key>
 	<false/>
