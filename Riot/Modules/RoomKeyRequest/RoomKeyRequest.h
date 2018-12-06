@@ -20,39 +20,26 @@
 #import <MatrixKit/MatrixKit.h>
 
 /**
- The `RoomKeyRequestViewController` display a modal dialog at the top of the
- application asking the user if he wants to share room keys with a user's device.
- For the moment, the user is himself.
+ `RoomKeyRequest` allows to accept all pending keys without verifying the devices.
  */
-@interface RoomKeyRequestViewController : NSObject <MXKEncryptionInfoViewDelegate>
-
-/**
- The UIAlertController instance which handles the dialog.
- */
-@property (nonatomic, readonly) UIAlertController *alertController;
+@interface RoomKeyRequest : NSObject
 
 @property (nonatomic, readonly) MXSession *mxSession;
 @property (nonatomic, readonly) MXDeviceInfo *device;
 
 /**
- Initialise an `RoomKeyRequestViewController` instance.
+ Initialise an `RoomKeyRequest` instance.
 
  @param deviceInfo the device to share keys to.
- @param wasNewDevice flag indicating whether this is the first time we meet the device.
  @param session the related matrix session.
  @param onComplete a block called when the the dialog is closed.
  @return the newly created instance.
  */
-- (instancetype)initWithDeviceInfo:(MXDeviceInfo*)deviceInfo wasNewDevice:(BOOL)wasNewDevice andMatrixSession:(MXSession*)session onComplete:(void (^)())onComplete;
+- (instancetype)initWithDeviceInfo:(MXDeviceInfo*)deviceInfo andMatrixSession:(MXSession*)session onComplete:(void (^)())onComplete;
 
 /**
- Show the dialog in a modal way.
+ Accept all pending keys but not verify devices.
  */
-- (void)show;
-
-/**
- Hide the dialog.
- */
-- (void)hide;
+- (void)acceptAllKeys;
 
 @end

@@ -34,7 +34,7 @@
 #import "ContactDetailsViewController.h"
 
 #import "BugReportViewController.h"
-#import "RoomKeyRequestViewController.h"
+#import "RoomKeyRequest.h"
 
 #import <MatrixKit/MatrixKit.h>
 
@@ -92,7 +92,7 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     /**
      If any the currently displayed sharing key dialog
      */
-    RoomKeyRequestViewController *roomKeyRequestViewController;
+    RoomKeyRequest *roomKeyRequest;
 
     /**
      Account picker used in case of multiple account.
@@ -3057,30 +3057,7 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
 
     [mxSession.crypto pendingKeyRequests:^(MXUsersDevicesMap<NSArray<MXIncomingRoomKeyRequest *> *> *pendingKeyRequests) {
 
-        NSLog(@"[AppDelegate] checkPendingRoomKeyRequestsInSession: pendingKeyRequests.count: %@. Already displayed: %@",
-              @(pendingKeyRequests.count),
-              roomKeyRequestViewController ? @"YES" : @"NO");
-
-        if (roomKeyRequestViewController)
-        {
-            // Check if the current RoomKeyRequestViewController is still valid
-            MXSession *currentMXSession = roomKeyRequestViewController.mxSession;
-            NSString *currentUser = roomKeyRequestViewController.device.userId;
-            NSString *currentDevice = roomKeyRequestViewController.device.deviceId;
-
-            NSArray<MXIncomingRoomKeyRequest *> *currentPendingRequest = [pendingKeyRequests objectForDevice:currentDevice forUser:currentUser];
-
-            if (currentMXSession == mxSession && currentPendingRequest.count == 0)
-            {
-                NSLog(@"[AppDelegate] checkPendingRoomKeyRequestsInSession: Cancel current dialog");
-
-                // The key request has been probably cancelled, remove the popup
-                [roomKeyRequestViewController hide];
-                roomKeyRequestViewController = nil;
-            }
-        }
-
-        if (!roomKeyRequestViewController && pendingKeyRequests.count)
+        if (!roomKeyRequest && pendingKeyRequests.count)
         {
             // Pick the first coming user/device pair
             NSString *userId = pendingKeyRequests.userIds.firstObject;
@@ -3094,29 +3071,29 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
                 {
                     BOOL wasNewDevice = (deviceInfo.verified == MXDeviceUnknown);
 
-                    void (^openDialog)() = ^void()
+                    void (^acceptKeys)() = ^void()
                     {
-                        NSLog(@"[AppDelegate] checkPendingRoomKeyRequestsInSession: Open dialog for %@", deviceInfo);
+                        NSLog(@"[AppDelegate] checkPendingRoomKeyRequestsInSession: Accepting keys without verifying for %@", deviceInfo);
 
-                        roomKeyRequestViewController = [[RoomKeyRequestViewController alloc] initWithDeviceInfo:deviceInfo wasNewDevice:wasNewDevice andMatrixSession:mxSession onComplete:^{
+                        roomKeyRequest = [[RoomKeyRequest alloc] initWithDeviceInfo:deviceInfo andMatrixSession:mxSession onComplete:^{
 
-                            roomKeyRequestViewController = nil;
+                            roomKeyRequest = nil;
 
                             // Check next pending key request, if any
                             [self checkPendingRoomKeyRequests];
                         }];
 
-                        [roomKeyRequestViewController show];
+                        [roomKeyRequest acceptAllKeys];
                     };
 
                     // If the device was new before, it's not any more.
                     if (wasNewDevice)
                     {
-                        [mxSession.crypto setDeviceVerification:MXDeviceUnverified forDevice:deviceId ofUser:userId success:openDialog failure:nil];
+                        [mxSession.crypto setDeviceVerification:MXDeviceUnverified forDevice:deviceId ofUser:userId success:acceptKeys failure:nil];
                     }
                     else
                     {
-                        openDialog();
+                        acceptKeys();
                     }
                 }
                 else
