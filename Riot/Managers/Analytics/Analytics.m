@@ -65,17 +65,11 @@ NSString *const kAnalyticsE2eDecryptionFailureAction = @"Decryption failure";
         // The language is either the one selected by the user within the app
         // or, else, the one configured by the OS
         NSString *language = [NSBundle mxk_language] ? [NSBundle mxk_language] : [[NSBundle mainBundle] preferredLocalizations][0];
-        [[PiwikTracker shared] setCustomVariableWithIndex:4 name:@"Chosen Language" value:language];
-
-        MXKAccount* account = [MXKAccountManager sharedManager].activeAccounts.firstObject;
-        if (account)
-        {
-            [[PiwikTracker shared] setCustomVariableWithIndex:7 name:@"Homeserver URL" value:account.mxCredentials.homeServer];
-            [[PiwikTracker shared] setCustomVariableWithIndex:8 name:@"Identity Server URL" value:account.identityServerURL];
-        }
-
-        // TODO: We should also track device and os version
-        // But that needs to be decided for all platforms
+        [[PiwikTracker shared] setCustomVariableWithIndex:3 name:@"Chosen Language" value:language];
+        
+        // Device and OS version
+        [[PiwikTracker shared] setCustomVariableWithIndex:4 name:@"Device" value:[[UIDevice currentDevice] name]];
+        [[PiwikTracker shared] setCustomVariableWithIndex:5 name:@"OS Version" value:[[UIDevice currentDevice] systemVersion]];
 
         // Catch and log crashes
         [MXLogger logCrashes:YES];
