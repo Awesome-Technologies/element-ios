@@ -1183,7 +1183,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     // Return the fixed number of sections
-    return ROOM_SETTINGS_SECTION_COUNT - (mxRoom.isDirect ? 1 : 0);
+    return mxRoom.isDirect ? 1 : ROOM_SETTINGS_SECTION_COUNT;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -1420,7 +1420,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
             cell = leaveCell;
         }
     }
-    else if (indexPath.section == ROOM_SETTINGS_ROOM_ACCESS_SECTION_INDEX && !mxRoom.isDirect)
+    else if (indexPath.section == ROOM_SETTINGS_ROOM_ACCESS_SECTION_INDEX)
     {
         TableViewCellWithCheckBoxAndLabel *roomAccessCell = [tableView dequeueReusableCellWithIdentifier:[TableViewCellWithCheckBoxAndLabel defaultReuseIdentifier] forIndexPath:indexPath];
         
@@ -1471,7 +1471,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
         
         cell = roomAccessCell;
     }
-    else if (indexPath.section == ROOM_SETTINGS_HISTORY_VISIBILITY_SECTION_INDEX - (mxRoom.isDirect ? 1 : 0))
+    else if (indexPath.section == ROOM_SETTINGS_HISTORY_VISIBILITY_SECTION_INDEX)
     {
         TableViewCellWithCheckBoxAndLabel *historyVisibilityCell = [tableView dequeueReusableCellWithIdentifier:[TableViewCellWithCheckBoxAndLabel defaultReuseIdentifier] forIndexPath:indexPath];
         
@@ -1603,7 +1603,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
                 }
             }
         }
-        else if (indexPath.section == ROOM_SETTINGS_ROOM_ACCESS_SECTION_INDEX && !mxRoom.isDirect)
+        else if (indexPath.section == ROOM_SETTINGS_ROOM_ACCESS_SECTION_INDEX)
         {
             BOOL isUpdated = NO;
             
@@ -1737,7 +1737,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
                 [self getNavigationItem].rightBarButtonItem.enabled = (updatedItemsDict.count != 0);
             }
         }
-        else if (indexPath.section == ROOM_SETTINGS_HISTORY_VISIBILITY_SECTION_INDEX - (mxRoom.isDirect ? 1 : 0))
+        else if (indexPath.section == ROOM_SETTINGS_HISTORY_VISIBILITY_SECTION_INDEX)
         {
             // Ignore the selection if the option is already enabled
             TableViewCellWithCheckBoxAndLabel *selectedCell = [self.tableView cellForRowAtIndexPath:indexPath];
