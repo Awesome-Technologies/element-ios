@@ -1229,7 +1229,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     // Return the fixed number of sections
-    return ROOM_SETTINGS_SECTION_COUNT;
+    return ROOM_SETTINGS_SECTION_COUNT - (mxRoom.isDirect ? 1 : 0);
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -1266,11 +1266,11 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
 
 - (nullable NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-    if (section == ROOM_SETTINGS_ROOM_ACCESS_SECTION_INDEX)
+    if (section == ROOM_SETTINGS_ROOM_ACCESS_SECTION_INDEX && !mxRoom.isDirect)
     {
         return NSLocalizedStringFromTable(@"room_details_access_section", @"Vector", nil);
     }
-    else if (section == ROOM_SETTINGS_HISTORY_VISIBILITY_SECTION_INDEX)
+    else if (section == ROOM_SETTINGS_HISTORY_VISIBILITY_SECTION_INDEX - (mxRoom.isDirect ? 1 : 0))
     {
         return NSLocalizedStringFromTable(@"room_details_history_section", @"Vector", nil);
     }
@@ -1492,7 +1492,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
             cell = leaveCell;
         }
     }
-    else if (indexPath.section == ROOM_SETTINGS_ROOM_ACCESS_SECTION_INDEX)
+    else if (indexPath.section == ROOM_SETTINGS_ROOM_ACCESS_SECTION_INDEX && !mxRoom.isDirect)
     {
         if (indexPath.row == directoryVisibilityIndex)
         {
@@ -1572,7 +1572,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
             cell = roomAccessCell;
         }
     }
-    else if (indexPath.section == ROOM_SETTINGS_HISTORY_VISIBILITY_SECTION_INDEX)
+    else if (indexPath.section == ROOM_SETTINGS_HISTORY_VISIBILITY_SECTION_INDEX - (mxRoom.isDirect ? 1 : 0))
     {
         TableViewCellWithCheckBoxAndLabel *historyVisibilityCell = [tableView dequeueReusableCellWithIdentifier:[TableViewCellWithCheckBoxAndLabel defaultReuseIdentifier] forIndexPath:indexPath];
         
@@ -1710,7 +1710,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
                 }
             }
         }
-        else if (indexPath.section == ROOM_SETTINGS_ROOM_ACCESS_SECTION_INDEX)
+        else if (indexPath.section == ROOM_SETTINGS_ROOM_ACCESS_SECTION_INDEX && !mxRoom.isDirect)
         {
             BOOL isUpdated = NO;
             
@@ -1844,7 +1844,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
                 [self getNavigationItem].rightBarButtonItem.enabled = (updatedItemsDict.count != 0);
             }
         }
-        else if (indexPath.section == ROOM_SETTINGS_HISTORY_VISIBILITY_SECTION_INDEX)
+        else if (indexPath.section == ROOM_SETTINGS_HISTORY_VISIBILITY_SECTION_INDEX - (mxRoom.isDirect ? 1 : 0))
         {
             // Ignore the selection if the option is already enabled
             TableViewCellWithCheckBoxAndLabel *selectedCell = [self.tableView cellForRowAtIndexPath:indexPath];
