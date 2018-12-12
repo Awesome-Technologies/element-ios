@@ -113,6 +113,9 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
     // History Visibility items
     NSMutableDictionary<MXRoomHistoryVisibility, TableViewCellWithCheckBoxAndLabel*> *historyVisibilityTickCells;
     
+    // Oder of setting in main section
+    NSMutableArray *mainSectionSettingsOrder;
+    
     // The potential image loader
     MXMediaLoader *uploader;
     
@@ -380,6 +383,22 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
 
 - (void)refreshRoomSettings
 {
+    mainSectionSettingsOrder = [NSMutableArray array];
+    if (mxRoom.isDirect)
+    {
+        [mainSectionSettingsOrder addObject:@(ROOM_SETTINGS_MAIN_SECTION_ROW_DIRECT_CHAT)];
+        [mainSectionSettingsOrder addObject:@(ROOM_SETTINGS_MAIN_SECTION_ROW_MUTE_NOTIFICATIONS)];
+        [mainSectionSettingsOrder addObject:@(ROOM_SETTINGS_MAIN_SECTION_ROW_LEAVE)];
+    }
+    else
+    {
+        [mainSectionSettingsOrder addObject:@(ROOM_SETTINGS_MAIN_SECTION_ROW_PHOTO)];
+        [mainSectionSettingsOrder addObject:@(ROOM_SETTINGS_MAIN_SECTION_ROW_NAME)];
+        [mainSectionSettingsOrder addObject:@(ROOM_SETTINGS_MAIN_SECTION_ROW_TOPIC)];
+        [mainSectionSettingsOrder addObject:@(ROOM_SETTINGS_MAIN_SECTION_ROW_MUTE_NOTIFICATIONS)];
+        [mainSectionSettingsOrder addObject:@(ROOM_SETTINGS_MAIN_SECTION_ROW_LEAVE)];
+    }
+    
     [self retrieveActualDirectoryVisibility];
     
     // Check whether a text input is currently edited
@@ -1278,7 +1297,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
     
     if (section == ROOM_SETTINGS_MAIN_SECTION_INDEX)
     {
-        count = ROOM_SETTINGS_MAIN_SECTION_ROW_COUNT;
+        count = mainSectionSettingsOrder.count;
     }
     else if (section == ROOM_SETTINGS_ROOM_ACCESS_SECTION_INDEX)
     {
@@ -1341,7 +1360,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.section == ROOM_SETTINGS_MAIN_SECTION_INDEX)
+    if (indexPath.section == ROOM_SETTINGS_MAIN_SECTION_INDEX && !mxRoom.isDirect)
     {
         if (indexPath.row == ROOM_SETTINGS_MAIN_SECTION_ROW_TOPIC)
         {
@@ -1364,7 +1383,8 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
     // general settings
     if (indexPath.section == ROOM_SETTINGS_MAIN_SECTION_INDEX)
     {
-        if (row == ROOM_SETTINGS_MAIN_SECTION_ROW_MUTE_NOTIFICATIONS)
+        NSInteger rowEnum = [[mainSectionSettingsOrder objectAtIndex:row] integerValue];
+        if (rowEnum == ROOM_SETTINGS_MAIN_SECTION_ROW_MUTE_NOTIFICATIONS)
         {
             MXKTableViewCellWithLabelAndSwitch *roomNotifCell = [self getLabelAndSwitchCell:tableView forIndexPath:indexPath];
 
@@ -1383,7 +1403,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
             
             cell = roomNotifCell;
         }
-        else if (row == ROOM_SETTINGS_MAIN_SECTION_ROW_DIRECT_CHAT)
+        else if (rowEnum == ROOM_SETTINGS_MAIN_SECTION_ROW_DIRECT_CHAT)
         {
             MXKTableViewCellWithLabelAndSwitch *roomDirectChat = [self getLabelAndSwitchCell:tableView forIndexPath:indexPath];
             
@@ -1402,7 +1422,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
             
             cell = roomDirectChat;
         }
-        else if (row == ROOM_SETTINGS_MAIN_SECTION_ROW_PHOTO)
+        else if (rowEnum == ROOM_SETTINGS_MAIN_SECTION_ROW_PHOTO)
         {
             MXKTableViewCellWithLabelAndMXKImageView *roomPhotoCell = [tableView dequeueReusableCellWithIdentifier:[MXKTableViewCellWithLabelAndMXKImageView defaultReuseIdentifier] forIndexPath:indexPath];
             
@@ -1439,7 +1459,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
             
             cell = roomPhotoCell;
         }
-        else if (row == ROOM_SETTINGS_MAIN_SECTION_ROW_TOPIC)
+        else if (rowEnum == ROOM_SETTINGS_MAIN_SECTION_ROW_TOPIC)
         {
             TableViewCellWithLabelAndLargeTextView *roomTopicCell = [tableView dequeueReusableCellWithIdentifier:kRoomSettingsTopicCellViewIdentifier forIndexPath:indexPath];
             
@@ -1471,7 +1491,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
             
             cell = roomTopicCell;
         }
-        else if (row == ROOM_SETTINGS_MAIN_SECTION_ROW_NAME)
+        else if (rowEnum == ROOM_SETTINGS_MAIN_SECTION_ROW_NAME)
         {
             MXKTableViewCellWithLabelAndTextField *roomNameCell = [tableView dequeueReusableCellWithIdentifier:kRoomSettingsNameCellViewIdentifier forIndexPath:indexPath];
             
@@ -1511,7 +1531,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
             
             cell = roomNameCell;
         }
-        else if (row == ROOM_SETTINGS_MAIN_SECTION_ROW_LEAVE)
+        else if (rowEnum == ROOM_SETTINGS_MAIN_SECTION_ROW_LEAVE)
         {
             MXKTableViewCellWithButton *leaveCell = [tableView dequeueReusableCellWithIdentifier:[MXKTableViewCellWithButton defaultReuseIdentifier] forIndexPath:indexPath];
             
@@ -1732,7 +1752,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
     {
         [self dismissFirstResponder];
         
-        if (indexPath.section == ROOM_SETTINGS_MAIN_SECTION_INDEX)
+        if (indexPath.section == ROOM_SETTINGS_MAIN_SECTION_INDEX && !mxRoom.isDirect)
         {
             if (indexPath.row == ROOM_SETTINGS_MAIN_SECTION_ROW_PHOTO)
             {
