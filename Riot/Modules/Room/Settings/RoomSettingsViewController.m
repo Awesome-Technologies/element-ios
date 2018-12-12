@@ -47,7 +47,6 @@ enum
     ROOM_SETTINGS_MAIN_SECTION_ROW_PHOTO = 0,
     ROOM_SETTINGS_MAIN_SECTION_ROW_NAME,
     ROOM_SETTINGS_MAIN_SECTION_ROW_TOPIC,
-    ROOM_SETTINGS_MAIN_SECTION_ROW_DIRECT_CHAT,
     ROOM_SETTINGS_MAIN_SECTION_ROW_MUTE_NOTIFICATIONS,
     ROOM_SETTINGS_MAIN_SECTION_ROW_LEAVE,
     ROOM_SETTINGS_MAIN_SECTION_ROW_COUNT
@@ -80,7 +79,6 @@ NSString *const kRoomSettingsNameKey = @"kRoomSettingsNameKey";
 NSString *const kRoomSettingsTopicKey = @"kRoomSettingsTopicKey";
 NSString *const kRoomSettingsTagKey = @"kRoomSettingsTagKey";
 NSString *const kRoomSettingsMuteNotifKey = @"kRoomSettingsMuteNotifKey";
-NSString *const kRoomSettingsDirectChatKey = @"kRoomSettingsDirectChatKey";
 NSString *const kRoomSettingsJoinRuleKey = @"kRoomSettingsJoinRuleKey";
 NSString *const kRoomSettingsGuestAccessKey = @"kRoomSettingsGuestAccessKey";
 NSString *const kRoomSettingsDirectoryKey = @"kRoomSettingsDirectoryKey";
@@ -386,7 +384,6 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
     mainSectionSettingsOrder = [NSMutableArray array];
     if (mxRoom.isDirect)
     {
-        [mainSectionSettingsOrder addObject:@(ROOM_SETTINGS_MAIN_SECTION_ROW_DIRECT_CHAT)];
         [mainSectionSettingsOrder addObject:@(ROOM_SETTINGS_MAIN_SECTION_ROW_MUTE_NOTIFICATIONS)];
         [mainSectionSettingsOrder addObject:@(ROOM_SETTINGS_MAIN_SECTION_ROW_LEAVE)];
     }
@@ -1195,45 +1192,6 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
             return;
         }
         
-        if ([updatedItemsDict objectForKey:kRoomSettingsDirectChatKey])
-        {
-            pendingOperation = [mxRoom setIsDirect:((NSNumber*)[updatedItemsDict objectForKey:kRoomSettingsDirectChatKey]).boolValue withUserId:nil success:^{
-                
-                if (weakSelf)
-                {
-                    typeof(self) self = weakSelf;
-                    
-                    self->pendingOperation = nil;
-                    [self->updatedItemsDict removeObjectForKey:kRoomSettingsDirectChatKey];
-                    [self onSave:nil];
-                }
-                
-            } failure:^(NSError *error) {
-                
-                NSLog(@"[RoomSettingsViewController] Altering DMness failed");
-                
-                if (weakSelf)
-                {
-                    typeof(self) self = weakSelf;
-                    
-                    self->pendingOperation = nil;
-                    
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        
-                        NSString* message = error.localizedDescription;
-                        if (!message.length)
-                        {
-                            message = NSLocalizedStringFromTable(@"room_details_fail_to_update_room_direct", @"Vector", nil);
-                        }
-                        [self onSaveFailed:message withKeys:@[kRoomSettingsDirectChatKey]];
-                        
-                    });
-                }
-                
-            }];
-            return;
-        }
-        
         // Room directory visibility
         MXRoomDirectoryVisibility directoryVisibility = [updatedItemsDict objectForKey:kRoomSettingsDirectoryKey];
         if (directoryVisibility)
@@ -1402,25 +1360,6 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
             }
             
             cell = roomNotifCell;
-        }
-        else if (rowEnum == ROOM_SETTINGS_MAIN_SECTION_ROW_DIRECT_CHAT)
-        {
-            MXKTableViewCellWithLabelAndSwitch *roomDirectChat = [self getLabelAndSwitchCell:tableView forIndexPath:indexPath];
-            
-            [roomDirectChat.mxkSwitch addTarget:self action:@selector(toggleDirectChat:) forControlEvents:UIControlEventValueChanged];
-            
-            roomDirectChat.mxkLabel.text = NSLocalizedStringFromTable(@"room_details_direct_chat", @"Vector", nil);
-            
-            if ([updatedItemsDict objectForKey:kRoomSettingsDirectChatKey])
-            {
-                roomDirectChat.mxkSwitch.on = ((NSNumber*)[updatedItemsDict objectForKey:kRoomSettingsDirectChatKey]).boolValue;
-            }
-            else
-            {
-                roomDirectChat.mxkSwitch.on = mxRoom.isDirect;
-            }
-            
-            cell = roomDirectChat;
         }
         else if (rowEnum == ROOM_SETTINGS_MAIN_SECTION_ROW_PHOTO)
         {
@@ -2130,21 +2069,6 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
     
     [self getNavigationItem].rightBarButtonItem.enabled = (updatedItemsDict.count != 0);
 }
-
-- (void)toggleDirectChat:(UISwitch*)theSwitch
-{
-    if (theSwitch.on == mxRoom.isDirect)
-    {
-        [updatedItemsDict removeObjectForKey:kRoomSettingsDirectChatKey];
-    }
-    else
-    {
-        [updatedItemsDict setObject:[NSNumber numberWithBool:theSwitch.on] forKey:kRoomSettingsDirectChatKey];
-    }
-    
-    [self getNavigationItem].rightBarButtonItem.enabled = (updatedItemsDict.count != 0);
-}
-
 
 - (void)toggleDirectoryVisibility:(UISwitch*)theSwitch
 {
