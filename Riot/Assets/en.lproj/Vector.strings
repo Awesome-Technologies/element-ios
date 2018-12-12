@@ -422,7 +422,8 @@
 "settings_deactivate_my_account" = "Deactivate my account";
 
 // Room Details
-"room_details_title" = "Room Details";
+"room_details_title" = "Group Chat";
+"room_details_title_direct_chat" = "Direct Chat";
 "room_details_people" = "Members";
 "room_details_files" = "Files";
 "room_details_settings" = "Settings";
