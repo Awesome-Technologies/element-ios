@@ -47,7 +47,6 @@ enum
     ROOM_SETTINGS_MAIN_SECTION_ROW_PHOTO = 0,
     ROOM_SETTINGS_MAIN_SECTION_ROW_NAME,
     ROOM_SETTINGS_MAIN_SECTION_ROW_TOPIC,
-    ROOM_SETTINGS_MAIN_SECTION_ROW_TAG ,
     ROOM_SETTINGS_MAIN_SECTION_ROW_DIRECT_CHAT,
     ROOM_SETTINGS_MAIN_SECTION_ROW_MUTE_NOTIFICATIONS,
     ROOM_SETTINGS_MAIN_SECTION_ROW_LEAVE,
@@ -101,9 +100,6 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
     // The current table items
     UITextField* nameTextField;
     UITextView* topicTextView;
-    
-    // The room tag items
-    TableViewCellWithCheckBoxes *roomTagCell;
     
     // Room Access items
     NSInteger directoryVisibilityIndex;
@@ -1515,40 +1511,6 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
             
             cell = roomNameCell;
         }
-        else if (row == ROOM_SETTINGS_MAIN_SECTION_ROW_TAG)
-        {
-            roomTagCell = [tableView dequeueReusableCellWithIdentifier:[TableViewCellWithCheckBoxes defaultReuseIdentifier] forIndexPath:indexPath];
-            
-            roomTagCell.mainContainerLeadingConstraint.constant = roomTagCell.separatorInset.left;
-            
-            roomTagCell.checkBoxesNumber = 1;
-            
-            roomTagCell.allowsMultipleSelection = NO;
-            roomTagCell.delegate = self;
-            
-            NSArray *labels = roomTagCell.labels;
-            UILabel *label = labels[0];
-            label.textColor = kCaritasPrimaryTextColor;
-            label.text = NSLocalizedStringFromTable(@"room_details_low_priority_tag", @"Vector", nil);
-            
-            if ([updatedItemsDict objectForKey:kRoomSettingsTagKey])
-            {
-                NSString *roomTag = [updatedItemsDict objectForKey:kRoomSettingsTagKey];
-                if ([roomTag isEqualToString:kMXRoomTagLowPriority])
-                {
-                    [roomTagCell setCheckBoxValue:YES atIndex:1];
-                }
-            }
-            else
-            {
-                if (mxRoom.accountData.tags[kMXRoomTagLowPriority] != nil)
-                {
-                    [roomTagCell setCheckBoxValue:YES atIndex:1];
-                }
-            }
-            
-            cell = roomTagCell;
-        }
         else if (row == ROOM_SETTINGS_MAIN_SECTION_ROW_LEAVE)
         {
             MXKTableViewCellWithButton *leaveCell = [tableView dequeueReusableCellWithIdentifier:[MXKTableViewCellWithButton defaultReuseIdentifier] forIndexPath:indexPath];
@@ -2188,67 +2150,4 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
     [self getNavigationItem].rightBarButtonItem.enabled = (updatedItemsDict.count != 0);
 }
 
-#pragma mark - TableViewCellWithCheckBoxesDelegate
-
-- (void)tableViewCellWithCheckBoxes:(TableViewCellWithCheckBoxes *)tableViewCellWithCheckBoxes didTapOnCheckBoxAtIndex:(NSUInteger)index
-{
-    if (tableViewCellWithCheckBoxes == roomTagCell)
-    {
-        NSString *tappedRoomTag = kMXRoomTagLowPriority;
-        BOOL isCurrentlySelected = [roomTagCell checkBoxValueAtIndex:index];
-        
-        if (isCurrentlySelected)
-        {
-            // The user wants to unselect this tag
-            // Retrieve the current change on room tag (if any)
-            NSString *updatedRoomTag = [updatedItemsDict objectForKey:kRoomSettingsTagKey];
-            
-            // Check the actual tag on mxRoom
-            if (mxRoom.accountData.tags[tappedRoomTag])
-            {
-                // The actual tag must be updated, check whether another tag is already set
-                if (!updatedRoomTag)
-                {
-                    [updatedItemsDict setObject:@"" forKey:kRoomSettingsTagKey];
-                }
-            }
-            else if (updatedRoomTag && [updatedRoomTag isEqualToString:tappedRoomTag])
-            {
-                // Cancel the updated tag, but take into account the cancellation of another tag when 'tappedRoomTag' was selected.
-                if (mxRoom.accountData.tags.count)
-                {
-                    [updatedItemsDict setObject:@"" forKey:kRoomSettingsTagKey];
-                }
-                else
-                {
-                    [updatedItemsDict removeObjectForKey:kRoomSettingsTagKey];
-                }
-            }
-            
-            // Unselect the tag
-            [roomTagCell setCheckBoxValue:NO atIndex:index];
-        }
-        else
-        {
-            // The user wants to select this room tag
-            // Check the actual tag on mxRoom
-            if (mxRoom.accountData.tags[tappedRoomTag])
-            {
-                [updatedItemsDict removeObjectForKey:kRoomSettingsTagKey];
-            }
-            else
-            {
-                [updatedItemsDict setObject:tappedRoomTag forKey:kRoomSettingsTagKey];
-            }
-            
-            // Select the tapped tag
-            [roomTagCell setCheckBoxValue:YES atIndex:index];
-        }
-        
-        [self getNavigationItem].rightBarButtonItem.enabled = (updatedItemsDict.count != 0);
-    }
-}
-
 @end
-
-
