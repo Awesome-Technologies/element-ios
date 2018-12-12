@@ -100,13 +100,9 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
     UITextView* topicTextView;
     
     // Room Access items
-    NSInteger directoryVisibilityIndex;
     TableViewCellWithCheckBoxAndLabel *accessInvitedOnlyTickCell;
     TableViewCellWithCheckBoxAndLabel *accessAnyoneApartGuestTickCell;
     TableViewCellWithCheckBoxAndLabel *accessAnyoneTickCell;
-    UISwitch *directoryVisibilitySwitch;
-    MXRoomDirectoryVisibility actualDirectoryVisibility;
-    MXHTTPOperation* actualDirectoryVisibilityRequest;
     
     // History Visibility items
     NSMutableDictionary<MXRoomHistoryVisibility, TableViewCellWithCheckBoxAndLabel*> *historyVisibilityTickCells;
@@ -331,12 +327,6 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
         pendingOperation = nil;
     }
     
-    if (actualDirectoryVisibilityRequest)
-    {
-        [actualDirectoryVisibilityRequest cancel];
-        actualDirectoryVisibilityRequest = nil;
-    }
-    
     if (kRiotDesignValuesDidChangeThemeNotificationObserver)
     {
         [[NSNotificationCenter defaultCenter] removeObserver:kRiotDesignValuesDidChangeThemeNotificationObserver];
@@ -395,8 +385,6 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
         [mainSectionSettingsOrder addObject:@(ROOM_SETTINGS_MAIN_SECTION_ROW_MUTE_NOTIFICATIONS)];
         [mainSectionSettingsOrder addObject:@(ROOM_SETTINGS_MAIN_SECTION_ROW_LEAVE)];
     }
-    
-    [self retrieveActualDirectoryVisibility];
     
     // Check whether a text input is currently edited
     BOOL isNameEdited = nameTextField ? nameTextField.isFirstResponder : NO;
@@ -598,57 +586,6 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
     
     [currentAlert mxk_setAccessibilityIdentifier:@"RoomSettingsVCSaveChangesAlert"];
     [self presentViewController:currentAlert animated:YES completion:nil];
-}
-
-- (void)retrieveActualDirectoryVisibility
-{
-    if (!mxRoom || actualDirectoryVisibilityRequest)
-    {
-        return;
-    }
-    
-    // Trigger a new request to check the actual directory visibility
-    __weak typeof(self) weakSelf = self;
-    
-    actualDirectoryVisibilityRequest = [mxRoom directoryVisibility:^(MXRoomDirectoryVisibility directoryVisibility) {
-        
-        if (weakSelf)
-        {
-            typeof(self) self = weakSelf;
-            self->actualDirectoryVisibilityRequest = nil;
-            
-            self->actualDirectoryVisibility = directoryVisibility;
-            
-            // Update the value of the displayed toggle button (if any)
-            if (directoryVisibilitySwitch)
-            {
-                // Check a potential user's change before the end of the request
-                MXRoomDirectoryVisibility modifiedDirectoryVisibility = [updatedItemsDict objectForKey:kRoomSettingsDirectoryKey];
-                if (modifiedDirectoryVisibility)
-                {
-                    if ([modifiedDirectoryVisibility isEqualToString:directoryVisibility])
-                    {
-                        // The requested change corresponds to the actual settings
-                        [updatedItemsDict removeObjectForKey:kRoomSettingsDirectoryKey];
-                        
-                        [self getNavigationItem].rightBarButtonItem.enabled = (updatedItemsDict.count != 0);
-                    }
-                }
-                
-                directoryVisibilitySwitch.on = ([directoryVisibility isEqualToString:kMXRoomDirectoryVisibilityPublic]);
-            }
-        }
-        
-    } failure:^(NSError *error) {
-        
-        NSLog(@"[RoomSettingsViewController] request to get directory visibility failed");
-        
-        if (weakSelf)
-        {
-            typeof(self) self = weakSelf;
-            self->actualDirectoryVisibilityRequest = nil;
-        }
-    }];
 }
 
 #pragma mark - UITextViewDelegate
@@ -1259,8 +1196,6 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
     }
     else if (section == ROOM_SETTINGS_ROOM_ACCESS_SECTION_INDEX)
     {
-        directoryVisibilityIndex = -1;
-        
         count = ROOM_SETTINGS_ROOM_ACCESS_SECTION_ROW_SUB_COUNT;
         
         // Check whether a room address is required for the current join rule
@@ -1270,8 +1205,6 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
             // Use the actual values if no change is pending.
             joinRule = mxRoomState.joinRule;
         }
-        
-        directoryVisibilityIndex = count++;
     }
     else if (section == ROOM_SETTINGS_HISTORY_VISIBILITY_SECTION_INDEX)
     {
@@ -1489,83 +1422,54 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
     }
     else if (indexPath.section == ROOM_SETTINGS_ROOM_ACCESS_SECTION_INDEX && !mxRoom.isDirect)
     {
-        if (indexPath.row == directoryVisibilityIndex)
+        TableViewCellWithCheckBoxAndLabel *roomAccessCell = [tableView dequeueReusableCellWithIdentifier:[TableViewCellWithCheckBoxAndLabel defaultReuseIdentifier] forIndexPath:indexPath];
+        
+        roomAccessCell.checkBoxLeadingConstraint.constant = roomAccessCell.separatorInset.left;
+        
+        // Retrieve the potential updated values for joinRule and guestAccess
+        NSString *joinRule = [updatedItemsDict objectForKey:kRoomSettingsJoinRuleKey];
+        NSString *guestAccess = [updatedItemsDict objectForKey:kRoomSettingsGuestAccessKey];
+        
+        // Use the actual values if no change is pending
+        if (!joinRule)
         {
-            MXKTableViewCellWithLabelAndSwitch *directoryToggleCell = [self getLabelAndSwitchCell:tableView forIndexPath:indexPath];
-            
-            directoryToggleCell.mxkLabel.text = NSLocalizedStringFromTable(@"room_details_access_section_directory_toggle", @"Vector", nil);
-            
-            [directoryToggleCell.mxkSwitch addTarget:self action:@selector(toggleDirectoryVisibility:) forControlEvents:UIControlEventValueChanged];
-            
-            if ([updatedItemsDict objectForKey:kRoomSettingsDirectoryKey])
-            {
-                directoryToggleCell.mxkSwitch.on = ((NSNumber*)[updatedItemsDict objectForKey:kRoomSettingsDirectoryKey]).boolValue;
-            }
-            else
-            {
-                // Use the last retrieved value if any
-                directoryToggleCell.mxkSwitch.on = actualDirectoryVisibility ? [actualDirectoryVisibility isEqualToString:kMXRoomDirectoryVisibilityPublic] : NO;
-            }
-            
-            // Check whether the user can change this option
-            directoryToggleCell.mxkSwitch.enabled = (oneSelfPowerLevel >= powerLevels.stateDefault);
-            
-            // Store the switch to be able to update it
-            directoryVisibilitySwitch = directoryToggleCell.mxkSwitch;
-            
-            cell = directoryToggleCell;
+            joinRule = mxRoomState.joinRule;
         }
-        else
+        if (!guestAccess)
         {
-            TableViewCellWithCheckBoxAndLabel *roomAccessCell = [tableView dequeueReusableCellWithIdentifier:[TableViewCellWithCheckBoxAndLabel defaultReuseIdentifier] forIndexPath:indexPath];
-            
-            roomAccessCell.checkBoxLeadingConstraint.constant = roomAccessCell.separatorInset.left;
-            
-            // Retrieve the potential updated values for joinRule and guestAccess
-            NSString *joinRule = [updatedItemsDict objectForKey:kRoomSettingsJoinRuleKey];
-            NSString *guestAccess = [updatedItemsDict objectForKey:kRoomSettingsGuestAccessKey];
-            
-            // Use the actual values if no change is pending
-            if (!joinRule)
-            {
-                joinRule = mxRoomState.joinRule;
-            }
-            if (!guestAccess)
-            {
-                guestAccess = mxRoomState.guestAccess;
-            }
-            
-            if (indexPath.row == ROOM_SETTINGS_ROOM_ACCESS_SECTION_ROW_INVITED_ONLY)
-            {
-                roomAccessCell.label.text = NSLocalizedStringFromTable(@"room_details_access_section_invited_only", @"Vector", nil);
-                
-                roomAccessCell.enabled = ([joinRule isEqualToString:kMXRoomJoinRuleInvite]);
-                
-                accessInvitedOnlyTickCell = roomAccessCell;
-            }
-            else if (indexPath.row == ROOM_SETTINGS_ROOM_ACCESS_SECTION_ROW_ANYONE_APART_FROM_GUEST)
-            {
-                roomAccessCell.label.text = NSLocalizedStringFromTable(@"room_details_access_section_anyone_apart_from_guest", @"Vector", nil);
-                
-                roomAccessCell.enabled = ([joinRule isEqualToString:kMXRoomJoinRulePublic] && [guestAccess isEqualToString:kMXRoomGuestAccessForbidden]);
-                
-                accessAnyoneApartGuestTickCell = roomAccessCell;
-            }
-            else if (indexPath.row == ROOM_SETTINGS_ROOM_ACCESS_SECTION_ROW_ANYONE)
-            {
-                roomAccessCell.label.text = NSLocalizedStringFromTable(@"room_details_access_section_anyone", @"Vector", nil);
-                
-                roomAccessCell.enabled = ([joinRule isEqualToString:kMXRoomJoinRulePublic] && [guestAccess isEqualToString:kMXRoomGuestAccessCanJoin]);
-                
-                accessAnyoneTickCell = roomAccessCell;
-            }
-            
-            // Check whether the user can change this option
-            roomAccessCell.userInteractionEnabled = (oneSelfPowerLevel >= [powerLevels minimumPowerLevelForSendingEventAsStateEvent:kMXEventTypeStringRoomJoinRules]);
-            roomAccessCell.checkBox.alpha = roomAccessCell.userInteractionEnabled ? 1.0f : 0.5f;
-            
-            cell = roomAccessCell;
+            guestAccess = mxRoomState.guestAccess;
         }
+        
+        if (indexPath.row == ROOM_SETTINGS_ROOM_ACCESS_SECTION_ROW_INVITED_ONLY)
+        {
+            roomAccessCell.label.text = NSLocalizedStringFromTable(@"room_details_access_section_invited_only", @"Vector", nil);
+            
+            roomAccessCell.enabled = ([joinRule isEqualToString:kMXRoomJoinRuleInvite]);
+            
+            accessInvitedOnlyTickCell = roomAccessCell;
+        }
+        else if (indexPath.row == ROOM_SETTINGS_ROOM_ACCESS_SECTION_ROW_ANYONE_APART_FROM_GUEST)
+        {
+            roomAccessCell.label.text = NSLocalizedStringFromTable(@"room_details_access_section_anyone_apart_from_guest", @"Vector", nil);
+            
+            roomAccessCell.enabled = ([joinRule isEqualToString:kMXRoomJoinRulePublic] && [guestAccess isEqualToString:kMXRoomGuestAccessForbidden]);
+            
+            accessAnyoneApartGuestTickCell = roomAccessCell;
+        }
+        else if (indexPath.row == ROOM_SETTINGS_ROOM_ACCESS_SECTION_ROW_ANYONE)
+        {
+            roomAccessCell.label.text = NSLocalizedStringFromTable(@"room_details_access_section_anyone", @"Vector", nil);
+            
+            roomAccessCell.enabled = ([joinRule isEqualToString:kMXRoomJoinRulePublic] && [guestAccess isEqualToString:kMXRoomGuestAccessCanJoin]);
+            
+            accessAnyoneTickCell = roomAccessCell;
+        }
+        
+        // Check whether the user can change this option
+        roomAccessCell.userInteractionEnabled = (oneSelfPowerLevel >= [powerLevels minimumPowerLevelForSendingEventAsStateEvent:kMXEventTypeStringRoomJoinRules]);
+        roomAccessCell.checkBox.alpha = roomAccessCell.userInteractionEnabled ? 1.0f : 0.5f;
+        
+        cell = roomAccessCell;
     }
     else if (indexPath.section == ROOM_SETTINGS_HISTORY_VISIBILITY_SECTION_INDEX - (mxRoom.isDirect ? 1 : 0))
     {
@@ -1647,12 +1551,6 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
     
     cell.mxkSwitch.onTintColor = kCaritasColorRed;
     [cell.mxkSwitch removeTarget:self action:nil forControlEvents:UIControlEventValueChanged];
-    
-    // Reset the stored `directoryVisibilitySwitch` if the corresponding cell is reused.
-    if (cell.mxkSwitch == directoryVisibilitySwitch)
-    {
-        directoryVisibilitySwitch = nil;
-    }
     
     // Force layout before reusing a cell (fix switch displayed outside the screen)
     [cell layoutIfNeeded];
@@ -2065,30 +1963,6 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
     else
     {
         [updatedItemsDict setObject:[NSNumber numberWithBool:theSwitch.on] forKey:kRoomSettingsMuteNotifKey];
-    }
-    
-    [self getNavigationItem].rightBarButtonItem.enabled = (updatedItemsDict.count != 0);
-}
-
-- (void)toggleDirectoryVisibility:(UISwitch*)theSwitch
-{
-    MXRoomDirectoryVisibility visibility = theSwitch.on ? kMXRoomDirectoryVisibilityPublic : kMXRoomDirectoryVisibilityPrivate;
-    
-    // Check whether the actual settings has been retrieved
-    if (actualDirectoryVisibility)
-    {
-        if ([visibility isEqualToString:actualDirectoryVisibility])
-        {
-            [updatedItemsDict removeObjectForKey:kRoomSettingsDirectoryKey];
-        }
-        else
-        {
-            [updatedItemsDict setObject:visibility forKey:kRoomSettingsDirectoryKey];
-        }
-    }
-    else
-    {
-        [updatedItemsDict setObject:visibility forKey:kRoomSettingsDirectoryKey];
     }
     
     [self getNavigationItem].rightBarButtonItem.enabled = (updatedItemsDict.count != 0);
