@@ -1524,7 +1524,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
         }
         
         // Check whether the user can change this option
-        historyVisibilityCell.userInteractionEnabled = (oneSelfPowerLevel >= [powerLevels minimumPowerLevelForSendingEventAsStateEvent:kMXEventTypeStringRoomHistoryVisibility]);
+        historyVisibilityCell.userInteractionEnabled = false;
         historyVisibilityCell.checkBox.alpha = historyVisibilityCell.userInteractionEnabled ? 1.0f : 0.5f;
         
         cell = historyVisibilityCell;
@@ -1737,110 +1737,8 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
                 [self getNavigationItem].rightBarButtonItem.enabled = (updatedItemsDict.count != 0);
             }
         }
-        else if (indexPath.section == ROOM_SETTINGS_HISTORY_VISIBILITY_SECTION_INDEX)
-        {
-            // Ignore the selection if the option is already enabled
-            TableViewCellWithCheckBoxAndLabel *selectedCell = [self.tableView cellForRowAtIndexPath:indexPath];
-            if (! selectedCell.isEnabled)
-            {
-                MXRoomHistoryVisibility historyVisibility;
-                
-                if (indexPath.row == ROOM_SETTINGS_HISTORY_VISIBILITY_SECTION_ROW_ANYONE)
-                {
-                    historyVisibility = kMXRoomHistoryVisibilityWorldReadable;
-                }
-                else if (indexPath.row == ROOM_SETTINGS_HISTORY_VISIBILITY_SECTION_ROW_MEMBERS_ONLY)
-                {
-                    historyVisibility = kMXRoomHistoryVisibilityShared;
-                }
-                else if (indexPath.row == ROOM_SETTINGS_HISTORY_VISIBILITY_SECTION_ROW_MEMBERS_ONLY_SINCE_INVITED)
-                {
-                    historyVisibility = kMXRoomHistoryVisibilityInvited;
-                }
-                else if (indexPath.row == ROOM_SETTINGS_HISTORY_VISIBILITY_SECTION_ROW_MEMBERS_ONLY_SINCE_JOINED)
-                {
-                    historyVisibility = kMXRoomHistoryVisibilityJoined;
-                }
-                
-                if (historyVisibility)
-                {
-                    // Prompt the user before taking into account the change
-                    [self shouldChangeHistoryVisibility:historyVisibility];
-                }
-            }
-        }
         
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    }
-}
-
-#pragma mark -
-
-- (void)shouldChangeHistoryVisibility:(MXRoomHistoryVisibility)historyVisibility
-{
-    // Prompt the user before applying the change on room history visibility
-    [currentAlert dismissViewControllerAnimated:NO completion:nil];
-    
-    __weak typeof(self) weakSelf = self;
-    
-    currentAlert = [UIAlertController alertControllerWithTitle:NSLocalizedStringFromTable(@"room_details_history_section_prompt_title", @"Vector", nil) message:NSLocalizedStringFromTable(@"room_details_history_section_prompt_msg", @"Vector", nil) preferredStyle:UIAlertControllerStyleAlert];
-    
-    [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"cancel"]
-                                                     style:UIAlertActionStyleCancel
-                                                   handler:^(UIAlertAction * action) {
-                                                       
-                                                       if (weakSelf)
-                                                       {
-                                                           typeof(self) self = weakSelf;
-                                                           self->currentAlert = nil;
-                                                       }
-                                                       
-                                                   }]];
-    
-    [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"continue"]
-                                                     style:UIAlertActionStyleDefault
-                                                   handler:^(UIAlertAction * action) {
-                                                       
-                                                       if (weakSelf)
-                                                       {
-                                                           typeof(self) self = weakSelf;
-                                                           self->currentAlert = nil;
-                                                           
-                                                           [self changeHistoryVisibility:historyVisibility];
-                                                       }
-                                                       
-                                                   }]];
-    
-    [currentAlert mxk_setAccessibilityIdentifier:@"RoomSettingsVCChangeHistoryVisibilityAlert"];
-    [self presentViewController:currentAlert animated:YES completion:nil];
-}
-
-- (void)changeHistoryVisibility:(MXRoomHistoryVisibility)historyVisibility
-{
-    if (historyVisibility)
-    {
-        // Disable all history visibility options
-        NSArray *tickCells = historyVisibilityTickCells.allValues;
-        for (TableViewCellWithCheckBoxAndLabel *historyVisibilityTickCell in tickCells)
-        {
-            historyVisibilityTickCell.enabled = NO;
-        }
-        
-        // Enable the selected option
-        historyVisibilityTickCells[historyVisibility].enabled = YES;
-        
-        // Check the actual option
-        if ([mxRoomState.historyVisibility isEqualToString:historyVisibility])
-        {
-            // No change on history visibility
-            [updatedItemsDict removeObjectForKey:kRoomSettingsHistoryVisibilityKey];
-        }
-        else
-        {
-            [updatedItemsDict setObject:historyVisibility forKey:kRoomSettingsHistoryVisibilityKey];
-        }
-        
-        [self getNavigationItem].rightBarButtonItem.enabled = (updatedItemsDict.count != 0);
     }
 }
 
