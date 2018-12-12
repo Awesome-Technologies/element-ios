@@ -39,9 +39,6 @@ enum
     ROOM_SETTINGS_MAIN_SECTION_INDEX = 0,
     ROOM_SETTINGS_ROOM_ACCESS_SECTION_INDEX,
     ROOM_SETTINGS_HISTORY_VISIBILITY_SECTION_INDEX,
-    ROOM_SETTINGS_ROOM_ADDRESSES_SECTION_INDEX,
-    ROOM_SETTINGS_BANNED_USERS_SECTION_INDEX,
-    ROOM_SETTINGS_ADVANCED_SECTION_INDEX,
     ROOM_SETTINGS_SECTION_COUNT
 };
 
@@ -95,10 +92,6 @@ NSString *const kRoomSettingsCanonicalAliasKey = @"kRoomSettingsCanonicalAliasKe
 
 NSString *const kRoomSettingsNameCellViewIdentifier = @"kRoomSettingsNameCellViewIdentifier";
 NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellViewIdentifier";
-NSString *const kRoomSettingsWarningCellViewIdentifier = @"kRoomSettingsWarningCellViewIdentifier";
-NSString *const kRoomSettingsNewAddressCellViewIdentifier = @"kRoomSettingsNewAddressCellViewIdentifier";
-NSString *const kRoomSettingsAddressCellViewIdentifier = @"kRoomSettingsAddressCellViewIdentifier";
-NSString *const kRoomSettingsAdvancedCellViewIdentifier = @"kRoomSettingsAdvancedCellViewIdentifier";
 
 @interface RoomSettingsViewController ()
 {
@@ -114,7 +107,6 @@ NSString *const kRoomSettingsAdvancedCellViewIdentifier = @"kRoomSettingsAdvance
     
     // Room Access items
     NSInteger directoryVisibilityIndex;
-    NSInteger missingAddressWarningIndex;
     TableViewCellWithCheckBoxAndLabel *accessInvitedOnlyTickCell;
     TableViewCellWithCheckBoxAndLabel *accessAnyoneApartGuestTickCell;
     TableViewCellWithCheckBoxAndLabel *accessAnyoneTickCell;
@@ -124,12 +116,6 @@ NSString *const kRoomSettingsAdvancedCellViewIdentifier = @"kRoomSettingsAdvance
     
     // History Visibility items
     NSMutableDictionary<MXRoomHistoryVisibility, TableViewCellWithCheckBoxAndLabel*> *historyVisibilityTickCells;
-    
-    // Room aliases
-    NSMutableArray<NSString *> *roomAddresses;
-    NSUInteger localAddressesCount;
-    NSInteger roomAddressNewAliasIndex;
-    UITextField* addAddressTextField;
     
     // The potential image loader
     MXMediaLoader *uploader;
@@ -150,9 +136,6 @@ NSString *const kRoomSettingsAdvancedCellViewIdentifier = @"kRoomSettingsAdvance
     
     // Observe kAppDelegateDidTapStatusBarNotification to handle tap on clock status bar.
     id appDelegateDidTapStatusBarNotificationObserver;
-    
-    // A copy of the banned members
-    NSArray<MXRoomMember*> *bannedMembers;
     
     // Observe kRiotDesignValuesDidChangeThemeNotification to handle user interface theme change.
     id kRiotDesignValuesDidChangeThemeNotificationObserver;
@@ -189,8 +172,6 @@ NSString *const kRoomSettingsAdvancedCellViewIdentifier = @"kRoomSettingsAdvance
 - (void)updateRoomState:(MXRoomState *)newRoomState
 {
     [super updateRoomState:newRoomState];
-    
-    bannedMembers = [mxRoomState.members membersWithMembership:MXMembershipBan];
 }
 
 - (UINavigationItem*)getNavigationItem
@@ -215,8 +196,6 @@ NSString *const kRoomSettingsAdvancedCellViewIdentifier = @"kRoomSettingsAdvance
     updatedItemsDict = [[NSMutableDictionary alloc] init];
     historyVisibilityTickCells = [[NSMutableDictionary alloc] initWithCapacity:4];
     
-    roomAddresses = [NSMutableArray array];
-    
     [self.tableView registerClass:MXKTableViewCellWithLabelAndSwitch.class forCellReuseIdentifier:[MXKTableViewCellWithLabelAndSwitch defaultReuseIdentifier]];
     [self.tableView registerClass:MXKTableViewCellWithLabelAndMXKImageView.class forCellReuseIdentifier:[MXKTableViewCellWithLabelAndMXKImageView defaultReuseIdentifier]];
     
@@ -224,9 +203,6 @@ NSString *const kRoomSettingsAdvancedCellViewIdentifier = @"kRoomSettingsAdvance
     // on the text input field without being disturbed by the cell dequeuing process.
     [self.tableView registerClass:MXKTableViewCellWithLabelAndTextField.class forCellReuseIdentifier:kRoomSettingsNameCellViewIdentifier];
     [self.tableView registerClass:TableViewCellWithLabelAndLargeTextView.class forCellReuseIdentifier:kRoomSettingsTopicCellViewIdentifier];
-    [self.tableView registerClass:MXKTableViewCellWithLabelAndTextField.class forCellReuseIdentifier:kRoomSettingsNewAddressCellViewIdentifier];
-    [self.tableView registerClass:UITableViewCell.class forCellReuseIdentifier:kRoomSettingsAddressCellViewIdentifier];
-    [self.tableView registerClass:UITableViewCell.class forCellReuseIdentifier:kRoomSettingsWarningCellViewIdentifier];
     
     [self.tableView registerClass:MXKTableViewCellWithButton.class forCellReuseIdentifier:[MXKTableViewCellWithButton defaultReuseIdentifier]];
     [self.tableView registerClass:TableViewCellWithCheckBoxes.class forCellReuseIdentifier:[TableViewCellWithCheckBoxes defaultReuseIdentifier]];
@@ -379,8 +355,6 @@ NSString *const kRoomSettingsAdvancedCellViewIdentifier = @"kRoomSettingsAdvance
     updatedItemsDict = nil;
     historyVisibilityTickCells = nil;
     
-    roomAddresses = nil;
-    
     if (extraEventsListener)
     {
         MXWeakify(self);
@@ -415,7 +389,6 @@ NSString *const kRoomSettingsAdvancedCellViewIdentifier = @"kRoomSettingsAdvance
     // Check whether a text input is currently edited
     BOOL isNameEdited = nameTextField ? nameTextField.isFirstResponder : NO;
     BOOL isTopicEdited = topicTextView ? topicTextView.isFirstResponder : NO;
-    BOOL isAddressEdited = addAddressTextField ? addAddressTextField.isFirstResponder : NO;
     
     // Trigger a full table reloadData
     [super refreshRoomSettings];
@@ -428,10 +401,6 @@ NSString *const kRoomSettingsAdvancedCellViewIdentifier = @"kRoomSettingsAdvance
     else if (isTopicEdited)
     {
         [self editRoomTopic];
-    }
-    else if (isAddressEdited)
-    {
-        [self editAddRoomAddress];
     }
 }
 
@@ -519,19 +488,6 @@ NSString *const kRoomSettingsAdvancedCellViewIdentifier = @"kRoomSettingsAdvance
     }
 }
 
-- (void)editAddRoomAddress
-{
-    if (![addAddressTextField becomeFirstResponder])
-    {
-        // Retry asynchronously
-        dispatch_async(dispatch_get_main_queue(), ^{
-            
-            [self editAddRoomAddress];
-            
-        });
-    }
-}
-
 - (void)dismissFirstResponder
 {
     if ([topicTextView isFirstResponder])
@@ -542,11 +498,6 @@ NSString *const kRoomSettingsAdvancedCellViewIdentifier = @"kRoomSettingsAdvance
     if ([nameTextField isFirstResponder])
     {
         [nameTextField resignFirstResponder];
-    }
-    
-    if ([addAddressTextField isFirstResponder])
-    {
-        [addAddressTextField resignFirstResponder];
     }
     
     _selectedRoomSettingsField = RoomSettingsViewControllerFieldNone;
@@ -635,179 +586,6 @@ NSString *const kRoomSettingsAdvancedCellViewIdentifier = @"kRoomSettingsAdvance
     
     [currentAlert mxk_setAccessibilityIdentifier:@"RoomSettingsVCSaveChangesAlert"];
     [self presentViewController:currentAlert animated:YES completion:nil];
-}
-
-- (void)promptUserToCopyRoomId:(UILabel*)roomIdLabel
-{
-    if (roomIdLabel)
-    {
-        [currentAlert dismissViewControllerAnimated:NO completion:nil];
-        
-        __weak typeof(self) weakSelf = self;
-        
-        currentAlert = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-        
-        [currentAlert addAction:[UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"room_details_copy_room_id", @"Vector", nil)
-                                                         style:UIAlertActionStyleDefault
-                                                       handler:^(UIAlertAction * action) {
-                                                           
-                                                           if (weakSelf)
-                                                           {
-                                                               typeof(self) self = weakSelf;
-                                                               self->currentAlert = nil;
-                                                               
-                                                               [[UIPasteboard generalPasteboard] setString:roomIdLabel.text];
-                                                           }
-                                                           
-                                                       }]];
-        
-        [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"cancel"]
-                                                         style:UIAlertActionStyleCancel
-                                                       handler:^(UIAlertAction * action) {
-                                                           
-                                                           if (weakSelf)
-                                                           {
-                                                               typeof(self) self = weakSelf;
-                                                               self->currentAlert = nil;
-                                                           }
-                                                           
-                                                       }]];
-        
-        [currentAlert mxk_setAccessibilityIdentifier:@"RoomSettingsVCCopyRoomIdAlert"];
-        [currentAlert popoverPresentationController].sourceView = roomIdLabel;
-        [currentAlert popoverPresentationController].sourceRect = roomIdLabel.bounds;
-        [self presentViewController:currentAlert animated:YES completion:nil];
-    }
-}
-
-- (void)promptUserOnSelectedRoomAlias:(UILabel*)roomAliasLabel
-{
-    if (roomAliasLabel)
-    {
-        [currentAlert dismissViewControllerAnimated:NO completion:nil];
-        
-        __weak typeof(self) weakSelf = self;
-        
-        currentAlert = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-        
-        // Check whether the user is allowed to modify the main address.
-        if ([self canSetCanonicalAlias])
-        {
-            // Compare the selected alias with the current main address
-            NSString *currentCanonicalAlias = mxRoomState.canonicalAlias;
-            NSString *canonicalAlias;
-            
-            if ([updatedItemsDict objectForKey:kRoomSettingsCanonicalAliasKey])
-            {
-                canonicalAlias = [updatedItemsDict objectForKey:kRoomSettingsCanonicalAliasKey];
-            }
-            else
-            {
-                canonicalAlias = currentCanonicalAlias;
-            }
-            
-            if (canonicalAlias && [roomAliasLabel.text isEqualToString:canonicalAlias])
-            {
-                [currentAlert addAction:[UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"room_details_unset_main_address", @"Vector", nil)
-                                                                 style:UIAlertActionStyleDefault
-                                                               handler:^(UIAlertAction * action) {
-                                                                   
-                                                                   if (weakSelf)
-                                                                   {
-                                                                       typeof(self) self = weakSelf;
-                                                                       self->currentAlert = nil;
-                                                                       
-                                                                       // Prompt user before removing the current main address (use dispatch_async here to not be stuck by the table refresh).
-                                                                       dispatch_async(dispatch_get_main_queue(), ^{
-                                                                           
-                                                                           [self shouldRemoveCanonicalAlias:nil];
-                                                                           
-                                                                       });
-                                                                   }
-                                                                   
-                                                               }]];
-            }
-            else
-            {
-                // Invite user to define this alias as the main room address
-                [currentAlert addAction:[UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"room_details_set_main_address", @"Vector", nil)
-                                                                 style:UIAlertActionStyleDefault
-                                                               handler:^(UIAlertAction * action) {
-                                                                   
-                                                                   if (weakSelf)
-                                                                   {
-                                                                       typeof(self) self = weakSelf;
-                                                                       self->currentAlert = nil;
-                                                                       
-                                                                       [self setRoomAliasAsMainAddress:roomAliasLabel.text];
-                                                                   }
-                                                                   
-                                                               }]];
-            }
-        }
-        
-        [currentAlert addAction:[UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"room_details_copy_room_address", @"Vector", nil)
-                                                         style:UIAlertActionStyleDefault
-                                                       handler:^(UIAlertAction * action) {
-                                                           
-                                                           if (weakSelf)
-                                                           {
-                                                               typeof(self) self = weakSelf;
-                                                               self->currentAlert = nil;
-                                                               
-                                                               [[UIPasteboard generalPasteboard] setString:roomAliasLabel.text];
-                                                           }
-                                                           
-                                                       }]];
-        
-        [currentAlert addAction:[UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"room_details_copy_room_url", @"Vector", nil)
-                                                         style:UIAlertActionStyleDefault
-                                                       handler:^(UIAlertAction * action) {
-                                                           
-                                                           if (weakSelf)
-                                                           {
-                                                               typeof(self) self = weakSelf;
-                                                               self->currentAlert = nil;
-                                                               
-                                                               // Create a matrix.to permalink to the room
-                                                               [[UIPasteboard generalPasteboard] setString:[MXTools permalinkToRoom:roomAliasLabel.text]];
-                                                           }
-                                                           
-                                                       }]];
-        
-        // The user can only delete alias they has created, even if the Admin has set it as canonical.
-        // So, let the server answer if it's possible to delete an alias.
-        [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"delete"]
-                                                         style:UIAlertActionStyleDefault
-                                                       handler:^(UIAlertAction * action) {
-
-                                                           if (weakSelf)
-                                                           {
-                                                               typeof(self) self = weakSelf;
-                                                               self->currentAlert = nil;
-
-                                                               [self removeRoomAlias:roomAliasLabel.text];
-                                                           }
-
-                                                       }]];
-        
-        [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"cancel"]
-                                                         style:UIAlertActionStyleCancel
-                                                       handler:^(UIAlertAction * action) {
-                                                           
-                                                           if (weakSelf)
-                                                           {
-                                                               typeof(self) self = weakSelf;
-                                                               self->currentAlert = nil;
-                                                           }
-                                                           
-                                                       }]];
-        
-        [currentAlert mxk_setAccessibilityIdentifier:@"RoomSettingsVCOnSelectedAliasAlert"];
-        [currentAlert popoverPresentationController].sourceView = roomAliasLabel;
-        [currentAlert popoverPresentationController].sourceRect = roomAliasLabel.bounds;
-        [self presentViewController:currentAlert animated:YES completion:nil];
-    }
 }
 
 - (void)retrieveActualDirectoryVisibility
@@ -920,87 +698,14 @@ NSString *const kRoomSettingsAdvancedCellViewIdentifier = @"kRoomSettingsAdvance
     {
         nameTextField.textAlignment = NSTextAlignmentLeft;
     }
-    else if (textField == addAddressTextField)
-    {
-        if (textField.text.length == 0)
-        {
-            textField.text = @"#";
-        }
-    }
 }
+
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
     if (textField == nameTextField)
     {
         nameTextField.textAlignment = NSTextAlignmentRight;
     }
-    else if (textField == addAddressTextField)
-    {
-        if (textField.text.length < 2)
-        {
-            // reset text field
-            textField.text = nil;
-        }
-        else
-        {
-            // Check whether homeserver suffix should be added
-            NSRange range = [textField.text rangeOfString:@":"];
-            if (range.location == NSNotFound)
-            {
-                textField.text = [textField.text stringByAppendingString:self.mainSession.matrixRestClient.homeserverSuffix];
-            }
-        }
-    }
-}
-
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
-{
-    // Auto complete room alias
-    if (textField == addAddressTextField)
-    {
-        // Add # if none
-        if (!textField.text.length || textField.text.length == range.length)
-        {
-            if ([string hasPrefix:@"#"] == NO)
-            {
-                if ([string isEqualToString:@":"])
-                {
-                    textField.text = [NSString stringWithFormat:@"#%@",self.mainSession.matrixRestClient.homeserverSuffix];
-                }
-                else
-                {
-                    textField.text = [NSString stringWithFormat:@"#%@",string];
-                }
-                return NO;
-            }
-        }
-        else
-        {
-            // Remove default '#' if the string start with '#'
-            if ([string hasPrefix:@"#"] && [textField.text isEqualToString:@"#"])
-            {
-                textField.text = string;
-                return NO;
-            }
-            // Add homeserver automatically when user adds ':' at the end
-            else if (range.location == textField.text.length && [string isEqualToString:@":"])
-            {
-                textField.text = [textField.text stringByAppendingString:self.mainSession.matrixRestClient.homeserverSuffix];
-                return NO;
-            }
-        }
-    }
-    return YES;
-}
-
-- (BOOL)textFieldShouldClear:(UITextField *)textField
-{
-    if (textField == addAddressTextField)
-    {
-        textField.text = @"#";
-        return NO;
-    }
-    return YES;
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
@@ -1009,18 +714,6 @@ NSString *const kRoomSettingsAdvancedCellViewIdentifier = @"kRoomSettingsAdvance
     {
         // Dismiss the keyboard
         [nameTextField resignFirstResponder];
-    }
-    else if (textField == addAddressTextField)
-    {
-        // Dismiss the keyboard
-        [addAddressTextField resignFirstResponder];
-        
-        NSString *roomAlias = addAddressTextField.text;
-        if (!roomAlias.length || [self addRoomAlias:roomAlias])
-        {
-            // Reset the input field
-            addAddressTextField.text = nil;
-        }
     }
     
     return YES;
@@ -1428,154 +1121,6 @@ NSString *const kRoomSettingsAdvancedCellViewIdentifier = @"kRoomSettingsAdvance
                 
                 return;
             }
-            
-            // Room addresses
-            NSMutableArray<NSString *> *aliases = [updatedItemsDict objectForKey:kRoomSettingsNewAliasesKey];
-            if (aliases.count)
-            {
-                NSString *roomAlias = aliases.firstObject;
-                
-                pendingOperation = [mxRoom addAlias:roomAlias success:^{
-                    
-                    if (weakSelf)
-                    {
-                        typeof(self) self = weakSelf;
-                        
-                        self->pendingOperation = nil;
-                        
-                        if (aliases.count > 1)
-                        {
-                            [aliases removeObjectAtIndex:0];
-                            [self->updatedItemsDict setObject:aliases forKey:kRoomSettingsNewAliasesKey];
-                        }
-                        else
-                        {
-                            [self->updatedItemsDict removeObjectForKey:kRoomSettingsNewAliasesKey];
-                        }
-                        
-                        [self onSave:nil];
-                    }
-                    
-                } failure:^(NSError *error) {
-                    
-                    NSLog(@"[RoomSettingsViewController] Add room aliases failed");
-                    
-                    if (weakSelf)
-                    {
-                        typeof(self) self = weakSelf;
-                        
-                        self->pendingOperation = nil;
-                        
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            
-                            NSString* message = error.localizedDescription;
-                            if (!message.length)
-                            {
-                                message = NSLocalizedStringFromTable(@"room_details_fail_to_add_room_aliases", @"Vector", nil);
-                            }
-                            [self onSaveFailed:message withKeys:@[kRoomSettingsNewAliasesKey]];
-                            
-                        });
-                    }
-                    
-                }];
-                
-                return;
-            }
-            
-            aliases = [updatedItemsDict objectForKey:kRoomSettingsRemovedAliasesKey];
-            if (aliases.count)
-            {
-                NSString *roomAlias = aliases.firstObject;
-                
-                pendingOperation = [mxRoom removeAlias:roomAlias success:^{
-                    
-                    if (weakSelf)
-                    {
-                        typeof(self) self = weakSelf;
-                        
-                        self->pendingOperation = nil;
-                        
-                        if (aliases.count > 1)
-                        {
-                            [aliases removeObjectAtIndex:0];
-                            [self->updatedItemsDict setObject:aliases forKey:kRoomSettingsRemovedAliasesKey];
-                        }
-                        else
-                        {
-                            [self->updatedItemsDict removeObjectForKey:kRoomSettingsRemovedAliasesKey];
-                        }
-                        
-                        [self onSave:nil];
-                    }
-                    
-                } failure:^(NSError *error) {
-                    
-                    NSLog(@"[RoomSettingsViewController] Remove room aliases failed");
-                    
-                    if (weakSelf)
-                    {
-                        typeof(self) self = weakSelf;
-                        
-                        self->pendingOperation = nil;
-                        
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            
-                            NSString* message = error.localizedDescription;
-                            if (!message.length)
-                            {
-                                message = NSLocalizedStringFromTable(@"room_details_fail_to_remove_room_aliases", @"Vector", nil);
-                            }
-                            [self onSaveFailed:message withKeys:@[kRoomSettingsRemovedAliasesKey]];
-                            
-                        });
-                    }
-                    
-                }];
-                
-                return;
-            }
-            
-            NSString* canonicalAlias = [updatedItemsDict objectForKey:kRoomSettingsCanonicalAliasKey];
-            if (canonicalAlias)
-            {
-                pendingOperation = [mxRoom setCanonicalAlias:canonicalAlias success:^{
-                    
-                    if (weakSelf)
-                    {
-                        typeof(self) self = weakSelf;
-                        
-                        self->pendingOperation = nil;
-                        [self->updatedItemsDict removeObjectForKey:kRoomSettingsCanonicalAliasKey];
-                        [self onSave:nil];
-                    }
-                    
-                } failure:^(NSError *error) {
-                    
-                    NSLog(@"[RoomSettingsViewController] Update canonical alias failed");
-                    
-                    if (weakSelf)
-                    {
-                        typeof(self) self = weakSelf;
-                        
-                        self->pendingOperation = nil;
-                        
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            
-                            NSString* message = error.localizedDescription;
-                            if (!message.length)
-                            {
-                                message = NSLocalizedStringFromTable(@"room_details_fail_to_update_room_canonical_alias", @"Vector", nil);
-                            }
-                            [self onSaveFailed:message withKeys:@[kRoomSettingsCanonicalAliasKey]];
-                            
-                        });
-                    }
-                    
-                }];
-                
-                return;
-            }
         }
         
         // Update here other room settings
@@ -1727,42 +1272,6 @@ NSString *const kRoomSettingsAdvancedCellViewIdentifier = @"kRoomSettingsAdvance
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    // Refresh here the room addresses list.
-    [roomAddresses removeAllObjects];
-    localAddressesCount = 0;
-    
-    NSArray *removedAliases = [updatedItemsDict objectForKey:kRoomSettingsRemovedAliasesKey];
-    
-    NSArray *aliases = mxRoomState.aliases;
-    if (aliases)
-    {
-        for (NSString *alias in aliases)
-        {
-            // Check whether the user did not remove it
-            if (!removedAliases || [removedAliases indexOfObject:alias] == NSNotFound)
-            {
-                // Add it
-                if ([alias hasSuffix:self.mainSession.matrixRestClient.homeserverSuffix])
-                {
-                    [roomAddresses insertObject:alias atIndex:localAddressesCount];
-                    localAddressesCount++;
-                }
-                else
-                {
-                    [roomAddresses addObject:alias];
-                }
-            }
-        }
-    }
-    
-    aliases = [updatedItemsDict objectForKey:kRoomSettingsNewAliasesKey];
-    for (NSString *alias in aliases)
-    {
-        // Add this new alias to local addresses
-        [roomAddresses insertObject:alias atIndex:localAddressesCount];
-        localAddressesCount++;
-    }
-    
     // Return the fixed number of sections
     return ROOM_SETTINGS_SECTION_COUNT;
 }
@@ -1777,7 +1286,6 @@ NSString *const kRoomSettingsAdvancedCellViewIdentifier = @"kRoomSettingsAdvance
     }
     else if (section == ROOM_SETTINGS_ROOM_ACCESS_SECTION_INDEX)
     {
-        missingAddressWarningIndex = -1;
         directoryVisibilityIndex = -1;
         
         count = ROOM_SETTINGS_ROOM_ACCESS_SECTION_ROW_SUB_COUNT;
@@ -1790,34 +1298,11 @@ NSString *const kRoomSettingsAdvancedCellViewIdentifier = @"kRoomSettingsAdvance
             joinRule = mxRoomState.joinRule;
         }
         
-        if ([joinRule isEqualToString:kMXRoomJoinRulePublic] && !roomAddresses.count)
-        {
-            // Notify the user that a room address is required.
-            missingAddressWarningIndex = count++;
-        }
-        
         directoryVisibilityIndex = count++;
     }
     else if (section == ROOM_SETTINGS_HISTORY_VISIBILITY_SECTION_INDEX)
     {
         count = ROOM_SETTINGS_HISTORY_VISIBILITY_SECTION_ROW_COUNT;
-    }
-    else if (section == ROOM_SETTINGS_ROOM_ADDRESSES_SECTION_INDEX)
-    {
-        roomAddressNewAliasIndex = -1;
-        
-        count = (localAddressesCount ? roomAddresses.count : roomAddresses.count + 1);
-
-        // Everyone can add an alias: display the "add address" entry
-        roomAddressNewAliasIndex = count++;
-    }
-    else if (section == ROOM_SETTINGS_BANNED_USERS_SECTION_INDEX)
-    {
-        count = bannedMembers.count;
-    }
-    else if (section == ROOM_SETTINGS_ADVANCED_SECTION_INDEX)
-    {
-        count = 1;
     }
     
     return count;
@@ -1832,23 +1317,6 @@ NSString *const kRoomSettingsAdvancedCellViewIdentifier = @"kRoomSettingsAdvance
     else if (section == ROOM_SETTINGS_HISTORY_VISIBILITY_SECTION_INDEX)
     {
         return NSLocalizedStringFromTable(@"room_details_history_section", @"Vector", nil);
-    }
-    else if (section == ROOM_SETTINGS_ROOM_ADDRESSES_SECTION_INDEX)
-    {
-        return NSLocalizedStringFromTable(@"room_details_addresses_section", @"Vector", nil);
-    }
-    else if (section == ROOM_SETTINGS_BANNED_USERS_SECTION_INDEX)
-    {
-        if (bannedMembers.count)
-        {
-            return NSLocalizedStringFromTable(@"room_details_banned_users_section", @"Vector", nil);
-        }
-        // Hide this section
-        return nil;
-    }
-    else if (section == ROOM_SETTINGS_ADVANCED_SECTION_INDEX)
-    {
-        return NSLocalizedStringFromTable(@"room_details_advanced_section", @"Vector", nil);
     }
     
     return nil;
@@ -1867,28 +1335,12 @@ NSString *const kRoomSettingsAdvancedCellViewIdentifier = @"kRoomSettingsAdvance
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    if (section == ROOM_SETTINGS_BANNED_USERS_SECTION_INDEX && bannedMembers.count == 0)
-    {
-        // Hide this section
-        return SECTION_TITLE_PADDING_WHEN_HIDDEN;
-    }
-    else
-    {
-        return [super tableView:tableView heightForHeaderInSection:section];
-    }
+    return [super tableView:tableView heightForHeaderInSection:section];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
-    if (section == ROOM_SETTINGS_BANNED_USERS_SECTION_INDEX && bannedMembers.count == 0)
-    {
-        // Hide this section
-        return SECTION_TITLE_PADDING_WHEN_HIDDEN;
-    }
-    else
-    {
-        return [super tableView:tableView heightForFooterInSection:section];
-    }
+    return [super tableView:tableView heightForFooterInSection:section];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -2142,18 +1594,6 @@ NSString *const kRoomSettingsAdvancedCellViewIdentifier = @"kRoomSettingsAdvance
             
             cell = directoryToggleCell;
         }
-        else if (indexPath.row == missingAddressWarningIndex)
-        {
-            cell = [tableView dequeueReusableCellWithIdentifier:kRoomSettingsWarningCellViewIdentifier forIndexPath:indexPath];
-            
-            cell.textLabel.font = [UIFont systemFontOfSize:17];
-            cell.textLabel.textColor = kCaritasColorPinkRed;
-            cell.textLabel.numberOfLines = 0;
-            cell.accessoryView = nil;
-            cell.accessoryType = UITableViewCellAccessoryNone;
-            cell.selectionStyle = UITableViewCellSelectionStyleNone;
-            cell.textLabel.text = NSLocalizedStringFromTable(@"room_details_access_section_no_address_warning", @"Vector", nil);
-        }
         else
         {
             TableViewCellWithCheckBoxAndLabel *roomAccessCell = [tableView dequeueReusableCellWithIdentifier:[TableViewCellWithCheckBoxAndLabel defaultReuseIdentifier] forIndexPath:indexPath];
@@ -2264,134 +1704,6 @@ NSString *const kRoomSettingsAdvancedCellViewIdentifier = @"kRoomSettingsAdvance
         
         cell = historyVisibilityCell;
     }
-    else if (indexPath.section == ROOM_SETTINGS_ROOM_ADDRESSES_SECTION_INDEX)
-    {
-        if (indexPath.row == roomAddressNewAliasIndex)
-        {
-            MXKTableViewCellWithLabelAndTextField *addAddressCell = [tableView dequeueReusableCellWithIdentifier:kRoomSettingsNewAddressCellViewIdentifier forIndexPath:indexPath];
-            
-            // Retrieve the current edited value if any
-            NSString *currentValue = (addAddressTextField ? addAddressTextField.text : nil);
-            
-            addAddressCell.mxkLabelLeadingConstraint.constant = 0;
-            addAddressCell.mxkTextFieldLeadingConstraint.constant = addAddressCell.separatorInset.left;
-            addAddressCell.mxkTextFieldTrailingConstraint.constant = 15;
-            
-            addAddressCell.mxkLabel.text = nil;
-            
-            addAddressCell.accessoryType = UITableViewCellAccessoryNone;
-            addAddressCell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"plus_icon"]];
-            
-            addAddressTextField = addAddressCell.mxkTextField;
-            addAddressTextField.placeholder = [NSString stringWithFormat:NSLocalizedStringFromTable(@"room_details_new_address_placeholder", @"Vector", nil), self.mainSession.matrixRestClient.homeserverSuffix];
-            if (kCaritasPlaceholderTextColor)
-            {
-                addAddressTextField.attributedPlaceholder = [[NSAttributedString alloc]
-                                                             initWithString:addAddressTextField.placeholder
-                                                             attributes:@{NSForegroundColorAttributeName: kCaritasPlaceholderTextColor}];
-            }
-            addAddressTextField.userInteractionEnabled = YES;
-            addAddressTextField.text = currentValue;
-            addAddressTextField.textColor = kCaritasSecondaryTextColor;
-            
-            addAddressTextField.tintColor = kCaritasColorRed;
-            addAddressTextField.font = [UIFont systemFontOfSize:17];
-            addAddressTextField.borderStyle = UITextBorderStyleNone;
-            addAddressTextField.textAlignment = NSTextAlignmentLeft;
-            
-            addAddressTextField.autocorrectionType = UITextAutocorrectionTypeNo;
-            addAddressTextField.spellCheckingType = UITextSpellCheckingTypeNo;
-            addAddressTextField.delegate = self;
-            
-            cell = addAddressCell;
-        }
-        else
-        {
-            UITableViewCell *addressCell = [tableView dequeueReusableCellWithIdentifier:kRoomSettingsAddressCellViewIdentifier forIndexPath:indexPath];
-            
-            addressCell.textLabel.font = [UIFont systemFontOfSize:16];
-            addressCell.textLabel.textColor = kCaritasPrimaryTextColor;
-            addressCell.textLabel.lineBreakMode = NSLineBreakByTruncatingMiddle;
-            addressCell.accessoryView = nil;
-            addressCell.accessoryType = UITableViewCellAccessoryNone;
-            addressCell.selectionStyle = UITableViewCellSelectionStyleNone;
-            
-            // Check whether there is no local addresses
-            if (localAddressesCount == 0 && indexPath.row == 0)
-            {
-                addressCell.textLabel.text = NSLocalizedStringFromTable(@"room_details_no_local_addresses", @"Vector", nil);
-            }
-            else
-            {
-                NSInteger row = (localAddressesCount ? indexPath.row : indexPath.row - 1);
-                
-                if (row < roomAddresses.count)
-                {
-                    NSString *alias = roomAddresses[row];
-                    NSString *canonicalAlias;
-                    
-                    if ([updatedItemsDict objectForKey:kRoomSettingsCanonicalAliasKey])
-                    {
-                        canonicalAlias = [updatedItemsDict objectForKey:kRoomSettingsCanonicalAliasKey];
-                    }
-                    else
-                    {
-                        canonicalAlias = mxRoomState.canonicalAlias;
-                    }
-                    
-                    addressCell.textLabel.text = alias;
-                    
-                    // Check whether this alias is the main address
-                    if (canonicalAlias)
-                    {
-                        if ([alias isEqualToString:canonicalAlias])
-                        {
-                            addressCell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"main_alias_icon"]];
-                        }
-                    }
-                }
-            }
-            
-            cell = addressCell;
-        }
-    }
-    else if (indexPath.section == ROOM_SETTINGS_BANNED_USERS_SECTION_INDEX)
-    {
-        UITableViewCell *addressCell = [tableView dequeueReusableCellWithIdentifier:kRoomSettingsAddressCellViewIdentifier forIndexPath:indexPath];
-        
-        addressCell.textLabel.font = [UIFont systemFontOfSize:16];
-        addressCell.textLabel.textColor = kCaritasPrimaryTextColor;
-        addressCell.textLabel.lineBreakMode = NSLineBreakByTruncatingMiddle;
-        addressCell.accessoryView = nil;
-        addressCell.accessoryType = UITableViewCellAccessoryNone;
-        addressCell.selectionStyle = UITableViewCellSelectionStyleNone;
-        
-        addressCell.textLabel.text = bannedMembers[indexPath.row].userId;
-        
-        cell = addressCell;
-    }
-    else if (indexPath.section == ROOM_SETTINGS_ADVANCED_SECTION_INDEX)
-    {
-        if (indexPath.row == 0)
-        {
-            cell = [tableView dequeueReusableCellWithIdentifier:kRoomSettingsAdvancedCellViewIdentifier];
-            if (!cell)
-            {
-                cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:kRoomSettingsAdvancedCellViewIdentifier];
-            }
-            
-            cell.textLabel.font = [UIFont systemFontOfSize:17];
-            cell.textLabel.text = NSLocalizedStringFromTable(@"room_details_advanced_room_id", @"Vector", nil);
-            cell.textLabel.textColor = kCaritasPrimaryTextColor;
-            
-            cell.detailTextLabel.font = [UIFont systemFontOfSize:15];
-            cell.detailTextLabel.text = mxRoomState.roomId;
-            cell.detailTextLabel.textColor = kCaritasSecondaryTextColor;
-            cell.detailTextLabel.lineBreakMode = NSLineBreakByTruncatingMiddle;
-            
-            cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        }
-    }
     
     // Sanity check
     if (!cell)
@@ -2401,25 +1713,6 @@ NSString *const kRoomSettingsAdvancedCellViewIdentifier = @"kRoomSettingsAdvance
     }
     
     return cell;
-}
-
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (indexPath.section == ROOM_SETTINGS_ROOM_ADDRESSES_SECTION_INDEX && indexPath.row != roomAddressNewAliasIndex)
-    {
-        if (localAddressesCount != 0 || indexPath.row != 0)
-        {
-            // The user can only delete alias they has created, even if the Admin has set it as canonical.
-            // So, let the server answer if it's possible to delete an alias.
-            return YES;
-        }
-    }
-    return NO;
-}
-
-- (void)tableView:(UITableView*)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath*)indexPath
-{
-    // iOS8 requires this method to enable editing (see editActionsForRowAtIndexPath).
 }
 
 - (MXKTableViewCellWithLabelAndSwitch*)getLabelAndSwitchCell:(UITableView*)tableview forIndexPath:(NSIndexPath *)indexPath
@@ -2616,12 +1909,6 @@ NSString *const kRoomSettingsAdvancedCellViewIdentifier = @"kRoomSettingsAdvance
                     isUpdated = YES;
                 }
             }
-            else if (indexPath.row == missingAddressWarningIndex)
-            {
-                // Scroll to room addresses section
-                NSIndexPath *addressIndexPath = [NSIndexPath indexPathForRow:0 inSection:ROOM_SETTINGS_ROOM_ADDRESSES_SECTION_INDEX];
-                [tableView scrollToRowAtIndexPath:addressIndexPath atScrollPosition:UITableViewScrollPositionTop animated:YES];
-            }
             
             if (isUpdated)
             {
@@ -2663,82 +1950,9 @@ NSString *const kRoomSettingsAdvancedCellViewIdentifier = @"kRoomSettingsAdvance
                 }
             }
         }
-        else if (indexPath.section == ROOM_SETTINGS_ROOM_ADDRESSES_SECTION_INDEX)
-        {
-            if (indexPath.row == roomAddressNewAliasIndex)
-            {
-                NSString *roomAlias = addAddressTextField.text;
-                if (!roomAlias.length || [self addRoomAlias:roomAlias])
-                {
-                    // Reset the input field
-                    addAddressTextField.text = nil;
-                }
-            }
-            else if (localAddressesCount != 0 || indexPath.row != 0)
-            {
-                // Prompt user on selected room alias
-                UITableViewCell *addressCell = [tableView cellForRowAtIndexPath:indexPath];
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    
-                    [self promptUserOnSelectedRoomAlias:addressCell.textLabel];
-                    
-                });
-            }
-        }
-        else if (indexPath.section == ROOM_SETTINGS_BANNED_USERS_SECTION_INDEX)
-        {
-            // Show the RoomMemberDetailsViewController on this member so that
-            // if the user has enough power level, he will be able to unban him
-            RoomMemberDetailsViewController *roomMemberDetailsViewController = [RoomMemberDetailsViewController roomMemberDetailsViewController];
-            [roomMemberDetailsViewController displayRoomMember:bannedMembers[indexPath.row] withMatrixRoom:mxRoom];
-            roomMemberDetailsViewController.delegate = self;
-            roomMemberDetailsViewController.enableVoipCall = NO;
-            
-            [self.parentViewController.navigationController pushViewController:roomMemberDetailsViewController animated:NO];
-        }
-        else if (indexPath.section == ROOM_SETTINGS_ADVANCED_SECTION_INDEX && indexPath.row == 0)
-        {
-            UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-            if (cell)
-            {
-                // Prompt user to copy the room id (use dispatch_async here to not be stuck by the table refresh).
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    
-                    [self promptUserToCopyRoomId:cell.detailTextLabel];
-                    
-                });
-            }
-        }
         
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
     }
-}
-
-- (NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    NSMutableArray* actions;
-    
-    // Add the swipe to delete only on addresses section
-    if (indexPath.section == ROOM_SETTINGS_ROOM_ADDRESSES_SECTION_INDEX && indexPath.row != roomAddressNewAliasIndex)
-    {
-        if (localAddressesCount != 0 || indexPath.row != 0)
-        {
-            actions = [[NSMutableArray alloc] init];
-            
-            // Patch: Force the width of the button by adding whitespace characters into the title string.
-            UITableViewRowAction *removeAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDestructive title:@"   "  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
-                
-                [self removeAddressAtIndexPath:indexPath];
-                
-            }];
-            
-            removeAction.backgroundColor = [MXKTools convertImageToPatternColor:@"remove_icon" backgroundColor:kCaritasSecondaryBgColor patternSize:CGSizeMake(44, 44) resourceSize:CGSizeMake(24, 24)];
-            [actions insertObject:removeAction atIndex:0];
-        }
-    }
-    
-    return actions;
 }
 
 #pragma mark -
@@ -2809,81 +2023,6 @@ NSString *const kRoomSettingsAdvancedCellViewIdentifier = @"kRoomSettingsAdvance
         
         [self getNavigationItem].rightBarButtonItem.enabled = (updatedItemsDict.count != 0);
     }
-}
-
-- (BOOL)canSetCanonicalAlias
-{
-    BOOL canSetCanonicalAlias = NO;
-    if (self.mainSession)
-    {
-        // Check user's power level to know whether the user is allowed to set the main address
-        MXRoomPowerLevels *powerLevels = [mxRoomState powerLevels];
-        NSInteger oneSelfPowerLevel = [powerLevels powerLevelOfUserWithUserID:self.mainSession.myUser.userId];
-
-        if (oneSelfPowerLevel >= [powerLevels minimumPowerLevelForSendingEventAsStateEvent:kMXEventTypeStringRoomAliases])
-        {
-            canSetCanonicalAlias = YES;
-        }
-    }
-
-    return canSetCanonicalAlias;
-}
-
-- (void)shouldRemoveCanonicalAlias:(void (^)())didRemoveCanonicalAlias
-{
-    // Prompt the user before removing the current main address
-    [currentAlert dismissViewControllerAnimated:NO completion:nil];
-    
-    __weak typeof(self) weakSelf = self;
-    
-    currentAlert = [UIAlertController alertControllerWithTitle:NSLocalizedStringFromTable(@"room_details_addresses_disable_main_address_prompt_title", @"Vector", nil) message:NSLocalizedStringFromTable(@"room_details_addresses_disable_main_address_prompt_msg", @"Vector", nil) preferredStyle:UIAlertControllerStyleAlert];
-    
-    [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"cancel"]
-                                                     style:UIAlertActionStyleCancel
-                                                   handler:^(UIAlertAction * action) {
-                                                       
-                                                       if (weakSelf)
-                                                       {
-                                                           typeof(self) self = weakSelf;
-                                                           self->currentAlert = nil;
-                                                       }
-                                                       
-                                                   }]];
-    
-    [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"continue"]
-                                                     style:UIAlertActionStyleDefault
-                                                   handler:^(UIAlertAction * action) {
-                                                       
-                                                       if (weakSelf)
-                                                       {
-                                                           typeof(self) self = weakSelf;
-                                                           self->currentAlert = nil;
-                                                           
-                                                           // Remove the canonical address
-                                                           if (self->mxRoomState.canonicalAlias.length)
-                                                           {
-                                                               [self->updatedItemsDict setObject:@"" forKey:kRoomSettingsCanonicalAliasKey];
-                                                           }
-                                                           else
-                                                           {
-                                                               [self->updatedItemsDict removeObjectForKey:kRoomSettingsCanonicalAliasKey];
-                                                           }
-                                                           
-                                                           NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:ROOM_SETTINGS_ROOM_ADDRESSES_SECTION_INDEX];
-                                                           [self.tableView reloadSections:indexSet withRowAnimation:UITableViewRowAnimationNone];
-                                                           
-                                                           [self getNavigationItem].rightBarButtonItem.enabled = (self->updatedItemsDict.count != 0);
-                                                           
-                                                           if (didRemoveCanonicalAlias)
-                                                           {
-                                                               didRemoveCanonicalAlias();
-                                                           }
-                                                       }
-                                                       
-                                                   }]];
-    
-    [currentAlert mxk_setAccessibilityIdentifier:@"RoomSettingsVCRemoveCanonicalAliasAlert"];
-    [self presentViewController:currentAlert animated:YES completion:nil];
 }
 
 #pragma mark - MediaPickerViewController Delegate
@@ -3047,191 +2186,6 @@ NSString *const kRoomSettingsAdvancedCellViewIdentifier = @"kRoomSettingsAdvance
     }
     
     [self getNavigationItem].rightBarButtonItem.enabled = (updatedItemsDict.count != 0);
-}
-
-- (void)setRoomAliasAsMainAddress:(NSString *)alias
-{
-    NSString *currentCanonicalAlias = mxRoomState.canonicalAlias;
-    
-    // Update the current canonical address
-    if ([alias isEqualToString:currentCanonicalAlias])
-    {
-        [updatedItemsDict removeObjectForKey:kRoomSettingsCanonicalAliasKey];
-    }
-    else
-    {
-        [updatedItemsDict setObject:alias forKey:kRoomSettingsCanonicalAliasKey];
-    }
-    
-    NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:ROOM_SETTINGS_ROOM_ADDRESSES_SECTION_INDEX];
-    [self.tableView reloadSections:indexSet withRowAnimation:UITableViewRowAnimationNone];
-    
-    [self getNavigationItem].rightBarButtonItem.enabled = (updatedItemsDict.count != 0);
-}
-
-- (void)removeAddressAtIndexPath:(NSIndexPath *)indexPath
-{
-    NSInteger row = (localAddressesCount ? indexPath.row : indexPath.row - 1);
-    
-    if (row < roomAddresses.count)
-    {
-        NSString *alias = roomAddresses[indexPath.row];
-        [self removeRoomAlias:alias];
-    }
-}
-
-- (void)removeRoomAlias:(NSString*)roomAlias
-{
-    NSString *canonicalAlias;
-    
-    if ([updatedItemsDict objectForKey:kRoomSettingsCanonicalAliasKey])
-    {
-        canonicalAlias = [updatedItemsDict objectForKey:kRoomSettingsCanonicalAliasKey];
-    }
-    else
-    {
-        canonicalAlias = mxRoomState.canonicalAlias;
-    }
-    
-    // Check whether this alias is the main address
-    if (canonicalAlias && [roomAlias isEqualToString:canonicalAlias])
-    {
-        // Prompt user before remove this alias which is the main address
-        [self shouldRemoveCanonicalAlias:^{
-            
-            // The room alias can be removed now
-            [self removeRoomAlias:roomAlias];
-            
-        }];
-    }
-    else
-    {
-        // Check whether the alias has just been added
-        NSMutableArray<NSString *> *addedAlias = [updatedItemsDict objectForKey:kRoomSettingsNewAliasesKey];
-        if (addedAlias && [addedAlias indexOfObject:roomAlias] != NSNotFound)
-        {
-            [addedAlias removeObject:roomAlias];
-            
-            if (!addedAlias.count)
-            {
-                [updatedItemsDict removeObjectForKey:kRoomSettingsNewAliasesKey];
-            }
-        }
-        else
-        {
-            NSMutableArray<NSString *> *removedAlias = [updatedItemsDict objectForKey:kRoomSettingsRemovedAliasesKey];
-            if (!removedAlias)
-            {
-                removedAlias = [NSMutableArray array];
-                [updatedItemsDict setObject:removedAlias forKey:kRoomSettingsRemovedAliasesKey];
-            }
-            
-            [removedAlias addObject:roomAlias];
-        }
-        
-        NSMutableIndexSet *mutableIndexSet = [NSMutableIndexSet indexSet];
-        
-        if (roomAddresses.count <= 1)
-        {
-            // The user remove here all the room addresses, reload the room access section to display potential warning message
-            [mutableIndexSet addIndex:ROOM_SETTINGS_ROOM_ACCESS_SECTION_INDEX];
-        }
-        
-        [mutableIndexSet addIndex:ROOM_SETTINGS_ROOM_ADDRESSES_SECTION_INDEX];
-        [self.tableView reloadSections:mutableIndexSet withRowAnimation:UITableViewRowAnimationAutomatic];
-        
-        [self getNavigationItem].rightBarButtonItem.enabled = (updatedItemsDict.count != 0);
-    }
-}
-
-- (BOOL)addRoomAlias:(NSString*)roomAlias
-{
-    // Check whether the provided alias is valid
-    if ([MXTools isMatrixRoomAlias:roomAlias])
-    {
-        // Check whether this alias has just been deleted
-        NSMutableArray<NSString *> *removedAlias = [updatedItemsDict objectForKey:kRoomSettingsRemovedAliasesKey];
-        if (removedAlias && [removedAlias indexOfObject:roomAlias] != NSNotFound)
-        {
-            [removedAlias removeObject:roomAlias];
-            
-            if (!removedAlias.count)
-            {
-                [updatedItemsDict removeObjectForKey:kRoomSettingsRemovedAliasesKey];
-            }
-        }
-        // Check whether this alias is not already defined for this room
-        else if ([roomAddresses indexOfObject:roomAlias] == NSNotFound)
-        {
-            NSMutableArray<NSString *> *addedAlias = [updatedItemsDict objectForKey:kRoomSettingsNewAliasesKey];
-            if (!addedAlias)
-            {
-                addedAlias = [NSMutableArray array];
-                [updatedItemsDict setObject:addedAlias forKey:kRoomSettingsNewAliasesKey];
-            }
-            
-            [addedAlias addObject:roomAlias];
-        }
-        
-        NSMutableIndexSet *mutableIndexSet = [NSMutableIndexSet indexSet];
-        
-        if (!roomAddresses.count)
-        {
-            // The first added alias is defined as the main address by default.
-            // Update the current canonical address.
-            NSString *currentCanonicalAlias = mxRoomState.canonicalAlias;
-            if (currentCanonicalAlias && [roomAlias isEqualToString:currentCanonicalAlias])
-            {
-                // The right canonical alias is already defined
-                [updatedItemsDict removeObjectForKey:kRoomSettingsCanonicalAliasKey];
-            }
-            else
-            {
-                [updatedItemsDict setObject:roomAlias forKey:kRoomSettingsCanonicalAliasKey];
-            }
-            
-            if (missingAddressWarningIndex != -1)
-            {
-                // Reload room access section to remove warning message
-                [mutableIndexSet addIndex:ROOM_SETTINGS_ROOM_ACCESS_SECTION_INDEX];
-            }
-        }
-        
-        [mutableIndexSet addIndex:ROOM_SETTINGS_ROOM_ADDRESSES_SECTION_INDEX];
-        [self.tableView reloadSections:mutableIndexSet withRowAnimation:UITableViewRowAnimationAutomatic];
-        
-        [self getNavigationItem].rightBarButtonItem.enabled = (updatedItemsDict.count != 0);
-        
-        return YES;
-    }
-    
-    // Prompt here user for invalid alias
-    __weak typeof(self) weakSelf = self;
-    
-    [currentAlert dismissViewControllerAnimated:NO completion:nil];
-    
-    NSString *alertMsg = [NSString stringWithFormat:NSLocalizedStringFromTable(@"room_details_addresses_invalid_address_prompt_msg", @"Vector", nil), roomAlias];
-    
-    currentAlert = [UIAlertController alertControllerWithTitle:NSLocalizedStringFromTable(@"room_details_addresses_invalid_address_prompt_title", @"Vector", nil)
-                                                       message:alertMsg
-                                                preferredStyle:UIAlertControllerStyleAlert];
-    
-    [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"ok"]
-                                                     style:UIAlertActionStyleDefault
-                                                   handler:^(UIAlertAction * action) {
-                                                       
-                                                       if (weakSelf)
-                                                       {
-                                                           typeof(self) self = weakSelf;
-                                                           self->currentAlert = nil;
-                                                       }
-                                                       
-                                                   }]];
-    
-    [currentAlert mxk_setAccessibilityIdentifier:@"RoomSettingsVCAddAliasAlert"];
-    [self presentViewController:currentAlert animated:YES completion:nil];
-    
-    return NO;
 }
 
 #pragma mark - TableViewCellWithCheckBoxesDelegate
