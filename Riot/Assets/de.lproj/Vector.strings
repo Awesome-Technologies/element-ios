@@ -8,7 +8,8 @@
 "view" = "Ansehen";
 "invite" = "Einladen";
 // Room Details
-"room_details_title" = "Raum Details";
+"room_details_title" = "Gruppen Chat";
+"room_details_title_direct_chat" = "Direkter Chat";
 "title_favourites" = "Favoriten";
 "title_people" = "Personen";
 "title_rooms" = "Gruppen";

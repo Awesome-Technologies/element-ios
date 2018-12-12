@@ -2833,7 +2833,16 @@
                 selectedRoomDetailsIndex = 0;
             }
             
-            segmentedViewController.title = NSLocalizedStringFromTable(@"room_details_title", @"Vector", nil);
+            MXRoom *room = [session roomWithRoomId:roomId];
+            if (room.isDirect)
+            {
+                segmentedViewController.title = NSLocalizedStringFromTable(@"room_details_title_direct_chat", @"Vector", nil);
+            }
+            else
+            {
+                segmentedViewController.title = NSLocalizedStringFromTable(@"room_details_title", @"Vector", nil);
+            }
+            
             [segmentedViewController initWithTitles:titles viewControllers:viewControllers defaultSelected:selectedRoomDetailsIndex];
             
             // Add the current session to be able to observe its state change.
