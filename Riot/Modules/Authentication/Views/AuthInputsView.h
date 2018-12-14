@@ -41,7 +41,7 @@
 
 @property (weak, nonatomic) IBOutlet UILabel *messageLabel;
 
-@property (weak, nonatomic) IBOutlet MXKAuthenticationRecaptchaWebView *recaptchaWebView;
+@property (weak, nonatomic) IBOutlet UIView *recaptchaContainer;
 
 /**
  Tell whether some third-party identifiers may be added during the account registration.

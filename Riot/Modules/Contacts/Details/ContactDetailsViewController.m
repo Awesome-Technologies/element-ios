@@ -1,6 +1,7 @@
 /*
  Copyright 2016 OpenMarket Ltd
  Copyright 2017 Vector Creations Ltd
+ Copyright 2018 New Vector Ltd
  
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -1156,13 +1157,16 @@
         __block MXKImageView * avatarFullScreenView = [[MXKImageView alloc] initWithFrame:CGRectZero];
         avatarFullScreenView.stretchable = YES;
 
+        MXWeakify(self);
         [avatarFullScreenView setRightButtonTitle:[NSBundle mxk_localizedStringForKey:@"ok"] handler:^(MXKImageView* imageView, NSString* buttonTitle) {
+            
+            MXStrongifyAndReturnIfNil(self);
             [avatarFullScreenView dismissSelection];
             [avatarFullScreenView removeFromSuperview];
 
             avatarFullScreenView = nil;
             
-            isStatusBarHidden = NO;
+            self->isStatusBarHidden = NO;
             // Trigger status bar update
             [self setNeedsStatusBarAppearanceUpdate];
         }];
@@ -1171,15 +1175,16 @@
         if (self.firstMatrixId)
         {
             MXUser *user = [self.mainSession userWithUserId:self.firstMatrixId];
-            avatarURL = [self.mainSession.matrixRestClient urlOfContent:user.avatarUrl];
+            avatarURL = user.avatarUrl;
         }
 
         // TODO: Display the orignal contact avatar when the contast is not a Matrix user
 
-        [avatarFullScreenView setImageURL:avatarURL
+        [avatarFullScreenView setImageURI:avatarURL
                                  withType:nil
                       andImageOrientation:UIImageOrientationUp
-                             previewImage:self.contactAvatar.image];
+                             previewImage:self.contactAvatar.image
+                             mediaManager:self.mainSession.mediaManager];
 
         [avatarFullScreenView showFullScreen];
         isStatusBarHidden = YES;

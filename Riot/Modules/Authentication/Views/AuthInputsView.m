@@ -195,7 +195,7 @@
     
     if (type == MXKAuthenticationTypeLogin)
     {
-        if (self.isPasswordBasedFlowSupported)
+        if ([self isFlowSupported:kMXLoginFlowTypePassword])
         {
             // Check required fields
             if (!self.userLoginTextField.text.length || !self.passWordTextField.text.length)
@@ -246,7 +246,7 @@
             // Handle here the supported login flow
             if (type == MXKAuthenticationTypeLogin)
             {
-                if (self.isPasswordBasedFlowSupported)
+                if ([self isFlowSupported:kMXLoginFlowTypePassword])
                 {
                     // Check whether the user login has been set.
                     NSString *user = self.userLoginTextField.text;
@@ -301,8 +301,8 @@
         {
             currentSession.completed = completedStages;
             
-            BOOL isMSISDNFlowCompleted = self.isMSISDNFlowCompleted;
-            BOOL isEmailFlowCompleted = self.isEmailIdentityFlowCompleted;
+            BOOL isMSISDNFlowCompleted = [self isFlowCompleted:kMXLoginFlowTypeMSISDN];
+            BOOL isEmailFlowCompleted = [self isFlowCompleted:kMXLoginFlowTypeEmailIdentity];
             
             // Check the supported use cases
             if (isMSISDNFlowCompleted && self.isThirdPartyIdentifierPending)
@@ -314,33 +314,36 @@
                 
                 return;
             }
-            else if ((isMSISDNFlowCompleted || isEmailFlowCompleted) && self.isRecaptchaFlowRequired)
+            else if ((isMSISDNFlowCompleted || isEmailFlowCompleted)
+                     && [self isFlowSupported:kMXLoginFlowTypeRecaptcha] && ![self isFlowCompleted:kMXLoginFlowTypeRecaptcha])
             {
                 NSLog(@"[AuthInputsView] Display reCaptcha stage");
                 
                 [self displayRecaptchaForm:^(NSString *response) {
-                    
-                    if (response.length)
-                    {
-                        // Update the parameters dict
-                        NSDictionary *parameters = @{
-                                                     @"auth": @{@"session": currentSession.session, @"response": response, @"type": kMXLoginFlowTypeRecaptcha},
-                                                     @"username": self.userLoginTextField.text,
-                                                     @"password": self.passWordTextField.text,
-                                                     @"bind_msisdn": [NSNumber numberWithBool:isMSISDNFlowCompleted],
-                                                     @"bind_email": [NSNumber numberWithBool:isEmailFlowCompleted]
-                                                     };
-                        
-                        callback (parameters, nil);
-                    }
-                    else
-                    {
-                        NSLog(@"[AuthInputsView] reCaptcha stage failed");
-                        callback (nil, [NSError errorWithDomain:MXKAuthErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey:[NSBundle mxk_localizedStringForKey:@"not_supported_yet"]}]);
-                    }
-                    
-                }];
+
+                        if (response.length)
+                        {
+                            // We finalize here a registration triggered from external inputs. All the required data are handled by the session id
+                            NSDictionary *parameters = @{
+                                           @"auth": @{@"session": currentSession.session, @"response": response, @"type": kMXLoginFlowTypeRecaptcha},
+                                           };
+                            callback (parameters, nil);
+                        }
+                        else
+                        {
+                            NSLog(@"[AuthInputsView] reCaptcha stage failed");
+                            callback (nil, [NSError errorWithDomain:MXKAuthErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey:[NSBundle mxk_localizedStringForKey:@"not_supported_yet"]}]);
+                        }
+                    }];
                 
+                return;
+            }
+            else if ([self isFlowSupported:kMXLoginFlowTypeTerms] && ![self isFlowCompleted:kMXLoginFlowTypeTerms])
+            {
+                NSLog(@"[AuthInputsView] Prepare a new terms stage");
+
+                [self prepareParameters:callback];
+
                 return;
             }
         }
@@ -388,7 +391,7 @@
 
 - (BOOL)areThirdPartyIdentifiersSupported
 {
-    return (self.isEmailIdentityFlowSupported || self.isMSISDNFlowSupported);
+    return ([self isFlowSupported:kMXLoginFlowTypeEmailIdentity] || [self isFlowSupported:kMXLoginFlowTypeMSISDN]);
 }
 
 - (BOOL)isThirdPartyIdentifierRequired
@@ -432,7 +435,7 @@
         return NO;
     }
     
-    BOOL isEmailIdentityFlowSupported = self.isEmailIdentityFlowSupported;
+    BOOL isEmailIdentityFlowSupported = [self isFlowSupported:kMXLoginFlowTypeEmailIdentity];
     
     for (MXLoginFlow *loginFlow in currentSession.flows)
     {
@@ -476,7 +479,7 @@
     }
     else
     {
-        if (self.isEmailIdentityFlowSupported)
+        if ([self isFlowSupported:kMXLoginFlowTypeEmailIdentity])
         {
             if (self.isThirdPartyIdentifierRequired)
             {
@@ -571,7 +574,7 @@
     // Hide other items
     self.messageLabelTopConstraint.constant = 8;
     self.messageLabel.hidden = YES;
-    self.recaptchaWebView.hidden = YES;
+    self.recaptchaContainer.hidden = YES;
     
     _currentLastContainer = nil;
 }
@@ -604,10 +607,43 @@
         self.messageLabel.hidden = NO;
         self.messageLabel.text = NSLocalizedStringFromTable(@"auth_recaptcha_message", @"Vector", nil);
         
-        self.recaptchaWebView.hidden = NO;
-        self.currentLastContainer = self.recaptchaWebView;
-        
-        [self.recaptchaWebView openRecaptchaWidgetWithSiteKey:siteKey fromHomeServer:restClient.homeserver callback:callback];
+        self.recaptchaContainer.hidden = NO;
+        self.currentLastContainer = self.recaptchaContainer;
+
+        // IB does not support WKWebview in a xib before iOS 11
+        // So, add it by coding
+
+        // Do some cleaning/reset before
+        for (UIView *view in self.recaptchaContainer.subviews)
+        {
+            [view removeFromSuperview];
+        }
+
+        MXKAuthenticationRecaptchaWebView *reCaptchaWebView = [MXKAuthenticationRecaptchaWebView new];
+        reCaptchaWebView.translatesAutoresizingMaskIntoConstraints = NO;
+        [self.recaptchaContainer addSubview:reCaptchaWebView];
+
+        [self.recaptchaContainer addConstraints:
+         [NSLayoutConstraint constraintsWithVisualFormat:@"|-[view]-|"
+                                                 options:0
+                                                 metrics:0
+                                                   views:@{
+                                                           @"view": reCaptchaWebView
+                                                           }
+          ]
+         ];
+        [self.recaptchaContainer addConstraints:
+         [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[view]-|"
+                                                 options:0
+                                                 metrics:0
+                                                   views:@{
+                                                           @"view": reCaptchaWebView
+                                                           }
+          ]
+         ];
+
+
+        [reCaptchaWebView openRecaptchaWidgetWithSiteKey:siteKey fromHomeServer:restClient.homeserver callback:callback];
         
         return YES;
     }
@@ -638,7 +674,11 @@
     {
         return YES;
     }
-    
+    else if ([flowType isEqualToString:kMXLoginFlowTypeTerms])
+    {
+        return YES;
+    }
+
     return NO;
 }
 
@@ -728,100 +768,40 @@
     return nil;
 }
 
-- (BOOL)isPasswordBasedFlowSupported
-{
-    if (currentSession)
-    {
-        for (MXLoginFlow *loginFlow in currentSession.flows)
-        {
-            if ([loginFlow.type isEqualToString:kMXLoginFlowTypePassword] || [loginFlow.stages indexOfObject:kMXLoginFlowTypePassword] != NSNotFound)
-            {
-                return YES;
-            }
-        }
-    }
-    
-    return NO;
-}
+#pragma mark - Flow state
 
-- (BOOL)isEmailIdentityFlowSupported
-{
-    if (currentSession)
-    {
-        for (MXLoginFlow *loginFlow in currentSession.flows)
-        {
-            if ([loginFlow.stages indexOfObject:kMXLoginFlowTypeEmailIdentity] != NSNotFound || [loginFlow.type isEqualToString:kMXLoginFlowTypeEmailIdentity])
-            {
-                return YES;
-            }
-        }
-    }
-    
-    return NO;
-}
+/**
+ Check if a flow (kMXLoginFlowType*) is part of the required flows steps.
 
-- (BOOL)isEmailIdentityFlowCompleted
+ @param flow the flow type to check.
+ @return YES if the the flow must be implemented.
+ */
+- (BOOL)isFlowSupported:(NSString *)flow
 {
-    if (currentSession && currentSession.completed)
+    for (MXLoginFlow *loginFlow in currentSession.flows)
     {
-        if ([currentSession.completed indexOfObject:kMXLoginFlowTypeEmailIdentity] != NSNotFound)
+        if ([loginFlow.type isEqualToString:flow] || [loginFlow.stages indexOfObject:flow] != NSNotFound)
         {
             return YES;
         }
     }
-    
+
     return NO;
 }
 
-- (BOOL)isMSISDNFlowSupported
-{
-    return NO;
-}
+/**
+ Check if a flow (kMXLoginFlowType*) has already been completed.
 
-- (BOOL)isMSISDNFlowCompleted
+ @param flow the flow type to check.
+ @return YES if the the flow has been completedd.
+ */
+- (BOOL)isFlowCompleted:(NSString *)flow
 {
-    if (currentSession && currentSession.completed)
+    if (currentSession.completed && [currentSession.completed indexOfObject:flow] != NSNotFound)
     {
-        if ([currentSession.completed indexOfObject:kMXLoginFlowTypeMSISDN] != NSNotFound)
-        {
-            return YES;
-        }
-    }
-    
-    return NO;
-}
-
-- (BOOL)isRecaptchaFlowRequired
-{
-    if (currentSession && currentSession.flows)
-    {
-        for (MXLoginFlow *loginFlow in currentSession.flows)
-        {
-            if ([loginFlow.stages indexOfObject:kMXLoginFlowTypeRecaptcha] == NSNotFound && ![loginFlow.type isEqualToString:kMXLoginFlowTypeRecaptcha])
-            {
-                return NO;
-            }
-        }
-        
         return YES;
     }
-    
-    return NO;
-}
 
-- (BOOL)isDummyFlowSupported
-{
-    if (currentSession)
-    {
-        for (MXLoginFlow *loginFlow in currentSession.flows)
-        {
-            if ([loginFlow.stages indexOfObject:kMXLoginFlowTypeDummy] != NSNotFound || [loginFlow.type isEqualToString:kMXLoginFlowTypeDummy])
-            {
-                return YES;
-            }
-        }
-    }
-    
     return NO;
 }
 
