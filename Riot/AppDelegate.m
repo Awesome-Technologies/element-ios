@@ -1965,9 +1965,25 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     
     // Use UIKit BackgroundTask for handling background tasks in the SDK
     sdkOptions.backgroundModeHandler = [[MXUIKitBackgroundModeHandler alloc] init];
-
-    // Get modular widget events in rooms histories
-    [[MXKAppSettings standardAppSettings] addSupportedEventTypes:@[kWidgetMatrixEventTypeString, kWidgetModularEventTypeString]];
+    
+    // Define supported events to be shown in room history
+    [[MXKAppSettings standardAppSettings] removeSupportedEventTypes:@[kMXEventTypeStringRoomName,
+                                                                      kMXEventTypeStringSticker,
+                                                                      kMXEventTypeStringRoomTopic,
+                                                                      kMXEventTypeStringRoomAvatar,
+                                                                      kMXEventTypeStringRoomCreate,
+                                                                      kMXEventTypeStringRoomMember,
+                                                                      kMXEventTypeStringRoomAliases,
+                                                                      kMXEventTypeStringRoomHistoryVisibility,
+                                                                      kMXEventTypeStringRoomEncryption,
+                                                                      kMXEventTypeStringCallAnswer,
+                                                                      kMXEventTypeStringCallHangup,
+                                                                      kMXEventTypeStringCallInvite,
+                                                                      kMXEventTypeStringCallCandidates,
+                                                                      kMXEventTypeStringRoomJoinRules,
+                                                                      kMXEventTypeStringRoomPowerLevels,
+                                                                      kMXEventTypeStringRoomThirdPartyInvite,
+                                                                      kMXEventTypeStringRoomRelatedGroups]];
     
     // Disable Call Kit functionality
     [MXKAppSettings standardAppSettings].enableCallKit = NO;
