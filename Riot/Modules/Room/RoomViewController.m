@@ -103,7 +103,6 @@
 
 #import "AvatarGenerator.h"
 #import "Tools.h"
-#import "WidgetManager.h"
 
 #import "GBDeviceInfo_iOS.h"
 
@@ -111,10 +110,6 @@
 #import "EncryptionInfoView.h"
 
 #import "MXRoom+Riot.h"
-
-#import "IntegrationManagerViewController.h"
-#import "WidgetPickerViewController.h"
-#import "StickerPickerViewController.h"
 
 #import "EventFormatter.h"
 #import <MatrixKit/MXKSlashCommands.h>
@@ -177,9 +172,6 @@
 
     // Observers to manage MXSession state (and sync errors)
     id kMXSessionStateDidChangeObserver;
-
-    // Observers to manage widgets
-    id kMXKWidgetManagerDidUpdateWidgetObserver;
     
     // Observer kMXRoomSummaryDidChangeNotification to keep updated the missed discussion count
     id mxRoomSummaryDidChangeObserver;
@@ -470,7 +462,6 @@
     }
     
     [self listenTypingNotifications];
-    [self listenWidgetNotifications];
     [self listenTombstoneEventNotifications];
     [self listenMXSessionStateChangeNotifications];
     
@@ -519,7 +510,6 @@
         kAppDelegateDidTapStatusBarNotificationObserver = nil;
     }
     
-    [self removeWidgetNotificationsListeners];
     [self removeTombstoneEventNotificationsListener];
     [self removeMXSessionStateChangeNotificationsListener];
 
@@ -1134,7 +1124,6 @@
         mxEventDidDecryptNotificationObserver = nil;
     }
     
-    [self removeWidgetNotificationsListeners];
     [self removeTombstoneEventNotificationsListener];
     [self removeMXSessionStateChangeNotificationsListener];
     [self removeServerNoticesListener];
@@ -1280,32 +1269,6 @@
             for (UIBarButtonItem *barButtonItem in self.navigationItem.rightBarButtonItems)
             {
                 barButtonItem.enabled = YES;
-            }
-
-            if (self.navigationItem.rightBarButtonItems.count == 2)
-            {
-                BOOL matrixAppsEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"matrixApps"];
-                if (!matrixAppsEnabled)
-                {
-                    // If the setting is disabled, do not show the icon
-                    self.navigationItem.rightBarButtonItems = @[self.navigationItem.rightBarButtonItem];
-                }
-                else if ([self widgetsCount:NO])
-                {
-                    // Show there are widgets by changing the "apps" icon color
-                    // Show it in red only for room widgets, not user's widgets
-                    // TODO: Design must be reviewed
-                    UIImage *icon = self.navigationItem.rightBarButtonItems[1].image;
-                    icon = [MXKTools paintImage:icon withColor:kCaritasColorPinkRed];
-                    icon = [icon imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-
-                    self.navigationItem.rightBarButtonItems[1].image = icon;
-                }
-                else
-                {
-                    // Reset original icon
-                    self.navigationItem.rightBarButtonItems[1].image = [UIImage imageNamed:@"apps-icon"];
-                }
             }
 
             // Do not change title view class here if the expanded header is visible.
@@ -2937,80 +2900,6 @@
     self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStylePlain target:nil action:nil];
 }
 
-#pragma mark - RoomInputToolbarViewDelegate
-
-- (void)roomInputToolbarViewPresentStickerPicker:(MXKRoomInputToolbarView*)toolbarView
-{
-    // Search for the sticker picker widget in the user account
-    Widget *widget = [[WidgetManager sharedManager] userWidgets:self.roomDataSource.mxSession ofTypes:@[kWidgetTypeStickerPicker]].firstObject;
-
-    if (widget)
-    {
-        // Display the widget
-        [widget widgetUrl:^(NSString * _Nonnull widgetUrl) {
-
-            StickerPickerViewController *stickerPickerVC = [[StickerPickerViewController alloc] initWithUrl:widgetUrl forWidget:widget];
-
-            stickerPickerVC.roomDataSource = self.roomDataSource;
-
-            [self.navigationController pushViewController:stickerPickerVC animated:YES];
-        } failure:^(NSError * _Nonnull error) {
-
-            NSLog(@"[RoomVC] Cannot display widget %@", widget);
-            [[AppDelegate theDelegate] showErrorAsAlert:error];
-        }];
-    }
-    else
-    {
-        // The Sticker picker widget is not installed yet. Propose the user to install it
-        __weak typeof(self) weakSelf = self;
-
-        [currentAlert dismissViewControllerAnimated:NO completion:nil];
-
-        NSString *alertMessage = [NSString stringWithFormat:@"%@\n%@",
-                                  NSLocalizedStringFromTable(@"widget_sticker_picker_no_stickerpacks_alert", @"Vector", nil),
-                                  NSLocalizedStringFromTable(@"widget_sticker_picker_no_stickerpacks_alert_add_now", @"Vector", nil)
-                                  ];
-
-        currentAlert = [UIAlertController alertControllerWithTitle:nil message:alertMessage preferredStyle:UIAlertControllerStyleAlert];
-
-        [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"no"]
-                                                         style:UIAlertActionStyleCancel
-                                                       handler:^(UIAlertAction * action)
-        {
-            if (weakSelf)
-            {
-                typeof(self) self = weakSelf;
-                self->currentAlert = nil;
-            }
-
-        }]];
-
-        [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"yes"]
-                                                         style:UIAlertActionStyleDefault
-                                                       handler:^(UIAlertAction * action)
-        {
-            if (weakSelf)
-            {
-                typeof(self) self = weakSelf;
-                self->currentAlert = nil;
-
-                // Show the sticker picker settings screen
-                IntegrationManagerViewController *modularVC = [[IntegrationManagerViewController alloc]
-                                                               initForMXSession:self.roomDataSource.mxSession
-                                                               inRoom:self.roomDataSource.roomId
-                                                               screen:[IntegrationManagerViewController screenForWidget:kWidgetTypeStickerPicker]
-                                                               widgetId:nil];
-
-                [self presentViewController:modularVC animated:NO completion:nil];
-            }
-        }]];
-
-        [currentAlert mxk_setAccessibilityIdentifier:@"RoomVCStickerPickerAlert"];
-        [self presentViewController:currentAlert animated:YES completion:nil];
-    }
-}
-
 #pragma mark - MXKRoomInputToolbarViewDelegate
 
 - (void)roomInputToolbarView:(MXKRoomInputToolbarView*)toolbarView isTyping:(BOOL)typing
@@ -3081,27 +2970,6 @@
     if (sender == self.navigationItem.rightBarButtonItem)
     {
         [self performSegueWithIdentifier:@"showRoomSearch" sender:self];
-    }
-    // Matrix Apps button
-    else if (self.navigationItem.rightBarButtonItems.count == 2 && sender == self.navigationItem.rightBarButtonItems[1])
-    {
-        if ([self widgetsCount:NO])
-        {
-            WidgetPickerViewController *widgetPicker = [[WidgetPickerViewController alloc] initForMXSession:self.roomDataSource.mxSession
-                                                                                                     inRoom:self.roomDataSource.roomId];
-
-            [widgetPicker showInViewController:self];
-        }
-        else
-        {
-            // No widgets -> Directly show the integration manager
-            IntegrationManagerViewController *modularVC = [[IntegrationManagerViewController alloc] initForMXSession:self.roomDataSource.mxSession
-                                                                                                              inRoom:self.roomDataSource.roomId
-                                                                                                              screen:kIntegrationManagerMainScreen
-                                                                                                            widgetId:nil];
-
-            [self presentViewController:modularVC animated:NO completion:nil];
-        }
     }
     else if (sender == self.jumpToLastUnreadButton)
     {
@@ -3601,63 +3469,6 @@
 - (void)serverNoticesDidChangeState:(MXServerNotices *)serverNotices
 {
     [self refreshActivitiesViewDisplay];
-}
-
-#pragma mark - Widget notifications management
-
-- (void)removeWidgetNotificationsListeners
-{
-    if (kMXKWidgetManagerDidUpdateWidgetObserver)
-    {
-        [[NSNotificationCenter defaultCenter] removeObserver:kMXKWidgetManagerDidUpdateWidgetObserver];
-        kMXKWidgetManagerDidUpdateWidgetObserver = nil;
-    }
-}
-
-- (void)listenWidgetNotifications
-{
-    kMXKWidgetManagerDidUpdateWidgetObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kWidgetManagerDidUpdateWidgetNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notif) {
-
-        Widget *widget = notif.object;
-        if (widget.mxSession == self.roomDataSource.mxSession
-            && [widget.roomId isEqualToString:customizedRoomDataSource.roomId])
-        {
-            // Jitsi conference widget existence is shown in the bottom bar
-            // Update the bar
-            [self refreshActivitiesViewDisplay];
-            [self refreshRoomInputToolbar];
-            [self refreshRoomTitle];
-        }
-    }];
-}
-
-- (void)showJitsiErrorAsAlert:(NSError*)error
-{
-    // Customise the error for permission issues
-    if ([error.domain isEqualToString:WidgetManagerErrorDomain] && error.code == WidgetManagerErrorCodeNotEnoughPower)
-    {
-        error = [NSError errorWithDomain:error.domain
-                                    code:error.code
-                                userInfo:@{
-                                           NSLocalizedDescriptionKey: NSLocalizedStringFromTable(@"room_conference_call_no_power", @"Vector", nil)
-                                           }];
-    }
-
-    // Alert user
-    [[AppDelegate theDelegate] showErrorAsAlert:error];
-}
-
-- (NSUInteger)widgetsCount:(BOOL)includeUserWidgets
-{
-    NSUInteger widgetsCount = [[WidgetManager sharedManager] widgetsNotOfTypes:@[kWidgetTypeJitsi]
-                                                                        inRoom:self.roomDataSource.room
-                                                                 withRoomState:self.roomDataSource.roomState].count;
-    if (includeUserWidgets)
-    {
-        widgetsCount += [[WidgetManager sharedManager] userWidgets:self.roomDataSource.room.mxSession].count;
-    }
-
-    return widgetsCount;
 }
 
 #pragma mark - Unreachable Network Handling

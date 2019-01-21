@@ -29,9 +29,6 @@
 
 #import <MobileCoreServices/MobileCoreServices.h>
 
-#import "WidgetManager.h"
-#import "IntegrationManagerViewController.h"
-
 @interface RoomInputToolbarView()
 {
     MediaPickerViewController *mediaPicker;
@@ -247,20 +244,6 @@
                                                                   self->actionSheet = nil;
 
                                                                   [self showMediaPicker];
-                                                              }
-
-                                                          }]];
-
-            [actionSheet addAction:[UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"room_action_send_sticker", @"Vector", nil)
-                                                            style:UIAlertActionStyleDefault
-                                                          handler:^(UIAlertAction * action) {
-
-                                                              if (weakSelf)
-                                                              {
-                                                                  typeof(self) self = weakSelf;
-                                                                  self->actionSheet = nil;
-
-                                                                  [self.delegate roomInputToolbarViewPresentStickerPicker:self];
                                                               }
 
                                                           }]];

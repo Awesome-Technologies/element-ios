@@ -78,7 +78,7 @@ static const CGFloat kDirectRoomBorderWidth = 3.0;
 
 - (void)render:(MXKCellData *)cellData
 {
-    // Hide by default missed notifications and unread widgets
+    // Hide by default missed notifications
     self.missedNotifAndUnreadIndicator.hidden = YES;
     self.missedNotifAndUnreadBadgeBgView.hidden = YES;
     self.missedNotifAndUnreadBadgeBgViewWidthConstraint.constant = 0;

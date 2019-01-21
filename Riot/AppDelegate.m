@@ -39,7 +39,6 @@
 #import <MatrixKit/MatrixKit.h>
 
 #import "Tools.h"
-#import "WidgetManager.h"
 
 #import "AFNetworkReachabilityManager.h"
 
@@ -2008,12 +2007,6 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
             
             // Each room member will be considered as a potential contact.
             [MXKContactManager sharedManager].contactManagerMXRoomSource = MXKContactManagerMXRoomSourceAll;
-
-            // Send read receipts for widgets events too
-            NSMutableArray<MXEventTypeString> *acknowledgableEventTypes = [NSMutableArray arrayWithArray:mxSession.acknowledgableEventTypes];
-            [acknowledgableEventTypes addObject:kWidgetMatrixEventTypeString];
-            [acknowledgableEventTypes addObject:kWidgetModularEventTypeString];
-            mxSession.acknowledgableEventTypes = acknowledgableEventTypes;
         }
         else if (mxSession.state == MXSessionStateStoreDataReady)
         {
@@ -2133,9 +2126,6 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
         // Remove inApp notifications toggle change
         MXKAccount *account = notif.object;
         [account removeObserver:self forKeyPath:@"enableInAppNotifications"];
-
-        // Clear Modular data
-        [[WidgetManager sharedManager] deleteDataForUser:account.mxCredentials.userId];
         
         // Logout the app when there is no available account
         if (![MXKAccountManager sharedManager].accounts.count)
@@ -2233,9 +2223,6 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
         
         // Update home data sources
         [_masterTabBarController addMatrixSession:mxSession];
-
-        // Register the session to the widgets manager
-        [[WidgetManager sharedManager] addMatrixSession:mxSession];
         
         [mxSessionArray addObject:mxSession];
         
@@ -2259,9 +2246,6 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     
     // Update home data sources
     [_masterTabBarController removeMatrixSession:mxSession];
-
-    // Update the widgets manager
-    [[WidgetManager sharedManager] removeMatrixSession:mxSession];
     
     // Disable local notifications from this session
     [self disableLocalNotificationsFromMatrixSession:mxSession];
