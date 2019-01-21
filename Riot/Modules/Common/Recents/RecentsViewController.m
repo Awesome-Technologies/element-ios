@@ -99,7 +99,7 @@
     _screenName = @"RecentsScreen";
     
     // Enable the search bar in the recents table, and remove the search option from the navigation bar.
-    _enableSearchBar = YES;
+    _enableSearchBar = NO;
     self.enableBarButtonSearch = NO;
     
     _enableDragging = NO;
