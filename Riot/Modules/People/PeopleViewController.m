@@ -58,11 +58,15 @@
     // This will be used by the shared RecentsDataSource instance for sanity checks (see UITableViewDataSource methods).
     self.recentsTableView.tag = RecentsDataSourceModePeople;
     
-    // Add the (+) button programmatically
-    [self addPlusButton];
-    
-    // Apply tintColor on the (+) button
-    plusButtonImageView.image = [UIImage imageNamed:@"create_direct_chat"];
+    __weak typeof(self) weakSelf = self;
+    // Configure new chat button
+    [self setNewChatBlock:^{
+        if (weakSelf)
+        {
+            typeof(self) self = weakSelf;
+            [self performSegueWithIdentifier:@"presentStartChat" sender:self];
+        }
+    }];
     
     // Register table view cell for contacts.
     [self.recentsTableView registerClass:ContactTableViewCell.class forCellReuseIdentifier:ContactTableViewCell.defaultReuseIdentifier];
@@ -98,6 +102,10 @@
         // Take the lead on the shared data source.
         [recentsDataSource setDelegate:self andRecentsDataSourceMode:RecentsDataSourceModePeople];
     }
+    
+    // Add new chat icon to navigation bar
+    [AppDelegate theDelegate].masterTabBarController.navigationItem.rightBarButtonItem = newChatButton;
+    [newChatButton setEnabled:YES];
 }
 
 - (void)viewWillDisappear:(BOOL)animated

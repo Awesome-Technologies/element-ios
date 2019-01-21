@@ -49,9 +49,6 @@
     // This will be used by the shared RecentsDataSource instance for sanity checks (see UITableViewDataSource methods).
     self.recentsTableView.tag = RecentsDataSourceModeRooms;
     
-    // Add the (+) button programmatically
-    [self addPlusButton];
-    
     self.enableStickyHeaders = YES;
 }
 
@@ -72,6 +69,9 @@
         [recentsDataSource.publicRoomsDirectoryDataSource resetPagination];
         [recentsDataSource.publicRoomsDirectoryDataSource paginate:nil failure:nil];
     }
+    
+    // Remove button in navigation bar
+    [AppDelegate theDelegate].masterTabBarController.navigationItem.rightBarButtonItem = nil;
 }
 
 - (void)dealloc

@@ -390,8 +390,6 @@ typedef void (^blockSettingsViewController_onReadyToDestroy)();
         [[NSNotificationCenter defaultCenter] removeObserver:kAppDelegateDidTapStatusBarNotificationObserver];
         kAppDelegateDidTapStatusBarNotificationObserver = nil;
     }
-    
-    [AppDelegate theDelegate].masterTabBarController.navigationItem.rightBarButtonItem = nil;
 }
 
 #pragma mark - Internal methods

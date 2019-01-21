@@ -26,14 +26,19 @@
     NSString *editedRoomId;
     
     /**
-     The image view of the (+) button.
-     */
-    UIImageView* plusButtonImageView;
-    
-    /**
      Current alert (if any).
      */
     UIAlertController *currentAlert;
+    
+    /**
+     Block called when newChatButton clicked
+     */
+    void (^newChatBlock)(void);
+    
+    /**
+     Bar button item to start a new chat
+     */
+    UIBarButtonItem *newChatButton;
     
     /**
      The list of the section headers currently displayed in the recents table.
@@ -120,15 +125,9 @@
 
 #pragma mark - Room handling
 /**
- Add the (+) button at the right bottom corner of the view.
+ Set newChatButton block
  */
-- (void)addPlusButton;
-
-/**
- Action triggered when the user taps on the (+) button.
- Create an empty room by default.
- */
-- (void)onPlusButtonPressed;
+- (void)setNewChatBlock:(void (^)(void))block;
 
 /**
  Create an empty room.
