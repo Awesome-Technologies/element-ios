@@ -375,7 +375,6 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
     if (mxRoom.isDirect)
     {
         [mainSectionSettingsOrder addObject:@(ROOM_SETTINGS_MAIN_SECTION_ROW_MUTE_NOTIFICATIONS)];
-        [mainSectionSettingsOrder addObject:@(ROOM_SETTINGS_MAIN_SECTION_ROW_LEAVE)];
     }
     else
     {
