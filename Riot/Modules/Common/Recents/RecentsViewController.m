@@ -863,20 +863,6 @@
         
         NSString* title = @"      ";
         
-        // Direct chat toggle
-        BOOL isDirect = room.isDirect;
-        
-        UITableViewRowAction *directAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:title handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
-            
-            [self makeDirectEditedRoom:!isDirect];
-            
-        }];
-        
-        UIImage *actionIcon = isDirect ? [UIImage imageNamed:@"directChatOff"] : [UIImage imageNamed:@"directChatOn"];
-        directAction.backgroundColor = [MXKTools convertImageToPatternColor:isDirect ? @"directChatOff" : @"directChatOn" backgroundColor:kCaritasSecondaryBgColor patternSize:CGSizeMake(74, 74) resourceSize:actionIcon.size];
-        [actions insertObject:directAction atIndex:0];
-        
-        
         // Notification toggle
         BOOL isMuted = room.isMute || room.isMentionsOnly;
         
@@ -886,83 +872,22 @@
             
         }];
         
-        actionIcon = isMuted ? [UIImage imageNamed:@"notifications"] : [UIImage imageNamed:@"notificationsOff"];
+        UIImage *actionIcon = isMuted ? [UIImage imageNamed:@"notifications"] : [UIImage imageNamed:@"notificationsOff"];
         muteAction.backgroundColor = [MXKTools convertImageToPatternColor:isMuted ? @"notifications" : @"notificationsOff" backgroundColor:kCaritasSecondaryBgColor patternSize:CGSizeMake(74, 74) resourceSize:actionIcon.size];
         [actions insertObject:muteAction atIndex:0];
         
-        // Favorites management
-        MXRoomTag* currentTag = nil;
-        
-        // Get the room tag (use only the first one).
-        if (room.accountData.tags)
-        {
-            NSArray<MXRoomTag*>* tags = room.accountData.tags.allValues;
-            if (tags.count)
-            {
-                currentTag = [tags objectAtIndex:0];
-            }
-        }
-        
-        if (currentTag && [kMXRoomTagFavourite isEqualToString:currentTag.name])
-        {
-            UITableViewRowAction* action = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:title handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
+        if (!room.isDirect) {
+            UITableViewRowAction *leaveAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDestructive title:title  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
                 
-                [self updateEditedRoomTag:nil];
+                [self leaveEditedRoom];
                 
             }];
             
-            actionIcon = [UIImage imageNamed:@"favouriteOff"];
-            action.backgroundColor = [MXKTools convertImageToPatternColor:@"favouriteOff" backgroundColor:kCaritasSecondaryBgColor patternSize:CGSizeMake(74, 74) resourceSize:actionIcon.size];
-            [actions insertObject:action atIndex:0];
+            actionIcon = [UIImage imageNamed:@"leave"];
+            leaveAction.backgroundColor = [MXKTools convertImageToPatternColor:@"leave" backgroundColor:kCaritasSecondaryBgColor patternSize:CGSizeMake(74, 74) resourceSize:actionIcon.size];
+            
+            [actions insertObject:leaveAction atIndex:0];
         }
-        else
-        {
-            UITableViewRowAction* action = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:title handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
-                
-                [self updateEditedRoomTag:kMXRoomTagFavourite];
-                
-            }];
-            
-            actionIcon = [UIImage imageNamed:@"favourite"];
-            action.backgroundColor = [MXKTools convertImageToPatternColor:@"favourite" backgroundColor:kCaritasSecondaryBgColor patternSize:CGSizeMake(74, 74) resourceSize:actionIcon.size];
-            [actions insertObject:action atIndex:0];
-        }
-        
-        if (currentTag && [kMXRoomTagLowPriority isEqualToString:currentTag.name])
-        {
-            UITableViewRowAction* action = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:title handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
-                
-                [self updateEditedRoomTag:nil];
-                
-            }];
-            
-            actionIcon = [UIImage imageNamed:@"priorityHigh"];
-            action.backgroundColor = [MXKTools convertImageToPatternColor:@"priorityHigh" backgroundColor:kCaritasSecondaryBgColor patternSize:CGSizeMake(74, 74) resourceSize:actionIcon.size];
-            [actions insertObject:action atIndex:0];
-        }
-        else
-        {
-            UITableViewRowAction* action = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:title handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
-                
-                [self updateEditedRoomTag:kMXRoomTagLowPriority];
-                
-            }];
-            
-            actionIcon = [UIImage imageNamed:@"priorityLow"];
-            action.backgroundColor = [MXKTools convertImageToPatternColor:@"priorityLow" backgroundColor:kCaritasSecondaryBgColor patternSize:CGSizeMake(74, 74) resourceSize:actionIcon.size];
-            [actions insertObject:action atIndex:0];
-        }
-        
-        UITableViewRowAction *leaveAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDestructive title:title  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
-            
-            [self leaveEditedRoom];
-            
-        }];
-        
-        actionIcon = [UIImage imageNamed:@"leave"];
-        leaveAction.backgroundColor = [MXKTools convertImageToPatternColor:@"leave" backgroundColor:kCaritasSecondaryBgColor patternSize:CGSizeMake(74, 74) resourceSize:actionIcon.size];
-        
-        [actions insertObject:leaveAction atIndex:0];
     }
     
     return actions;
