@@ -330,7 +330,7 @@
 "settings_crypto_device_id" = "\nGeräte ID: ";
 "settings_crypto_blacklist_unverified_devices" = "Verschlüssele nur zu verifzierten Geräten";
 "room_details_people" = "Mitglieder";
-"room_details_files" = "Dateien";
+"room_details_files" = "Medien";
 "room_details_mute_notifs" = "Benachrichtigungen stummschalten";
 "room_details_access_section_no_address_warning" = "Um einen Raum zu betreten, muss er eine Adresse haben";
 "room_details_access_section_directory_toggle" = "Zeige alle Räume in diesem Verzeichnis";
