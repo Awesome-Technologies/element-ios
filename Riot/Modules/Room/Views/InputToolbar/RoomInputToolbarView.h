@@ -16,8 +16,6 @@
 
 #import <MatrixKit/MatrixKit.h>
 
-#import "MediaPickerViewController.h"
-
 @protocol RoomInputToolbarViewDelegate <MXKRoomInputToolbarViewDelegate>
 
 /**
@@ -33,7 +31,7 @@
  `RoomInputToolbarView` instance is a view used to handle all kinds of available inputs
  for a room (message composer, attachments selection...).
  */
-@interface RoomInputToolbarView : MXKRoomInputToolbarViewWithHPGrowingText <MediaPickerViewControllerDelegate>
+@interface RoomInputToolbarView : MXKRoomInputToolbarViewWithHPGrowingText
 
 /**
  The delegate notified when inputs are ready.

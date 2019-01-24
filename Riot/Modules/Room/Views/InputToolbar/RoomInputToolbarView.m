@@ -31,10 +31,8 @@
 
 @interface RoomInputToolbarView()
 {
-    MediaPickerViewController *mediaPicker;
-
-    // The intermediate action sheet
-    UIAlertController *actionSheet;
+    // Image picker
+    UIImagePickerController *mediaPicker;
 }
 
 @end
@@ -243,61 +241,49 @@
 
 - (void)showMediaPicker
 {
-    // MediaPickerViewController is based on the Photos framework. So it is available only for iOS 8 and later.
-    Class PHAsset_class = NSClassFromString(@"PHAsset");
-    if (PHAsset_class)
-    {
-        mediaPicker = [MediaPickerViewController mediaPickerViewController];
-        mediaPicker.mediaTypes = @[(NSString *)kUTTypeImage, (NSString *)kUTTypeMovie];
+    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+        // Open Camera
+        mediaPicker = [[UIImagePickerController alloc] init];
         mediaPicker.delegate = self;
-        UINavigationController *navigationController = [UINavigationController new];
-        [navigationController pushViewController:mediaPicker animated:NO];
-
-        [self.delegate roomInputToolbarView:self presentViewController:navigationController];
-    }
-    else
-    {
-        // We use UIImagePickerController by default for iOS < 8
-        self.leftInputToolbarButton = self.attachMediaButton;
-        [super onTouchUpInside:self.leftInputToolbarButton];
+        mediaPicker.sourceType = UIImagePickerControllerSourceTypeCamera;
+        mediaPicker.allowsEditing = NO;
+        mediaPicker.mediaTypes = [NSArray arrayWithObjects:(NSString *)kUTTypeImage, (NSString *)kUTTypeMovie, nil];
+        [self.delegate roomInputToolbarView:self presentViewController:mediaPicker];
+    } else {
+        NSLog(@"[RoomInputToolbarView] Camera not available");
     }
 }
 
 - (void)destroy
 {
     [self dismissMediaPicker];
-
-    if (actionSheet)
-    {
-        [actionSheet dismissViewControllerAnimated:NO completion:nil];
-        actionSheet = nil;
-    }
     
     [super destroy];
 }
 
-#pragma mark - MediaPickerViewController Delegate
+#pragma mark - UIImagePickerControllerDelegate
 
-- (void)mediaPickerController:(MediaPickerViewController *)mediaPickerController didSelectImage:(NSData*)imageData withMimeType:(NSString *)mimetype isPhotoLibraryAsset:(BOOL)isPhotoLibraryAsset
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
     [self dismissMediaPicker];
     
-    [self sendSelectedImage:imageData withMimeType:mimetype andCompressionMode:MXKRoomInputToolbarCompressionModePrompt isPhotoLibraryAsset:isPhotoLibraryAsset];
-}
-
-- (void)mediaPickerController:(MediaPickerViewController *)mediaPickerController didSelectVideo:(NSURL*)videoURL
-{
-    [self dismissMediaPicker];
-    
-    BOOL isPhotoLibraryAsset = ![videoURL.path hasPrefix:NSTemporaryDirectory()];
-    [self sendSelectedVideo:videoURL isPhotoLibraryAsset:isPhotoLibraryAsset];
-}
-
-- (void)mediaPickerController:(MediaPickerViewController *)mediaPickerController didSelectAssets:(NSArray<PHAsset*>*)assets
-{
-    [self dismissMediaPicker];
-
-    [self sendSelectedAssets:assets withCompressionMode:MXKRoomInputToolbarCompressionModePrompt];
+    NSString *mediaType = [info objectForKey:UIImagePickerControllerMediaType];
+    if ([mediaType isEqualToString:(NSString *)kUTTypeImage])
+    {
+        UIImage *selectedImage = [info objectForKey:UIImagePickerControllerOriginalImage];
+        if (selectedImage)
+        {
+            // Suggest compression before sending image
+            NSData *imageData = UIImageJPEGRepresentation(selectedImage, 1.0);
+            [self sendSelectedImage:imageData withMimeType:nil andCompressionMode:MXKRoomInputToolbarCompressionModeNone isPhotoLibraryAsset:NO];
+        }
+    }
+    else if ([mediaType isEqualToString:(NSString *)kUTTypeMovie])
+    {
+        NSURL* selectedVideo = [info objectForKey:UIImagePickerControllerMediaURL];
+        
+        [self sendSelectedVideo:selectedVideo isPhotoLibraryAsset:NO];
+    }
 }
 
 #pragma mark - Media picker handling
@@ -306,9 +292,14 @@
 {
     if (mediaPicker)
     {
-        [mediaPicker withdrawViewControllerAnimated:YES completion:nil];
-        [mediaPicker destroy];
-        mediaPicker = nil;
+        mediaPicker.delegate = nil;
+        
+        if ([self.delegate respondsToSelector:@selector(roomInputToolbarView:dismissViewControllerAnimated:completion:)])
+        {
+            [self.delegate roomInputToolbarView:self dismissViewControllerAnimated:NO completion:^{
+                mediaPicker = nil;
+            }];
+        }
     }
 }
 
@@ -316,9 +307,7 @@
 
 - (void)paste:(id)sender
 {
-    // TODO Custom here the validation screen for each available item
     
-    [super paste:sender];
 }
 
 @end
