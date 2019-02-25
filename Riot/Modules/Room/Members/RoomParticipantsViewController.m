@@ -142,9 +142,6 @@
     
     [self.tableView registerClass:ContactTableViewCell.class forCellReuseIdentifier:@"ParticipantTableViewCellId"];
     
-    // Add room creation button programmatically
-    [self addAddParticipantButton];
-    
     // Observe user interface theme change.
     kRiotDesignValuesDidChangeThemeNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kRiotDesignValuesDidChangeThemeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notif) {
         
@@ -377,6 +374,11 @@
 
         if (self.mxRoom)
         {
+            if (!self.mxRoom.isDirect) {
+                // Add room creation button programmatically
+                [self addAddParticipantButton];
+            }
+            
             self.searchBarHeader.hidden = NO;
 
             // Update the current matrix session.
