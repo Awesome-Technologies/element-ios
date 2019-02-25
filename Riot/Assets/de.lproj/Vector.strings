@@ -101,7 +101,7 @@
 "search_rooms" = "Räume";
 "search_messages" = "Nachrichten";
 "search_people" = "Personen";
-"search_files" = "Dateien";
+"search_files" = "Medien";
 "search_default_placeholder" = "Suche";
 "search_people_placeholder" = "Suche nach Nutzer-ID, Name oder E-Mail";
 "search_no_result" = "Keine Ergebnisse";
