@@ -291,14 +291,14 @@
 "auth_reset_password_success_message" = "Dein Passwort wurde zurückgesetzt.\n\nDu wurdest von allen Geräten abgemeldet, diese bekommen jetzt keine Push-Benachrichtigungen mehr. Um diese wiedereinzuschalten, melde dich auf den Geräten erneut an.";
 "auth_add_email_and_phone_warning" = "Registrierung mit E-Mail und Telefonnummer zugleich ist noch nicht unterstützt. Nur die Telefonnummer wird berücksichtigt. Du kannst deine E-Mail-Adresse in deinem Profil ergänzen.";
 "room_creation_make_public_prompt_msg" = "Sicher, dass du diesen Raum öffentlich machen willst? Jeder kann deine Nachrichten lesen und dem Raum beitreten.";
-"room_creation_invite_another_user" = "Suchen/Einladen mittels Benutzer ID, Name oder E-Mail-Adresse";
+"room_creation_invite_another_user" = "Name";
 "room_recents_join_room_prompt" = "Gib eine Raum-ID oder einem Raum-Alias an";
 "directory_cell_description" = "%tu Räume";
 "directory_search_results" = "%tu Treffer gefunden für %@";
 "directory_search_results_more_than" = ">%tu Treffer gefunden für %@";
 "contacts_address_book_permission_denied" = "Riot fehlt die Berechtigung auf die lokalen Kontakte zuzugreifen";
 "room_participants_remove_third_party_invite_msg" = "Entfernen der Einladung von Dritten ist noch nicht unterstützt";
-"room_participants_invite_another_user" = "Suchen/Einladen mittels Benutzer ID, Name oder E-Mail-Adresse";
+"room_participants_invite_another_user" = "Name";
 "room_participants_invite_malformed_id" = "Ungültige ID. Sollte eine E-Mail-Adresse oder Matrix-ID wie \"@thomas:matrix.org' sein";
 "room_participants_idle" = "Untätig";
 "room_participants_since" = "seit";

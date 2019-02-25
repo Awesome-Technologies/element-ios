@@ -124,7 +124,7 @@
 "room_creation_keep_private" = "Keep private";
 "room_creation_make_private" = "Make private";
 "room_creation_wait_for_creation" = "A room is already being created. Please wait.";
-"room_creation_invite_another_user" = "Search / invite by User ID, Name or email";
+"room_creation_invite_another_user" = "Name";
 
 // Room recents
 "room_recents_directory_section" = "Public Groups";
@@ -195,7 +195,7 @@
 "room_participants_invite_prompt_title" = "Confirmation";
 "room_participants_invite_prompt_msg" = "Are you sure you want to invite %@ to this chat?";
 "room_participants_filter_room_members" = "Filter room members";
-"room_participants_invite_another_user" = "Search / invite by User ID, Name or email";
+"room_participants_invite_another_user" = "Name";
 "room_participants_invite_malformed_id_title" = "Invite Error";
 "room_participants_invite_malformed_id" = "Malformed ID. Should be an email address or a Matrix ID like '@localpart:domain'";
 "room_participants_invited_section" = "INVITED";
