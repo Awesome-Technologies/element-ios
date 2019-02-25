@@ -3058,7 +3058,13 @@
     
     if (tappedView == titleView.titleMask)
     {
-        if (self.expandedHeaderContainer.isHidden)
+        if (self.roomDataSource.room.isDirect)
+        {
+            // Open room details by selecting member list
+            selectedRoomDetailsIndex = 0;
+            [self performSegueWithIdentifier:@"showRoomDetails" sender:self];
+        }
+        else if (self.expandedHeaderContainer.isHidden)
         {
             // Expand the header
             [self showExpandedHeader:YES];
