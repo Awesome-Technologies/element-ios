@@ -126,7 +126,7 @@
 "room_participants_remove_prompt_msg" = "Bist du sicher, dass du %@ aus dem Chat entfernen möchtest?";
 "room_participants_invite_prompt_title" = "Bestätigung";
 "room_participants_invite_prompt_msg" = "Bist du sicher, dass du %@ in diesen Chat einladen möchtest?";
-"room_participants_filter_room_members" = "Filtere Raum-Mitglieder";
+"room_participants_filter_room_members" = "Filtere Chat-Mitglieder";
 "room_participants_invite_malformed_id_title" = "Fehler beim Einladen";
 "room_participants_invited_section" = "EINGELADEN";
 "room_participants_online" = "Online";

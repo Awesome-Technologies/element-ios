@@ -194,7 +194,7 @@
 "room_participants_remove_third_party_invite_msg" = "Remove third-party invite is not supported yet until the api exists";
 "room_participants_invite_prompt_title" = "Confirmation";
 "room_participants_invite_prompt_msg" = "Are you sure you want to invite %@ to this chat?";
-"room_participants_filter_room_members" = "Filter room members";
+"room_participants_filter_room_members" = "Filter chat members";
 "room_participants_invite_another_user" = "Name";
 "room_participants_invite_malformed_id_title" = "Invite Error";
 "room_participants_invite_malformed_id" = "Malformed ID. Should be an email address or a Matrix ID like '@localpart:domain'";
