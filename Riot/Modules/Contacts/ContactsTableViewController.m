@@ -347,17 +347,6 @@
 {
     // "Done" key has been pressed.
     
-    if (self.contactsTableViewControllerDelegate)
-    {
-        // Check whether the current search input is a valid email or a Matrix user ID
-        MXKContact* filedContact = [contactsDataSource searchInputContact];
-        if (filedContact)
-        {
-            // Select the contact related to the search input, rather than having to hit +
-            [self.contactsTableViewControllerDelegate contactsTableViewController:self didSelectContact:filedContact];
-        }
-    }
-    
     // Dismiss keyboard
     [searchBar resignFirstResponder];
 }
