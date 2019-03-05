@@ -221,8 +221,8 @@
         
         // Init the search for people
         peopleSearchDataSource = [[ContactsDataSource alloc] initWithMatrixSession:mainSession];
-        peopleSearchDataSource.areSectionsShrinkable = YES;
-        peopleSearchDataSource.displaySearchInputInContactsList = YES;
+        peopleSearchDataSource.areSectionsShrinkable = NO;
+        peopleSearchDataSource.displaySearchInputInContactsList = NO;
         peopleSearchDataSource.contactCellAccessoryType = UITableViewCellAccessoryDisclosureIndicator;
         [peopleSearchViewController displayList:peopleSearchDataSource];
         

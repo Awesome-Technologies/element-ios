@@ -114,8 +114,8 @@
 
     // Prepare its data source
     ContactsDataSource *dataSource = [[ContactsDataSource alloc] initWithMatrixSession:self.mainSession]; // TO TEST
-    dataSource.areSectionsShrinkable = YES;
-    dataSource.displaySearchInputInContactsList = YES;
+    dataSource.areSectionsShrinkable = NO;
+    dataSource.displaySearchInputInContactsList = NO;
     dataSource.forceMatrixIdInDisplayName = YES;
     // Add a plus icon to the contact cell when a search session is in progress,
     // in order to make it more understandable for the end user.
