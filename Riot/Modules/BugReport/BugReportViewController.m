@@ -158,6 +158,9 @@
     self.sendLogsLabel.textColor = kCaritasPrimaryTextColor;
     self.sendScreenshotLabel.textColor = kCaritasPrimaryTextColor;
     
+    self.sendLogsButtonImage.tintColor = kCaritasPrimaryTextColor;
+    self.sendScreenshotButtonImage.tintColor = kCaritasPrimaryTextColor;
+    
     self.sendButton.tintColor = kCaritasColorRed;
     self.cancelButton.tintColor = kCaritasColorRed;
     
