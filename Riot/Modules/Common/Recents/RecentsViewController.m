@@ -807,13 +807,20 @@
 - (void)dataSource:(MXKDataSource *)dataSource didRecognizeAction:(NSString *)actionIdentifier inCell:(id<MXKCellRendering>)cell userInfo:(NSDictionary *)userInfo
 {
     // Handle here user actions on recents for Riot app
-    if ([actionIdentifier isEqualToString:kInviteRecentTableViewCellPreviewButtonPressed])
+    if ([actionIdentifier isEqualToString:kInviteRecentTableViewCellJoinButtonPressed])
     {
         // Retrieve the invited room
         MXRoom *invitedRoom = userInfo[kInviteRecentTableViewCellRoomKey];
         
-        // Display the room preview
-        [self dispayRoomWithRoomId:invitedRoom.roomId inMatrixSession:invitedRoom.mxSession];
+        // Join the room
+        [invitedRoom join:^{
+            // Display the room
+            [self dispayRoomWithRoomId:invitedRoom.roomId inMatrixSession:invitedRoom.mxSession];
+        } failure:^(NSError *error) {
+            
+            NSLog(@"[RecentsViewController] Failed to join an invited room (%@)", invitedRoom.roomId);
+            
+        }];
     }
     else if ([actionIdentifier isEqualToString:kInviteRecentTableViewCellDeclineButtonPressed])
     {
