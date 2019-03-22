@@ -2246,6 +2246,10 @@ internal enum VectorL10n {
   internal static var settingsUiTheme: String { 
     return VectorL10n.tr("Vector", "settings_ui_theme") 
   }
+  /// AMP
+  internal static var settingsUiThemeAmp: String { 
+    return VectorL10n.tr("Vector", "settings_ui_theme_amp") 
+  }
   /// Auto
   internal static var settingsUiThemeAuto: String { 
     return VectorL10n.tr("Vector", "settings_ui_theme_auto") 

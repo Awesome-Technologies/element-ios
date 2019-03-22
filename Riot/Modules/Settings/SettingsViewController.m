@@ -1822,7 +1822,7 @@ SignOutAlertPresenterDelegate>
 {
     __weak typeof(self) weakSelf = self;
 
-    __block UIAlertAction *autoAction, *caritasAction, *darkAction;
+    __block UIAlertAction *autoAction, *caritasAction, *darkAction, *ampAction;
     NSString *themePickerMessage;
 
     void (^actionBlock)(UIAlertAction *action) = ^(UIAlertAction * action) {
@@ -1843,6 +1843,10 @@ SignOutAlertPresenterDelegate>
             else if (action == caritasAction)
             {
                 newTheme = @"caritas";
+            }
+            else if (action == ampAction)
+            {
+                newTheme = @"amp";
             }
 
             NSString *theme = RiotSettings.shared.userInterfaceTheme;
@@ -1878,6 +1882,10 @@ SignOutAlertPresenterDelegate>
     caritasAction = [UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"settings_ui_theme_caritas", @"Vector", nil)
                                              style:UIAlertActionStyleDefault
                                            handler:actionBlock];
+    
+    ampAction = [UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"settings_ui_theme_amp", @"Vector", nil)
+                                             style:UIAlertActionStyleDefault
+                                           handler:actionBlock];
 
 
     UIAlertController *themePicker = [UIAlertController alertControllerWithTitle:NSLocalizedStringFromTable(@"settings_ui_theme_picker_title", @"Vector", nil)
@@ -1890,6 +1898,9 @@ SignOutAlertPresenterDelegate>
     }
     [themePicker addAction:caritasAction];
     [themePicker addAction:darkAction];
+#if DEBUG
+    [themePicker addAction:ampAction];
+#endif
 
     // Cancel button
     [themePicker addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"cancel"]

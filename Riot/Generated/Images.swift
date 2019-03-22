@@ -19,24 +19,19 @@
 // swiftlint:disable identifier_name line_length nesting type_body_length type_name
 internal enum Asset {
   internal enum AMPChatSharedImages {
-    internal static let animatedLogo0 = ImageAsset(name: "animatedLogo-0")
-    internal static let animatedLogo1 = ImageAsset(name: "animatedLogo-1")
-    internal static let animatedLogo2 = ImageAsset(name: "animatedLogo-2")
-    internal static let animatedLogo3 = ImageAsset(name: "animatedLogo-3")
-    internal static let animatedLogo4 = ImageAsset(name: "animatedLogo-4")
     internal static let logo = ImageAsset(name: "Logo")
     internal static let logoNavBar = ImageAsset(name: "Logo_NavBar")
   }
   internal enum CaritasMessengerSharedImages {
-    internal static let animatedLogo0 = ImageAsset(name: "animatedLogo-0")
-    internal static let animatedLogo1 = ImageAsset(name: "animatedLogo-1")
-    internal static let animatedLogo2 = ImageAsset(name: "animatedLogo-2")
-    internal static let animatedLogo3 = ImageAsset(name: "animatedLogo-3")
-    internal static let animatedLogo4 = ImageAsset(name: "animatedLogo-4")
     internal static let logo = ImageAsset(name: "Logo")
     internal static let logoNavBar = ImageAsset(name: "Logo_NavBar")
   }
   internal enum Images {
+    internal static let animatedDots0 = ImageAsset(name: "animatedDots-0")
+    internal static let animatedDots1 = ImageAsset(name: "animatedDots-1")
+    internal static let animatedDots2 = ImageAsset(name: "animatedDots-2")
+    internal static let animatedDots3 = ImageAsset(name: "animatedDots-3")
+    internal static let animatedDots4 = ImageAsset(name: "animatedDots-4")
     internal static let adminIcon = ImageAsset(name: "admin_icon")
     internal static let backIcon = ImageAsset(name: "back_icon")
     internal static let cancel = ImageAsset(name: "cancel")

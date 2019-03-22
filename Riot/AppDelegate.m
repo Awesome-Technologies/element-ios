@@ -2536,11 +2536,11 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
                 [window addSubview:launchAnimationContainerView];
                 
                 // Add animation view
-                UIImageView *animationView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 170, 170)];
-                animationView.image = [UIImage animatedImageNamed:@"animatedLogo-" duration:2];
-                animationView.contentMode = UIViewContentModeScaleAspectFill;
+                UIImageView *animationView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 255, 44)];
+                animationView.image = [UIImage animatedImageNamed:@"animatedDots-" duration:2];
+                animationView.contentMode = UIViewContentModeScaleAspectFit;
                 
-                animationView.center = CGPointMake(launchAnimationContainerView.center.x, 3 * launchAnimationContainerView.center.y / 4);
+                animationView.center = CGPointMake(launchAnimationContainerView.center.x, launchAnimationContainerView.center.y + 100);
                 
                 animationView.translatesAutoresizingMaskIntoConstraints = NO;
                 [launchAnimationContainerView addSubview:animationView];
@@ -2551,7 +2551,7 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
                                                                                       toItem:nil
                                                                                    attribute:NSLayoutAttributeNotAnAttribute
                                                                                   multiplier:1
-                                                                                    constant:170];
+                                                                                    constant:255];
                 
                 NSLayoutConstraint* heightConstraint = [NSLayoutConstraint constraintWithItem:animationView
                                                                                     attribute:NSLayoutAttributeHeight
@@ -2559,7 +2559,7 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
                                                                                        toItem:nil
                                                                                     attribute:NSLayoutAttributeNotAnAttribute
                                                                                    multiplier:1
-                                                                                     constant:170];
+                                                                                     constant:44];
                 
                 NSLayoutConstraint* centerXConstraint = [NSLayoutConstraint constraintWithItem:animationView
                                                                                      attribute:NSLayoutAttributeCenterX
@@ -2574,10 +2574,50 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
                                                                                      relatedBy:NSLayoutRelationEqual
                                                                                         toItem:launchAnimationContainerView
                                                                                      attribute:NSLayoutAttributeCenterY
-                                                                                    multiplier:3.0/4.0
-                                                                                      constant:0];
+                                                                                    multiplier:1
+                                                                                      constant:100];
                 
                 [NSLayoutConstraint activateConstraints:@[widthConstraint, heightConstraint, centerXConstraint, centerYConstraint]];
+                
+                UIImageView *logoImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 255, 331)];
+                [logoImageView setImage:[UIImage imageNamed:@"Logo"]];
+                logoImageView.contentMode = UIViewContentModeScaleAspectFit;
+                logoImageView.translatesAutoresizingMaskIntoConstraints = NO;
+                [launchAnimationContainerView addSubview:logoImageView];
+                
+                NSLayoutConstraint* logoImageViewWidthConstraint = [NSLayoutConstraint constraintWithItem:logoImageView
+                                                                                   attribute:NSLayoutAttributeWidth
+                                                                                   relatedBy:NSLayoutRelationEqual
+                                                                                      toItem:nil
+                                                                                   attribute:NSLayoutAttributeNotAnAttribute
+                                                                                  multiplier:1
+                                                                                    constant:255];
+                
+                NSLayoutConstraint* logoImageViewHeightConstraint = [NSLayoutConstraint constraintWithItem:logoImageView
+                                                                                    attribute:NSLayoutAttributeHeight
+                                                                                    relatedBy:NSLayoutRelationEqual
+                                                                                       toItem:nil
+                                                                                    attribute:NSLayoutAttributeNotAnAttribute
+                                                                                   multiplier:1
+                                                                                     constant:331];
+                
+                NSLayoutConstraint* logoImageViewCenterXConstraint = [NSLayoutConstraint constraintWithItem:logoImageView
+                                                                                     attribute:NSLayoutAttributeCenterX
+                                                                                     relatedBy:NSLayoutRelationEqual
+                                                                                        toItem:animationView
+                                                                                     attribute:NSLayoutAttributeCenterX
+                                                                                    multiplier:1
+                                                                                      constant:0];
+                
+                NSLayoutConstraint* logoImageViewBottomConstraint = [NSLayoutConstraint constraintWithItem:logoImageView
+                                                                                     attribute:NSLayoutAttributeBottom
+                                                                                     relatedBy:NSLayoutRelationEqual
+                                                                                        toItem:animationView
+                                                                                     attribute:NSLayoutAttributeTop
+                                                                                    multiplier:1
+                                                                                      constant:-15];
+                
+                [NSLayoutConstraint activateConstraints:@[logoImageViewWidthConstraint, logoImageViewHeightConstraint, logoImageViewCenterXConstraint, logoImageViewBottomConstraint]];
                 
                 launchAnimationStart = [NSDate date];
             }
