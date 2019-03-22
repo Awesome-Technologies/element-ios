@@ -43,6 +43,8 @@
 		9768F4942266391800926AFB /* Caritas Messenger-SharedImages.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9768F4932266391700926AFB /* Caritas Messenger-SharedImages.xcassets */; };
 		9787D9B62271D9EE0010EA83 /* App-Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9787D9B52271D9ED0010EA83 /* App-Defaults.swift */; };
 		97BDA7F52252360C0055EBCE /* TermsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 32B1FEDA21A46F2C00637127 /* TermsView.xib */; };
+		979234BA2244762F0081082E /* AMPTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979234B92244762F0081082E /* AMPTheme.swift */; };
+		97A684AC22448FD000EB1C51 /* AMPTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979234B92244762F0081082E /* AMPTheme.swift */; };
 		B104C2942203773C00D9F496 /* KeyBackupBannerPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = B104C2932203773B00D9F496 /* KeyBackupBannerPreferences.swift */; };
 		B1057789221304EC00334B1E /* KeyBackupSetupSuccessFromPassphraseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1057788221304EB00334B1E /* KeyBackupSetupSuccessFromPassphraseViewController.swift */; };
 		B105778B221304FA00334B1E /* KeyBackupSetupSuccessFromPassphraseViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B105778A221304FA00334B1E /* KeyBackupSetupSuccessFromPassphraseViewController.storyboard */; };
@@ -466,6 +468,7 @@
 		9768F4912266385A00926AFB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = "Base.lproj/AMP Chat-LaunchScreen.storyboard"; sourceTree = "<group>"; };
 		9768F4932266391700926AFB /* Caritas Messenger-SharedImages.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Caritas Messenger-SharedImages.xcassets"; sourceTree = "<group>"; };
 		9787D9B52271D9ED0010EA83 /* App-Defaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "App-Defaults.swift"; sourceTree = "<group>"; };
+		979234B92244762F0081082E /* AMPTheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMPTheme.swift; sourceTree = "<group>"; };
 		97FE8C2121B1F180009ABE88 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = en; path = en.lproj/AppIntentVocabulary.plist; sourceTree = "<group>"; };
 		A004C4BA200BCD9777EEF321 /* Pods-RiotPods-RiotShareExtension.ampchat release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RiotPods-RiotShareExtension.ampchat release.xcconfig"; path = "Pods/Target Support Files/Pods-RiotPods-RiotShareExtension/Pods-RiotPods-RiotShareExtension.ampchat release.xcconfig"; sourceTree = "<group>"; };
 		B104C2932203773B00D9F496 /* KeyBackupBannerPreferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyBackupBannerPreferences.swift; sourceTree = "<group>"; };
@@ -1008,6 +1011,7 @@
 		32242F0E21E8FBA900725742 /* Themes */ = {
 			isa = PBXGroup;
 			children = (
+				979234B92244762F0081082E /* AMPTheme.swift */,
 				32242F0F21E8FBA900725742 /* DefaultTheme.swift */,
 				32242F1021E8FBA900725742 /* DarkTheme.swift */,
 			);
@@ -3033,6 +3037,7 @@
 				32242F1721E8FBE500725742 /* Theme.swift in Sources */,
 				B169328320F38AE600746532 /* RiotSettings.swift in Sources */,
 				32242F0A21E8B21300725742 /* UIColor.swift in Sources */,
+				97A684AC22448FD000EB1C51 /* AMPTheme.swift in Sources */,
 				32242F1921E8FBFB00725742 /* DarkTheme.swift in Sources */,
 				B1664BC820F4E67600808783 /* ShareDataSource.m in Sources */,
 				B1664BCD20F4E67600808783 /* RecentRoomTableViewCell.m in Sources */,
@@ -3172,6 +3177,7 @@
 				B140B4A821F8AB4600E3F5FE /* KeyBackupRecoverCoordinatorBridgePresenter.swift in Sources */,
 				B1098BFE21ECFE65000DDA48 /* KeyBackupSetupPassphraseViewModelType.swift in Sources */,
 				B1B558BE20EF768F00210D55 /* RoomOutgoingEncryptedAttachmentWithPaginationTitleBubbleCell.m in Sources */,
+				979234BA2244762F0081082E /* AMPTheme.swift in Sources */,
 				F083BDED1E7009ED00A9B29C /* MXKRoomBubbleTableViewCell+Riot.m in Sources */,
 				B1B557A820EF5A1B00210D55 /* DeviceTableViewCell.m in Sources */,
 				B1B5572620EE6C4D00210D55 /* RoomFilesSearchViewController.m in Sources */,

@@ -1226,7 +1226,7 @@
         frame.size.width = sectionHeader.frame.size.width - 10;
         frame.size.height -= 10;
         UILabel *headerLabel = [[UILabel alloc] initWithFrame:frame];
-        headerLabel.textColor = ThemeService.shared.theme.textPrimaryColor;
+        headerLabel.textColor = ThemeService.shared.theme.headerTextPrimaryColor;
         headerLabel.font = [UIFont boldSystemFontOfSize:15.0];
         headerLabel.backgroundColor = [UIColor clearColor];
         

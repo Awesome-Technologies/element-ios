@@ -65,8 +65,8 @@
     
     self.rightInputToolbarButton.hidden = YES;
     
-    [self.rightInputToolbarButton setTitleColor:ThemeService.shared.theme.tintColor forState:UIControlStateNormal];
-    [self.rightInputToolbarButton setTitleColor:ThemeService.shared.theme.tintColor forState:UIControlStateHighlighted];
+    [self.rightInputToolbarButton setTitleColor:ThemeService.shared.theme.textPrimaryColor forState:UIControlStateNormal];
+    [self.rightInputToolbarButton setTitleColor:ThemeService.shared.theme.textPrimaryColor forState:UIControlStateHighlighted];
     
     self.isEncryptionEnabled = _isEncryptionEnabled;
     

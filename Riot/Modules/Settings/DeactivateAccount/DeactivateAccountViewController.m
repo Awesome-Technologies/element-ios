@@ -171,8 +171,8 @@ static CGFloat const kTextFontSize = 15.0;
     
     self.deactivateAcccountButton.layer.masksToBounds = YES;
     self.deactivateAcccountButton.backgroundColor = ThemeService.shared.theme.baseColor;
-    [self.deactivateAcccountButton setTitle:NSLocalizedStringFromTable(@"deactivate_account_validate_action", @"Vector", nil) forState:UIControlStateNormal];    
-    [self.deactivateAcccountButton setTitleColor:ThemeService.shared.theme.headerTextSecondaryColor forState:UIControlStateDisabled];
+    [self.deactivateAcccountButton setTitle:NSLocalizedStringFromTable(@"deactivate_account_validate_action", @"Vector", nil) forState:UIControlStateNormal];
+    [self.deactivateAcccountButton setTitleColor:ThemeService.shared.theme.baseTextPrimaryColor forState:UIControlStateNormal];
 }
 
 - (void)setupDeactivateAccountInfosLabel

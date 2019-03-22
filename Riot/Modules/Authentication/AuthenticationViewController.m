@@ -158,6 +158,9 @@
     self.submitButton.backgroundColor = ThemeService.shared.theme.baseColor;
     self.skipButton.backgroundColor = ThemeService.shared.theme.baseColor;
     
+    [self.submitButton setTitleColor:ThemeService.shared.theme.baseTextPrimaryColor forState:UIControlStateNormal];
+    [self.skipButton setTitleColor:ThemeService.shared.theme.baseTextPrimaryColor forState:UIControlStateNormal];
+    
     self.noFlowLabel.textColor = ThemeService.shared.theme.warningColor;
     
     self.activityIndicator.backgroundColor = ThemeService.shared.theme.overlayBackgroundColor;
