@@ -18,6 +18,7 @@
 #import "AuthenticationViewController.h"
 
 #import "AppDelegate.h"
+#import "Riot-Swift.h"
 
 #import "AuthInputsView.h"
 
@@ -35,9 +36,9 @@
     NSString *defaultCountryCode;
     
     /**
-     Observe kRiotDesignValuesDidChangeThemeNotification to handle user interface theme change.
+     Observe kThemeServiceDidChangeThemeNotification to handle user interface theme change.
      */
-    id kRiotDesignValuesDidChangeThemeNotificationObserver;
+    id kThemeServiceDidChangeThemeNotificationObserver;
 }
 
 @end
@@ -107,9 +108,12 @@
     MXAuthenticationSession *authSession = [MXAuthenticationSession modelFromJSON:@{@"flows":@[@{@"stages":@[kMXLoginFlowTypePassword]}]}];
     [authInputsView setAuthSession:authSession withAuthType:MXKAuthenticationTypeLogin];
     self.authInputsView = authInputsView;
-    
+
+    // Listen to action within the child view
+    [authInputsView.ssoButton addTarget:self action:@selector(onButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+
     // Observe user interface theme change.
-    kRiotDesignValuesDidChangeThemeNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kRiotDesignValuesDidChangeThemeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notif) {
+    kThemeServiceDidChangeThemeNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kThemeServiceDidChangeThemeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notif) {
         
         [self userInterfaceThemeDidChange];
         
@@ -119,20 +123,42 @@
 
 - (void)userInterfaceThemeDidChange
 {
-    self.view.backgroundColor = kCaritasSecondaryBgColor;
+    [ThemeService.shared.theme applyStyleOnNavigationBar:self.navigationBar];
+    self.navigationBarSeparatorView.backgroundColor = ThemeService.shared.theme.lineBreakColor;
+
+    // This view controller is not part of a navigation controller
+    // so that applyStyleOnNavigationBar does not fully work.
+    // In order to have the right status bar color, use the expected status bar color
+    // as the main view background color.
+    // Hopefully, subviews define their own background color with `theme.backgroundColor`,
+    // which makes all work together.
+    self.view.backgroundColor = ThemeService.shared.theme.baseColor;
+
+    self.authenticationScrollView.backgroundColor = ThemeService.shared.theme.backgroundColor;
+
+    // Style the authentication fallback webview screen so that its header matches to navigation bar style
+    self.authFallbackContentView.backgroundColor = ThemeService.shared.theme.baseColor;
+    self.cancelAuthFallbackButton.tintColor = ThemeService.shared.theme.baseTextPrimaryColor;
+
+    if (self.homeServerTextField.placeholder)
+    {
+        self.homeServerTextField.attributedPlaceholder = [[NSAttributedString alloc]
+                                                          initWithString:self.homeServerTextField.placeholder
+                                                          attributes:@{NSForegroundColorAttributeName: ThemeService.shared.theme.placeholderTextColor}];
+    }
+    if (self.identityServerTextField.placeholder)
+    {
+        self.identityServerTextField.attributedPlaceholder = [[NSAttributedString alloc]
+                                                              initWithString:self.identityServerTextField.placeholder
+                                                              attributes:@{NSForegroundColorAttributeName: ThemeService.shared.theme.placeholderTextColor}];
+    }
     
-    self.navigationBar.barTintColor = kCaritasSecondaryBgColor;
-    self.authenticationScrollView.backgroundColor = kCaritasPrimaryBgColor;
-    self.authFallbackContentView.backgroundColor = kCaritasPrimaryBgColor;
+    self.submitButton.backgroundColor = ThemeService.shared.theme.tintColor;
+    self.skipButton.backgroundColor = ThemeService.shared.theme.tintColor;
     
-    self.submitButton.backgroundColor = kCaritasColorRed;
-    self.skipButton.backgroundColor = kCaritasColorRed;
+    self.noFlowLabel.textColor = ThemeService.shared.theme.warningColor;
     
-    self.noFlowLabel.textColor = kCaritasColorRed;
-    
-    self.defaultBarTintColor = kCaritasNavigationBarBgColor;
-    self.barTitleColor = kCaritasColorWhite;
-    self.activityIndicator.backgroundColor = kCaritasOverlayColor;
+    self.activityIndicator.backgroundColor = ThemeService.shared.theme.overlayBackgroundColor;
     
     [self.authInputsView customizeViewRendering];
     
@@ -141,7 +167,7 @@
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-    return kCaritasDesignStatusBarStyle;
+    return ThemeService.shared.theme.statusBarStyle;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -174,10 +200,10 @@
 {
     [super destroy];
     
-    if (kRiotDesignValuesDidChangeThemeNotificationObserver)
+    if (kThemeServiceDidChangeThemeNotificationObserver)
     {
-        [[NSNotificationCenter defaultCenter] removeObserver:kRiotDesignValuesDidChangeThemeNotificationObserver];
-        kRiotDesignValuesDidChangeThemeNotificationObserver = nil;
+        [[NSNotificationCenter defaultCenter] removeObserver:kThemeServiceDidChangeThemeNotificationObserver];
+        kThemeServiceDidChangeThemeNotificationObserver = nil;
     }
 }
 
@@ -251,6 +277,12 @@
     }
     else
     {
+        AuthInputsView *authInputsview;
+        if ([self.authInputsView isKindOfClass:AuthInputsView.class])
+        {
+            authInputsview = (AuthInputsView*)self.authInputsView;
+        }
+
         // The right bar button is used to switch the authentication type.
         if (self.authType == MXKAuthenticationTypeLogin)
         {
@@ -262,6 +294,19 @@
             self.rightBarButtonItem.title = NSLocalizedStringFromTable(@"cancel", @"Vector", nil);
         }
     }
+}
+
+- (void)handleAuthenticationSession:(MXAuthenticationSession *)authSession
+{
+    [super handleAuthenticationSession:authSession];
+    
+    AuthInputsView *authInputsview;
+    if ([self.authInputsView isKindOfClass:AuthInputsView.class])
+    {
+        authInputsview = (AuthInputsView*)self.authInputsView;
+    }
+    
+    self.submitButton.hidden = authInputsview.isSingleSignOnRequired;
 }
 
 - (IBAction)onButtonPressed:(id)sender
@@ -360,6 +405,13 @@
         }
         
         [super onButtonPressed:self.submitButton];
+    }
+    else if (sender == ((AuthInputsView*)self.authInputsView).ssoButton)
+    {
+        // Do SSO using the fallback URL
+        [self showAuthenticationFallBackView];
+
+        [ThemeService.shared.theme applyStyleOnNavigationBar:self.navigationController.navigationBar];
     }
     else
     {

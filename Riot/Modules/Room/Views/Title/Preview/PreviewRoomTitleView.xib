@@ -38,7 +38,7 @@
                             </constraints>
                         </view>
                         <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Room Name" textAlignment="center" adjustsFontSizeToFit="NO" minimumFontSize="14" translatesAutoresizingMaskIntoConstraints="NO" id="6uH-I3-RQg">
-                            <rect key="frame" x="249" y="126" width="103" height="22"/>
+                            <rect key="frame" x="247.5" y="126" width="105" height="22"/>
                             <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                             <accessibility key="accessibilityConfiguration" identifier="DisplayNameTextField"/>
                             <fontDescription key="fontDescription" type="system" weight="medium" pointSize="18"/>
@@ -62,7 +62,7 @@
                             <nil key="highlightedColor"/>
                         </label>
                         <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="details_icon" translatesAutoresizingMaskIntoConstraints="NO" id="S3Y-wJ-HOe">
-                            <rect key="frame" x="345" y="187" width="6" height="12"/>
+                            <rect key="frame" x="345" y="186.5" width="6" height="12"/>
                             <accessibility key="accessibilityConfiguration" identifier="RoomMembersDetailsIcon"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="6" id="XTx-6p-2wB"/>
@@ -94,7 +94,7 @@
                     </constraints>
                 </view>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gIX-nY-f6M">
-                    <rect key="frame" x="280" y="239" width="41" height="20"/>
+                    <rect key="frame" x="279.5" y="239" width="41" height="20"/>
                     <accessibility key="accessibilityConfiguration" identifier="PreviewLabel"/>
                     <fontDescription key="fontDescription" type="system" weight="medium" pointSize="16"/>
                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -104,7 +104,7 @@
                     <rect key="frame" x="60" y="276" width="480" height="30"/>
                     <subviews>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="osd-JP-2az" userLabel="Left Button">
-                            <rect key="frame" x="0.0" y="0.0" width="230" height="30"/>
+                            <rect key="frame" x="0.0" y="0.0" width="230.5" height="30"/>
                             <color key="backgroundColor" red="0.6886889638" green="1" blue="0.74383144840000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <accessibility key="accessibilityConfiguration" identifier="LeftButton"/>
                             <fontDescription key="fontDescription" type="boldSystem" pointSize="16"/>
@@ -113,7 +113,7 @@
                             </state>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="461-vO-hLZ" userLabel="Right Button">
-                            <rect key="frame" x="250" y="0.0" width="230" height="30"/>
+                            <rect key="frame" x="249.5" y="0.0" width="230.5" height="30"/>
                             <color key="backgroundColor" red="0.6886889638" green="1" blue="0.74383144840000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <accessibility key="accessibilityConfiguration" identifier="RightButton"/>
                             <fontDescription key="fontDescription" type="boldSystem" pointSize="16"/>
@@ -197,6 +197,6 @@
         </view>
     </objects>
     <resources>
-        <image name="details_icon" width="31" height="31"/>
+        <image name="details_icon" width="6" height="12"/>
     </resources>
 </document>

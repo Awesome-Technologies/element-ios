@@ -17,7 +17,8 @@
 
 #import "ExpandedRoomTitleView.h"
 
-#import "RiotDesignValues.h"
+#import "ThemeService.h"
+#import "Riot-Swift.h"
 
 #import "MXRoomSummary+Riot.h"
 
@@ -34,14 +35,24 @@
     [super awakeFromNib];
 }
 
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+
+    self.membersListIcon.image = [MXKTools paintImage:self.membersListIcon.image
+                                            withColor:ThemeService.shared.theme.tintColor];
+
+    // TODO: paintImage does not work here because addParticipantIcon has 2 colors
+//    self.addParticipantIcon.image = [MXKTools paintImage:self.addParticipantIcon.image
+//                                            withColor:ThemeService.shared.theme.accent];
+}
+
 -(void)customizeViewRendering
 {
     [super customizeViewRendering];
     
-    self.displayNameTextField.textColor = kCaritasColorWhite;
-    self.roomTopic.textColor = kCaritasTopicTextColor;
-    self.roomMembers.textColor = kCaritasColorWhite;
-    
+    self.roomTopic.textColor = ThemeService.shared.theme.baseTextSecondaryColor;
+    self.roomMembers.textColor = ThemeService.shared.theme.tintColor;
 }
 
 - (void)refreshDisplay
@@ -60,9 +71,9 @@
         
         self.roomTopic.text = [MXTools stripNewlineCharacters:self.mxRoom.summary.topic];
         
-        self.displayNameTextField.textColor = kCaritasColorWhite;
-        self.roomTopic.textColor = kCaritasTopicTextColor;
-        self.roomMembers.textColor = kCaritasColorWhite;
+        self.displayNameTextField.textColor = ThemeService.shared.theme.baseTextPrimaryColor;
+        self.roomTopic.textColor = ThemeService.shared.theme.baseTextPrimaryColor;
+        self.roomMembers.textColor = ThemeService.shared.theme.baseTextPrimaryColor;
         
         // Compute active members count
         MXWeakify(self);
@@ -130,7 +141,7 @@
     self.roomAvatar.layer.cornerRadius = self.roomAvatar.frame.size.width / 2;
     self.roomAvatar.clipsToBounds = YES;
     
-    self.roomAvatar.defaultBackgroundColor = kCaritasSecondaryBgColor;
+    self.roomAvatar.defaultBackgroundColor = ThemeService.shared.theme.headerBackgroundColor;
     
     // Force the layout of subviews to update the position of 'bottomBorderView' which is used to define the actual height of the preview container.
     [self layoutIfNeeded];

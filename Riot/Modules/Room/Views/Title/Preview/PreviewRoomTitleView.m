@@ -18,7 +18,8 @@
 
 #import "PreviewRoomTitleView.h"
 
-#import "RiotDesignValues.h"
+#import "ThemeService.h"
+#import "Riot-Swift.h"
 
 #import "MXRoomSummary+Riot.h"
 
@@ -61,31 +62,32 @@
 -(void)customizeViewRendering
 {
     [super customizeViewRendering];
+
+    // Use same color as navigation bar
+    self.backgroundColor = ThemeService.shared.theme.backgroundColor;
+    self.mainHeaderBackground.backgroundColor = ThemeService.shared.theme.baseColor;
     
-    self.backgroundColor = kCaritasPrimaryBgColor;
-    self.mainHeaderBackground.backgroundColor = kCaritasSecondaryBgColor;
+    self.roomTopic.textColor = ThemeService.shared.theme.baseTextSecondaryColor;
     
-    self.displayNameTextField.textColor = kCaritasColorWhite;
+    self.roomMembers.textColor = ThemeService.shared.theme.baseTextSecondaryColor;
     
-    self.roomTopic.textColor = kCaritasTopicTextColor;
-    
-    self.roomMembers.textColor = kCaritasColorWhite;
-    
-    self.previewLabel.textColor = kCaritasTopicTextColor;
+    self.previewLabel.textColor = ThemeService.shared.theme.textPrimaryColor;
     self.previewLabel.numberOfLines = 0;
     
-    self.subNoticeLabel.textColor = kCaritasSecondaryTextColor;
+    self.subNoticeLabel.textColor = ThemeService.shared.theme.textPrimaryColor;
     self.subNoticeLabel.numberOfLines = 0;
     
-    self.bottomBorderView.backgroundColor = kCaritasSecondaryBgColor;
+    self.bottomBorderView.backgroundColor = ThemeService.shared.theme.backgroundColor;
     
     [self.leftButton.layer setCornerRadius:5];
     self.leftButton.clipsToBounds = YES;
-    self.leftButton.backgroundColor = kCaritasColorRed;
+    self.leftButton.backgroundColor = ThemeService.shared.theme.baseColor;
+    [self.leftButton setTitleColor:ThemeService.shared.theme.baseTextPrimaryColor forState:UIControlStateNormal];
     
     [self.rightButton.layer setCornerRadius:5];
     self.rightButton.clipsToBounds = YES;
-    self.rightButton.backgroundColor = kCaritasColorRed;
+    self.rightButton.backgroundColor = ThemeService.shared.theme.baseColor;
+    [self.rightButton setTitleColor:ThemeService.shared.theme.baseTextPrimaryColor forState:UIControlStateNormal];
 }
 
 - (void)refreshDisplay
@@ -102,7 +104,8 @@
                      andImageOrientation:UIImageOrientationUp
                            toFitViewSize:self.roomAvatar.frame.size
                               withMethod:MXThumbnailingMethodCrop
-                            previewImage:[UIImage imageNamed:@"placeholder"]
+                            previewImage:[MXKTools paintImage:[UIImage imageNamed:@"placeholder"]
+                                                    withColor:ThemeService.shared.theme.tintColor]
                             mediaManager:self.mxRoom.mxSession.mediaManager];
         }
         else
@@ -255,7 +258,7 @@
     self.roomAvatar.layer.cornerRadius = self.roomAvatar.frame.size.width / 2;
     self.roomAvatar.clipsToBounds = YES;
     
-    self.roomAvatar.defaultBackgroundColor = kCaritasSecondaryBgColor;
+    self.roomAvatar.defaultBackgroundColor = ThemeService.shared.theme.headerBackgroundColor;
     
     // Force the layout of subviews to update the position of 'bottomBorderView' which is used to define the actual height of the preview container.
     [self layoutIfNeeded];

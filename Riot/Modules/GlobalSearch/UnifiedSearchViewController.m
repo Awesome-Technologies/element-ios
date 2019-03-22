@@ -32,6 +32,7 @@
 #import "FilesSearchCellData.h"
 
 #import "AppDelegate.h"
+#import "Riot-Swift.h"
 
 #import "GBDeviceInfo_iOS.h"
 
@@ -114,7 +115,7 @@
     UIImageView *backgroundImageView = self.backgroundImageView;
     if (backgroundImageView)
     {
-        UIImage *image = [MXKTools paintImage:backgroundImageView.image withColor:kCaritasKeyboardColor];
+        UIImage *image = [MXKTools paintImage:backgroundImageView.image withColor:ThemeService.shared.theme.matrixSearchBackgroundImageTintColor];
         backgroundImageView.image = image;
     }
 }
@@ -135,8 +136,6 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
-    self.searchBar.tintColor = kCaritasPrimaryTextColor;
 
     // Screen tracking
     [[Analytics sharedInstance] trackScreen:@"UnifiedSearch"];

@@ -17,7 +17,8 @@
 
 #import "EncryptionInfoView.h"
 
-#import "RiotDesignValues.h"
+#import "ThemeService.h"
+#import "Riot-Swift.h"
 
 @implementation EncryptionInfoView
 
@@ -27,13 +28,13 @@
 {
     [super customizeViewRendering];
     
-    self.backgroundColor = kCaritasSecondaryBgColor;
-    self.textView.backgroundColor = kCaritasPrimaryBgColor;
-    self.defaultTextColor = kCaritasPrimaryTextColor;
-    self.cancelButton.tintColor = kCaritasColorWhite;
-    self.verifyButton.tintColor = kCaritasColorWhite;
-    self.blockButton.tintColor = kCaritasColorWhite;
-    self.confirmVerifyButton.tintColor = kCaritasColorWhite;
+    self.backgroundColor = ThemeService.shared.theme.headerBackgroundColor;
+    self.textView.backgroundColor = ThemeService.shared.theme.backgroundColor;
+    self.defaultTextColor = ThemeService.shared.theme.textPrimaryColor;
+    self.cancelButton.tintColor = ThemeService.shared.theme.tintColor;
+    self.verifyButton.tintColor = ThemeService.shared.theme.tintColor;
+    self.blockButton.tintColor = ThemeService.shared.theme.tintColor;
+    self.confirmVerifyButton.tintColor = ThemeService.shared.theme.tintColor;
 }
 
 @end

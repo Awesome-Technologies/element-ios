@@ -20,6 +20,7 @@
 #import "RoomMemberDetailsViewController.h"
 
 #import "AppDelegate.h"
+#import "Riot-Swift.h"
 
 #import "Contact.h"
 
@@ -60,8 +61,8 @@
     
     UIAlertController *currentAlert;
     
-    // Observe kRiotDesignValuesDidChangeThemeNotification to handle user interface theme change.
-    id kRiotDesignValuesDidChangeThemeNotificationObserver;
+    // Observe kThemeServiceDidChangeThemeNotification to handle user interface theme change.
+    id kThemeServiceDidChangeThemeNotificationObserver;
 }
 
 @end
@@ -143,7 +144,7 @@
     [self.tableView registerClass:ContactTableViewCell.class forCellReuseIdentifier:@"ParticipantTableViewCellId"];
     
     // Observe user interface theme change.
-    kRiotDesignValuesDidChangeThemeNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kRiotDesignValuesDidChangeThemeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notif) {
+    kThemeServiceDidChangeThemeNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kThemeServiceDidChangeThemeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notif) {
         
         [self userInterfaceThemeDidChange];
         
@@ -153,26 +154,25 @@
 
 - (void)userInterfaceThemeDidChange
 {
-    self.defaultBarTintColor = kCaritasNavigationBarBgColor;
-    self.barTitleColor = kCaritasColorWhite;
-    self.activityIndicator.backgroundColor = kCaritasOverlayColor;
+    [ThemeService.shared.theme applyStyleOnNavigationBar:self.navigationController.navigationBar];
+
+    self.activityIndicator.backgroundColor = ThemeService.shared.theme.overlayBackgroundColor;
     
     [self refreshSearchBarItemsColor:_searchBarView];
     
-    _searchBarView.tintColor = kCaritasPrimaryTextColor;
-    
-    _searchBarHeaderBorder.backgroundColor = kCaritasAuxiliaryColor;
+    _searchBarHeaderBorder.backgroundColor = ThemeService.shared.theme.headerBorderColor;
     
     // Check the table view style to select its bg color.
-    self.tableView.backgroundColor = kCaritasPrimaryBgColor;
+    self.tableView.backgroundColor = ((self.tableView.style == UITableViewStylePlain) ? ThemeService.shared.theme.backgroundColor : ThemeService.shared.theme.headerBackgroundColor);
     self.view.backgroundColor = self.tableView.backgroundColor;
+    self.tableView.separatorColor = ThemeService.shared.theme.lineBreakColor;
     
     // Update the gradient view above the screen
     CGFloat white = 1.0;
-    [kCaritasPrimaryBgColor getWhite:&white alpha:nil];
+    [ThemeService.shared.theme.backgroundColor getWhite:&white alpha:nil];
     CGColorRef opaqueWhiteColor = [UIColor colorWithWhite:white alpha:1.0].CGColor;
     CGColorRef transparentWhiteColor = [UIColor colorWithWhite:white alpha:0].CGColor;
-    tableViewMaskLayer.colors = [NSArray arrayWithObjects:(__bridge id)transparentWhiteColor, (__bridge id)transparentWhiteColor, (__bridge id)opaqueWhiteColor, nil];
+    tableViewMaskLayer.colors = @[(__bridge id) transparentWhiteColor, (__bridge id) transparentWhiteColor, (__bridge id) opaqueWhiteColor];
     
     if (self.tableView.dataSource)
     {
@@ -182,7 +182,7 @@
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-    return kCaritasDesignStatusBarStyle;
+    return ThemeService.shared.theme.statusBarStyle;
 }
 
 // This method is called when the viewcontroller is added or removed from a container view controller.
@@ -195,10 +195,10 @@
 
 - (void)destroy
 {
-    if (kRiotDesignValuesDidChangeThemeNotificationObserver)
+    if (kThemeServiceDidChangeThemeNotificationObserver)
     {
-        [[NSNotificationCenter defaultCenter] removeObserver:kRiotDesignValuesDidChangeThemeNotificationObserver];
-        kRiotDesignValuesDidChangeThemeNotificationObserver = nil;
+        [[NSNotificationCenter defaultCenter] removeObserver:kThemeServiceDidChangeThemeNotificationObserver];
+        kThemeServiceDidChangeThemeNotificationObserver = nil;
     }
     
     if (leaveRoomNotificationObserver)
@@ -578,20 +578,19 @@
     // Add blur mask programmatically
     tableViewMaskLayer = [CAGradientLayer layer];
     
-    // Consider the grayscale components of the kRiotPrimaryBgColor.
+    // Consider the grayscale components of the ThemeService.shared.theme.backgroundColor.
     CGFloat white = 1.0;
-    [kCaritasPrimaryBgColor getWhite:&white alpha:nil];
+    [ThemeService.shared.theme.backgroundColor getWhite:&white alpha:nil];
     
     CGColorRef opaqueWhiteColor = [UIColor colorWithWhite:white alpha:1.0].CGColor;
     CGColorRef transparentWhiteColor = [UIColor colorWithWhite:white alpha:0].CGColor;
     
-    tableViewMaskLayer.colors = [NSArray arrayWithObjects:(__bridge id)transparentWhiteColor, (__bridge id)transparentWhiteColor, (__bridge id)opaqueWhiteColor, nil];
+    tableViewMaskLayer.colors = @[(__bridge id) transparentWhiteColor, (__bridge id) transparentWhiteColor, (__bridge id) opaqueWhiteColor];
     
     // display a gradient to the rencents bottom (20% of the bottom of the screen)
-    tableViewMaskLayer.locations = [NSArray arrayWithObjects:
-                                    [NSNumber numberWithFloat:0],
-                                    [NSNumber numberWithFloat:0.85],
-                                    [NSNumber numberWithFloat:1.0], nil];
+    tableViewMaskLayer.locations = @[@0.0F,
+            @0.85F,
+            @1.0F];
     
     tableViewMaskLayer.bounds = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
     tableViewMaskLayer.anchorPoint = CGPointZero;
@@ -675,18 +674,18 @@
     // List all the participants matrix user id to ignore them during the contacts search.
     for (Contact *contact in actualParticipants)
     {
-        [contactsDataSource.ignoredContactsByMatrixId setObject:contact forKey:contact.mxMember.userId];
+        contactsDataSource.ignoredContactsByMatrixId[contact.mxMember.userId] = contact;
     }
     for (Contact *contact in invitedParticipants)
     {
         if (contact.mxMember)
         {
-            [contactsDataSource.ignoredContactsByMatrixId setObject:contact forKey:contact.mxMember.userId];
+            contactsDataSource.ignoredContactsByMatrixId[contact.mxMember.userId] = contact;
         }
     }
     if (userParticipant)
     {
-        [contactsDataSource.ignoredContactsByMatrixId setObject:userParticipant forKey:userParticipant.mxMember.userId];
+        contactsDataSource.ignoredContactsByMatrixId[userParticipant.mxMember.userId] = userParticipant;
     }
     
     [contactsPickerViewController showSearch:YES];
@@ -1131,12 +1130,12 @@
                 // Update member badge
                 MXRoomPowerLevels *powerLevels = [roomState powerLevels];
                 NSInteger powerLevel = [powerLevels powerLevelOfUserWithUserID:contact.mxMember.userId];
-                if (powerLevel >= kRiotRoomAdminLevel)
+                if (powerLevel >= RoomPowerLevelAdmin)
                 {
                     participantCell.thumbnailBadgeView.image = [UIImage imageNamed:@"admin_icon"];
                     participantCell.thumbnailBadgeView.hidden = NO;
                 }
-                else if (powerLevel >= kRiotRoomModeratorLevel)
+                else if (powerLevel >= RoomPowerLevelModerator)
                 {
                     participantCell.thumbnailBadgeView.image = [UIImage imageNamed:@"mod_icon"];
                     participantCell.thumbnailBadgeView.hidden = NO;
@@ -1179,13 +1178,13 @@
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    cell.backgroundColor = kCaritasPrimaryBgColor;
+    cell.backgroundColor = ThemeService.shared.theme.backgroundColor;
     
     // Update the selected background view
-    if (kCaritasSelectedBgColor)
+    if (ThemeService.shared.theme.selectedBackgroundColor)
     {
         cell.selectedBackgroundView = [[UIView alloc] init];
-        cell.selectedBackgroundView.backgroundColor = kCaritasSelectedBgColor;
+        cell.selectedBackgroundView.backgroundColor = ThemeService.shared.theme.selectedBackgroundColor;
     }
     else
     {
@@ -1219,7 +1218,7 @@
     if (section == invitedSection)
     {
         sectionHeader = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, 30)];
-        sectionHeader.backgroundColor = kCaritasSecondaryBgColor;
+        sectionHeader.backgroundColor = ThemeService.shared.theme.headerBackgroundColor;
         
         CGRect frame = sectionHeader.frame;
         frame.origin.x = 20;
@@ -1227,7 +1226,7 @@
         frame.size.width = sectionHeader.frame.size.width - 10;
         frame.size.height -= 10;
         UILabel *headerLabel = [[UILabel alloc] initWithFrame:frame];
-        headerLabel.textColor = kCaritasPrimaryTextColor;
+        headerLabel.textColor = ThemeService.shared.theme.textPrimaryColor;
         headerLabel.font = [UIFont boldSystemFontOfSize:15.0];
         headerLabel.backgroundColor = [UIColor clearColor];
         
@@ -1331,7 +1330,7 @@
             
         }];
         
-        leaveAction.backgroundColor = [MXKTools convertImageToPatternColor:@"remove_icon" backgroundColor:kCaritasSecondaryBgColor patternSize:CGSizeMake(74, 74) resourceSize:CGSizeMake(24, 24)];
+        leaveAction.backgroundColor = [MXKTools convertImageToPatternColor:@"remove_icon" backgroundColor:ThemeService.shared.theme.headerBackgroundColor patternSize:CGSizeMake(74, 74) resourceSize:CGSizeMake(24, 24)];
         [actions insertObject:leaveAction atIndex:0];
     }
     
@@ -1687,32 +1686,7 @@
 
 - (void)refreshSearchBarItemsColor:(UISearchBar *)searchBar
 {
-    // bar tint color
-    searchBar.barTintColor = kCaritasDesignSearchBarTintColor;
-    searchBar.tintColor = kCaritasPrimaryTextColor;
-    
-    // FIXME: this all seems incredibly fragile and tied to gutwrenching the current UISearchBar internals.
-    
-    // text color
-    UITextField *searchBarTextField = [searchBar valueForKey:@"_searchField"];
-    searchBarTextField.textColor = kCaritasSecondaryTextColor;
-    
-    // Magnifying glass icon.
-    UIImageView *leftImageView = (UIImageView *)searchBarTextField.leftView;
-    leftImageView.image = [leftImageView.image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-    leftImageView.tintColor = kCaritasColorRed;
-    
-    // remove the gray background color
-    UIView *effectBackgroundTop =  [searchBarTextField valueForKey:@"_effectBackgroundTop"];
-    UIView *effectBackgroundBottom =  [searchBarTextField valueForKey:@"_effectBackgroundBottom"];
-    effectBackgroundTop.hidden = YES;
-    effectBackgroundBottom.hidden = YES;
-    
-    // place holder
-    searchBarTextField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:searchBarTextField.placeholder
-                                                                               attributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleSingle),
-                                                                                            NSUnderlineColorAttributeName: kCaritasColorRed,
-                                                                                            NSForegroundColorAttributeName: kCaritasColorRed}];
+    [ThemeService.shared.theme applyStyleOnSearchBar:searchBar];
 }
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText

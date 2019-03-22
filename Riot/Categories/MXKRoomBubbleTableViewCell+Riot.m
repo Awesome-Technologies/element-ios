@@ -19,7 +19,8 @@
 
 #import "RoomBubbleCellData.h"
 
-#import "RiotDesignValues.h"
+#import "ThemeService.h"
+#import "Riot-Swift.h"
 
 #import <objc/runtime.h>
 
@@ -61,7 +62,7 @@ NSString *const kMXKRoomBubbleCellTapOnReceiptsContainer = @"kMXKRoomBubbleCellT
         
         timeLabel.text = [bubbleData.eventFormatter timeStringFromDate:component.date];
         timeLabel.textAlignment = NSTextAlignmentRight;
-        timeLabel.textColor = kCaritasSecondaryTextColor;
+        timeLabel.textColor = ThemeService.shared.theme.textSecondaryColor;
         if ([UIFont respondsToSelector:@selector(systemFontOfSize:weight:)])
         {
              timeLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightLight];
@@ -208,7 +209,7 @@ NSString *const kMXKRoomBubbleCellTapOnReceiptsContainer = @"kMXKRoomBubbleCellT
                                                                 markPosY,
                                                                 VECTOR_ROOMBUBBLETABLEVIEWCELL_MARK_WIDTH,
                                                                 markHeight)];
-        markerView.backgroundColor = kCaritasColorRed;
+        markerView.backgroundColor = ThemeService.shared.theme.tintColor;
 
         [markerView setTranslatesAutoresizingMaskIntoConstraints:NO];
         markerView.accessibilityIdentifier = @"markerView";
@@ -263,7 +264,7 @@ NSString *const kMXKRoomBubbleCellTapOnReceiptsContainer = @"kMXKRoomBubbleCellT
         
         timeLabel.text = [bubbleData.eventFormatter dateStringFromDate:date withTime:NO];
         timeLabel.textAlignment = NSTextAlignmentRight;
-        timeLabel.textColor = kCaritasSecondaryTextColor;
+        timeLabel.textColor = ThemeService.shared.theme.textSecondaryColor;
         if ([UIFont respondsToSelector:@selector(systemFontOfSize:weight:)])
         {
             timeLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightLight];
@@ -315,12 +316,12 @@ NSString *const kMXKRoomBubbleCellTapOnReceiptsContainer = @"kMXKRoomBubbleCellT
 
 - (void)setBlurred:(BOOL)blurred
 {
-    objc_setAssociatedObject(self, @selector(blurred), [NSNumber numberWithBool:blurred], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(self, @selector(blurred), @(blurred), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     
     if (blurred)
     {
         self.bubbleOverlayContainer.hidden = NO;
-        self.bubbleOverlayContainer.backgroundColor = kCaritasPrimaryBgColor;
+        self.bubbleOverlayContainer.backgroundColor = ThemeService.shared.theme.backgroundColor;
         self.bubbleOverlayContainer.alpha = 0.8;
         self.bubbleOverlayContainer.userInteractionEnabled = YES;
         
@@ -383,6 +384,32 @@ NSString *const kMXKRoomBubbleCellTapOnReceiptsContainer = @"kMXKRoomBubbleCellT
 -(UIView *)markerView
 {
     return objc_getAssociatedObject(self, @selector(markerView));
+}
+
+- (void)updateUserNameColor
+{
+    static UserNameColorGenerator *userNameColorGenerator;
+    
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        userNameColorGenerator = [UserNameColorGenerator new];
+    });
+    
+    id<Theme> theme = ThemeService.shared.theme;
+    
+    userNameColorGenerator.defaultColor = theme.textPrimaryColor;
+    userNameColorGenerator.userNameColors = theme.userNameColors;
+    
+    NSString *senderId = self.bubbleData.senderId;
+    
+    if (senderId)
+    {
+        self.userNameLabel.textColor = [userNameColorGenerator colorFrom:senderId];
+    }
+    else
+    {
+        self.userNameLabel.textColor = userNameColorGenerator.defaultColor;
+    }
 }
 
 #pragma mark - User actions

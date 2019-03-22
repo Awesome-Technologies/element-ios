@@ -95,7 +95,6 @@
     [super viewWillAppear:animated];
 
     [AppDelegate theDelegate].masterTabBarController.navigationItem.title = NSLocalizedStringFromTable(@"title_people", @"Vector", nil);
-    [[AppDelegate theDelegate].masterTabBarController userInterfaceThemeDidChange];
     
     if (recentsDataSource)
     {
@@ -106,11 +105,6 @@
     // Add new chat icon to navigation bar
     [AppDelegate theDelegate].masterTabBarController.navigationItem.rightBarButtonItem = newChatButton;
     [newChatButton setEnabled:YES];
-}
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-    [super viewWillDisappear:animated];
 }
 
 #pragma mark - 

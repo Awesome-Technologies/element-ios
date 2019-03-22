@@ -17,6 +17,7 @@
 #import "BugReportViewController.h"
 
 #import "AppDelegate.h"
+#import "Riot-Swift.h"
 
 #import "GBDeviceInfo_iOS.h"
 
@@ -27,8 +28,8 @@
     // The temporary file used to store the screenshot
     NSURL *screenShotFile;
     
-    // Observe kRiotDesignValuesDidChangeThemeNotification to handle user interface theme change.
-    id kRiotDesignValuesDidChangeThemeNotificationObserver;
+    // Observe kThemeServiceDidChangeThemeNotification to handle user interface theme change.
+    id kThemeServiceDidChangeThemeNotificationObserver;
 }
 
 @property (nonatomic) BOOL sendLogs;
@@ -127,7 +128,7 @@
     _bugReportDescriptionTextView.inputAccessoryView = [[UIView alloc] initWithFrame:CGRectZero];
 
     // Observe user interface theme change.
-    kRiotDesignValuesDidChangeThemeNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kRiotDesignValuesDidChangeThemeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notif) {
+    kThemeServiceDidChangeThemeNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kThemeServiceDidChangeThemeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notif) {
         
         [self userInterfaceThemeDidChange];
         
@@ -137,47 +138,47 @@
 
 - (void)userInterfaceThemeDidChange
 {
-    self.defaultBarTintColor = kCaritasNavigationBarBgColor;
-    self.barTitleColor = kCaritasColorWhite;
-    self.activityIndicator.backgroundColor = kCaritasOverlayColor;
+    [ThemeService.shared.theme applyStyleOnNavigationBar:self.navigationController.navigationBar];
+
+    self.activityIndicator.backgroundColor = ThemeService.shared.theme.overlayBackgroundColor;
     
-    self.overlayView.backgroundColor = kCaritasOverlayColor;
+    self.overlayView.backgroundColor = ThemeService.shared.theme.overlayBackgroundColor;
     self.overlayView.alpha = 1.0;
     
-    self.containerView.backgroundColor = kCaritasPrimaryBgColor;
-    self.sendingContainer.backgroundColor = kCaritasPrimaryBgColor;
+    self.containerView.backgroundColor = ThemeService.shared.theme.backgroundColor;
+    self.sendingContainer.backgroundColor = ThemeService.shared.theme.backgroundColor;
     
-    self.bugReportDescriptionTextView.keyboardAppearance = kCaritasKeyboard;
+    self.bugReportDescriptionTextView.keyboardAppearance = ThemeService.shared.theme.keyboardAppearance;
     
-    self.titleLabel.textColor = kCaritasPrimaryTextColor;
-    self.sendingLabel.textColor = kCaritasPrimaryTextColor;
-    self.descriptionLabel.textColor = kCaritasPrimaryTextColor;
-    self.bugReportDescriptionTextView.textColor = kCaritasPrimaryTextColor;
-    self.bugReportDescriptionTextView.tintColor = kCaritasColorRed;
-    self.logsDescriptionLabel.textColor = kCaritasPrimaryTextColor;
-    self.sendLogsLabel.textColor = kCaritasPrimaryTextColor;
-    self.sendScreenshotLabel.textColor = kCaritasPrimaryTextColor;
+    self.titleLabel.textColor = ThemeService.shared.theme.textPrimaryColor;
+    self.sendingLabel.textColor = ThemeService.shared.theme.textPrimaryColor;
+    self.descriptionLabel.textColor = ThemeService.shared.theme.textPrimaryColor;
+    self.bugReportDescriptionTextView.textColor = ThemeService.shared.theme.textPrimaryColor;
+    self.bugReportDescriptionTextView.tintColor = ThemeService.shared.theme.tintColor;
+    self.logsDescriptionLabel.textColor = ThemeService.shared.theme.textPrimaryColor;
+    self.sendLogsLabel.textColor = ThemeService.shared.theme.textPrimaryColor;
+    self.sendScreenshotLabel.textColor = ThemeService.shared.theme.textPrimaryColor;
     
-    self.sendLogsButtonImage.tintColor = kCaritasPrimaryTextColor;
-    self.sendScreenshotButtonImage.tintColor = kCaritasPrimaryTextColor;
+    self.sendLogsButtonImage.tintColor = ThemeService.shared.theme.tintColor;
+    self.sendScreenshotButtonImage.tintColor = ThemeService.shared.theme.tintColor;
     
-    self.sendButton.tintColor = kCaritasColorRed;
-    self.cancelButton.tintColor = kCaritasColorRed;
+    self.sendButton.tintColor = ThemeService.shared.theme.tintColor;
+    self.cancelButton.tintColor = ThemeService.shared.theme.tintColor;
     
-    _bugReportDescriptionTextView.layer.borderColor = kCaritasSecondaryBgColor.CGColor;
+    _bugReportDescriptionTextView.layer.borderColor = ThemeService.shared.theme.headerBackgroundColor.CGColor;
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-    return kCaritasDesignStatusBarStyle;
+    return ThemeService.shared.theme.statusBarStyle;
 }
 
 - (void)destroy
 {
-    if (kRiotDesignValuesDidChangeThemeNotificationObserver)
+    if (kThemeServiceDidChangeThemeNotificationObserver)
     {
-        [[NSNotificationCenter defaultCenter] removeObserver:kRiotDesignValuesDidChangeThemeNotificationObserver];
-        kRiotDesignValuesDidChangeThemeNotificationObserver = nil;
+        [[NSNotificationCenter defaultCenter] removeObserver:kThemeServiceDidChangeThemeNotificationObserver];
+        kThemeServiceDidChangeThemeNotificationObserver = nil;
     }
     
     [super destroy];

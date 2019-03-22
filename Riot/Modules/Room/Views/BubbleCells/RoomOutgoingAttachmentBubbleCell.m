@@ -17,7 +17,9 @@
 
 #import "RoomOutgoingAttachmentBubbleCell.h"
 
-#import "RiotDesignValues.h"
+#import "ThemeService.h"
+#import "Riot-Swift.h"
+#import "MXKRoomBubbleTableViewCell+Riot.h"
 
 @implementation RoomOutgoingAttachmentBubbleCell
 
@@ -25,14 +27,16 @@
 {
     [super customizeTableViewCellRendering];
     
-    self.userNameLabel.textColor = kCaritasPrimaryTextColor;
-    self.messageTextView.tintColor = kCaritasColorRed;
+    [self updateUserNameColor];
+    
+    self.messageTextView.tintColor = ThemeService.shared.theme.textPrimaryColor;
 }
 
 - (void)render:(MXKCellData *)cellData
 {
     [super render:cellData];
 
+    [self updateUserNameColor];
     [RoomOutgoingAttachmentBubbleCell render:cellData inBubbleCell:self];
 }
 
@@ -48,7 +52,7 @@
         // Show a red border when the attachment sending failed
         if (bubbleCell->bubbleData.attachment.eventSentState == MXEventSentStateFailed)
         {
-            bubbleCell.attachmentView.layer.borderColor = kCaritasColorPinkRed.CGColor;
+            bubbleCell.attachmentView.layer.borderColor = ThemeService.shared.theme.warningColor.CGColor;
             bubbleCell.attachmentView.layer.borderWidth = 1;
         }
         else

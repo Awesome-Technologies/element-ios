@@ -18,7 +18,8 @@
 
 #import "FilesSearchTableViewCell.h"
 
-#import "RiotDesignValues.h"
+#import "ThemeService.h"
+#import "Riot-Swift.h"
 
 @implementation FilesSearchTableViewCell
 @synthesize delegate, mxkCellData;
@@ -27,11 +28,11 @@
 {
     [super customizeTableViewCellRendering];
     
-    self.title.textColor = kCaritasPrimaryTextColor;
+    self.title.textColor = ThemeService.shared.theme.textPrimaryColor;
     
-    self.message.textColor = kCaritasSecondaryTextColor;
+    self.message.textColor = ThemeService.shared.theme.textSecondaryColor;
     
-    self.date.tintColor = kCaritasSecondaryTextColor;
+    self.date.tintColor = ThemeService.shared.theme.textSecondaryColor;
 }
 
 + (CGFloat)heightForCellData:(MXKCellData *)cellData withMaximumWidth:(CGFloat)maxWidth
@@ -75,7 +76,7 @@
             
             if (bubbleData.isAttachmentWithThumbnail)
             {
-                self.attachmentImageView.backgroundColor = kCaritasPrimaryBgColor;
+                self.attachmentImageView.backgroundColor = ThemeService.shared.theme.backgroundColor;
                 [self.attachmentImageView setAttachmentThumb:bubbleData.attachment];
             }
             

@@ -17,7 +17,7 @@
 
 #import "AuthInputsView.h"
 
-#import "RiotDesignValues.h"
+#import "ThemeService.h"
 #import "Tools.h"
 
 #import "RiotNavigationController.h"
@@ -51,16 +51,14 @@
     
     _thirdPartyIdentifiersHidden = YES;
     _isThirdPartyIdentifierPending = NO;
+    _isSingleSignOnRequired = NO;
     
     self.userLoginTextField.placeholder = NSLocalizedStringFromTable(@"auth_user_id_placeholder", @"Vector", nil);
     self.repeatPasswordTextField.placeholder = NSLocalizedStringFromTable(@"auth_repeat_password_placeholder", @"Vector", nil);
     self.passWordTextField.placeholder = NSLocalizedStringFromTable(@"auth_password_placeholder", @"Vector", nil);
-    
-    if (kCaritasPlaceholderTextColor)
-    {
-        // Apply placeholder color
-        [self customizeViewRendering];
-    }
+
+    // Apply placeholder color
+    [self customizeViewRendering];
 }
 
 - (void)destroy
@@ -86,45 +84,48 @@
 {
     [super customizeViewRendering];
     
-    self.repeatPasswordTextField.textColor = kCaritasPrimaryTextColor;
-    self.userLoginTextField.textColor = kCaritasPrimaryTextColor;
-    self.passWordTextField.textColor = kCaritasPrimaryTextColor;
+    self.repeatPasswordTextField.textColor = ThemeService.shared.theme.textPrimaryColor;
+    self.userLoginTextField.textColor = ThemeService.shared.theme.textPrimaryColor;
+    self.passWordTextField.textColor = ThemeService.shared.theme.textPrimaryColor;
     
-    self.emailTextField.textColor = kCaritasPrimaryTextColor;
+    self.emailTextField.textColor = ThemeService.shared.theme.textPrimaryColor;
     
-    self.messageLabel.textColor = kCaritasSecondaryTextColor;
+    self.messageLabel.textColor = ThemeService.shared.theme.textSecondaryColor;
     self.messageLabel.numberOfLines = 0;
     
-    if (kCaritasPlaceholderTextColor)
+    [self.ssoButton.layer setCornerRadius:5];
+    self.ssoButton.clipsToBounds = YES;
+    [self.ssoButton setTitle:NSLocalizedStringFromTable(@"auth_login_single_sign_on", @"Vector", nil) forState:UIControlStateNormal];
+    [self.ssoButton setTitle:NSLocalizedStringFromTable(@"auth_login_single_sign_on", @"Vector", nil) forState:UIControlStateHighlighted];
+    self.ssoButton.backgroundColor = ThemeService.shared.theme.tintColor;
+
+    if (self.userLoginTextField.placeholder)
     {
-        if (self.userLoginTextField.placeholder)
-        {
-            self.userLoginTextField.attributedPlaceholder = [[NSAttributedString alloc]
-                                                             initWithString:self.userLoginTextField.placeholder
-                                                             attributes:@{NSForegroundColorAttributeName: kCaritasPlaceholderTextColor}];
-        }
-        
-        if (self.repeatPasswordTextField.placeholder)
-        {
-            self.repeatPasswordTextField.attributedPlaceholder = [[NSAttributedString alloc]
-                                                                  initWithString:self.repeatPasswordTextField.placeholder
-                                                                  attributes:@{NSForegroundColorAttributeName: kCaritasPlaceholderTextColor}];
-            
-        }
-        
-        if (self.passWordTextField.placeholder)
-        {
-            self.passWordTextField.attributedPlaceholder = [[NSAttributedString alloc]
-                                                            initWithString:self.passWordTextField.placeholder
-                                                            attributes:@{NSForegroundColorAttributeName: kCaritasPlaceholderTextColor}];
-        }
-        
-        if (self.emailTextField.placeholder)
-        {
-            self.emailTextField.attributedPlaceholder = [[NSAttributedString alloc]
-                                                         initWithString:self.emailTextField.placeholder
-                                                         attributes:@{NSForegroundColorAttributeName: kCaritasPlaceholderTextColor}];
-        }
+        self.userLoginTextField.attributedPlaceholder = [[NSAttributedString alloc]
+                                                         initWithString:self.userLoginTextField.placeholder
+                                                         attributes:@{NSForegroundColorAttributeName: ThemeService.shared.theme.placeholderTextColor}];
+    }
+
+    if (self.repeatPasswordTextField.placeholder)
+    {
+        self.repeatPasswordTextField.attributedPlaceholder = [[NSAttributedString alloc]
+                                                              initWithString:self.repeatPasswordTextField.placeholder
+                                                              attributes:@{NSForegroundColorAttributeName: ThemeService.shared.theme.placeholderTextColor}];
+
+    }
+
+    if (self.passWordTextField.placeholder)
+    {
+        self.passWordTextField.attributedPlaceholder = [[NSAttributedString alloc]
+                                                        initWithString:self.passWordTextField.placeholder
+                                                        attributes:@{NSForegroundColorAttributeName: ThemeService.shared.theme.placeholderTextColor}];
+    }
+
+    if (self.emailTextField.placeholder)
+    {
+        self.emailTextField.attributedPlaceholder = [[NSAttributedString alloc]
+                                                     initWithString:self.emailTextField.placeholder
+                                                     attributes:@{NSForegroundColorAttributeName: ThemeService.shared.theme.placeholderTextColor}];
     }
 }
 
@@ -151,25 +152,37 @@
         {
             if (authType == MXKAuthenticationTypeLogin)
             {
-                self.passWordTextField.returnKeyType = UIReturnKeyDone;
-                
-                self.userLoginTextField.placeholder = NSLocalizedStringFromTable(@"auth_user_id_placeholder", @"Vector", nil);
-                
-                if (kCaritasPlaceholderTextColor)
+                _isSingleSignOnRequired = NO;
+
+                if ([self isFlowSupported:kMXLoginFlowTypePassword])
                 {
+                    self.passWordTextField.returnKeyType = UIReturnKeyDone;
+                    
+                    self.userLoginTextField.placeholder = NSLocalizedStringFromTable(@"auth_user_id_placeholder", @"Vector", nil);
+                    self.messageLabel.text = NSLocalizedStringFromTable(@"or", @"Vector", nil);
+                    
                     self.userLoginTextField.attributedPlaceholder = [[NSAttributedString alloc]
                                                                      initWithString:self.userLoginTextField.placeholder
-                                                                     attributes:@{NSForegroundColorAttributeName: kCaritasPlaceholderTextColor}];
+                                                                     attributes:@{NSForegroundColorAttributeName: ThemeService.shared.theme.placeholderTextColor}];
+                    
+                    self.userLoginContainer.hidden = NO;
+                    self.messageLabel.hidden = NO;
+                    self.passwordContainer.hidden = NO;
+
+                    self.messageLabelTopConstraint.constant = 59;
+                    self.passwordContainerTopConstraint.constant = 150;
+
+                    self.currentLastContainer = self.passwordContainer;
                 }
-                
-                self.userLoginContainer.hidden = NO;
-                self.messageLabel.hidden = YES;
-                self.passwordContainer.hidden = NO;
-                
-                self.messageLabelTopConstraint.constant = 59;
-                self.passwordContainerTopConstraint.constant = 70;
-                
-                self.currentLastContainer = self.passwordContainer;
+                else if ([self isFlowSupported:kMXLoginFlowTypeCAS]
+                         || [self isFlowSupported:kMXLoginFlowTypeSSO])
+                {
+
+                    self.ssoButtonContainer.hidden = NO;
+                    self.currentLastContainer = self.ssoButtonContainer;
+
+                    _isSingleSignOnRequired = YES;
+                }
             }
             else
             {
@@ -405,21 +418,10 @@
     // Check whether an account may be created without third-party identifiers.
     for (MXLoginFlow *loginFlow in currentSession.flows)
     {
-        if ([loginFlow.stages indexOfObject:kMXLoginFlowTypeDummy] != NSNotFound || [loginFlow.type isEqualToString:kMXLoginFlowTypeDummy])
+        if ([loginFlow.stages indexOfObject:kMXLoginFlowTypeEmailIdentity] == NSNotFound
+             && [loginFlow.stages indexOfObject:kMXLoginFlowTypeMSISDN] == NSNotFound)
         {
-            // The dummy flow is supported, the 3pid are then optional.
-            return NO;
-        }
-        
-        if ((loginFlow.stages.count == 1 && [loginFlow.stages[0] isEqualToString:kMXLoginFlowTypeRecaptcha]) || [loginFlow.type isEqualToString:kMXLoginFlowTypeRecaptcha])
-        {
-            // The recaptcha flow is supported alone, the 3pids are then optional.
-            return NO;
-        }
-        
-        if ((loginFlow.stages.count == 1 && [loginFlow.stages[0] isEqualToString:kMXLoginFlowTypePassword]) || [loginFlow.type isEqualToString:kMXLoginFlowTypePassword])
-        {
-            // The password flow is supported alone, the 3pids are then optional.
+            // There is a flow with no 3pids
             return NO;
         }
     }
@@ -457,17 +459,10 @@
     if (thirdPartyIdentifiersHidden)
     {
         self.passWordTextField.returnKeyType = UIReturnKeyNext;
-        
-        if (kCaritasPlaceholderTextColor)
-        {
-            self.userLoginTextField.attributedPlaceholder = [[NSAttributedString alloc]
-                                                             initWithString:NSLocalizedStringFromTable(@"auth_user_name_placeholder", @"Vector", nil)
-                                                             attributes:@{NSForegroundColorAttributeName: kCaritasPlaceholderTextColor}];
-        }
-        else
-        {
-            self.userLoginTextField.placeholder = NSLocalizedStringFromTable(@"auth_user_name_placeholder", @"Vector", nil);
-        }
+
+        self.userLoginTextField.attributedPlaceholder = [[NSAttributedString alloc]
+                                                         initWithString:NSLocalizedStringFromTable(@"auth_user_name_placeholder", @"Vector", nil)
+                                                         attributes:@{NSForegroundColorAttributeName: ThemeService.shared.theme.placeholderTextColor}];
         
         self.userLoginContainer.hidden = NO;
         self.passwordContainer.hidden = NO;
@@ -490,12 +485,9 @@
                 self.emailTextField.placeholder = NSLocalizedStringFromTable(@"auth_optional_email_placeholder", @"Vector", nil);
             }
             
-            if (kCaritasPlaceholderTextColor)
-            {
-                self.emailTextField.attributedPlaceholder = [[NSAttributedString alloc]
+            self.emailTextField.attributedPlaceholder = [[NSAttributedString alloc]
                                                              initWithString:self.emailTextField.placeholder
-                                                             attributes:@{NSForegroundColorAttributeName: kCaritasPlaceholderTextColor}];
-            }
+                                                             attributes:@{NSForegroundColorAttributeName: ThemeService.shared.theme.placeholderTextColor}];
             
             self.emailContainer.hidden = NO;
             
@@ -575,6 +567,8 @@
     self.messageLabelTopConstraint.constant = 8;
     self.messageLabel.hidden = YES;
     self.recaptchaContainer.hidden = YES;
+    self.termsView.hidden = YES;
+    self.ssoButtonContainer.hidden = YES;
     
     _currentLastContainer = nil;
 }
@@ -584,11 +578,11 @@
     // Retrieve the site key
     NSString *siteKey;
     
-    id recaptchaParams = [currentSession.params objectForKey:kMXLoginFlowTypeRecaptcha];
+    id recaptchaParams = currentSession.params[kMXLoginFlowTypeRecaptcha];
     if (recaptchaParams && [recaptchaParams isKindOfClass:NSDictionary.class])
     {
         NSDictionary *recaptchaParamsDict = (NSDictionary*)recaptchaParams;
-        siteKey = [recaptchaParamsDict objectForKey:@"public_key"];
+        siteKey = recaptchaParamsDict[@"public_key"];
     }
     
     // Retrieve the REST client from delegate
@@ -622,6 +616,9 @@
         MXKAuthenticationRecaptchaWebView *reCaptchaWebView = [MXKAuthenticationRecaptchaWebView new];
         reCaptchaWebView.translatesAutoresizingMaskIntoConstraints = NO;
         [self.recaptchaContainer addSubview:reCaptchaWebView];
+
+        // Disable the webview scrollView to avoid 2 scrollviews on the same screen
+        reCaptchaWebView.scrollView.scrollEnabled = NO;
 
         [self.recaptchaContainer addConstraints:
          [NSLayoutConstraint constraintsWithVisualFormat:@"|-[view]-|"
@@ -675,6 +672,10 @@
         return YES;
     }
     else if ([flowType isEqualToString:kMXLoginFlowTypeTerms])
+    {
+        return YES;
+    }
+    else if ([flowType isEqualToString:kMXLoginFlowTypeCAS] || [flowType isEqualToString:kMXLoginFlowTypeSSO])
     {
         return YES;
     }
@@ -766,6 +767,32 @@
     }
     
     return nil;
+}
+
+- (BOOL)displayTermsView:(dispatch_block_t)onAcceptedCallback
+{
+    // Extract data
+    NSDictionary *loginTermsData = currentSession.params[kMXLoginFlowTypeTerms];
+    MXLoginTerms *loginTerms;
+    MXJSONModelSetMXJSONModel(loginTerms, MXLoginTerms.class, loginTermsData);
+
+    if (loginTerms)
+    {
+        [self hideInputsContainer];
+
+        self.messageLabel.hidden = NO;
+        self.messageLabel.text = NSLocalizedStringFromTable(@"auth_accept_policies", @"Vector", nil);
+
+        self.termsView.hidden = NO;
+        self.currentLastContainer = self.termsView;
+
+        self.termsView.delegate = self.delegate;
+        [self.termsView displayTermsWithTerms:loginTerms onAccepted:onAcceptedCallback];
+
+        return YES;
+    }
+
+    return NO;
 }
 
 #pragma mark - Flow state

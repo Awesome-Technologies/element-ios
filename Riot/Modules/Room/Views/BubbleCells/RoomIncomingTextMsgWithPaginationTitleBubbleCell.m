@@ -17,7 +17,9 @@
 
 #import "RoomIncomingTextMsgWithPaginationTitleBubbleCell.h"
 
-#import "RiotDesignValues.h"
+#import "ThemeService.h"
+#import "Riot-Swift.h"
+#import "MXKRoomBubbleTableViewCell+Riot.h"
 
 @implementation RoomIncomingTextMsgWithPaginationTitleBubbleCell
 
@@ -25,11 +27,10 @@
 {
     [super customizeTableViewCellRendering];
     
-    self.userNameLabel.textColor = kCaritasPrimaryTextColor;
-    
-    self.paginationLabel.textColor = kCaritasColorRed;
-    self.paginationSeparatorView.backgroundColor = kCaritasColorRed;
-    self.messageTextView.tintColor = kCaritasColorRed;
+    [self updateUserNameColor];
+    self.paginationLabel.textColor = ThemeService.shared.theme.textPrimaryColor;
+    self.paginationSeparatorView.backgroundColor = ThemeService.shared.theme.textPrimaryColor;
+    self.messageTextView.tintColor = ThemeService.shared.theme.textPrimaryColor;
 }
 
 - (void)render:(MXKCellData *)cellData
@@ -39,6 +40,8 @@
     if (bubbleData)
     {
         self.paginationLabel.text = [[bubbleData.eventFormatter dateStringFromDate:bubbleData.date withTime:NO] uppercaseString];
+        
+        [self updateUserNameColor];
     }
 }
 

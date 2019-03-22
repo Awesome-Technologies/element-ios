@@ -16,7 +16,9 @@
  */
 
 #import "TableViewCellWithCheckBoxes.h"
-#import "RiotDesignValues.h"
+
+#import "ThemeService.h"
+#import "Riot-Swift.h"
 
 // The space between 2 check boxes
 #define TABLEVIEWCELLWITHCHECKBOXES_MARGIN 8
@@ -132,7 +134,7 @@
         // Store the new check box unselected by default
         checkbox.image = [UIImage imageNamed:@"selection_untick"];
         // Colorize
-        checkbox.tintColor = kCaritasPrimaryTextColor;
+        checkbox.tintColor = ThemeService.shared.theme.baseTextPrimaryColor;
         checkbox.tag = 0;
         [checkBoxesArray addObject:checkbox];
         

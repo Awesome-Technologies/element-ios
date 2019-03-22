@@ -20,6 +20,7 @@
 
 #import <Intents/Intents.h>
 #import <PushKit/PushKit.h>
+#import <Contacts/Contacts.h>
 
 #import "RecentsDataSource.h"
 #import "RoomDataSource.h"
@@ -130,7 +131,7 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
      Completion block called when [self popToPeopleViewControllerAnimated:] has been
      completed.
      */
-    void (^popToPeopleViewControllerCompletion)();
+    void (^popToPeopleViewControllerCompletion)(void);
     
     /**
      The notification listener blocks.
@@ -156,7 +157,12 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
      Prompt to ask the user to log in again.
      */
     UIAlertController *cryptoDataCorruptedAlert;
-    
+
+    /**
+     Prompt to warn the user about a new backup on the homeserver.
+     */
+    UIAlertController *wrongBackupVersionAlert;
+
     /**
      The launch animation container view
      */
@@ -337,7 +343,7 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     NSLog(@"[AppDelegate] didFinishLaunchingWithOptions: isProtectedDataAvailable: %@", @([application isProtectedDataAvailable]));
 
     // Log app information
-    NSString *appDisplayName = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleDisplayName"];
+    NSString *appDisplayName = [[NSBundle mainBundle] infoDictionary][@"CFBundleDisplayName"];
     NSString* appVersion = [AppDelegate theDelegate].appVersion;
     NSString* build = [AppDelegate theDelegate].build;
     
@@ -350,6 +356,9 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     NSLog(@"------------------------------\n");
     
     [self setupUserDefaults];
+
+    // Set up theme
+    ThemeService.shared.themeId = RiotSettings.shared.userInterfaceTheme;
 
     // Set up runtime language and fallback by considering the userDefaults object shared within the application group.
     NSUserDefaults *sharedUserDefaults = [MXKAppSettings standardAppSettings].sharedUserDefaults;
@@ -369,8 +378,6 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     [NSBundle mxk_setLanguage:language];
     [NSBundle mxk_setFallbackLanguage:@"en"];
 
-    // Define the navigation bar text color
-    [[UINavigationBar appearance] setTintColor:kCaritasColorWhite];
     
     // Customize the localized string table
     [NSBundle mxk_customizeLocalizedStringTableName:@"Vector"];
@@ -384,15 +391,15 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
     splitViewController.delegate = self;
     
-    _masterNavigationController = [splitViewController.viewControllers objectAtIndex:0];
+    _masterNavigationController = splitViewController.viewControllers[0];
     _masterTabBarController = _masterNavigationController.viewControllers.firstObject;
     
     // Force the background color of the fake view controller displayed when there is no details.
     UINavigationController *secondNavController = self.secondaryNavigationController;
     if (secondNavController)
     {
-        secondNavController.navigationBar.barTintColor = kCaritasNavigationBarBgColor;
-        secondNavController.topViewController.view.backgroundColor = kCaritasPrimaryBgColor;
+        [ThemeService.shared.theme applyStyleOnNavigationBar:secondNavController.navigationBar];
+        secondNavController.topViewController.view.backgroundColor = ThemeService.shared.theme.backgroundColor;
     }
     
     // on IOS 8 iPad devices, force to display the primary and the secondary viewcontroller
@@ -455,6 +462,12 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     {
         [cryptoDataCorruptedAlert dismissViewControllerAnimated:NO completion:nil];
         cryptoDataCorruptedAlert = nil;
+    }
+
+    if (wrongBackupVersionAlert)
+    {
+        [wrongBackupVersionAlert dismissViewControllerAnimated:NO completion:nil];
+        wrongBackupVersionAlert = nil;
     }
 }
 
@@ -588,7 +601,10 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     
     // Observe crypto data storage corruption
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onSessionCryptoDidCorruptData:) name:kMXSessionCryptoDidCorruptDataNotification object:nil];
-    
+
+    // Observe wrong backup version
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyBackupStateDidChangeNotification:) name:kMXKeyBackupDidStateChangeNotification object:nil];
+
     // Resume all existing matrix sessions
     NSArray *mxAccounts = [MXKAccountManager sharedManager].activeAccounts;
     for (MXKAccount *account in mxAccounts)
@@ -632,7 +648,7 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
 
 #pragma mark - Application layout handling
 
-- (void)restoreInitialDisplay:(void (^)())completion
+- (void)restoreInitialDisplay:(void (^)(void))completion
 {
     // Suspend error notifications during navigation stack change.
     isErrorNotificationSuspended = YES;
@@ -657,6 +673,12 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
                 {
                     NSLog(@"[AppDelegate] restoreInitialDisplay: keep visible log in again");
                     [self showNotificationAlert:cryptoDataCorruptedAlert];
+                }
+                else if (wrongBackupVersionAlert)
+                {
+                    NSLog(@"[AppDelegate] restoreInitialDisplay: keep visible wrongBackupVersionAlert");
+                    [self showNotificationAlert:wrongBackupVersionAlert];
+
                 }
                 // Check whether an error notification is pending
                 else if (_errorNotification)
@@ -707,7 +729,7 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
             
             UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
             UIViewController *emptyDetailsViewController = [storyboard instantiateViewControllerWithIdentifier:@"EmptyDetailsViewControllerStoryboardId"];
-            emptyDetailsViewController.view.backgroundColor = kCaritasPrimaryBgColor;
+            emptyDetailsViewController.view.backgroundColor = ThemeService.shared.theme.backgroundColor;
             
             splitViewController.viewControllers = @[mainViewController, emptyDetailsViewController];
         }
@@ -740,9 +762,7 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
             return nil;
         }
     }
-    
-    [_errorNotification dismissViewControllerAnimated:NO completion:nil];
-    
+
     NSString *title = [error.userInfo valueForKey:NSLocalizedFailureReasonErrorKey];
     NSString *msg = [error.userInfo valueForKey:NSLocalizedDescriptionKey];
     if (!title)
@@ -758,13 +778,26 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
         }
     }
     
-    _errorNotification = [UIAlertController alertControllerWithTitle:title message:msg preferredStyle:UIAlertControllerStyleAlert];
+    // Switch in offline mode in case of network reachability error
+    if ([error.domain isEqualToString:NSURLErrorDomain] && error.code == NSURLErrorNotConnectedToInternet)
+    {
+        self.isOffline = YES;
+    }
+
+    return [self showAlertWithTitle:title message:msg];
+}
+
+- (UIAlertController*)showAlertWithTitle:(NSString*)title message:(NSString*)message
+{
+    [_errorNotification dismissViewControllerAnimated:NO completion:nil];
+
+    _errorNotification = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
     [_errorNotification addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"ok"]
                                                            style:UIAlertActionStyleDefault
                                                          handler:^(UIAlertAction * action) {
-                                                             
+
                                                              [AppDelegate theDelegate].errorNotification = nil;
-                                                             
+
                                                          }]];
     // Display the error notification
     if (!isErrorNotificationSuspended)
@@ -772,13 +805,7 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
         [_errorNotification mxk_setAccessibilityIdentifier:@"AppDelegateErrorAlert"];
         [self showNotificationAlert:_errorNotification];
     }
-    
-    // Switch in offline mode in case of network reachability error
-    if ([error.domain isEqualToString:NSURLErrorDomain] && error.code == NSURLErrorNotConnectedToInternet)
-    {
-        self.isOffline = YES;
-    }
-    
+
     return self.errorNotification;
 }
 
@@ -846,9 +873,50 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     }
 }
 
+- (void)keyBackupStateDidChangeNotification:(NSNotification *)notification
+{
+    MXKeyBackup *keyBackup = notification.object;
+
+    if (keyBackup.state == MXKeyBackupStateWrongBackUpVersion)
+    {
+        if (wrongBackupVersionAlert)
+        {
+            [wrongBackupVersionAlert dismissViewControllerAnimated:NO completion:nil];
+        }
+
+        wrongBackupVersionAlert = [UIAlertController
+                                   alertControllerWithTitle:NSLocalizedStringFromTable(@"e2e_key_backup_wrong_version_title", @"Vector", nil)
+
+                                   message:NSLocalizedStringFromTable(@"e2e_key_backup_wrong_version", @"Vector", nil)
+
+                                   preferredStyle:UIAlertControllerStyleAlert];
+
+        MXWeakify(self);
+        [wrongBackupVersionAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"e2e_key_backup_wrong_version_button_settings"]
+                                                                     style:UIAlertActionStyleDefault
+                                                                   handler:^(UIAlertAction * action)
+                                             {
+                                                 MXStrongifyAndReturnIfNil(self);
+                                                 self->wrongBackupVersionAlert = nil;
+
+                                                 // TODO: Open settings
+                                             }]];
+
+        [wrongBackupVersionAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"e2e_key_backup_wrong_version_button_wasme"]
+                                                                     style:UIAlertActionStyleDefault
+                                                                   handler:^(UIAlertAction * action)
+                                             {
+                                                 MXStrongifyAndReturnIfNil(self);
+                                                 self->wrongBackupVersionAlert = nil;
+                                             }]];
+
+        [self showNotificationAlert:wrongBackupVersionAlert];
+    }
+}
+
 #pragma mark
 
-- (void)popToPeopleViewControllerAnimated:(BOOL)animated completion:(void (^)())completion
+- (void)popToPeopleViewControllerAnimated:(BOOL)animated completion:(void (^)(void))completion
 {
     UINavigationController *secondNavController = self.secondaryNavigationController;
     if (secondNavController)
@@ -896,12 +964,12 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
         
         if (popToPeopleViewControllerCompletion)
         {
-            void (^popToHomeViewControllerCompletion2)() = popToPeopleViewControllerCompletion;
+            void (^popToPeopleViewControllerCompletion2)() = popToPeopleViewControllerCompletion;
             popToPeopleViewControllerCompletion = nil;
             
             // Dispatch the completion in order to let navigation stack refresh itself.
             dispatch_async(dispatch_get_main_queue(), ^{
-                popToHomeViewControllerCompletion2();
+                popToPeopleViewControllerCompletion2();
             });
         }
     }
@@ -941,20 +1009,18 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     if (!isPushRegistered)
     {
         NSMutableSet* notificationCategories = [NSMutableSet set];
-        if ([[UIMutableUserNotificationAction class] instancesRespondToSelector:@selector(behavior)])
-        {
-            UIMutableUserNotificationAction* quickReply = [[UIMutableUserNotificationAction alloc] init];
-            quickReply.title = NSLocalizedStringFromTable(@"room_message_short_placeholder", @"Vector", nil);
-            quickReply.identifier = @"inline-reply";
-            quickReply.activationMode = UIUserNotificationActivationModeBackground;
-            quickReply.authenticationRequired = true;
-            quickReply.behavior = UIUserNotificationActionBehaviorTextInput;
 
-            UIMutableUserNotificationCategory* quickReplyCategory = [[UIMutableUserNotificationCategory alloc] init];
-            quickReplyCategory.identifier = @"QUICK_REPLY";
-            [quickReplyCategory setActions:[NSArray arrayWithObjects:quickReply, nil] forContext:UIUserNotificationActionContextDefault];
-            [notificationCategories addObject:quickReplyCategory];
-        }
+        UIMutableUserNotificationAction* quickReply = [[UIMutableUserNotificationAction alloc] init];
+        quickReply.title = NSLocalizedStringFromTable(@"room_message_short_placeholder", @"Vector", nil);
+        quickReply.identifier = @"inline-reply";
+        quickReply.activationMode = UIUserNotificationActivationModeBackground;
+        quickReply.authenticationRequired = true;
+        quickReply.behavior = UIUserNotificationActionBehaviorTextInput;
+
+        UIMutableUserNotificationCategory* quickReplyCategory = [[UIMutableUserNotificationCategory alloc] init];
+        quickReplyCategory.identifier = @"QUICK_REPLY";
+        [quickReplyCategory setActions:@[quickReply] forContext:UIUserNotificationActionContextDefault];
+        [notificationCategories addObject:quickReplyCategory];
 
         // Registration on iOS 8 and later
         UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeBadge | UIUserNotificationTypeSound |UIUserNotificationTypeAlert) categories:notificationCategories];
@@ -986,6 +1052,7 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     }
 }
 
+// "This block is not a prototype" - don't fix this, or it won't match Apple's definition
 - (void)application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forLocalNotification:(UILocalNotification *)notification withResponseInfo:(NSDictionary *)responseInfo completionHandler:(void (^)())completionHandler
 {
     if ([identifier isEqualToString: @"inline-reply"])
@@ -1015,7 +1082,7 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
             else
             {
                 [manager roomDataSourceForRoom:roomId create:YES onComplete:^(MXKRoomDataSource *roomDataSource) {
-                    NSString* responseText = [responseInfo objectForKey:UIUserNotificationActionResponseTypedTextKey];
+                    NSString* responseText = responseInfo[UIUserNotificationActionResponseTypedTextKey];
                     if (responseText != nil && responseText.length != 0)
                     {
                         NSLog(@"[AppDelegate][Push] handleActionWithIdentifier: sending message to room: %@", roomId);
@@ -1705,9 +1772,9 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
                     
                     if ([_masterTabBarController.selectedViewController isKindOfClass:MXKViewController.class])
                     {
-                        MXKViewController *homeViewController = (MXKViewController*)_masterTabBarController.selectedViewController;
+                        MXKViewController *peopleViewController = (MXKViewController*)_masterTabBarController.selectedViewController;
                         
-                        [homeViewController startActivityIndicator];
+                        [peopleViewController startActivityIndicator];
                         
                         if ([roomIdOrAlias hasPrefix:@"#"])
                         {
@@ -1718,15 +1785,16 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
                             [account.mxSession.matrixRestClient roomIDForRoomAlias:roomIdOrAlias success:^(NSString *roomId) {
                                 
                                 // Note: the activity indicator will not disappear if the session is not ready
-                                [homeViewController stopActivityIndicator];
+                                [peopleViewController stopActivityIndicator];
                                 
                                 // Check that 'fragment' has not been cancelled
                                 if ([universalLinkFragmentPending isEqualToString:fragment])
                                 {
                                     // Retry opening the link but with the returned room id
                                     NSString *newUniversalLinkFragment =
-                                    [fragment stringByReplacingOccurrencesOfString:[roomIdOrAlias stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
-                                                                        withString:[roomId stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+                                            [fragment stringByReplacingOccurrencesOfString:[MXTools encodeURIComponent:roomIdOrAlias]
+                                                                                withString:[MXTools encodeURIComponent:roomId]
+                                            ];
                                     
                                     universalLinkFragmentPendingRoomAlias = @{roomId: roomIdOrAlias};
                                     
@@ -1735,6 +1803,12 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
                                 
                             } failure:^(NSError *error) {
                                 NSLog(@"[AppDelegate] Universal link: Error: The home server failed to resolve the room alias (%@)", roomIdOrAlias);
+
+                                [peopleViewController stopActivityIndicator];
+
+                                NSString *errorMessage = [NSString stringWithFormat:NSLocalizedStringFromTable(@"room_does_not_exist", @"Vector", nil), roomIdOrAlias];
+
+                                [self showAlertWithTitle:nil message:errorMessage];
                             }];
                         }
                         else if ([roomIdOrAlias hasPrefix:@"!"] && ((MXKAccount*)accountManager.activeAccounts.firstObject).mxSession.state != MXSessionStateRunning)
@@ -1772,7 +1846,7 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
                             if (queryParams)
                             {
                                 // Note: the activity indicator will not disappear if the session is not ready
-                                [homeViewController stopActivityIndicator];
+                                [peopleViewController stopActivityIndicator];
                                 
                                 roomPreviewData = [[RoomPreviewData alloc] initWithRoomId:roomIdOrAlias emailInvitationParams:queryParams andSession:account.mxSession];
                                 [self showRoomPreview:roomPreviewData];
@@ -1789,7 +1863,7 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
                                 [roomPreviewData peekInRoom:^(BOOL succeeded) {
                                     
                                     // Note: the activity indicator will not disappear if the session is not ready
-                                    [homeViewController stopActivityIndicator];
+                                    [peopleViewController stopActivityIndicator];
                                     
                                     // If no data is available for this room, we name it with the known room alias (if any).
                                     if (!succeeded && universalLinkFragmentPendingRoomAlias[roomIdOrAlias])
@@ -1914,7 +1988,7 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     NSMutableArray<NSString*> *pathParams2 = [NSMutableArray arrayWithArray:pathParams];
     for (NSInteger i = 0; i < pathParams.count; i++)
     {
-        pathParams2[i] = [pathParams2[i] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        pathParams2[i] = [pathParams2[i] stringByRemovingPercentEncoding];
     }
     pathParams = pathParams2;
     
@@ -1927,14 +2001,14 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
         for (NSString *keyValue in [fragments[1] componentsSeparatedByString:@"&"])
         {
             // Get the parameter name
-            NSString *key = [[keyValue componentsSeparatedByString:@"="] objectAtIndex:0];
+            NSString *key = [keyValue componentsSeparatedByString:@"="][0];
             
             // Get the parameter value
-            NSString *value = [[keyValue componentsSeparatedByString:@"="] objectAtIndex:1];
+            NSString *value = [keyValue componentsSeparatedByString:@"="][1];
             if (value.length)
             {
                 value = [value stringByReplacingOccurrencesOfString:@"+" withString:@" "];
-                value = [value stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                value = [value stringByRemovingPercentEncoding];
                 
                 queryParams[key] = value;
             }
@@ -2391,6 +2465,9 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     // Clear cache
     [MXMediaManager clearCache];
     
+    // Reset key backup banner preferences
+    [KeyBackupBannerPreferences.shared reset];
+    
     // Logout all matrix account
     [[MXKAccountManager sharedManager] logoutWithCompletion:^{
         
@@ -2454,7 +2531,7 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
             if (!launchAnimationContainerView && window)
             {
                 launchAnimationContainerView = [[UIView alloc] initWithFrame:window.bounds];
-                launchAnimationContainerView.backgroundColor = kCaritasPrimaryBgColor;
+                launchAnimationContainerView.backgroundColor = ThemeService.shared.theme.backgroundColor;
                 launchAnimationContainerView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
                 [window addSubview:launchAnimationContainerView];
                 
@@ -2965,7 +3042,7 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     }
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
     UIViewController *emptyDetailsViewController = [storyboard instantiateViewControllerWithIdentifier:@"EmptyDetailsViewControllerStoryboardId"];
-    emptyDetailsViewController.view.backgroundColor = kCaritasPrimaryBgColor;
+    emptyDetailsViewController.view.backgroundColor = ThemeService.shared.theme.backgroundColor;
     return emptyDetailsViewController;
 }
 
@@ -3070,7 +3147,7 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
                 {
                     BOOL wasNewDevice = (deviceInfo.verified == MXDeviceUnknown);
 
-                    void (^acceptKeys)() = ^void()
+                    void (^acceptKeys)(void) = ^void()
                     {
                         NSLog(@"[AppDelegate] checkPendingRoomKeyRequestsInSession: Accepting keys without verifying for %@", deviceInfo);
 

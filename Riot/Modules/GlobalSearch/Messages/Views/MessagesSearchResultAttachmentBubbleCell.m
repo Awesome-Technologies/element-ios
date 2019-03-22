@@ -17,7 +17,9 @@
 
 #import "MessagesSearchResultAttachmentBubbleCell.h"
 
-#import "RiotDesignValues.h"
+#import "ThemeService.h"
+#import "Riot-Swift.h"
+#import "MXKRoomBubbleTableViewCell+Riot.h"
 
 @implementation MessagesSearchResultAttachmentBubbleCell
 
@@ -25,11 +27,11 @@
 {
     [super customizeTableViewCellRendering];
     
-    self.userNameLabel.textColor = kCaritasPrimaryTextColor;
+    self.roomNameLabel.textColor = ThemeService.shared.theme.textSecondaryColor;
     
-    self.roomNameLabel.textColor = kCaritasSecondaryTextColor;
+    self.messageTextView.tintColor = ThemeService.shared.theme.tintColor;
     
-    self.messageTextView.tintColor = kCaritasColorRed;
+    [self updateUserNameColor];
 }
 
 - (void)render:(MXKCellData *)cellData
@@ -51,6 +53,8 @@
         {
             self.roomNameLabel.text = bubbleData.roomId;
         }
+        
+        [self updateUserNameColor];
     }
 }
 

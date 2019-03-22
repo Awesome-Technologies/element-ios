@@ -16,7 +16,8 @@
 
 #import "DeactivateAccountViewController.h"
 
-#import "RiotDesignValues.h"
+#import "ThemeService.h"
+#import "Riot-Swift.h"
 #import "AppDelegate.h"
 
 #pragma mark - Defines & Constants
@@ -108,37 +109,40 @@ static CGFloat const kTextFontSize = 15.0;
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-    return kCaritasDesignStatusBarStyle;
+    return ThemeService.shared.theme.statusBarStyle;
 }
 
 #pragma mark - Private
 
 - (void)registerThemeNotification
 {
-    self.themeDidChangeNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kRiotDesignValuesDidChangeThemeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notif) {
+    self.themeDidChangeNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kThemeServiceDidChangeThemeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notif) {
         [self userInterfaceThemeDidChange];
     }];
 }
 
 - (void)userInterfaceThemeDidChange
 {
-    self.view.backgroundColor = kCaritasPrimaryBgColor;
-    self.defaultBarTintColor = kCaritasNavigationBarBgColor;
-    self.activityIndicator.backgroundColor = kCaritasOverlayColor;
-    self.forgetMessageButton.imageView.tintColor = kCaritasPrimaryTextColor;
+    [ThemeService.shared.theme applyStyleOnNavigationBar:self.navigationController.navigationBar];
+    self.defaultBarTintColor = self.navigationController.navigationBar.barTintColor;
+    self.view.backgroundColor = ThemeService.shared.theme.backgroundColor;
+    [self setNeedsStatusBarAppearanceUpdate];
+
+    self.activityIndicator.backgroundColor = ThemeService.shared.theme.overlayBackgroundColor;
+    self.forgetMessageButton.imageView.tintColor = ThemeService.shared.theme.textPrimaryColor;
 }
 
 - (void)setupStringAttributes
 {
     self.normalStringAttributes = @{
                                     NSFontAttributeName: [UIFont systemFontOfSize:kTextFontSize],
-                                    NSForegroundColorAttributeName: kCaritasPrimaryTextColor
+                                    NSForegroundColorAttributeName: ThemeService.shared.theme.textPrimaryColor
                                     };
     
     
     self.emphasizeStringAttributes = @{
                                        NSFontAttributeName: [UIFont systemFontOfSize:kTextFontSize weight:UIFontWeightBold],
-                                       NSForegroundColorAttributeName: kCaritasPrimaryTextColor
+                                       NSForegroundColorAttributeName: ThemeService.shared.theme.textPrimaryColor
                                        };
 }
 
@@ -152,7 +156,8 @@ static CGFloat const kTextFontSize = 15.0;
 
 - (void)setupNavigationBar
 {
-    self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName:kCaritasColorWhite};
+    self.navigationController.navigationBar.titleTextAttributes = @{ NSForegroundColorAttributeName: ThemeService.shared.theme.warningColor };
+    
     UIBarButtonItem *cancelBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedStringFromTable(@"cancel", @"Vector", nil) style:UIBarButtonItemStylePlain target:self action:@selector(cancelButtonAction:)];
     self.navigationItem.rightBarButtonItem = cancelBarButtonItem;
 }
@@ -165,9 +170,9 @@ static CGFloat const kTextFontSize = 15.0;
     self.deactivateAcccountButton.titleLabel.baselineAdjustment = UIBaselineAdjustmentAlignCenters;
     
     self.deactivateAcccountButton.layer.masksToBounds = YES;
-    self.deactivateAcccountButton.backgroundColor = kCaritasColorRed;
+    self.deactivateAcccountButton.backgroundColor = ThemeService.shared.theme.baseColor;
     [self.deactivateAcccountButton setTitle:NSLocalizedStringFromTable(@"deactivate_account_validate_action", @"Vector", nil) forState:UIControlStateNormal];    
-    [self.deactivateAcccountButton setTitleColor:kCaritasColorSilver forState:UIControlStateDisabled];
+    [self.deactivateAcccountButton setTitleColor:ThemeService.shared.theme.headerTextSecondaryColor forState:UIControlStateDisabled];
 }
 
 - (void)setupDeactivateAccountInfosLabel

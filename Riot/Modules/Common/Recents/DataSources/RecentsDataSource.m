@@ -19,7 +19,7 @@
 
 #import "RecentCellData.h"
 
-#import "RiotDesignValues.h"
+#import "ThemeService.h"
 
 #import "MXRoom+Riot.h"
 
@@ -40,7 +40,7 @@
 
 NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSourceTapOnDirectoryServerChange";
 
-@interface RecentsDataSource()
+@interface RecentsDataSource() <KeyBackupBannerCellDelegate>
 {
     NSMutableArray* invitesCellDataArray;
     NSMutableArray* favoriteCellDataArray;
@@ -60,10 +60,13 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
     // Timer to not refresh publicRoomsDirectoryDataSource on every keystroke.
     NSTimer *publicRoomsTriggerTimer;
 }
+
+@property (nonatomic, assign, readwrite) KeyBackupBanner keyBackupBanner;
+
 @end
 
 @implementation RecentsDataSource
-@synthesize directorySection, invitesSection, favoritesSection, peopleSection, conversationSection, lowPrioritySection, serverNoticeSection;
+@synthesize directorySection, invitesSection, favoritesSection, peopleSection, conversationSection, lowPrioritySection, serverNoticeSection, keyBackupBannerSection;
 @synthesize hiddenCellIndexPath, droppingCellIndexPath, droppingCellBackGroundView;
 @synthesize invitesCellDataArray, favoriteCellDataArray, peopleCellDataArray, conversationCellDataArray, lowPriorityCellDataArray, serverNoticeCellDataArray;
 
@@ -79,6 +82,9 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
         serverNoticeCellDataArray = [[NSMutableArray alloc] init];
         conversationCellDataArray = [[NSMutableArray alloc] init];
 
+        
+        _keyBackupBanner = KeyBackupBannerNone;
+        keyBackupBannerSection = -1;
         directorySection = -1;
         invitesSection = -1;
         favoritesSection = -1;
@@ -111,6 +117,17 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
 {
     _recentsDataSourceMode = recentsDataSourceMode;
     
+    // Register to key backup state changes only on in home mode.
+    if (recentsDataSourceMode == RecentsDataSourceModeHome)
+    {
+        [self registerKeyBackupStateDidChangeNotification];
+    }
+    else
+    {
+        [self unregisterKeyBackupStateDidChangeNotification];
+    }
+
+    [self updateKeyBackupBanner];
     [self forceRefresh];
 }
 
@@ -130,6 +147,100 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
     shrinkedSectionsBitMask = savedShrinkedSectionsBitMask;
 
     return stickyHeader;
+}
+
+#pragma mark - Key backup setup banner
+
+- (void)registerKeyBackupStateDidChangeNotification
+{
+    // Check homeserver update in background
+    [self.mxSession.crypto.backup forceRefresh:nil failure:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyBackupStateDidChangeNotification:) name:kMXKeyBackupDidStateChangeNotification object:nil];
+}
+
+- (void)unregisterKeyBackupStateDidChangeNotification
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kMXKeyBackupDidStateChangeNotification object:nil];
+}
+
+- (void)keyBackupStateDidChangeNotification:(NSNotification*)notification
+{
+    if ([self updateKeyBackupBanner])
+    {
+        [self forceRefresh];
+    }
+}
+
+- (BOOL)updateKeyBackupBanner
+{
+    KeyBackupBanner keyBackupBanner = KeyBackupBannerNone;
+        
+    if (self.recentsDataSourceMode == RecentsDataSourceModeHome && self.mxSession.crypto.backup.hasKeysToBackup)
+    {
+        KeyBackupBannerPreferences *keyBackupBannersPreferences = KeyBackupBannerPreferences.shared;
+        
+        NSString *keyBackupVersion = self.mxSession.crypto.backup.keyBackupVersion.version;
+        
+        switch (self.mxSession.crypto.backup.state) {
+            case MXKeyBackupStateDisabled:
+                // Show key backup setup banner only if user has not hidden it once.
+                if (keyBackupBannersPreferences.hideSetupBanner)
+                {
+                    keyBackupBanner = KeyBackupBannerNone;
+                }
+                else
+                {
+                    keyBackupBanner = KeyBackupBannerSetup;
+                }
+                break;
+            case MXKeyBackupStateNotTrusted:
+            case MXKeyBackupStateWrongBackUpVersion:
+                // Show key backup recover banner only if user has not hidden it for the given version.
+                if (keyBackupVersion && [keyBackupBannersPreferences isRecoverBannerHiddenFor:keyBackupVersion])
+                {
+                    keyBackupBanner = KeyBackupBannerNone;
+                }
+                else
+                {
+                    keyBackupBanner = KeyBackupBannerRecover;
+                }
+                break;
+            default:
+                keyBackupBanner = KeyBackupBannerNone;
+                break;
+        }
+    }
+
+    BOOL updated = (self.keyBackupBanner != keyBackupBanner);
+
+    self.keyBackupBanner = keyBackupBanner;
+
+    return updated;
+}
+
+- (void)hideKeyBackupBanner:(KeyBackupBanner)keyBackupBanner
+{
+    KeyBackupBannerPreferences *keyBackupBannersPreferences = KeyBackupBannerPreferences.shared;
+    
+    switch (keyBackupBanner) {
+        case KeyBackupBannerSetup:
+            keyBackupBannersPreferences.hideSetupBanner = YES;
+            break;
+        case KeyBackupBannerRecover:
+        {
+            NSString *keyBackupVersion = self.mxSession.crypto.backup.keyBackupVersion.version;
+            if (keyBackupVersion)
+            {
+                [keyBackupBannersPreferences hideRecoverBannerFor:keyBackupVersion];
+            }
+        }
+            break;
+        default:
+            break;
+    }
+    
+    [self forceRefresh];
 }
 
 #pragma mark -
@@ -156,7 +267,7 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
     // sanity check
     if (matrixSession.myUser && matrixSession.myUser.userId)
     {
-        id roomTagListener = [roomTagsListenerByUserId objectForKey:matrixSession.myUser.userId];
+        id roomTagListener = roomTagsListenerByUserId[matrixSession.myUser.userId];
         
         if (roomTagListener)
         {
@@ -204,7 +315,7 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
 
                                                                 }];
 
-            [roomTagsListenerByUserId setObject:roomTagsListener forKey:dataSource.mxSession.myUser.userId];
+            roomTagsListenerByUserId[dataSource.mxSession.myUser.userId] = roomTagsListener;
         }
     }
 }
@@ -246,7 +357,12 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
     // Check whether all data sources are ready before rendering recents
     if (self.state == MXKDataSourceStateReady)
     {
-        directorySection = favoritesSection = peopleSection = conversationSection = lowPrioritySection = invitesSection = serverNoticeSection = -1;
+        keyBackupBannerSection = directorySection = favoritesSection = peopleSection = conversationSection = lowPrioritySection = invitesSection = serverNoticeSection = -1;
+        
+        if (self.keyBackupBanner != KeyBackupBannerNone)
+        {
+            self.keyBackupBannerSection = sectionsCount++;
+        }
         
         if (invitesCellDataArray.count > 0)
         {
@@ -300,7 +416,11 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
     
     NSUInteger count = 0;
 
-    if (section == favoritesSection && !(shrinkedSectionsBitMask & RECENTSDATASOURCE_SECTION_FAVORITES))
+    if (section == self.keyBackupBannerSection && self.keyBackupBanner != KeyBackupBannerNone)
+    {
+        count = 1;
+    }
+    else if (section == favoritesSection && !(shrinkedSectionsBitMask & RECENTSDATASOURCE_SECTION_FAVORITES))
     {
         count = favoriteCellDataArray.count;
     }
@@ -345,7 +465,11 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
 
 - (CGFloat)heightForHeaderInSection:(NSInteger)section
 {
-    if (section == directorySection && !(shrinkedSectionsBitMask & RECENTSDATASOURCE_SECTION_DIRECTORY))
+    if (section == self.keyBackupBannerSection)
+    {
+        return 0.0;
+    }
+    else if (section == directorySection && !(shrinkedSectionsBitMask & RECENTSDATASOURCE_SECTION_DIRECTORY))
     {
         return RECENTSDATASOURCE_DIRECTORY_SECTION_HEADER_HEIGHT;
     }
@@ -415,10 +539,10 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
         NSString *roomCount = [NSString stringWithFormat:@"   %tu", count];
         
         NSMutableAttributedString *mutableSectionTitle = [[NSMutableAttributedString alloc] initWithString:title
-                                                                                         attributes:@{NSForegroundColorAttributeName : kCaritasColorWhite,
+                                                                                         attributes:@{NSForegroundColorAttributeName : ThemeService.shared.theme.headerTextPrimaryColor,
                                                                                                       NSFontAttributeName: [UIFont boldSystemFontOfSize:15.0]}];
         [mutableSectionTitle appendAttributedString:[[NSMutableAttributedString alloc] initWithString:roomCount
-                                                                                    attributes:@{NSForegroundColorAttributeName : kCaritasAuxiliaryColor,
+                                                                                    attributes:@{NSForegroundColorAttributeName : ThemeService.shared.theme.headerTextSecondaryColor,
                                                                                                  NSFontAttributeName: [UIFont boldSystemFontOfSize:15.0]}]];
         
         sectionTitle = mutableSectionTitle;
@@ -426,7 +550,7 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
     else if (title)
     {
         sectionTitle = [[NSAttributedString alloc] initWithString:title
-                                               attributes:@{NSForegroundColorAttributeName : kCaritasColorWhite,
+                                               attributes:@{NSForegroundColorAttributeName : ThemeService.shared.theme.headerTextPrimaryColor,
                                                             NSFontAttributeName: [UIFont boldSystemFontOfSize:15.0]}];
     }
     
@@ -460,16 +584,18 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
     {
         sectionArray = serverNoticeCellDataArray;
     }
-    
+
+    BOOL highlight = NO;
     for (id<MXKRecentCellDataStoring> cellData in sectionArray)
     {
         count += cellData.notificationCount;
+        highlight |= (cellData.highlightCount > 0);
     }
     
     if (count)
     {
         UILabel *missedNotifAndUnreadBadgeLabel = [[UILabel alloc] init];
-        missedNotifAndUnreadBadgeLabel.textColor = kCaritasPrimaryBgColor;
+        missedNotifAndUnreadBadgeLabel.textColor = ThemeService.shared.theme.baseTextPrimaryColor;
         missedNotifAndUnreadBadgeLabel.font = [UIFont boldSystemFontOfSize:14];
         if (count > 1000)
         {
@@ -487,7 +613,7 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
         
         missedNotifAndUnreadBadgeBgView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, bgViewWidth, 20)];
         [missedNotifAndUnreadBadgeBgView.layer setCornerRadius:10];
-        missedNotifAndUnreadBadgeBgView.backgroundColor = kCaritasAuxiliaryColor;
+        missedNotifAndUnreadBadgeBgView.backgroundColor = highlight ? ThemeService.shared.theme.noticeColor : ThemeService.shared.theme.noticeSecondaryColor;
         
         [missedNotifAndUnreadBadgeBgView addSubview:missedNotifAndUnreadBadgeLabel];
         missedNotifAndUnreadBadgeLabel.center = missedNotifAndUnreadBadgeBgView.center;
@@ -515,8 +641,14 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
 
 - (UIView *)viewForHeaderInSection:(NSInteger)section withFrame:(CGRect)frame
 {
+    // No header view in key backup banner section
+    if (section == self.keyBackupBannerSection)
+    {
+        return nil;
+    }
+    
     UIView *sectionHeader = [[UIView alloc] initWithFrame:frame];
-    sectionHeader.backgroundColor = kCaritasSecondaryBgColor;
+    sectionHeader.backgroundColor = ThemeService.shared.theme.headerBackgroundColor;
     NSInteger sectionBitwise = 0;
     UIImageView *chevronView;
     UIView *accessoryView;
@@ -626,7 +758,14 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
         return [[UITableViewCell alloc] init];
     }
     
-    if (indexPath.section == directorySection)
+    if (indexPath.section == self.keyBackupBannerSection)
+    {
+        KeyBackupBannerCell* keyBackupBannerCell = [tableView dequeueReusableCellWithIdentifier:KeyBackupBannerCell.defaultReuseIdentifier forIndexPath:indexPath];
+        [keyBackupBannerCell configureFor:self.keyBackupBanner];
+        keyBackupBannerCell.delegate = self;
+        return keyBackupBannerCell;
+    }
+    else if (indexPath.section == directorySection)
     {
         NSIndexPath *indexPathInPublicRooms = [NSIndexPath indexPathForRow:indexPath.row inSection:0];
         return [_publicRoomsDirectoryDataSource tableView:tableView cellForRowAtIndexPath:indexPathInPublicRooms];
@@ -665,7 +804,7 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
         if (!tableViewCell)
         {
             tableViewCell = [[MXKTableViewCell alloc] init];
-            tableViewCell.textLabel.textColor = kCaritasSecondaryTextColor;
+            tableViewCell.textLabel.textColor = ThemeService.shared.theme.textSecondaryColor;
             tableViewCell.textLabel.font = [UIFont systemFontOfSize:15.0];
             tableViewCell.selectionStyle = UITableViewCellSelectionStyleNone;
         }
@@ -710,42 +849,42 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
     {
         if (cellDataIndex < favoriteCellDataArray.count)
         {
-            cellData = [favoriteCellDataArray objectAtIndex:cellDataIndex];
+            cellData = favoriteCellDataArray[cellDataIndex];
         }
     }
     else if (tableSection == peopleSection)
     {
         if (cellDataIndex < peopleCellDataArray.count)
         {
-            cellData = [peopleCellDataArray objectAtIndex:cellDataIndex];
+            cellData = peopleCellDataArray[cellDataIndex];
         }
     }
     else if (tableSection== conversationSection)
     {
         if (cellDataIndex < conversationCellDataArray.count)
         {
-            cellData = [conversationCellDataArray objectAtIndex:cellDataIndex];
+            cellData = conversationCellDataArray[cellDataIndex];
         }
     }
     else if (tableSection == lowPrioritySection)
     {
         if (cellDataIndex < lowPriorityCellDataArray.count)
         {
-            cellData = [lowPriorityCellDataArray objectAtIndex:cellDataIndex];
+            cellData = lowPriorityCellDataArray[cellDataIndex];
         }
     }
     else if (tableSection == serverNoticeSection)
     {
         if (cellDataIndex < serverNoticeCellDataArray.count)
         {
-            cellData = [serverNoticeCellDataArray objectAtIndex:cellDataIndex];
+            cellData = serverNoticeCellDataArray[cellDataIndex];
         }
     }
     else if (tableSection == invitesSection)
     {
         if (cellDataIndex < invitesCellDataArray.count)
         {
-            cellData = [invitesCellDataArray objectAtIndex:cellDataIndex];
+            cellData = invitesCellDataArray[cellDataIndex];
         }
     }
     
@@ -802,7 +941,7 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
     {
         for (int index = 0; index < cellDataArray.count; index++)
         {
-            id<MXKRecentCellDataStoring> cellDataStoring = [cellDataArray objectAtIndex:index];
+            id<MXKRecentCellDataStoring> cellDataStoring = cellDataArray[index];
 
             if ([roomId isEqualToString:cellDataStoring.roomSummary.roomId] && (matrixSession == cellDataStoring.roomSummary.room.mxSession))
             {
@@ -917,6 +1056,8 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
 
 - (void)refreshRoomsSections
 {
+    NSDate *startDate = [NSDate date];
+
     [invitesCellDataArray removeAllObjects];
     [favoriteCellDataArray removeAllObjects];
     [peopleCellDataArray removeAllObjects];
@@ -928,12 +1069,12 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
     _missedDirectDiscussionsCount = _missedHighlightDirectDiscussionsCount = 0;
     _missedGroupDiscussionsCount = _missedHighlightGroupDiscussionsCount = 0;
     
-    directorySection = favoritesSection = peopleSection = conversationSection = lowPrioritySection = serverNoticeSection = invitesSection = -1;
+    keyBackupBannerSection = directorySection = favoritesSection = peopleSection = conversationSection = lowPrioritySection = serverNoticeSection = invitesSection = -1;
     
     if (displayedRecentsDataSourceArray.count > 0)
     {
         // FIXME manage multi accounts
-        MXKSessionRecentsDataSource *recentsDataSource = [displayedRecentsDataSourceArray objectAtIndex:0];
+        MXKSessionRecentsDataSource *recentsDataSource = displayedRecentsDataSourceArray[0];
         MXSession* session = recentsDataSource.mxSession;
         
         NSInteger count = recentsDataSource.numberOfCells;
@@ -1173,6 +1314,8 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
             }];
         }
     }
+
+    NSLog(@"[RecentsDataSource] refreshRoomsSections: Done in %.0fms", [[NSDate date] timeIntervalSinceDate:startDate] * 1000);
 }
 
 - (void)dataSource:(MXKDataSource*)dataSource didCellChange:(id)changes
@@ -1332,7 +1475,7 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
     return nil;
 }
 
-- (void)moveRoomCell:(MXRoom*)room from:(NSIndexPath*)oldPath to:(NSIndexPath*)newPath success:(void (^)())moveSuccess failure:(void (^)(NSError *error))moveFailure;
+- (void)moveRoomCell:(MXRoom*)room from:(NSIndexPath*)oldPath to:(NSIndexPath*)newPath success:(void (^)(void))moveSuccess failure:(void (^)(NSError *error))moveFailure;
 {
     NSLog(@"[RecentsDataSource] moveCellFrom (%tu, %tu) to (%tu, %tu)", oldPath.section, oldPath.row, newPath.section, newPath.row);
     
@@ -1409,6 +1552,13 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
         
         [self forceRefresh];
     }
+}
+
+#pragma mark - KeyBackupSetupBannerCellDelegate
+
+- (void)keyBackupBannerCellDidTapCloseAction:(KeyBackupBannerCell * _Nonnull)cell
+{
+    [self hideKeyBackupBanner:self.keyBackupBanner];
 }
 
 @end

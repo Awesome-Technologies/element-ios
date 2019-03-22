@@ -3,5 +3,10 @@
 //
 
 @import MatrixSDK;
+@import MatrixKit;
 
 #import "WebViewViewController.h"
+#import "RiotNavigationController.h"
+#import "ThemeService.h"
+#import "TableViewCellWithCheckBoxAndLabel.h"
+#import "RecentsDataSource.h"

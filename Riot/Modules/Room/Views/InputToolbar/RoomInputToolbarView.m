@@ -17,7 +17,8 @@
 
 #import "RoomInputToolbarView.h"
 
-#import "RiotDesignValues.h"
+#import "ThemeService.h"
+#import "Riot-Swift.h"
 
 #import "GBDeviceInfo_iOS.h"
 
@@ -64,12 +65,12 @@
     
     self.rightInputToolbarButton.hidden = YES;
     
-    [self.rightInputToolbarButton setTitleColor:kCaritasPrimaryTextColor forState:UIControlStateNormal];
-    [self.rightInputToolbarButton setTitleColor:kCaritasPrimaryTextColor forState:UIControlStateHighlighted];
+    [self.rightInputToolbarButton setTitleColor:ThemeService.shared.theme.tintColor forState:UIControlStateNormal];
+    [self.rightInputToolbarButton setTitleColor:ThemeService.shared.theme.tintColor forState:UIControlStateHighlighted];
     
     self.isEncryptionEnabled = _isEncryptionEnabled;
     
-    self.attachMediaButton.imageView.tintColor = kCaritasPrimaryTextColor;
+    self.attachMediaButton.imageView.tintColor = ThemeService.shared.theme.baseTextPrimaryColor;
 }
 
 #pragma mark - Override MXKView
@@ -81,7 +82,7 @@
     // Remove default toolbar background color
     self.backgroundColor = [UIColor clearColor];
     
-    self.separatorView.backgroundColor = kCaritasAuxiliaryColor;
+    self.separatorView.backgroundColor = ThemeService.shared.theme.lineBreakColor;
     
     // Custom the growingTextView display
     growingTextView.layer.cornerRadius = 0;
@@ -89,10 +90,10 @@
     growingTextView.backgroundColor = [UIColor clearColor];
     
     growingTextView.font = [UIFont systemFontOfSize:15];
-    growingTextView.textColor = kCaritasPrimaryTextColor;
-    growingTextView.tintColor = kCaritasColorRed;
+    growingTextView.textColor = ThemeService.shared.theme.textPrimaryColor;
+    growingTextView.tintColor = ThemeService.shared.theme.tintColor;
     
-    growingTextView.internalTextView.keyboardAppearance = kCaritasKeyboard;
+    growingTextView.internalTextView.keyboardAppearance = ThemeService.shared.theme.keyboardAppearance;
 }
 
 #pragma mark -

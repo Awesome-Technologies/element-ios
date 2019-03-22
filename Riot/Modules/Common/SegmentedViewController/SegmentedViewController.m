@@ -17,7 +17,13 @@
 
 #import "SegmentedViewController.h"
 
-#import "RiotDesignValues.h"
+#import "ThemeService.h"
+
+#ifdef IS_SHARE_EXTENSION
+#import "RiotShareExtension-Swift.h"
+#else
+#import "Riot-Swift.h"
+#endif
 
 @interface SegmentedViewController ()
 {
@@ -43,8 +49,8 @@
     UIView* selectedMarkerView;
     NSLayoutConstraint *leftMarkerViewConstraint;
     
-    // Observe kRiotDesignValuesDidChangeThemeNotification to handle user interface theme change.
-    id kRiotDesignValuesDidChangeThemeNotificationObserver;
+    // Observe kThemeServiceDidChangeThemeNotification to handle user interface theme change.
+    id kThemeServiceDidChangeThemeNotificationObserver;
 }
 
 @end
@@ -98,10 +104,10 @@
         selectedMarkerView = nil;
     }
     
-    if (kRiotDesignValuesDidChangeThemeNotificationObserver)
+    if (kThemeServiceDidChangeThemeNotificationObserver)
     {
-        [[NSNotificationCenter defaultCenter] removeObserver:kRiotDesignValuesDidChangeThemeNotificationObserver];
-        kRiotDesignValuesDidChangeThemeNotificationObserver = nil;
+        [[NSNotificationCenter defaultCenter] removeObserver:kThemeServiceDidChangeThemeNotificationObserver];
+        kThemeServiceDidChangeThemeNotificationObserver = nil;
     }
     
     [super destroy];
@@ -121,6 +127,24 @@
     return viewControllers;
 }
 
+- (void)setSectionHeaderTintColor:(UIColor *)sectionHeaderTintColor
+{
+    if (_sectionHeaderTintColor != sectionHeaderTintColor)
+    {
+        _sectionHeaderTintColor = sectionHeaderTintColor;
+        
+        if (selectedMarkerView)
+        {
+            selectedMarkerView.backgroundColor = ThemeService.shared.theme.baseColor;
+        }
+        
+        for (UILabel *label in sectionLabels)
+        {
+            label.textColor = sectionHeaderTintColor;
+        }
+    }
+}
+
 #pragma mark -
 
 - (void)finalizeInit
@@ -129,8 +153,6 @@
     
     // Setup `MXKViewControllerHandling` properties
     self.enableBarTintColorStatusChange = NO;
-    
-    self.sectionHeaderTintColor = kCaritasColorRed;
 }
 
 - (void)viewDidLoad
@@ -162,7 +184,7 @@
     [self createSegmentedViews];
     
     // Observe user interface theme change.
-    kRiotDesignValuesDidChangeThemeNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kRiotDesignValuesDidChangeThemeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notif) {
+    kThemeServiceDidChangeThemeNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kThemeServiceDidChangeThemeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notif) {
         
         [self userInterfaceThemeDidChange];
         
@@ -172,16 +194,18 @@
 
 - (void)userInterfaceThemeDidChange
 {
-    self.defaultBarTintColor = kCaritasNavigationBarBgColor;
-    self.barTitleColor = kCaritasColorWhite;
-    self.activityIndicator.backgroundColor = kCaritasOverlayColor;
+    [ThemeService.shared.theme applyStyleOnNavigationBar:self.navigationController.navigationBar];
+
+    self.activityIndicator.backgroundColor = ThemeService.shared.theme.overlayBackgroundColor;
     
-    self.view.backgroundColor = kCaritasPrimaryBgColor;
+    self.view.backgroundColor = ThemeService.shared.theme.backgroundColor;
+    
+    self.sectionHeaderTintColor = ThemeService.shared.theme.textPrimaryColor;
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-    return kCaritasDesignStatusBarStyle;
+    return ThemeService.shared.theme.statusBarStyle;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -243,10 +267,10 @@
         // create programmatically each label
         UILabel *label = [[UILabel alloc] init];
         
-        label.text = [sectionTitles objectAtIndex:index];
+        label.text = sectionTitles[index];
         label.font = [UIFont systemFontOfSize:17];
         label.textAlignment = NSTextAlignmentCenter;
-        label.textColor = kCaritasPrimaryTextColor;
+        label.textColor = _sectionHeaderTintColor;
         label.backgroundColor = [UIColor clearColor];
         label.accessibilityIdentifier = [NSString stringWithFormat:@"SegmentedVCSectionLabel%tu", index];
         
@@ -263,7 +287,7 @@
             leftConstraint = [NSLayoutConstraint constraintWithItem:label
                                                           attribute:NSLayoutAttributeLeading
                                                           relatedBy:NSLayoutRelationEqual
-                                                             toItem:[labels objectAtIndex:(index-1)]
+                                                             toItem:labels[index - 1]
                                                           attribute:NSLayoutAttributeTrailing
                                                          multiplier:1.0
                                                            constant:0];
@@ -339,7 +363,7 @@
     leftMarkerViewConstraint = [NSLayoutConstraint constraintWithItem:selectedMarkerView
                                                             attribute:NSLayoutAttributeLeading
                                                             relatedBy:NSLayoutRelationEqual
-                                                               toItem:[sectionLabels objectAtIndex:_selectedIndex]
+                                                               toItem:sectionLabels[_selectedIndex]
                                                             attribute:NSLayoutAttributeLeading
                                                            multiplier:1.0
                                                              constant:0];
@@ -386,7 +410,7 @@
         
         if (index != NSNotFound)
         {
-            UILabel* label = [sectionLabels objectAtIndex:index];
+            UILabel* label = sectionLabels[index];
             label.font = [UIFont systemFontOfSize:17];
         }
         
@@ -398,7 +422,7 @@
         [NSLayoutConstraint deactivateConstraints:@[displayedVCTopConstraint, displayedVCLeftConstraint, displayedVCWidthConstraint, displayedVCHeightConstraint]];
     }
     
-    UILabel* label = [sectionLabels objectAtIndex:_selectedIndex];
+    UILabel* label = sectionLabels[_selectedIndex];
     label.font = [UIFont boldSystemFontOfSize:17];
 
     // update the marker view position
@@ -407,7 +431,7 @@
     leftMarkerViewConstraint = [NSLayoutConstraint constraintWithItem:selectedMarkerView
                                                             attribute:NSLayoutAttributeLeading
                                                             relatedBy:NSLayoutRelationEqual
-                                                               toItem:[sectionLabels objectAtIndex:_selectedIndex]
+                                                               toItem:sectionLabels[_selectedIndex]
                                                             attribute:NSLayoutAttributeLeading
                                                            multiplier:1.0
                                                              constant:0];
@@ -415,7 +439,7 @@
     [NSLayoutConstraint activateConstraints:@[leftMarkerViewConstraint]];
 
     // Set the new selected view controller
-    _selectedViewController = [viewControllers objectAtIndex:_selectedIndex];
+    _selectedViewController = viewControllers[_selectedIndex];
 
     // Make iOS invoke selectedViewController viewWillAppear when the segmented view is already visible
     if (isViewAppeared)

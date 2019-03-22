@@ -35,7 +35,7 @@
  @param onComplete a block called when the the dialog is closed.
  @return the newly created instance.
  */
-- (instancetype)initWithDeviceInfo:(MXDeviceInfo*)deviceInfo andMatrixSession:(MXSession*)session onComplete:(void (^)())onComplete;
+- (instancetype)initWithDeviceInfo:(MXDeviceInfo*)deviceInfo andMatrixSession:(MXSession*)session onComplete:(void (^)(void))onComplete;
 
 /**
  Accept all pending keys but not verify devices.

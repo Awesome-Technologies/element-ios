@@ -17,7 +17,8 @@
 
 #import "RoomTitleView.h"
 
-#import "RiotDesignValues.h"
+#import "ThemeService.h"
+#import "Riot-Swift.h"
 
 @implementation RoomTitleView
 
@@ -70,6 +71,9 @@
 - (void)layoutSubviews
 {
     [super layoutSubviews];
+
+    self.roomDetailsIconImageView.image = [MXKTools paintImage:self.roomDetailsIconImageView.image
+                                                     withColor:ThemeService.shared.theme.tintColor];
     
     if (self.superview)
     {
@@ -132,8 +136,9 @@
 -(void)customizeViewRendering
 {
     [super customizeViewRendering];
-    
-    self.displayNameTextField.textColor = kCaritasColorWhite;
+
+    self.backgroundColor = UIColor.clearColor;
+    self.displayNameTextField.textColor = ThemeService.shared.theme.baseTextPrimaryColor;
 }
 
 - (void)setRoomPreviewData:(RoomPreviewData *)roomPreviewData
@@ -158,6 +163,11 @@
         if (!self.displayNameTextField.text.length)
         {
             self.displayNameTextField.text = [NSBundle mxk_localizedStringForKey:@"room_displayname_empty_room"];
+            self.displayNameTextField.textColor = ThemeService.shared.theme.baseTextSecondaryColor;
+        }
+        else
+        {
+            self.displayNameTextField.textColor = ThemeService.shared.theme.baseTextPrimaryColor;
         }
     }
 }

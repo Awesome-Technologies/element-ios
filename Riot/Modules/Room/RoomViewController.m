@@ -188,8 +188,8 @@
     // The right bar button items back up.
     NSArray<UIBarButtonItem *> *rightBarButtonItems;
 
-    // Observe kRiotDesignValuesDidChangeThemeNotification to handle user interface theme change.
-    id kRiotDesignValuesDidChangeThemeNotificationObserver;
+    // Observe kThemeServiceDidChangeThemeNotification to handle user interface theme change.
+    id kThemeServiceDidChangeThemeNotificationObserver;
     
     // Tell whether the input text field is in send reply mode. If true typed message will be sent to highlighted event.
     BOOL isInReplyMode;
@@ -393,7 +393,7 @@
     }
     
     // Observe user interface theme change.
-    kRiotDesignValuesDidChangeThemeNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kRiotDesignValuesDidChangeThemeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notif) {
+    kThemeServiceDidChangeThemeNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kThemeServiceDidChangeThemeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notif) {
         
         [self userInterfaceThemeDidChange];
         
@@ -403,29 +403,49 @@
 
 - (void)userInterfaceThemeDidChange
 {
-    self.defaultBarTintColor = kCaritasNavigationBarBgColor;
-    self.barTitleColor = kCaritasColorWhite;
-    self.activityIndicator.backgroundColor = kCaritasOverlayColor;
+    // Consider the main navigation controller if the current view controller is embedded inside a split view controller.
+    UINavigationController *mainNavigationController = self.navigationController;
+    if (self.splitViewController.isCollapsed && self.splitViewController.viewControllers.count)
+    {
+        mainNavigationController = self.splitViewController.viewControllers.firstObject;
+    }
+    
+    [ThemeService.shared.theme applyStyleOnNavigationBar:self.navigationController.navigationBar];
+    if (mainNavigationController)
+    {
+        [ThemeService.shared.theme applyStyleOnNavigationBar:mainNavigationController.navigationBar];
+    }
+
+    // Keep navigation bar transparent in some cases
+    if (!self.expandedHeaderContainer.hidden || !self.previewHeaderContainer.hidden)
+    {
+        self.navigationController.navigationBar.translucent = YES;
+        mainNavigationController.navigationBar.translucent = YES;
+    }
+    
+    self.activityIndicator.backgroundColor = ThemeService.shared.theme.overlayBackgroundColor;
     
     // Prepare jump to last unread banner
-    self.jumpToLastUnreadBannerContainer.backgroundColor = kCaritasPrimaryBgColor;
-    self.jumpToLastUnreadLabel.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedStringFromTable(@"room_jump_to_first_unread", @"Vector", nil) attributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleSingle), NSUnderlineColorAttributeName: kCaritasPrimaryTextColor, NSForegroundColorAttributeName: kCaritasPrimaryTextColor}];
+    self.jumpToLastUnreadBannerContainer.backgroundColor = ThemeService.shared.theme.backgroundColor;
+    self.jumpToLastUnreadLabel.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedStringFromTable(@"room_jump_to_first_unread", @"Vector", nil) attributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleSingle), NSUnderlineColorAttributeName: ThemeService.shared.theme.textPrimaryColor, NSForegroundColorAttributeName: ThemeService.shared.theme.textPrimaryColor}];
+    self.jumpToLastUnreadBannerSeparatorView.backgroundColor = ThemeService.shared.theme.headerBorderColor;
     
     
-    self.expandedHeaderContainer.backgroundColor = kCaritasSecondaryBgColor;
-    self.previewHeaderContainer.backgroundColor = kCaritasSecondaryBgColor;
+    self.expandedHeaderContainer.backgroundColor = ThemeService.shared.theme.baseColor;
+    self.previewHeaderContainer.backgroundColor = ThemeService.shared.theme.baseColor;
     
-    missedDiscussionsBadgeLabel.textColor = kCaritasPrimaryBgColor;
+    missedDiscussionsBadgeLabel.textColor = ThemeService.shared.theme.baseTextPrimaryColor;
     missedDiscussionsBadgeLabel.font = [UIFont boldSystemFontOfSize:14];
     missedDiscussionsBadgeLabel.backgroundColor = [UIColor clearColor];
     
     RoomTitleView *roomTitleView = (RoomTitleView*)self.titleView;
     if ([roomTitleView isMemberOfClass:[RoomTitleView class]]) {
-        roomTitleView.roomDetailsIconImageView.tintColor = kCaritasColorWhite;
+        roomTitleView.roomDetailsIconImageView.tintColor = ThemeService.shared.theme.baseColor;
     }
     
     // Check the table view style to select its bg color.
-    self.bubblesTableView.backgroundColor = ((self.bubblesTableView.style == UITableViewStylePlain) ? kCaritasPrimaryBgColor : kCaritasSecondaryBgColor);
+    self.bubblesTableView.backgroundColor = ((self.bubblesTableView.style == UITableViewStylePlain) ? ThemeService.shared.theme.backgroundColor : ThemeService.shared.theme.headerBackgroundColor);
+    self.bubblesTableView.separatorColor = ThemeService.shared.theme.lineBreakColor;
     self.view.backgroundColor = self.bubblesTableView.backgroundColor;
     
     if (self.bubblesTableView.dataSource)
@@ -436,7 +456,7 @@
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-    return kCaritasDesignStatusBarStyle;
+    return ThemeService.shared.theme.statusBarStyle;
 }
 
 - (void)didReceiveMemoryWarning
@@ -641,11 +661,13 @@
                 [expandedHeader layoutIfNeeded];
             }
         }
+
+        self.edgesForExtendedLayout = UIRectEdgeAll;
         
         // Adjust the top constraint of the bubbles table
         CGRect frame = expandedHeader.bottomBorderView.frame;
         self.expandedHeaderContainerHeightConstraint.constant = frame.origin.y + frame.size.height;
-        
+
         self.bubblesTableViewTopConstraint.constant = self.expandedHeaderContainerHeightConstraint.constant - self.bubblesTableView.mxk_adjustedContentInset.top;
         self.jumpToLastUnreadBannerContainerTopConstraint.constant = self.expandedHeaderContainerHeightConstraint.constant;
     }
@@ -668,17 +690,23 @@
                 [previewHeader layoutIfNeeded];
             }
         }
-        
+
+        self.edgesForExtendedLayout = UIRectEdgeAll;
+
         // Adjust the top constraint of the bubbles table
         CGRect frame = previewHeader.bottomBorderView.frame;
         self.previewHeaderContainerHeightConstraint.constant = frame.origin.y + frame.size.height;
-        
+
         self.bubblesTableViewTopConstraint.constant = self.previewHeaderContainerHeightConstraint.constant - self.bubblesTableView.mxk_adjustedContentInset.top;
         self.jumpToLastUnreadBannerContainerTopConstraint.constant = self.previewHeaderContainerHeightConstraint.constant;
     }
     else
     {
-        self.jumpToLastUnreadBannerContainerTopConstraint.constant = self.bubblesTableView.mxk_adjustedContentInset.top;
+        // In non expanded header mode, the navigation bar is opaque
+        // The table view must not display behind it
+        self.edgesForExtendedLayout = UIRectEdgeLeft | UIRectEdgeBottom | UIRectEdgeRight;
+
+        self.jumpToLastUnreadBannerContainerTopConstraint.constant = self.bubblesTableView.mxk_adjustedContentInset.top; // no expanded
     }
     
     [self refreshMissedDiscussionsCount:YES];
@@ -1098,10 +1126,10 @@
     
     [self removeTypingNotificationsListener];
     
-    if (kRiotDesignValuesDidChangeThemeNotificationObserver)
+    if (kThemeServiceDidChangeThemeNotificationObserver)
     {
-        [[NSNotificationCenter defaultCenter] removeObserver:kRiotDesignValuesDidChangeThemeNotificationObserver];
-        kRiotDesignValuesDidChangeThemeNotificationObserver = nil;
+        [[NSNotificationCenter defaultCenter] removeObserver:kThemeServiceDidChangeThemeNotificationObserver];
+        kThemeServiceDidChangeThemeNotificationObserver = nil;
     }
     if (kAppDelegateDidTapStatusBarNotificationObserver)
     {
@@ -1412,7 +1440,7 @@
         
         self.expandedHeaderContainer.hidden = !isVisible;
         
-        self.navigationController.navigationBar.barTintColor = kCaritasNavigationBarBgColor;
+        self.navigationController.navigationBar.barTintColor = ThemeService.shared.theme.tintColor;
         
         // Consider the main navigation controller if the current view controller is embedded inside a split view controller.
         UINavigationController *mainNavigationController = self.navigationController;
@@ -1455,6 +1483,8 @@
         // Report shadow image
         [mainNavigationController.navigationBar setShadowImage:shadowImage];
         [mainNavigationController.navigationBar setBackgroundImage:shadowImage forBarMetrics:UIBarMetricsDefault];
+        mainNavigationController.navigationBar.translucent = isVisible;
+        self.navigationController.navigationBar.translucent = isVisible;
         
         [UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseIn
                          animations:^{
@@ -1538,6 +1568,15 @@
             }
             
             self.previewHeaderContainer.hidden = NO;
+
+            // Consider the main navigation controller if the current view controller is embedded inside a split view controller.
+            UINavigationController *mainNavigationController = self.navigationController;
+            if (self.splitViewController.isCollapsed && self.splitViewController.viewControllers.count)
+            {
+                mainNavigationController = self.splitViewController.viewControllers.firstObject;
+            }
+            mainNavigationController.navigationBar.translucent = isVisible;
+            self.navigationController.navigationBar.translucent = isVisible;
             
             // Finalize preview header display according to the screen orientation
             [self refreshPreviewHeader:UIInterfaceOrientationIsLandscape([[UIApplication sharedApplication] statusBarOrientation])];
@@ -1653,7 +1692,8 @@
             }
             else
             {
-                previewHeader.roomAvatarPlaceholder = [UIImage imageNamed:@"placeholder"];
+                previewHeader.roomAvatarPlaceholder = [MXKTools paintImage:[UIImage imageNamed:@"placeholder"]
+                                                                 withColor:ThemeService.shared.theme.tintColor];
             }
         }
         
@@ -1906,8 +1946,23 @@
             }
             else if (tappedEvent)
             {
-                // Highlight this event in displayed message
-                [self selectEventWithId:tappedEvent.eventId];
+                if (tappedEvent.eventType == MXEventTypeRoomCreate)
+                {
+                    // Handle tap on RoomPredecessorBubbleCell
+                    MXRoomCreateContent *createContent = [MXRoomCreateContent modelFromJSON:tappedEvent.content];
+                    NSString *predecessorRoomId = createContent.roomPredecessorInfo.roomId;
+                    
+                    if (predecessorRoomId)
+                    {
+                        // Show predecessor room
+                        [[AppDelegate theDelegate] showRoom:predecessorRoomId andEventId:nil withMatrixSession:self.mainSession];
+                    }
+                }
+                else
+                {
+                    // Highlight this event in displayed message
+                    [self selectEventWithId:tappedEvent.eventId];
+                }
             }
             
             // Force table refresh
@@ -2401,12 +2456,12 @@
                                                                        if (weakSelf)
                                                                        {
                                                                            typeof(self) self = weakSelf;
-                                                                           UITextField *textField = [self->currentAlert textFields].firstObject;
+                                                                           NSString *text = [self->currentAlert textFields].firstObject.text;
                                                                            self->currentAlert = nil;
                                                                            
                                                                            [self startActivityIndicator];
                                                                            
-                                                                           [self.roomDataSource.room reportEvent:selectedEvent.eventId score:-100 reason:textField.text success:^{
+                                                                           [self.roomDataSource.room reportEvent:selectedEvent.eventId score:-100 reason:text success:^{
                                                                                
                                                                                __strong __typeof(weakSelf)self = weakSelf;
                                                                                [self stopActivityIndicator];
@@ -2520,10 +2575,12 @@
     {
         // Try to catch universal link supported by the app
         NSURL *url = userInfo[kMXKRoomBubbleCellUrl];
+        // Retrieve the type of interaction expected with the URL (See UITextItemInteraction)
+        NSNumber *urlItemInteractionValue = userInfo[kMXKRoomBubbleCellUrlItemInteraction];
         
         // When a link refers to a room alias/id, a user id or an event id, the non-ASCII characters (like '#' in room alias) has been escaped
         // to be able to convert it into a legal URL string.
-        NSString *absoluteURLString = [url.absoluteString stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        NSString *absoluteURLString = [url.absoluteString stringByRemovingPercentEncoding];
         
         // If the link can be open it by the app, let it do
         if ([Tools isUniversalLink:url])
@@ -2572,7 +2629,7 @@
             NSString *roomIdOrAlias = absoluteURLString;
             
             // Open the room or preview it
-            NSString *fragment = [NSString stringWithFormat:@"/room/%@", [roomIdOrAlias stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+            NSString *fragment = [NSString stringWithFormat:@"/room/%@", [MXTools encodeURIComponent:roomIdOrAlias]];
             [[AppDelegate theDelegate] handleUniversalLinkFragment:fragment];
         }
         else if ([absoluteURLString hasPrefix:kEventFormatterOnReRequestKeysLinkAction])
@@ -2588,6 +2645,37 @@
                     [self reRequestKeysAndShowExplanationAlert:event];
                 }
             }
+        }
+        else if (url && urlItemInteractionValue)
+        {
+            // Fallback case for external links
+            
+            // TODO: Use UITextItemInteraction enum when minimum deployement target will be iOS 10
+            switch (urlItemInteractionValue.integerValue) {
+                case 0: //UITextItemInteractionInvokeDefaultAction
+                {                    
+                    [[UIApplication sharedApplication] vc_open:url completionHandler:^(BOOL success) {
+                        if (!success)
+                        {
+                            [self showUnableToOpenLinkErrorAlert];
+                        }
+                    }];
+                    shouldDoAction = NO;
+                }
+                    break;
+                case 1: //UITextItemInteractionPresentActions
+                    // Long press on link, let MXKRoomBubbleTableViewCell UITextView present the default contextual menu.
+                    break;
+                case 2: //UITextItemInteractionPreview
+                    // Force touch on link, let MXKRoomBubbleTableViewCell UITextView use default peek and pop behavior.
+                    break;
+                default:
+                    break;
+            }
+        }
+        else
+        {
+            [self showUnableToOpenLinkErrorAlert];
         }
     }
     
@@ -2617,6 +2705,12 @@
     
     // Force table refresh
     [self dataSource:self.roomDataSource didCellChange:nil];
+}
+
+- (void)showUnableToOpenLinkErrorAlert
+{
+    [[AppDelegate theDelegate] showAlertWithTitle:[NSBundle mxk_localizedStringForKey:@"error"]
+                                          message:NSLocalizedStringFromTable(@"room_message_unable_open_link_error_message", @"Vector", nil)];
 }
 
 #pragma mark - Segues
@@ -2767,7 +2861,7 @@
             {
                 // Create the contact related to this member
                 MXKContact *contact = [[MXKContact alloc] initMatrixContactWithDisplayName:mxMember.displayname andMatrixID:mxMember.userId];
-                [contactsDataSource.ignoredContactsByMatrixId setObject:contact forKey:mxMember.userId];
+                contactsDataSource.ignoredContactsByMatrixId[mxMember.userId] = contact;
             }
         }
 
@@ -2888,13 +2982,13 @@
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    cell.backgroundColor = kCaritasPrimaryBgColor;
+    cell.backgroundColor = ThemeService.shared.theme.backgroundColor;
     
     // Update the selected background view
-    if (kCaritasSelectedBgColor)
+    if (ThemeService.shared.theme.selectedBackgroundColor)
     {
         cell.selectedBackgroundView = [[UIView alloc] init];
-        cell.selectedBackgroundView.backgroundColor = kCaritasSelectedBgColor;
+        cell.selectedBackgroundView.backgroundColor = ThemeService.shared.theme.selectedBackgroundColor;
     }
     else
     {
@@ -2961,7 +3055,7 @@
         [super scrollViewWillBeginDragging:scrollView];
     }
     
-    if (self.expandedHeaderContainer.isHidden == NO)
+    if (!self.expandedHeaderContainer.isHidden)
     {
         // Store here the position of the first touch down event
         UIPanGestureRecognizer *panGestureRecognizer = scrollView.panGestureRecognizer;
@@ -3295,7 +3389,7 @@
         // keeps the only the first two users
         for(int i = 0; i < MIN(count, 2); i++)
         {
-            NSString* name = [currentTypingUsers objectAtIndex:i];
+            NSString* name = currentTypingUsers[i];
             
             MXRoomMember* member = [self.roomDataSource.roomState.members memberWithUserId:name];
             
@@ -3317,15 +3411,15 @@
         }
         else if (1 == names.count)
         {
-            text = [NSString stringWithFormat:NSLocalizedStringFromTable(@"room_one_user_is_typing", @"Vector", nil), [names objectAtIndex:0]];
+            text = [NSString stringWithFormat:NSLocalizedStringFromTable(@"room_one_user_is_typing", @"Vector", nil), names[0]];
         }
         else if (2 == names.count)
         {
-            text = [NSString stringWithFormat:NSLocalizedStringFromTable(@"room_two_users_are_typing", @"Vector", nil), [names objectAtIndex:0], [names objectAtIndex:1]];
+            text = [NSString stringWithFormat:NSLocalizedStringFromTable(@"room_two_users_are_typing", @"Vector", nil), names[0], names[1]];
         }
         else
         {
-            text = [NSString stringWithFormat:NSLocalizedStringFromTable(@"room_many_users_are_typing", @"Vector", nil), [names objectAtIndex:0], [names objectAtIndex:1]];
+            text = [NSString stringWithFormat:NSLocalizedStringFromTable(@"room_many_users_are_typing", @"Vector", nil), names[0], names[1]];
         }
         
         [((RoomActivitiesView*) self.activitiesView) displayTypingNotification:text];
@@ -3392,7 +3486,7 @@
         else if (customizedRoomDataSource.roomState.isObsolete)
         {
             NSString *replacementRoomId = customizedRoomDataSource.roomState.tombStoneContent.replacementRoomId;
-            NSString *roomLinkFragment = [NSString stringWithFormat:@"/room/%@", [replacementRoomId stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+            NSString *roomLinkFragment = [NSString stringWithFormat:@"/room/%@", [MXTools encodeURIComponent:replacementRoomId]];
             
             [roomActivitiesView displayRoomReplacementWithRoomLinkTappedHandler:^{
                 [[AppDelegate theDelegate] handleUniversalLinkFragment:roomLinkFragment];
@@ -3582,11 +3676,11 @@
             // Set the right background color
             if (highlightCount)
             {
-                missedDiscussionsBadgeLabelBgView.backgroundColor = kCaritasColorGrey;
+                missedDiscussionsBadgeLabelBgView.backgroundColor = ThemeService.shared.theme.noticeColor;
             }
             else
             {
-                missedDiscussionsBadgeLabelBgView.backgroundColor = kCaritasColorLightBlack;
+                missedDiscussionsBadgeLabelBgView.backgroundColor = ThemeService.shared.theme.noticeSecondaryColor;
             }
             
             if (!missedDiscussionsButton || [leftBarButtonItems indexOfObject:missedDiscussionsButton] == NSNotFound)

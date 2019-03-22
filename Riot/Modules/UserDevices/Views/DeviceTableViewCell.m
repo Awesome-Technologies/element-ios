@@ -17,7 +17,9 @@
 
 #import "DeviceTableViewCell.h"
 
-#import "RiotDesignValues.h"
+#import "ThemeService.h"
+#import "Riot-Swift.h"
+
 #import "MXRoom+Riot.h"
 
 #define DEVICE_TABLEVIEW_ROW_CELL_HEIGHT_WITHOUT_LABEL_HEIGHT 59
@@ -30,15 +32,15 @@
 {
     [super customizeTableViewCellRendering];
     
-    self.deviceName.textColor = kCaritasPrimaryTextColor;
+    self.deviceName.textColor = ThemeService.shared.theme.textPrimaryColor;
     
     [self.verifyButton.layer setCornerRadius:5];
     self.verifyButton.clipsToBounds = YES;
-    self.verifyButton.backgroundColor = kCaritasColorRed;
+    self.verifyButton.backgroundColor = [UIColor colorWithRed:0.3 green:0.85 blue:0.39 alpha:1];
     
     [self.blockButton.layer setCornerRadius:5];
     self.blockButton.clipsToBounds = YES;
-    self.blockButton.backgroundColor = kCaritasColorRed;
+    self.blockButton.backgroundColor = ThemeService.shared.theme.baseColor;
 }
 
 - (void)render:(MXDeviceInfo *)deviceInfo

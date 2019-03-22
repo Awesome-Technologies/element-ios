@@ -17,7 +17,9 @@
 
 #import "RoomOutgoingTextMsgBubbleCell.h"
 
-#import "RiotDesignValues.h"
+#import "ThemeService.h"
+#import "Riot-Swift.h"
+#import "MXKRoomBubbleTableViewCell+Riot.h"
 
 @implementation RoomOutgoingTextMsgBubbleCell
 
@@ -25,8 +27,17 @@
 {
     [super customizeTableViewCellRendering];
     
-    self.userNameLabel.textColor = kCaritasPrimaryTextColor;
-    self.messageTextView.tintColor = kCaritasColorRed;
+    [self updateUserNameColor];
+    
+    self.messageTextView.tintColor = ThemeService.shared.theme.textPrimaryColor;
+}
+
+
+- (void)render:(MXKCellData *)cellData
+{
+    [super render:cellData];
+    
+    [self updateUserNameColor];
 }
 
 @end

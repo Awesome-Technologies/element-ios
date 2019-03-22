@@ -20,6 +20,8 @@
 
 #import "RecentsDataSource.h"
 
+#import "Riot-Swift.h"
+
 @interface RoomsViewController ()
 {
     RecentsDataSource *recentsDataSource;

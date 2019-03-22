@@ -29,6 +29,7 @@
 #import "MXRoomSummary+Riot.h"
 
 #import "AppDelegate.h"
+#import "Riot-Swift.h"
 
 #import "RoomMemberDetailsViewController.h"
 
@@ -130,8 +131,8 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
     // Observe kAppDelegateDidTapStatusBarNotification to handle tap on clock status bar.
     id appDelegateDidTapStatusBarNotificationObserver;
     
-    // Observe kRiotDesignValuesDidChangeThemeNotification to handle user interface theme change.
-    id kRiotDesignValuesDidChangeThemeNotificationObserver;
+    // Observe kThemeServiceDidChangeThemeNotification to handle user interface theme change.
+    id kThemeServiceDidChangeThemeNotificationObserver;
 }
 @end
 
@@ -209,7 +210,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
     [self setNavBarButtons];
     
     // Observe user interface theme change.
-    kRiotDesignValuesDidChangeThemeNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kRiotDesignValuesDidChangeThemeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notif) {
+    kThemeServiceDidChangeThemeNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kThemeServiceDidChangeThemeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notif) {
         
         [self userInterfaceThemeDidChange];
         
@@ -219,13 +220,14 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
 
 - (void)userInterfaceThemeDidChange
 {
-    self.defaultBarTintColor = kCaritasNavigationBarBgColor;
-    self.barTitleColor = kCaritasColorWhite;
-    self.activityIndicator.backgroundColor = kCaritasOverlayColor;
+    [ThemeService.shared.theme applyStyleOnNavigationBar:self.navigationController.navigationBar];
+
+    self.activityIndicator.backgroundColor = ThemeService.shared.theme.overlayBackgroundColor;
     
     // Check the table view style to select its bg color.
-    self.tableView.backgroundColor = kCaritasPrimaryBgColor;
+    self.tableView.backgroundColor = ThemeService.shared.theme.backgroundColor;
     self.view.backgroundColor = self.tableView.backgroundColor;
+    self.tableView.separatorColor = ThemeService.shared.theme.lineBreakColor;
     
     if (self.tableView.dataSource)
     {
@@ -235,7 +237,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-    return kCaritasDesignStatusBarStyle;
+    return ThemeService.shared.theme.statusBarStyle;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -327,10 +329,10 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
         pendingOperation = nil;
     }
     
-    if (kRiotDesignValuesDidChangeThemeNotificationObserver)
+    if (kThemeServiceDidChangeThemeNotificationObserver)
     {
-        [[NSNotificationCenter defaultCenter] removeObserver:kRiotDesignValuesDidChangeThemeNotificationObserver];
-        kRiotDesignValuesDidChangeThemeNotificationObserver = nil;
+        [[NSNotificationCenter defaultCenter] removeObserver:kThemeServiceDidChangeThemeNotificationObserver];
+        kThemeServiceDidChangeThemeNotificationObserver = nil;
     }
     
     if (appDelegateDidTapStatusBarNotificationObserver)
@@ -627,7 +629,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
         // Check whether the topic has been actually changed
         if ((topic || currentTopic) && ([topic isEqualToString:currentTopic] == NO))
         {
-            [updatedItemsDict setObject:(topic ? topic : @"") forKey:kRoomSettingsTopicKey];
+            updatedItemsDict[kRoomSettingsTopicKey] = topic ? topic : @"";
         }
         else
         {
@@ -681,7 +683,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
         // Check whether the name has been actually changed
         if ((displayName || currentName) && ([displayName isEqualToString:currentName] == NO))
         {
-            [updatedItemsDict setObject:(displayName ? displayName : @"") forKey:kRoomSettingsNameKey];
+            updatedItemsDict[kRoomSettingsNameKey] = displayName ? displayName : @"";
         }
         else
         {
@@ -770,10 +772,10 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
         // check if there is some updates related to room state
         if (mxRoomState)
         {
-            if ([updatedItemsDict objectForKey:kRoomSettingsAvatarKey])
+            if (updatedItemsDict[kRoomSettingsAvatarKey])
             {
                 // Retrieve the current picture and make sure its orientation is up
-                UIImage *updatedPicture = [MXKTools forceImageOrientationUp:[updatedItemsDict objectForKey:kRoomSettingsAvatarKey]];
+                UIImage *updatedPicture = [MXKTools forceImageOrientationUp:updatedItemsDict[kRoomSettingsAvatarKey]];
                 
                 // Upload picture
                 uploader = [MXMediaManager prepareUploaderWithMatrixSession:mxRoom.mxSession initialRange:0 andRange:1.0];
@@ -787,7 +789,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
                         self->uploader = nil;
                         
                         [self->updatedItemsDict removeObjectForKey:kRoomSettingsAvatarKey];
-                        [self->updatedItemsDict setObject:url forKey:kRoomSettingsAvatarURLKey];
+                        self->updatedItemsDict[kRoomSettingsAvatarURLKey] = url;
                         
                         [self onSave:nil];
                     }
@@ -819,7 +821,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
                 return;
             }
             
-            NSString* photoUrl = [updatedItemsDict objectForKey:kRoomSettingsAvatarURLKey];
+            NSString* photoUrl = updatedItemsDict[kRoomSettingsAvatarURLKey];
             if (photoUrl)
             {
                 pendingOperation = [mxRoom setAvatar:photoUrl success:^{
@@ -861,7 +863,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
             }
             
             // has a new room name
-            NSString* roomName = [updatedItemsDict objectForKey:kRoomSettingsNameKey];
+            NSString* roomName = updatedItemsDict[kRoomSettingsNameKey];
             if (roomName)
             {
                 pendingOperation = [mxRoom setName:roomName success:^{
@@ -903,7 +905,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
             }
             
             // has a new room topic
-            NSString* roomTopic = [updatedItemsDict objectForKey:kRoomSettingsTopicKey];
+            NSString* roomTopic = updatedItemsDict[kRoomSettingsTopicKey];
             if (roomTopic)
             {
                 pendingOperation = [mxRoom setTopic:roomTopic success:^{
@@ -945,7 +947,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
             }
             
             // Room guest access
-            MXRoomGuestAccess guestAccess = [updatedItemsDict objectForKey:kRoomSettingsGuestAccessKey];
+            MXRoomGuestAccess guestAccess = updatedItemsDict[kRoomSettingsGuestAccessKey];
             if (guestAccess)
             {
                 pendingOperation = [mxRoom setGuestAccess:guestAccess success:^{
@@ -987,7 +989,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
             }
             
             // Room join rule
-            MXRoomJoinRule joinRule = [updatedItemsDict objectForKey:kRoomSettingsJoinRuleKey];
+            MXRoomJoinRule joinRule = updatedItemsDict[kRoomSettingsJoinRuleKey];
             if (joinRule)
             {
                 pendingOperation = [mxRoom setJoinRule:joinRule success:^{
@@ -1029,7 +1031,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
             }
             
             // History visibility
-            MXRoomHistoryVisibility visibility = [updatedItemsDict objectForKey:kRoomSettingsHistoryVisibilityKey];
+            MXRoomHistoryVisibility visibility = updatedItemsDict[kRoomSettingsHistoryVisibilityKey];
             if (visibility)
             {
                 pendingOperation = [mxRoom setHistoryVisibility:visibility success:^{
@@ -1072,7 +1074,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
         }
         
         // Update here other room settings
-        NSString *roomTag = [updatedItemsDict objectForKey:kRoomSettingsTagKey];
+        NSString *roomTag = updatedItemsDict[kRoomSettingsTagKey];
         if (roomTag)
         {
             if (!roomTag.length)
@@ -1095,9 +1097,9 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
             return;
         }
         
-        if ([updatedItemsDict objectForKey:kRoomSettingsMuteNotifKey])
+        if (updatedItemsDict[kRoomSettingsMuteNotifKey])
         {
-            if (((NSNumber*)[updatedItemsDict objectForKey:kRoomSettingsMuteNotifKey]).boolValue)
+            if (((NSNumber*) updatedItemsDict[kRoomSettingsMuteNotifKey]).boolValue)
             {
                 [mxRoom mentionsOnly:^{
                     
@@ -1129,7 +1131,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
         }
         
         // Room directory visibility
-        MXRoomDirectoryVisibility directoryVisibility = [updatedItemsDict objectForKey:kRoomSettingsDirectoryKey];
+        MXRoomDirectoryVisibility directoryVisibility = updatedItemsDict[kRoomSettingsDirectoryKey];
         if (directoryVisibility)
         {
             [mxRoom setDirectoryVisibility:directoryVisibility success:^{
@@ -1198,7 +1200,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
         count = ROOM_SETTINGS_ROOM_ACCESS_SECTION_ROW_SUB_COUNT;
         
         // Check whether a room address is required for the current join rule
-        NSString *joinRule = [updatedItemsDict objectForKey:kRoomSettingsJoinRuleKey];
+        NSString *joinRule = updatedItemsDict[kRoomSettingsJoinRuleKey];
         if (!joinRule)
         {
             // Use the actual values if no change is pending.
@@ -1233,7 +1235,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
     {
         // Customize label style
         UITableViewHeaderFooterView *tableViewHeaderFooterView = (UITableViewHeaderFooterView*)view;
-        tableViewHeaderFooterView.textLabel.textColor = kCaritasPrimaryTextColor;
+        tableViewHeaderFooterView.textLabel.textColor = ThemeService.shared.theme.textPrimaryColor;
         tableViewHeaderFooterView.textLabel.font = [UIFont systemFontOfSize:15];
     }
 }
@@ -1281,10 +1283,11 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
             [roomNotifCell.mxkSwitch addTarget:self action:@selector(toggleRoomNotification:) forControlEvents:UIControlEventValueChanged];
             
             roomNotifCell.mxkLabel.text = NSLocalizedStringFromTable(@"room_details_mute_notifs", @"Vector", nil);
+            roomNotifCell.mxkLabel.textColor = ThemeService.shared.theme.textPrimaryColor;
             
-            if ([updatedItemsDict objectForKey:kRoomSettingsMuteNotifKey])
+            if (updatedItemsDict[kRoomSettingsMuteNotifKey])
             {
-                roomNotifCell.mxkSwitch.on = ((NSNumber*)[updatedItemsDict objectForKey:kRoomSettingsMuteNotifKey]).boolValue;
+                roomNotifCell.mxkSwitch.on = ((NSNumber*) updatedItemsDict[kRoomSettingsMuteNotifKey]).boolValue;
             }
             else
             {
@@ -1314,11 +1317,11 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
             roomPhotoCell.mxkImageView.defaultBackgroundColor = [UIColor clearColor];
             
             roomPhotoCell.mxkLabel.text = NSLocalizedStringFromTable(@"room_details_photo", @"Vector", nil);
-            roomPhotoCell.mxkLabel.textColor = kCaritasPrimaryTextColor;
+            roomPhotoCell.mxkLabel.textColor = ThemeService.shared.theme.textPrimaryColor;
             
-            if ([updatedItemsDict objectForKey:kRoomSettingsAvatarKey])
+            if (updatedItemsDict[kRoomSettingsAvatarKey])
             {
-                roomPhotoCell.mxkImageView.image = (UIImage*)[updatedItemsDict objectForKey:kRoomSettingsAvatarKey];
+                roomPhotoCell.mxkImageView.image = (UIImage*) updatedItemsDict[kRoomSettingsAvatarKey];
             }
             else
             {
@@ -1340,25 +1343,25 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
             
             topicTextView = roomTopicCell.textView;
             
-            if ([updatedItemsDict objectForKey:kRoomSettingsTopicKey])
+            if (updatedItemsDict[kRoomSettingsTopicKey])
             {
-                topicTextView.text = (NSString*)[updatedItemsDict objectForKey:kRoomSettingsTopicKey];
+                topicTextView.text = (NSString*) updatedItemsDict[kRoomSettingsTopicKey];
             }
             else
             {
                 topicTextView.text = mxRoomState.topic;
             }
             
-            topicTextView.tintColor = kCaritasColorRed;
+            topicTextView.tintColor = ThemeService.shared.theme.tintColor;
             topicTextView.font = [UIFont systemFontOfSize:15];
             topicTextView.bounces = NO;
             topicTextView.delegate = self;
             
             // disable the edition if the user cannot update it
             topicTextView.editable = (oneSelfPowerLevel >= [powerLevels minimumPowerLevelForSendingEventAsStateEvent:kMXEventTypeStringRoomTopic]);
-            topicTextView.textColor = kCaritasSecondaryTextColor;
+            topicTextView.textColor = ThemeService.shared.theme.textSecondaryColor;
             
-            topicTextView.keyboardAppearance = kCaritasKeyboard;
+            topicTextView.keyboardAppearance = ThemeService.shared.theme.keyboardAppearance;
             
             cell = roomTopicCell;
         }
@@ -1371,22 +1374,22 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
             roomNameCell.mxkTextFieldTrailingConstraint.constant = 15;
             
             roomNameCell.mxkLabel.text = NSLocalizedStringFromTable(@"room_details_room_name", @"Vector", nil);
-            roomNameCell.mxkLabel.textColor = kCaritasPrimaryTextColor;
+            roomNameCell.mxkLabel.textColor = ThemeService.shared.theme.textPrimaryColor;
             
             roomNameCell.accessoryType = UITableViewCellAccessoryNone;
             roomNameCell.accessoryView = nil;
             
             nameTextField = roomNameCell.mxkTextField;
             
-            nameTextField.tintColor = kCaritasColorRed;
+            nameTextField.tintColor = ThemeService.shared.theme.tintColor;
             nameTextField.font = [UIFont systemFontOfSize:17];
             nameTextField.borderStyle = UITextBorderStyleNone;
             nameTextField.textAlignment = NSTextAlignmentRight;
             nameTextField.delegate = self;
             
-            if ([updatedItemsDict objectForKey:kRoomSettingsNameKey])
+            if (updatedItemsDict[kRoomSettingsNameKey])
             {
-                nameTextField.text = (NSString*)[updatedItemsDict objectForKey:kRoomSettingsNameKey];
+                nameTextField.text = (NSString*) updatedItemsDict[kRoomSettingsNameKey];
             }
             else
             {
@@ -1395,7 +1398,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
             
             // disable the edition if the user cannot update it
             nameTextField.userInteractionEnabled = (oneSelfPowerLevel >= [powerLevels minimumPowerLevelForSendingEventAsStateEvent:kMXEventTypeStringRoomName]);
-            nameTextField.textColor = kCaritasSecondaryTextColor;
+            nameTextField.textColor = ThemeService.shared.theme.textSecondaryColor;
             
             // Add a "textFieldDidChange" notification method to the text field control.
             [nameTextField addTarget:self action:@selector(onTextFieldUpdate:) forControlEvents:UIControlEventEditingChanged];
@@ -1410,8 +1413,8 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
             
             [leaveCell.mxkButton setTitle:title forState:UIControlStateNormal];
             [leaveCell.mxkButton setTitle:title forState:UIControlStateHighlighted];
-            [leaveCell.mxkButton setTintColor:kCaritasColorRed];
             leaveCell.mxkButton.titleLabel.font = [UIFont systemFontOfSize:17];
+            leaveCell.mxkButton.tintColor = ThemeService.shared.theme.warningColor;
             
             [leaveCell.mxkButton  removeTarget:self action:nil forControlEvents:UIControlEventTouchUpInside];
             [leaveCell.mxkButton addTarget:self action:@selector(onLeave:) forControlEvents:UIControlEventTouchUpInside];
@@ -1477,7 +1480,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
         historyVisibilityCell.checkBoxLeadingConstraint.constant = historyVisibilityCell.separatorInset.left;
         
         // Retrieve first the potential updated value for history visibility
-        NSString *visibility = [updatedItemsDict objectForKey:kRoomSettingsHistoryVisibilityKey];
+        NSString *visibility = updatedItemsDict[kRoomSettingsHistoryVisibilityKey];
         
         // Use the actual value if no change is pending
         if (!visibility)
@@ -1492,7 +1495,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
             
             historyVisibilityCell.enabled = ([visibility isEqualToString:kMXRoomHistoryVisibilityWorldReadable]);
             
-            [historyVisibilityTickCells setObject:historyVisibilityCell forKey:kMXRoomHistoryVisibilityWorldReadable];
+            historyVisibilityTickCells[kMXRoomHistoryVisibilityWorldReadable] = historyVisibilityCell;
         }
         else if (indexPath.row == ROOM_SETTINGS_HISTORY_VISIBILITY_SECTION_ROW_MEMBERS_ONLY)
         {
@@ -1501,7 +1504,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
             
             historyVisibilityCell.enabled = ([visibility isEqualToString:kMXRoomHistoryVisibilityShared]);
             
-            [historyVisibilityTickCells setObject:historyVisibilityCell forKey:kMXRoomHistoryVisibilityShared];
+            historyVisibilityTickCells[kMXRoomHistoryVisibilityShared] = historyVisibilityCell;
         }
         else if (indexPath.row == ROOM_SETTINGS_HISTORY_VISIBILITY_SECTION_ROW_MEMBERS_ONLY_SINCE_INVITED)
         {
@@ -1510,7 +1513,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
             
             historyVisibilityCell.enabled = ([visibility isEqualToString:kMXRoomHistoryVisibilityInvited]);
             
-            [historyVisibilityTickCells setObject:historyVisibilityCell forKey:kMXRoomHistoryVisibilityInvited];
+            historyVisibilityTickCells[kMXRoomHistoryVisibilityInvited] = historyVisibilityCell;
         }
         else if (indexPath.row == ROOM_SETTINGS_HISTORY_VISIBILITY_SECTION_ROW_MEMBERS_ONLY_SINCE_JOINED)
         {
@@ -1519,7 +1522,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
             
             historyVisibilityCell.enabled = ([visibility isEqualToString:kMXRoomHistoryVisibilityJoined]);
             
-            [historyVisibilityTickCells setObject:historyVisibilityCell forKey:kMXRoomHistoryVisibilityJoined];
+            historyVisibilityTickCells[kMXRoomHistoryVisibilityJoined] = historyVisibilityCell;
         }
         
         // Check whether the user can change this option
@@ -1546,9 +1549,6 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
     cell.mxkLabelLeadingConstraint.constant = cell.separatorInset.left;
     cell.mxkSwitchTrailingConstraint.constant = 15;
     
-    cell.mxkLabel.textColor = kCaritasPrimaryTextColor;
-    
-    cell.mxkSwitch.onTintColor = kCaritasColorRed;
     [cell.mxkSwitch removeTarget:self action:nil forControlEvents:UIControlEventValueChanged];
     
     // Force layout before reusing a cell (fix switch displayed outside the screen)
@@ -1561,13 +1561,13 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    cell.backgroundColor = kCaritasPrimaryBgColor;
+    cell.backgroundColor = ThemeService.shared.theme.backgroundColor;
     
     // Update the selected background view
-    if (kCaritasSelectedBgColor)
+    if (ThemeService.shared.theme.selectedBackgroundColor)
     {
         cell.selectedBackgroundView = [[UIView alloc] init];
-        cell.selectedBackgroundView.backgroundColor = kCaritasSelectedBgColor;
+        cell.selectedBackgroundView.backgroundColor = ThemeService.shared.theme.selectedBackgroundColor;
     }
     else
     {
@@ -1588,7 +1588,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
     {
         [self dismissFirstResponder];
         
-        if (indexPath.section == ROOM_SETTINGS_MAIN_SECTION_INDEX && !mxRoom.isDirect)
+        if (indexPath.section == ROOM_SETTINGS_MAIN_SECTION_INDEX)
         {
             if (indexPath.row == ROOM_SETTINGS_MAIN_SECTION_ROW_PHOTO)
             {
@@ -1669,7 +1669,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
                         }
                         else
                         {
-                            [updatedItemsDict setObject:kMXRoomJoinRulePublic forKey:kRoomSettingsJoinRuleKey];
+                            updatedItemsDict[kRoomSettingsJoinRuleKey] = kMXRoomJoinRulePublic;
                         }
                         
                         if ([mxRoomState.guestAccess isEqualToString:kMXRoomGuestAccessForbidden])
@@ -1678,7 +1678,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
                         }
                         else
                         {
-                            [updatedItemsDict setObject:kMXRoomGuestAccessForbidden forKey:kRoomSettingsGuestAccessKey];
+                            updatedItemsDict[kRoomSettingsGuestAccessKey] = kMXRoomGuestAccessForbidden;
                         }
                     }
                     
@@ -1711,7 +1711,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
                         }
                         else
                         {
-                            [updatedItemsDict setObject:kMXRoomJoinRulePublic forKey:kRoomSettingsJoinRuleKey];
+                            updatedItemsDict[kRoomSettingsJoinRuleKey] = kMXRoomJoinRulePublic;
                         }
                         
                         if ([mxRoomState.guestAccess isEqualToString:kMXRoomGuestAccessCanJoin])
@@ -1720,7 +1720,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
                         }
                         else
                         {
-                            [updatedItemsDict setObject:kMXRoomGuestAccessCanJoin forKey:kRoomSettingsGuestAccessKey];
+                            updatedItemsDict[kRoomSettingsGuestAccessKey] = kMXRoomGuestAccessCanJoin;
                         }
                     }
                     
@@ -1859,7 +1859,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
     }
     else
     {
-        [updatedItemsDict setObject:[NSNumber numberWithBool:theSwitch.on] forKey:kRoomSettingsMuteNotifKey];
+        updatedItemsDict[kRoomSettingsMuteNotifKey] = @(theSwitch.on);
     }
     
     [self getNavigationItem].rightBarButtonItem.enabled = (updatedItemsDict.count != 0);

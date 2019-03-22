@@ -14,10 +14,12 @@
  limitations under the License.
  */
 
+#import <Contacts/Contacts.h>
 #import "ContactsDataSource.h"
 #import "ContactTableViewCell.h"
 
-#import "RiotDesignValues.h"
+#import "ThemeService.h"
+#import "Riot-Swift.h"
 
 #define CONTACTSDATASOURCE_USERDIRECTORY_BITWISE 0x01
 
@@ -326,7 +328,7 @@
         {
             for (NSString *userId in identifiers)
             {
-                if ([_ignoredContactsByMatrixId objectForKey:userId] == nil)
+                if (_ignoredContactsByMatrixId[userId] == nil)
                 {
                     MXKContact *splitContact = [[MXKContact alloc] initMatrixContactWithDisplayName:contact.displayName andMatrixID:userId];
                     [unfilteredMatrixContacts addObject:splitContact];
@@ -336,7 +338,7 @@
         else if (identifiers.count)
         {
             NSString *userId = identifiers.firstObject;
-            if ([_ignoredContactsByMatrixId objectForKey:userId] == nil)
+            if (_ignoredContactsByMatrixId[userId] == nil)
             {
                 [unfilteredMatrixContacts addObject:contact];
             }
@@ -459,7 +461,7 @@
         if (!tableViewCell)
         {
             tableViewCell = [[MXKTableViewCell alloc] init];
-            tableViewCell.textLabel.textColor = kCaritasSecondaryTextColor;
+            tableViewCell.textLabel.textColor = ThemeService.shared.theme.textSecondaryColor;
             tableViewCell.textLabel.font = [UIFont systemFontOfSize:15.0];
             tableViewCell.selectionStyle = UITableViewCellSelectionStyleNone;
         }
@@ -558,10 +560,10 @@
         NSString *roomCount = [NSString stringWithFormat:roomCountFormat, count];
         
         NSMutableAttributedString *mutableSectionTitle = [[NSMutableAttributedString alloc] initWithString:title
-                                                                                         attributes:@{NSForegroundColorAttributeName : kCaritasColorWhite,
+                                                                                         attributes:@{NSForegroundColorAttributeName : ThemeService.shared.theme.headerTextPrimaryColor,
                                                                                                       NSFontAttributeName: [UIFont boldSystemFontOfSize:15.0]}];
         [mutableSectionTitle appendAttributedString:[[NSMutableAttributedString alloc] initWithString:roomCount
-                                                                                    attributes:@{NSForegroundColorAttributeName : kCaritasAuxiliaryColor,
+                                                                                    attributes:@{NSForegroundColorAttributeName : ThemeService.shared.theme.headerTextSecondaryColor,
                                                                                                  NSFontAttributeName: [UIFont boldSystemFontOfSize:15.0]}]];
         
         sectionTitle = mutableSectionTitle;
@@ -569,7 +571,7 @@
     else if (title)
     {
         sectionTitle = [[NSAttributedString alloc] initWithString:title
-                                               attributes:@{NSForegroundColorAttributeName : kCaritasColorWhite,
+                                               attributes:@{NSForegroundColorAttributeName : ThemeService.shared.theme.headerTextPrimaryColor,
                                                             NSFontAttributeName: [UIFont boldSystemFontOfSize:15.0]}];
     }
     
@@ -583,7 +585,7 @@
     NSInteger sectionBitwise = 0;
     
     sectionHeader = [[UIView alloc] initWithFrame:frame];
-    sectionHeader.backgroundColor = kCaritasSecondaryBgColor;
+    sectionHeader.backgroundColor = ThemeService.shared.theme.headerBackgroundColor;
     
     frame.origin.x = 20;
     frame.origin.y = 5;
@@ -635,7 +637,6 @@
         }
         UIImageView *chevronView = [[UIImageView alloc] initWithImage:chevron];
         chevronView.contentMode = UIViewContentModeCenter;
-        [chevronView setTintColor:kCaritasColorWhite];
         frame = chevronView.frame;
         frame.origin.x = shrinkButton.frame.size.width - frame.size.width - 16;
         frame.origin.y = (shrinkButton.frame.size.height - frame.size.height) / 2;

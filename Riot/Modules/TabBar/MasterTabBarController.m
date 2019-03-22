@@ -54,8 +54,8 @@
     // Keep reference on the pushed view controllers to release them correctly
     NSMutableArray *childViewControllers;
     
-    // Observe kRiotDesignValuesDidChangeThemeNotification to handle user interface theme change.
-    id kRiotDesignValuesDidChangeThemeNotificationObserver;
+    // Observe kThemeServiceDidChangeThemeNotification to handle user interface theme change.
+    id kThemeServiceDidChangeThemeNotificationObserver;
 }
 
 @property(nonatomic,getter=isHidden) BOOL hidden;
@@ -70,9 +70,9 @@
     // Do any additional setup after loading the view, typically from a nib.
 
     // Retrieve the all view controllers
-    _peopleViewController = [self.viewControllers objectAtIndex:TABBAR_PEOPLE_INDEX];
-    _roomsViewController = [self.viewControllers objectAtIndex:TABBAR_ROOMS_INDEX];
-    _settingsViewController = [self.viewControllers objectAtIndex:TABBAR_SETTINGS_INDEX];
+    _peopleViewController = self.viewControllers[TABBAR_PEOPLE_INDEX];
+    _roomsViewController = self.viewControllers[TABBAR_ROOMS_INDEX];
+    _settingsViewController = self.viewControllers[TABBAR_SETTINGS_INDEX];
     
     // Set the accessibility labels for all buttons #1842
     [_peopleViewController setAccessibilityLabel:NSLocalizedStringFromTable(@"title_people", @"Vector", nil)];
@@ -94,7 +94,7 @@
     [self initializeDataSources];
     
     // Observe user interface theme change.
-    kRiotDesignValuesDidChangeThemeNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kRiotDesignValuesDidChangeThemeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notif) {
+    kThemeServiceDidChangeThemeNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kThemeServiceDidChangeThemeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notif) {
         
         [self userInterfaceThemeDidChange];
         
@@ -104,12 +104,9 @@
 
 - (void)userInterfaceThemeDidChange
 {
-    UIImage *image = [self.navigationItem.leftBarButtonItem.image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-    [self.navigationItem.leftBarButtonItem setImage:image];
-    
-    [self.navigationController.navigationBar setBarTintColor:kCaritasNavigationBarBgColor];
-    [self.navigationController.navigationBar setTitleTextAttributes:
-     @{NSForegroundColorAttributeName:kCaritasColorWhite}];
+    [ThemeService.shared.theme applyStyleOnNavigationBar:self.navigationController.navigationBar];
+
+    [ThemeService.shared.theme applyStyleOnTabBar:self.tabBar];
     
     // Creating UIImage for red selection background in tab bar
     CGFloat tabBarCountFloat = (CGFloat)TABBAR_COUNT;
@@ -120,7 +117,7 @@
     CGContextSaveGState(ctx);
     
     CGRect rect = CGRectMake(0, 0, tabBarItemSize.width, tabBarItemSize.height);
-    CGContextSetFillColorWithColor(ctx, kCaritasTabBarSelectionColor.CGColor);
+    CGContextSetFillColorWithColor(ctx, [ThemeService.shared.theme.baseColor CGColor]);
     CGContextFillRect(ctx, rect);
     
     CGContextRestoreGState(ctx);
@@ -130,10 +127,7 @@
     // Setting red selection background
     self.tabBar.selectionIndicatorImage = tabBarSelectionImage;
     
-    self.tabBar.tintColor = kCaritasColorWhite;
-    self.tabBar.barTintColor = kCaritasPrimaryBgColor;
-    
-    self.view.backgroundColor = kCaritasPrimaryBgColor;
+    self.view.backgroundColor = ThemeService.shared.theme.backgroundColor;
     
     // Localizing tab bar items
     _roomsViewController.tabBarItem.title = NSLocalizedStringFromTable(@"title_rooms", @"Vector", nil);
@@ -145,7 +139,7 @@
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-    return kCaritasDesignStatusBarStyle;
+    return ThemeService.shared.theme.statusBarStyle;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -237,10 +231,10 @@
         authViewControllerObserver = nil;
     }
     
-    if (kRiotDesignValuesDidChangeThemeNotificationObserver)
+    if (kThemeServiceDidChangeThemeNotificationObserver)
     {
-        [[NSNotificationCenter defaultCenter] removeObserver:kRiotDesignValuesDidChangeThemeNotificationObserver];
-        kRiotDesignValuesDidChangeThemeNotificationObserver = nil;
+        [[NSNotificationCenter defaultCenter] removeObserver:kThemeServiceDidChangeThemeNotificationObserver];
+        kThemeServiceDidChangeThemeNotificationObserver = nil;
     }
     
     childViewControllers = nil;
@@ -742,7 +736,7 @@
 {
     _hidden = hidden;
     
-    [self.view superview].backgroundColor = kCaritasPrimaryBgColor;
+    [self.view superview].backgroundColor = ThemeService.shared.theme.backgroundColor;
     self.view.hidden = hidden;
     self.navigationController.navigationBar.hidden = hidden;
 }
@@ -752,8 +746,12 @@
 - (void)refreshTabBarBadges
 {
     // Update the badge on People and Rooms tabs
-    [self setMissedDiscussionsCount:recentsDataSource.missedDirectDiscussionsCount onTabBarItem:TABBAR_PEOPLE_INDEX withBadgeColor:(recentsDataSource.missedHighlightDirectDiscussionsCount ? kCaritasColorGrey : kCaritasColorLightBlack)];
-    [self setMissedDiscussionsCount:recentsDataSource.missedGroupDiscussionsCount onTabBarItem:TABBAR_ROOMS_INDEX withBadgeColor:(recentsDataSource.missedHighlightGroupDiscussionsCount ? kCaritasColorGrey : kCaritasColorLightBlack)];
+    [self setMissedDiscussionsCount:recentsDataSource.missedDirectDiscussionsCount
+                       onTabBarItem:TABBAR_PEOPLE_INDEX
+                     withBadgeColor:(recentsDataSource.missedHighlightDirectDiscussionsCount ? ThemeService.shared.theme.noticeColor : ThemeService.shared.theme.noticeSecondaryColor)];
+    [self setMissedDiscussionsCount:recentsDataSource.missedGroupDiscussionsCount
+                       onTabBarItem:TABBAR_ROOMS_INDEX
+                     withBadgeColor:(recentsDataSource.missedHighlightGroupDiscussionsCount ? ThemeService.shared.theme.noticeColor : ThemeService.shared.theme.noticeSecondaryColor)];
 }
 
 - (void)setMissedDiscussionsCount:(NSUInteger)count onTabBarItem:(NSUInteger)index withBadgeColor:(UIColor*)badgeColor
@@ -764,9 +762,14 @@
         
         self.tabBar.items[index].badgeValue = badgeValue;
         
-        if ([UITabBarItem instancesRespondToSelector:@selector(setBadgeColor:)])
+        if (@available(iOS 10, *))
         {
             self.tabBar.items[index].badgeColor = badgeColor;
+
+            [self.tabBar.items[index] setBadgeTextAttributes:@{
+                                                               NSForegroundColorAttributeName: ThemeService.shared.theme.baseTextPrimaryColor
+                                                               }
+                                                    forState:UIControlStateNormal];
         }
     }
     else
@@ -781,9 +784,14 @@
     {
         self.tabBar.items[index].badgeValue = mark;
         
-        if ([UITabBarItem instancesRespondToSelector:@selector(setBadgeColor:)])
+        if (@available(iOS 10, *))
         {
             self.tabBar.items[index].badgeColor = badgeColor;
+
+            [self.tabBar.items[index] setBadgeTextAttributes:@{
+                                                               NSForegroundColorAttributeName: ThemeService.shared.theme.baseTextPrimaryColor
+                                                               }
+                                                    forState:UIControlStateNormal];
         }
     }
     else
@@ -819,7 +827,7 @@
     
     [currentAlert dismissViewControllerAnimated:NO completion:nil];
     
-    NSString *appDisplayName = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleDisplayName"];
+    NSString *appDisplayName = [[NSBundle mainBundle] infoDictionary][@"CFBundleDisplayName"];
     
     currentAlert = [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:NSLocalizedStringFromTable(@"google_analytics_use_prompt", @"Vector", nil), appDisplayName] message:nil preferredStyle:UIAlertControllerStyleAlert];
     

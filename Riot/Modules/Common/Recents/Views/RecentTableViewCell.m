@@ -21,7 +21,8 @@
 
 #import "MXEvent.h"
 
-#import "RiotDesignValues.h"
+#import "ThemeService.h"
+#import "Riot-Swift.h"
 
 #import "MXRoomSummary+Riot.h"
 
@@ -47,15 +48,15 @@ static const CGFloat kDirectRoomBorderWidth = 3.0;
 {
     [super customizeTableViewCellRendering];
     
-    self.roomTitle.textColor = kCaritasPrimaryTextColor;
-    self.roomTitle.highlightedTextColor = kCaritasColorWhite;
-    self.lastEventDescription.textColor = kCaritasSecondaryTextColor;
-    self.lastEventDescription.highlightedTextColor = kCaritasColorWhite;
-    self.lastEventDate.textColor = kCaritasSecondaryTextColor;
-    self.missedNotifAndUnreadBadgeLabel.textColor = kCaritasPrimaryBgColor;
+    self.roomTitle.textColor = ThemeService.shared.theme.textPrimaryColor;
+    self.roomTitle.highlightedTextColor = ThemeService.shared.theme.textSecondaryColor;
+    self.lastEventDescription.textColor = ThemeService.shared.theme.textSecondaryColor;
+    self.lastEventDescription.highlightedTextColor = ThemeService.shared.theme.textSecondaryColor;
+    self.lastEventDate.textColor = ThemeService.shared.theme.textSecondaryColor;
+    self.missedNotifAndUnreadBadgeLabel.textColor = ThemeService.shared.theme.baseTextPrimaryColor;
     
     // Prepare direct room border
-    CGColorRef directRoomBorderColor = CGColorCreateCopyWithAlpha(kCaritasColorRed.CGColor, kDirectRoomBorderColorAlpha);
+    CGColorRef directRoomBorderColor = CGColorCreateCopyWithAlpha(ThemeService.shared.theme.tintColor.CGColor, kDirectRoomBorderColorAlpha);
     
     [self.directRoomBorderView.layer setCornerRadius:self.directRoomBorderView.frame.size.width / 2];
     self.directRoomBorderView.clipsToBounds = YES;
@@ -95,7 +96,7 @@ static const CGFloat kDirectRoomBorderWidth = 3.0;
         {
             // Force the default text color for the last message (cancel highlighted message color)
             NSMutableAttributedString *lastEventDescription = [[NSMutableAttributedString alloc] initWithAttributedString:roomCellData.lastEventAttributedTextMessage];
-            [lastEventDescription addAttribute:NSForegroundColorAttributeName value:kCaritasSecondaryTextColor range:NSMakeRange(0, lastEventDescription.length)];
+            [lastEventDescription addAttribute:NSForegroundColorAttributeName value:ThemeService.shared.theme.textSecondaryColor range:NSMakeRange(0, lastEventDescription.length)];
             self.lastEventDescription.attributedText = lastEventDescription;
         }
         else
@@ -110,7 +111,7 @@ static const CGFloat kDirectRoomBorderWidth = 3.0;
             
             if (0 < roomCellData.notificationCount)
             {
-                self.missedNotifAndUnreadIndicator.backgroundColor = roomCellData.highlightCount ? kCaritasColorPinkRed : kCaritasColorRed;
+                self.missedNotifAndUnreadIndicator.backgroundColor = roomCellData.highlightCount ? ThemeService.shared.theme.noticeColor : ThemeService.shared.theme.noticeSecondaryColor;
                 
                 self.missedNotifAndUnreadBadgeBgView.hidden = NO;
                 self.missedNotifAndUnreadBadgeBgView.backgroundColor = self.missedNotifAndUnreadIndicator.backgroundColor;
@@ -122,7 +123,7 @@ static const CGFloat kDirectRoomBorderWidth = 3.0;
             }
             else
             {
-                self.missedNotifAndUnreadIndicator.backgroundColor = kCaritasAuxiliaryColor;
+                self.missedNotifAndUnreadIndicator.backgroundColor = ThemeService.shared.theme.unreadRoomIndentColor;
             }
             
             // Use bold font for the room title
@@ -137,7 +138,7 @@ static const CGFloat kDirectRoomBorderWidth = 3.0;
         }
         else
         {
-            self.lastEventDate.textColor = kCaritasSecondaryTextColor;
+            self.lastEventDate.textColor = ThemeService.shared.theme.textSecondaryColor;
             
             // The room title is not bold anymore
             if ([UIFont respondsToSelector:@selector(systemFontOfSize:weight:)])

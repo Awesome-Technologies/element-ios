@@ -17,7 +17,8 @@
 
 #import "SimpleRoomTitleView.h"
 
-#import "RiotDesignValues.h"
+#import "ThemeService.h"
+#import "Riot-Swift.h"
 
 @implementation SimpleRoomTitleView
 
@@ -91,7 +92,7 @@
 {
     [super customizeViewRendering];
     
-    self.displayNameTextField.textColor = kCaritasColorWhite;
+    self.displayNameTextField.textColor = ThemeService.shared.theme.baseTextPrimaryColor;
 }
 
 - (void)refreshDisplay

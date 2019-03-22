@@ -17,7 +17,8 @@
 
 #import "RoomOutgoingAttachmentWithoutSenderInfoBubbleCell.h"
 
-#import "RiotDesignValues.h"
+#import "ThemeService.h"
+#import "Riot-Swift.h"
 
 @implementation RoomOutgoingAttachmentWithoutSenderInfoBubbleCell
 
@@ -25,7 +26,7 @@
 {
     [super customizeTableViewCellRendering];
     
-    self.messageTextView.tintColor = kCaritasColorRed;
+    self.messageTextView.tintColor = ThemeService.shared.theme.textPrimaryColor;
 }
 
 - (void)render:(MXKCellData *)cellData

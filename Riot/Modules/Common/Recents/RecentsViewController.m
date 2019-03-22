@@ -34,6 +34,7 @@
 #import "RoomIdOrAliasTableViewCell.h"
 
 #import "AppDelegate.h"
+#import "Riot-Swift.h"
 
 @interface RecentsViewController ()
 {
@@ -63,8 +64,8 @@
     // when the user selects it.
     UISearchBar *tableSearchBar;
     
-    // Observe kRiotDesignValuesDidChangeThemeNotification to handle user interface theme change.
-    id kRiotDesignValuesDidChangeThemeNotificationObserver;
+    // Observe kThemeServiceDidChangeThemeNotification to handle user interface theme change.
+    id kThemeServiceDidChangeThemeNotificationObserver;
 }
 
 @end
@@ -151,7 +152,7 @@
     self.recentsSearchBar.placeholder = NSLocalizedStringFromTable(@"search_default_placeholder", @"Vector", nil);
     
     // Observe user interface theme change.
-    kRiotDesignValuesDidChangeThemeNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kRiotDesignValuesDidChangeThemeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notif) {
+    kThemeServiceDidChangeThemeNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kThemeServiceDidChangeThemeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notif) {
         
         [self userInterfaceThemeDidChange];
         
@@ -161,21 +162,19 @@
 
 - (void)userInterfaceThemeDidChange
 {
-    self.defaultBarTintColor = kCaritasNavigationBarBgColor;
-    self.barTitleColor = kCaritasColorWhite;
-    self.activityIndicator.backgroundColor = kCaritasOverlayColor;
+    [ThemeService.shared.theme applyStyleOnNavigationBar:self.navigationController.navigationBar];
+
+    self.activityIndicator.backgroundColor = ThemeService.shared.theme.overlayBackgroundColor;
     
     // Use the primary bg color for the recents table view in plain style.
-    self.recentsTableView.backgroundColor = kCaritasPrimaryBgColor;
-    topview.backgroundColor = nil;
-    self.view.backgroundColor = kCaritasPrimaryBgColor;
-    
-    tableSearchBar.barStyle = self.recentsSearchBar.barStyle = kCaritasDesignSearchBarStyle;
-    tableSearchBar.barTintColor = self.recentsSearchBar.barTintColor = kCaritasDesignSearchBarTintColor;
-    // Setting text color on cancel button when searching
-    tableSearchBar.tintColor = self.recentsSearchBar.tintColor = kCaritasPrimaryTextColor;
-    [[UIBarButtonItem appearanceWhenContainedIn:[UISearchBar class], nil] setTintColor:kCaritasColorWhite];
-    
+    self.recentsTableView.backgroundColor = ThemeService.shared.theme.backgroundColor;
+    self.recentsTableView.separatorColor = ThemeService.shared.theme.lineBreakColor;
+    topview.backgroundColor = ThemeService.shared.theme.backgroundColor;
+    self.view.backgroundColor = ThemeService.shared.theme.backgroundColor;
+
+    [ThemeService.shared.theme applyStyleOnSearchBar:tableSearchBar];
+    [ThemeService.shared.theme applyStyleOnSearchBar:self.recentsSearchBar];
+
     if (self.recentsTableView.dataSource)
     {
         // Force table refresh
@@ -185,7 +184,7 @@
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-    return kCaritasDesignStatusBarStyle;
+    return ThemeService.shared.theme.statusBarStyle;
 }
 
 - (void)destroy
@@ -212,10 +211,10 @@
         UIApplicationDidEnterBackgroundNotificationObserver = nil;
     }
     
-    if (kRiotDesignValuesDidChangeThemeNotificationObserver)
+    if (kThemeServiceDidChangeThemeNotificationObserver)
     {
-        [[NSNotificationCenter defaultCenter] removeObserver:kRiotDesignValuesDidChangeThemeNotificationObserver];
-        kRiotDesignValuesDidChangeThemeNotificationObserver = nil;
+        [[NSNotificationCenter defaultCenter] removeObserver:kThemeServiceDidChangeThemeNotificationObserver];
+        kThemeServiceDidChangeThemeNotificationObserver = nil;
     }
 }
 
@@ -880,7 +879,7 @@
         }];
         
         UIImage *actionIcon = isMuted ? [UIImage imageNamed:@"notifications"] : [UIImage imageNamed:@"notificationsOff"];
-        muteAction.backgroundColor = [MXKTools convertImageToPatternColor:isMuted ? @"notifications" : @"notificationsOff" backgroundColor:kCaritasSecondaryBgColor patternSize:CGSizeMake(74, 74) resourceSize:actionIcon.size];
+        muteAction.backgroundColor = [MXKTools convertImageToPatternColor:isMuted ? @"notifications" : @"notificationsOff" backgroundColor:ThemeService.shared.theme.headerBackgroundColor patternSize:CGSizeMake(74, 74) resourceSize:actionIcon.size];
         [actions insertObject:muteAction atIndex:0];
         
         if (!room.isDirect) {
@@ -891,7 +890,7 @@
             }];
             
             actionIcon = [UIImage imageNamed:@"leave"];
-            leaveAction.backgroundColor = [MXKTools convertImageToPatternColor:@"leave" backgroundColor:kCaritasSecondaryBgColor patternSize:CGSizeMake(74, 74) resourceSize:actionIcon.size];
+            leaveAction.backgroundColor = [MXKTools convertImageToPatternColor:@"leave" backgroundColor:ThemeService.shared.theme.headerBackgroundColor patternSize:CGSizeMake(74, 74) resourceSize:actionIcon.size];
             
             [actions insertObject:leaveAction atIndex:0];
         }
@@ -1122,13 +1121,13 @@
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    cell.backgroundColor = kCaritasPrimaryBgColor;
+    cell.backgroundColor = ThemeService.shared.theme.backgroundColor;
     
     // Update the selected background view
-    if (kCaritasSelectedBgColor)
+    if (ThemeService.shared.theme.selectedBackgroundColor)
     {
         cell.selectedBackgroundView = [[UIView alloc] init];
-        cell.selectedBackgroundView.backgroundColor = kCaritasSelectedBgColor;
+        cell.selectedBackgroundView.backgroundColor = ThemeService.shared.theme.selectedBackgroundColor;
     }
     else
     {
@@ -1188,7 +1187,7 @@
         if (roomIdOrAlias.length)
         {
             // Open the room or preview it
-            NSString *fragment = [NSString stringWithFormat:@"/room/%@", [roomIdOrAlias stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+            NSString *fragment = [NSString stringWithFormat:@"/room/%@", [MXTools encodeURIComponent:roomIdOrAlias]];
             [[AppDelegate theDelegate] handleUniversalLinkFragment:fragment];
         }
         [tableView deselectRowAtIndexPath:indexPath animated:NO];
@@ -1350,7 +1349,7 @@
             if (indexPath && [recentsDataSource isDraggableCellAt:indexPath])
             {
                 UITableViewCell *cell = [self.recentsTableView cellForRowAtIndexPath:indexPath];
-                cell.backgroundColor = kCaritasPrimaryBgColor;
+                cell.backgroundColor = ThemeService.shared.theme.backgroundColor;
                 
                 // snapshot the cell
                 UIGraphicsBeginImageContextWithOptions(cell.bounds.size, NO, 0);
@@ -1645,14 +1644,13 @@
                                                        {
                                                            typeof(self) self = weakSelf;
                                                            
-                                                           UITextField *textField = [self->currentAlert textFields].firstObject;
-                                                           NSString *roomAliasOrId = textField.text;
+                                                           NSString *roomAliasOrId = [self->currentAlert textFields].firstObject.text;
                                                            
                                                            self->currentAlert = nil;
                                                            
                                                            [self.activityIndicator startAnimating];
                                                            
-                                                           self->currentRequest = [self.mainSession joinRoom:textField.text success:^(MXRoom *room) {
+                                                           self->currentRequest = [self.mainSession joinRoom:roomAliasOrId success:^(MXRoom *room) {
                                                                
                                                                self->currentRequest = nil;
                                                                [self.activityIndicator stopAnimating];
