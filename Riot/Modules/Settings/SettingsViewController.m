@@ -54,7 +54,6 @@ enum
     SETTINGS_SECTION_IGNORED_USERS_INDEX,
     SETTINGS_SECTION_OTHER_INDEX,
     SETTINGS_SECTION_KEYBACKUP_INDEX,
-    SETTINGS_SECTION_DEVICES_INDEX,
     SETTINGS_SECTION_DEACTIVATE_ACCOUNT_INDEX,
     SETTINGS_SECTION_COUNT
 };
@@ -139,10 +138,6 @@ SignOutAlertPresenterDelegate>
     NSInteger userSettingsChangePasswordIndex;
     NSInteger userSettingsNightModeSepIndex;
     NSInteger userSettingsNightModeIndex;
-    
-    // Devices
-    NSMutableArray<MXDevice *> *devicesArray;
-    DeviceView *deviceView;
     
     // Observe kAppDelegateDidTapStatusBarNotification to handle tap on clock status bar.
     id kAppDelegateDidTapStatusBarNotificationObserver;
@@ -366,12 +361,6 @@ SignOutAlertPresenterDelegate>
     // Refresh display
     [self refreshSettings];
     
-    // Refresh the current device information in parallel
-    [self loadCurrentDeviceInformation];
-    
-    // Refresh devices in parallel
-    [self loadDevices];
-    
     // Observe kAppDelegateDidTapStatusBarNotificationObserver.
     kAppDelegateDidTapStatusBarNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kAppDelegateDidTapStatusBarNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notif) {
         
@@ -494,136 +483,6 @@ SignOutAlertPresenterDelegate>
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
     onReadyToDestroyHandler = nil;
-    
-    if (deviceView)
-    {
-        [deviceView removeFromSuperview];
-        deviceView = nil;
-    }
-}
-
-- (void)loadCurrentDeviceInformation
-{
-    // Refresh the current device information
-    MXKAccount* account = [MXKAccountManager sharedManager].activeAccounts.firstObject;
-    [account loadDeviceInformation:^{
-        
-        // Refresh all the table (A slide down animation is observed when we limit the refresh to the concerned section).
-        // Note: The use of 'reloadData' handles the case where the account has been logged out.
-        [self refreshSettings];
-        
-    } failure:nil];
-}
-
-- (void)loadDevices
-{
-    // Refresh the account devices list
-    MXKAccount* account = [MXKAccountManager sharedManager].activeAccounts.firstObject;
-    [account.mxRestClient devices:^(NSArray<MXDevice *> *devices) {
-        
-        if (devices)
-        {
-            devicesArray = [NSMutableArray arrayWithArray:devices];
-            
-            // Sort devices according to the last seen date.
-            NSComparator comparator = ^NSComparisonResult(MXDevice *deviceA, MXDevice *deviceB) {
-                
-                if (deviceA.lastSeenTs > deviceB.lastSeenTs)
-                {
-                    return NSOrderedAscending;
-                }
-                if (deviceA.lastSeenTs < deviceB.lastSeenTs)
-                {
-                    return NSOrderedDescending;
-                }
-                
-                return NSOrderedSame;
-            };
-            
-            // Sort devices list
-            [devicesArray sortUsingComparator:comparator];
-        }
-        else
-        {
-            devicesArray = nil;
-
-        }
-        
-        // Refresh all the table (A slide down animation is observed when we limit the refresh to the concerned section).
-        // Note: The use of 'reloadData' handles the case where the account has been logged out.
-        [self refreshSettings];
-        
-    } failure:^(NSError *error) {
-        
-        // Display the data that has been loaded last time
-        // Note: The use of 'reloadData' handles the case where the account has been logged out.
-        [self refreshSettings];
-        
-    }];
-}
-
-- (void)showDeviceDetails:(MXDevice *)device
-{
-    [self dismissKeyboard];
-    
-    deviceView = [[DeviceView alloc] initWithDevice:device andMatrixSession:self.mainSession];
-    deviceView.delegate = self;
-
-    // Add the view and define edge constraints
-    [self.tableView.superview addSubview:deviceView];
-    [self.tableView.superview bringSubviewToFront:deviceView];
-    
-    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:deviceView
-                                                                     attribute:NSLayoutAttributeTop
-                                                                     relatedBy:NSLayoutRelationEqual
-                                                                        toItem:self.tableView
-                                                                     attribute:NSLayoutAttributeTop
-                                                                    multiplier:1.0f
-                                                                      constant:0.0f];
-    
-    NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:deviceView
-                                                                      attribute:NSLayoutAttributeLeft
-                                                                      relatedBy:NSLayoutRelationEqual
-                                                                         toItem:self.tableView
-                                                                      attribute:NSLayoutAttributeLeft
-                                                                     multiplier:1.0f
-                                                                       constant:0.0f];
-    
-    NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:deviceView
-                                                                       attribute:NSLayoutAttributeWidth
-                                                                       relatedBy:NSLayoutRelationEqual
-                                                                          toItem:self.tableView
-                                                                       attribute:NSLayoutAttributeWidth
-                                                                      multiplier:1.0f
-                                                                        constant:0.0f];
-    
-    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:deviceView
-                                                                        attribute:NSLayoutAttributeHeight
-                                                                        relatedBy:NSLayoutRelationEqual
-                                                                           toItem:self.tableView
-                                                                        attribute:NSLayoutAttributeHeight
-                                                                       multiplier:1.0f
-                                                                         constant:0.0f];
-    
-    [NSLayoutConstraint activateConstraints:@[topConstraint, leftConstraint, widthConstraint, heightConstraint]];
-}
-
-- (void)deviceView:(DeviceView*)theDeviceView presentAlertController:(UIAlertController *)alert
-{
-    [self dismissKeyboard];
-    
-    [self presentViewController:alert animated:YES completion:nil];
-}
-
-- (void)dismissDeviceView:(MXKDeviceView *)theDeviceView didUpdate:(BOOL)isUpdated
-{
-    [deviceView removeFromSuperview];
-    deviceView = nil;
-    
-    if (isUpdated)
-    {
-        [self loadDevices];
-    }
 }
 
 - (void)refreshSettings
@@ -695,10 +554,6 @@ SignOutAlertPresenterDelegate>
     else if (section == SETTINGS_SECTION_OTHER_INDEX)
     {
         count = OTHER_COUNT;
-    }
-    else if (section == SETTINGS_SECTION_DEVICES_INDEX)
-    {
-        count = devicesArray.count;
     }
     else if (section == SETTINGS_SECTION_KEYBACKUP_INDEX)
     {
@@ -1220,25 +1075,6 @@ SignOutAlertPresenterDelegate>
             cell = reportBugBtnCell;
         }
     }
-    else if (section == SETTINGS_SECTION_DEVICES_INDEX)
-    {
-        MXKTableViewCell *deviceCell = [self getDefaultTableViewCell:tableView];
-        
-        if (row < devicesArray.count)
-        {
-            NSString *name = devicesArray[row].displayName;
-            NSString *deviceId = devicesArray[row].deviceId;
-            deviceCell.textLabel.text = (name.length ? [NSString stringWithFormat:@"%@ (%@)", name, deviceId] : [NSString stringWithFormat:@"(%@)", deviceId]);
-            deviceCell.textLabel.numberOfLines = 0;
-            
-            if ([deviceId isEqualToString:self.mainSession.matrixRestClient.credentials.deviceId])
-            {
-                deviceCell.textLabel.font = [UIFont boldSystemFontOfSize:17];
-            }
-        }
-        
-        cell = deviceCell;
-    }
     else if (section == SETTINGS_SECTION_KEYBACKUP_INDEX)
     {
         cell = [keyBackupSection cellForRowAtRow:row];
@@ -1302,14 +1138,6 @@ SignOutAlertPresenterDelegate>
     else if (section == SETTINGS_SECTION_OTHER_INDEX)
     {
         return NSLocalizedStringFromTable(@"settings_other", @"Vector", nil);
-    }
-    else if (section == SETTINGS_SECTION_DEVICES_INDEX)
-    {
-        // Check whether this section is visible
-        if (devicesArray.count > 0)
-        {
-            return NSLocalizedStringFromTable(@"settings_devices", @"Vector", nil);
-        }
     }
     else if (section == SETTINGS_SECTION_KEYBACKUP_INDEX)
     {
@@ -1541,13 +1369,6 @@ SignOutAlertPresenterDelegate>
             else if (row == userSettingsChangePasswordIndex)
             {
                 [self displayPasswordAlert];
-            }
-        }
-        else if (section == SETTINGS_SECTION_DEVICES_INDEX)
-        {
-            if (row < devicesArray.count)
-            {
-                [self showDeviceDetails:devicesArray[row]];
             }
         }
         
