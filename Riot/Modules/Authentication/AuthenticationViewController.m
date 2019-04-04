@@ -132,7 +132,7 @@
     // as the main view background color.
     // Hopefully, subviews define their own background color with `theme.backgroundColor`,
     // which makes all work together.
-    self.view.backgroundColor = ThemeService.shared.theme.baseColor;
+    self.view.backgroundColor = self.navigationBar.barTintColor;
 
     self.authenticationScrollView.backgroundColor = ThemeService.shared.theme.backgroundColor;
 
@@ -153,8 +153,8 @@
                                                               attributes:@{NSForegroundColorAttributeName: ThemeService.shared.theme.placeholderTextColor}];
     }
     
-    self.submitButton.backgroundColor = ThemeService.shared.theme.tintColor;
-    self.skipButton.backgroundColor = ThemeService.shared.theme.tintColor;
+    self.submitButton.backgroundColor = ThemeService.shared.theme.baseColor;
+    self.skipButton.backgroundColor = ThemeService.shared.theme.baseColor;
     
     self.noFlowLabel.textColor = ThemeService.shared.theme.warningColor;
     
