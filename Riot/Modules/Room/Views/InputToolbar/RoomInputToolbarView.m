@@ -70,7 +70,7 @@
     
     self.isEncryptionEnabled = _isEncryptionEnabled;
     
-    self.attachMediaButton.imageView.tintColor = ThemeService.shared.theme.baseTextPrimaryColor;
+    self.attachMediaButton.imageView.tintColor = ThemeService.shared.theme.textPrimaryColor;
 }
 
 #pragma mark - Override MXKView
