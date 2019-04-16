@@ -76,13 +76,15 @@
 {
     [super viewDidLoad];
     
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
     self.mainNavigationItem.title = nil;
     self.rightBarButtonItem.title = nil;
     
-    self.defaultHomeServerUrl = @"https://caritas.amp.care";
-    self.defaultIdentityServerUrl = @"https://caritas.amp.care";
+    self.defaultHomeServerUrl = [defaults stringForKey:@"homeserverurl"];
+    self.defaultIdentityServerUrl = [defaults stringForKey:@"identityserverurl"];
     
-    self.welcomeImageView.image = [UIImage imageNamed:@"Caritas_Logo"];
+    self.welcomeImageView.image = [UIImage imageNamed:@"Logo"];
     
     [self.submitButton.layer setCornerRadius:5];
     self.submitButton.clipsToBounds = YES;

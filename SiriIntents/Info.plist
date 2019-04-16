@@ -35,6 +35,8 @@
 		<string>com.apple.intents-service</string>
 		<key>NSExtensionPrincipalClass</key>
 		<string>IntentHandler</string>
+		<key>APP_GROUP</key>
+		<string>$(APP_GROUP)</string>
 	</dict>
 </dict>
 </plist>

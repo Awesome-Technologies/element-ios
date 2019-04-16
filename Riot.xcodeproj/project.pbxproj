@@ -37,6 +37,10 @@
 		92726A4B1F58737A004AD26F /* SiriIntents.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 92726A431F58737A004AD26F /* SiriIntents.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		92726A511F587410004AD26F /* Intents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92726A501F587410004AD26F /* Intents.framework */; };
 		9728D5FE21B1DF9800971E57 /* AppIntentVocabulary.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9708406F21B1B6B900746099 /* AppIntentVocabulary.plist */; };
+		9768F48A2266289F00926AFB /* AMP Chat-Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9768F4892266289F00926AFB /* AMP Chat-Defaults.plist */; };
+		9768F4922266385A00926AFB /* AMP Chat-LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9768F4902266385A00926AFB /* AMP Chat-LaunchScreen.storyboard */; };
+		9768F4942266391800926AFB /* Caritas Messenger-SharedImages.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9768F4932266391700926AFB /* Caritas Messenger-SharedImages.xcassets */; };
+		9787D9B62271D9EE0010EA83 /* App-Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9787D9B52271D9ED0010EA83 /* App-Defaults.swift */; };
 		97BDA7F52252360C0055EBCE /* TermsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 32B1FEDA21A46F2C00637127 /* TermsView.xib */; };
 		B104C2942203773C00D9F496 /* KeyBackupBannerPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = B104C2932203773B00D9F496 /* KeyBackupBannerPreferences.swift */; };
 		B1057789221304EC00334B1E /* KeyBackupSetupSuccessFromPassphraseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1057788221304EB00334B1E /* KeyBackupSetupSuccessFromPassphraseViewController.swift */; };
@@ -45,7 +49,6 @@
 		B105778F2213052A00334B1E /* KeyBackupSetupSuccessFromRecoveryKeyViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B105778E2213052A00334B1E /* KeyBackupSetupSuccessFromRecoveryKeyViewController.storyboard */; };
 		B1098BDF21ECE09F000DDA48 /* Strings.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1098BDA21ECE09E000DDA48 /* Strings.swift */; };
 		B1098BE121ECE09F000DDA48 /* Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1098BDC21ECE09E000DDA48 /* Images.swift */; };
-		B1098BE321ECE09F000DDA48 /* RiotDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1098BDE21ECE09E000DDA48 /* RiotDefaults.swift */; };
 		B1098BE521ECE1FC000DDA48 /* Storyboards.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1098BE421ECE1FC000DDA48 /* Storyboards.swift */; };
 		B1098BE821ECFE52000DDA48 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1098BE721ECFE51000DDA48 /* Coordinator.swift */; };
 		B1098BF621ECFE65000DDA48 /* KeyBackupSetupPassphraseCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1098BEA21ECFE64000DDA48 /* KeyBackupSetupPassphraseCoordinator.swift */; };
@@ -108,9 +111,9 @@
 		B169328320F38AE600746532 /* RiotSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B5597F20EFC3DF00210D55 /* RiotSettings.swift */; };
 		B169328420F38BE300746532 /* SegmentedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B556D720EE6C4C00210D55 /* SegmentedViewController.m */; };
 		B169328520F38BE800746532 /* SegmentedViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B1B556D620EE6C4C00210D55 /* SegmentedViewController.xib */; };
-		B169328720F3954A00746532 /* SharedImages.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B169328620F3954A00746532 /* SharedImages.xcassets */; };
-		B169328820F3954A00746532 /* SharedImages.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B169328620F3954A00746532 /* SharedImages.xcassets */; };
-		B169329920F39E6300746532 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B169329320F39E6200746532 /* LaunchScreen.storyboard */; };
+		B169328720F3954A00746532 /* AMP Chat-SharedImages.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B169328620F3954A00746532 /* AMP Chat-SharedImages.xcassets */; };
+		B169328820F3954A00746532 /* AMP Chat-SharedImages.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B169328620F3954A00746532 /* AMP Chat-SharedImages.xcassets */; };
+		B169329920F39E6300746532 /* Caritas Messenger-LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B169329320F39E6200746532 /* Caritas Messenger-LaunchScreen.storyboard */; };
 		B169329B20F39E6300746532 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B169329520F39E6300746532 /* Main.storyboard */; };
 		B16932A320F3A21C00746532 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B169329F20F3A21B00746532 /* main.m */; };
 		B16932A520F3A21C00746532 /* empty.mm in Sources */ = {isa = PBXBuildFile; fileRef = B16932A220F3A21B00746532 /* empty.mm */; };
@@ -359,7 +362,7 @@
 		F083BE021E7009ED00A9B29C /* AvatarGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = F083BC111E7009EC00A9B29C /* AvatarGenerator.m */; };
 		F083BE031E7009ED00A9B29C /* EventFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = F083BC131E7009EC00A9B29C /* EventFormatter.m */; };
 		F083BE041E7009ED00A9B29C /* Tools.m in Sources */ = {isa = PBXBuildFile; fileRef = F083BC151E7009EC00A9B29C /* Tools.m */; };
-		F083BE061E7009ED00A9B29C /* Riot-Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = F083BC181E7009EC00A9B29C /* Riot-Defaults.plist */; };
+		F083BE061E7009ED00A9B29C /* Caritas Messenger-Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = F083BC181E7009EC00A9B29C /* Caritas Messenger-Defaults.plist */; };
 		F083BEA51E70356E00A9B29C /* RiotTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F083BB041E7005FD00A9B29C /* RiotTests.m */; };
 		F0A8955F1F7D1FEA00BD6C2A /* MXRoomSummary+Riot.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D2ADA01F6AA5FD00A7097D /* MXRoomSummary+Riot.m */; };
 		F0D2ADA11F6AA5FD00A7097D /* MXRoomSummary+Riot.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D2ADA01F6AA5FD00A7097D /* MXRoomSummary+Riot.m */; };
@@ -416,8 +419,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		079E6CE65DD02846E2624D22 /* Pods-RiotPods-RiotShareExtension.amp chat release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RiotPods-RiotShareExtension.amp chat release.xcconfig"; path = "Pods/Target Support Files/Pods-RiotPods-RiotShareExtension/Pods-RiotPods-RiotShareExtension.amp chat release.xcconfig"; sourceTree = "<group>"; };
 		24CBEC4E1F0EAD310093EABB /* RiotShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = RiotShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		2510A69B4A681C1FEC36E848 /* Pods_RiotPods_Riot.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RiotPods_Riot.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		271C4E0382BE0D4588EBBE62 /* Pods-RiotPods-RiotShareExtension.ampchat debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RiotPods-RiotShareExtension.ampchat debug.xcconfig"; path = "Pods/Target Support Files/Pods-RiotPods-RiotShareExtension/Pods-RiotPods-RiotShareExtension.ampchat debug.xcconfig"; sourceTree = "<group>"; };
+		2BD5F3FDF532569CB9622C5A /* Pods-RiotPods-Riot.caritas release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RiotPods-Riot.caritas release.xcconfig"; path = "Pods/Target Support Files/Pods-RiotPods-Riot/Pods-RiotPods-Riot.caritas release.xcconfig"; sourceTree = "<group>"; };
 		319CD7C67A47A3D35959E18F /* Pods-RiotPods-Riot.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RiotPods-Riot.release.xcconfig"; path = "Pods/Target Support Files/Pods-RiotPods-Riot/Pods-RiotPods-Riot.release.xcconfig"; sourceTree = "<group>"; };
 		32242F0821E8B05F00725742 /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		32242F0C21E8FBA900725742 /* ThemeService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThemeService.m; sourceTree = "<group>"; };
@@ -440,7 +446,12 @@
 		32BF995421FA2AB700698084 /* SettingsKeyBackupViewAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsKeyBackupViewAction.swift; sourceTree = "<group>"; };
 		32BF995621FB07A400698084 /* SettingsKeyBackupTableViewSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsKeyBackupTableViewSection.swift; sourceTree = "<group>"; };
 		3998C51E0196D42B366E0900 /* Pods-RiotPods-RiotShareExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RiotPods-RiotShareExtension.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RiotPods-RiotShareExtension/Pods-RiotPods-RiotShareExtension.debug.xcconfig"; sourceTree = "<group>"; };
+		430A96F9CD614098871FFC81 /* Pods-RiotPods-SiriIntents.caritas debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RiotPods-SiriIntents.caritas debug.xcconfig"; path = "Pods/Target Support Files/Pods-RiotPods-SiriIntents/Pods-RiotPods-SiriIntents.caritas debug.xcconfig"; sourceTree = "<group>"; };
+		74741378D0B7948BDBB9758B /* Pods-RiotPods-RiotShareExtension.amp chat debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RiotPods-RiotShareExtension.amp chat debug.xcconfig"; path = "Pods/Target Support Files/Pods-RiotPods-RiotShareExtension/Pods-RiotPods-RiotShareExtension.amp chat debug.xcconfig"; sourceTree = "<group>"; };
 		78CD06F14060998545642330 /* Pods-RiotPods-Riot.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RiotPods-Riot.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RiotPods-Riot/Pods-RiotPods-Riot.debug.xcconfig"; sourceTree = "<group>"; };
+		79E3D9F1666184FF8CABCF1C /* Pods-RiotPods-Riot.ampchat release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RiotPods-Riot.ampchat release.xcconfig"; path = "Pods/Target Support Files/Pods-RiotPods-Riot/Pods-RiotPods-Riot.ampchat release.xcconfig"; sourceTree = "<group>"; };
+		7CED3737D182BB7FBC942DFE /* Pods-RiotPods-SiriIntents.amp chat release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RiotPods-SiriIntents.amp chat release.xcconfig"; path = "Pods/Target Support Files/Pods-RiotPods-SiriIntents/Pods-RiotPods-SiriIntents.amp chat release.xcconfig"; sourceTree = "<group>"; };
+		7FA86007CE91E707FF79737E /* Pods-RiotPods-SiriIntents.caritas release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RiotPods-SiriIntents.caritas release.xcconfig"; path = "Pods/Target Support Files/Pods-RiotPods-SiriIntents/Pods-RiotPods-SiriIntents.caritas release.xcconfig"; sourceTree = "<group>"; };
 		926FA53D1F4C132000F826C2 /* MXSession+Riot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MXSession+Riot.h"; sourceTree = "<group>"; };
 		926FA53E1F4C132000F826C2 /* MXSession+Riot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MXSession+Riot.m"; sourceTree = "<group>"; };
 		92726A431F58737A004AD26F /* SiriIntents.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SiriIntents.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -450,7 +461,12 @@
 		92726A4F1F587393004AD26F /* SiriIntents.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = SiriIntents.entitlements; sourceTree = "<group>"; };
 		92726A501F587410004AD26F /* Intents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Intents.framework; path = System/Library/Frameworks/Intents.framework; sourceTree = SDKROOT; };
 		9708407021B1B6BD00746099 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = de; path = de.lproj/AppIntentVocabulary.plist; sourceTree = "<group>"; };
+		9768F4892266289F00926AFB /* AMP Chat-Defaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "AMP Chat-Defaults.plist"; sourceTree = "<group>"; };
+		9768F4912266385A00926AFB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = "Base.lproj/AMP Chat-LaunchScreen.storyboard"; sourceTree = "<group>"; };
+		9768F4932266391700926AFB /* Caritas Messenger-SharedImages.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Caritas Messenger-SharedImages.xcassets"; sourceTree = "<group>"; };
+		9787D9B52271D9ED0010EA83 /* App-Defaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "App-Defaults.swift"; sourceTree = "<group>"; };
 		97FE8C2121B1F180009ABE88 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = en; path = en.lproj/AppIntentVocabulary.plist; sourceTree = "<group>"; };
+		A004C4BA200BCD9777EEF321 /* Pods-RiotPods-RiotShareExtension.ampchat release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RiotPods-RiotShareExtension.ampchat release.xcconfig"; path = "Pods/Target Support Files/Pods-RiotPods-RiotShareExtension/Pods-RiotPods-RiotShareExtension.ampchat release.xcconfig"; sourceTree = "<group>"; };
 		B104C2932203773B00D9F496 /* KeyBackupBannerPreferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyBackupBannerPreferences.swift; sourceTree = "<group>"; };
 		B1057788221304EB00334B1E /* KeyBackupSetupSuccessFromPassphraseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyBackupSetupSuccessFromPassphraseViewController.swift; sourceTree = "<group>"; };
 		B105778A221304FA00334B1E /* KeyBackupSetupSuccessFromPassphraseViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = KeyBackupSetupSuccessFromPassphraseViewController.storyboard; sourceTree = "<group>"; };
@@ -458,7 +474,6 @@
 		B105778E2213052A00334B1E /* KeyBackupSetupSuccessFromRecoveryKeyViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = KeyBackupSetupSuccessFromRecoveryKeyViewController.storyboard; sourceTree = "<group>"; };
 		B1098BDA21ECE09E000DDA48 /* Strings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Strings.swift; sourceTree = "<group>"; };
 		B1098BDC21ECE09E000DDA48 /* Images.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Images.swift; sourceTree = "<group>"; };
-		B1098BDE21ECE09E000DDA48 /* RiotDefaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RiotDefaults.swift; sourceTree = "<group>"; };
 		B1098BE421ECE1FC000DDA48 /* Storyboards.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Storyboards.swift; sourceTree = "<group>"; };
 		B1098BE721ECFE51000DDA48 /* Coordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 		B1098BEA21ECFE64000DDA48 /* KeyBackupSetupPassphraseCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyBackupSetupPassphraseCoordinator.swift; sourceTree = "<group>"; };
@@ -530,8 +545,8 @@
 		B1664D7520F4EBF300808783 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B1664D7B20F4EBF400808783 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B1664D8220F4EBF600808783 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
-		B169328620F3954A00746532 /* SharedImages.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = SharedImages.xcassets; sourceTree = "<group>"; };
-		B169329420F39E6200746532 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		B169328620F3954A00746532 /* AMP Chat-SharedImages.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "AMP Chat-SharedImages.xcassets"; sourceTree = "<group>"; };
+		B169329420F39E6200746532 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = "Base.lproj/Caritas Messenger-LaunchScreen.storyboard"; sourceTree = "<group>"; };
 		B169329620F39E6300746532 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		B169329E20F3A21B00746532 /* Riot-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Riot-Bridging-Header.h"; sourceTree = "<group>"; };
 		B169329F20F3A21B00746532 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -886,7 +901,15 @@
 		B1FDF55F21F5FE5500BA3834 /* KeyBackupSetupPassphraseViewAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyBackupSetupPassphraseViewAction.swift; sourceTree = "<group>"; };
 		B4B35D08E11507BEE733BBC4 /* Pods-RiotPods-SiriIntents.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RiotPods-SiriIntents.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RiotPods-SiriIntents/Pods-RiotPods-SiriIntents.debug.xcconfig"; sourceTree = "<group>"; };
 		BC0B9DB497F579AB1084E3DC /* Pods_RiotPods_SiriIntents.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RiotPods_SiriIntents.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C2D8F5A099A111858D79369F /* Pods-RiotPods-Riot.amp chat release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RiotPods-Riot.amp chat release.xcconfig"; path = "Pods/Target Support Files/Pods-RiotPods-Riot/Pods-RiotPods-Riot.amp chat release.xcconfig"; sourceTree = "<group>"; };
+		C81E9B244B25113854F5E94C /* Pods-RiotPods-SiriIntents.amp chat debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RiotPods-SiriIntents.amp chat debug.xcconfig"; path = "Pods/Target Support Files/Pods-RiotPods-SiriIntents/Pods-RiotPods-SiriIntents.amp chat debug.xcconfig"; sourceTree = "<group>"; };
 		D523D0ED52562EDD393BE0F0 /* Pods-RiotPods-RiotShareExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RiotPods-RiotShareExtension.release.xcconfig"; path = "Pods/Target Support Files/Pods-RiotPods-RiotShareExtension/Pods-RiotPods-RiotShareExtension.release.xcconfig"; sourceTree = "<group>"; };
+		D5F453919E3911FD20E68648 /* Pods-RiotPods-SiriIntents.ampchat debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RiotPods-SiriIntents.ampchat debug.xcconfig"; path = "Pods/Target Support Files/Pods-RiotPods-SiriIntents/Pods-RiotPods-SiriIntents.ampchat debug.xcconfig"; sourceTree = "<group>"; };
+		D8DDAA86174E7D504982DAC7 /* Pods-RiotPods-Riot.caritas debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RiotPods-Riot.caritas debug.xcconfig"; path = "Pods/Target Support Files/Pods-RiotPods-Riot/Pods-RiotPods-Riot.caritas debug.xcconfig"; sourceTree = "<group>"; };
+		DD195CB68CD1030AFC827C5C /* Pods-RiotPods-SiriIntents.ampchat release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RiotPods-SiriIntents.ampchat release.xcconfig"; path = "Pods/Target Support Files/Pods-RiotPods-SiriIntents/Pods-RiotPods-SiriIntents.ampchat release.xcconfig"; sourceTree = "<group>"; };
+		E2E6CDE9C7971072B37B37AD /* Pods-RiotPods-RiotShareExtension.caritas debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RiotPods-RiotShareExtension.caritas debug.xcconfig"; path = "Pods/Target Support Files/Pods-RiotPods-RiotShareExtension/Pods-RiotPods-RiotShareExtension.caritas debug.xcconfig"; sourceTree = "<group>"; };
+		E5DB5D96C2A36F38A2AEBB30 /* Pods-RiotPods-Riot.amp chat debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RiotPods-Riot.amp chat debug.xcconfig"; path = "Pods/Target Support Files/Pods-RiotPods-Riot/Pods-RiotPods-Riot.amp chat debug.xcconfig"; sourceTree = "<group>"; };
+		EB25B1AA3800A74E457B879B /* Pods-RiotPods-Riot.ampchat debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RiotPods-Riot.ampchat debug.xcconfig"; path = "Pods/Target Support Files/Pods-RiotPods-Riot/Pods-RiotPods-Riot.ampchat debug.xcconfig"; sourceTree = "<group>"; };
 		EE8AD7EF51758CA3EFD23BE1 /* Pods-RiotPods-SiriIntents.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RiotPods-SiriIntents.release.xcconfig"; path = "Pods/Target Support Files/Pods-RiotPods-SiriIntents/Pods-RiotPods-SiriIntents.release.xcconfig"; sourceTree = "<group>"; };
 		F083BB031E7005FD00A9B29C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F083BB041E7005FD00A9B29C /* RiotTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RiotTests.m; sourceTree = "<group>"; };
@@ -914,12 +937,13 @@
 		F083BC131E7009EC00A9B29C /* EventFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventFormatter.m; sourceTree = "<group>"; };
 		F083BC141E7009EC00A9B29C /* Tools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tools.h; sourceTree = "<group>"; };
 		F083BC151E7009EC00A9B29C /* Tools.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tools.m; sourceTree = "<group>"; };
-		F083BC181E7009EC00A9B29C /* Riot-Defaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Riot-Defaults.plist"; sourceTree = "<group>"; };
-		F094A9A21B78D8F000B1FBBF /* Riot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Riot.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F083BC181E7009EC00A9B29C /* Caritas Messenger-Defaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Caritas Messenger-Defaults.plist"; sourceTree = "<group>"; };
+		F094A9A21B78D8F000B1FBBF /* Caritas Messenger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Caritas Messenger.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F094A9BE1B78D8F000B1FBBF /* RiotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RiotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0D2AD9F1F6AA5FD00A7097D /* MXRoomSummary+Riot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MXRoomSummary+Riot.h"; sourceTree = "<group>"; };
 		F0D2ADA01F6AA5FD00A7097D /* MXRoomSummary+Riot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MXRoomSummary+Riot.m"; sourceTree = "<group>"; };
 		F5856BA7A55E53C0AEAFC084 /* Pods_RiotPods_RiotShareExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RiotPods_RiotShareExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		FAC32ED04D49F9ED409F67C4 /* Pods-RiotPods-RiotShareExtension.caritas release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RiotPods-RiotShareExtension.caritas release.xcconfig"; path = "Pods/Target Support Files/Pods-RiotPods-RiotShareExtension/Pods-RiotPods-RiotShareExtension.caritas release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1047,6 +1071,26 @@
 			path = SiriIntents;
 			sourceTree = "<group>";
 		};
+		9768F499226758C700926AFB /* Caritas */ = {
+			isa = PBXGroup;
+			children = (
+				9768F4932266391700926AFB /* Caritas Messenger-SharedImages.xcassets */,
+				B169329320F39E6200746532 /* Caritas Messenger-LaunchScreen.storyboard */,
+				F083BC181E7009EC00A9B29C /* Caritas Messenger-Defaults.plist */,
+			);
+			path = Caritas;
+			sourceTree = "<group>";
+		};
+		9768F49A226758E700926AFB /* AMP Chat */ = {
+			isa = PBXGroup;
+			children = (
+				B169328620F3954A00746532 /* AMP Chat-SharedImages.xcassets */,
+				9768F4902266385A00926AFB /* AMP Chat-LaunchScreen.storyboard */,
+				9768F4892266289F00926AFB /* AMP Chat-Defaults.plist */,
+			);
+			path = "AMP Chat";
+			sourceTree = "<group>";
+		};
 		A237FB70534FB8ADA0D7CFEE /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -1056,6 +1100,24 @@
 				D523D0ED52562EDD393BE0F0 /* Pods-RiotPods-RiotShareExtension.release.xcconfig */,
 				B4B35D08E11507BEE733BBC4 /* Pods-RiotPods-SiriIntents.debug.xcconfig */,
 				EE8AD7EF51758CA3EFD23BE1 /* Pods-RiotPods-SiriIntents.release.xcconfig */,
+				D8DDAA86174E7D504982DAC7 /* Pods-RiotPods-Riot.caritas debug.xcconfig */,
+				EB25B1AA3800A74E457B879B /* Pods-RiotPods-Riot.ampchat debug.xcconfig */,
+				2BD5F3FDF532569CB9622C5A /* Pods-RiotPods-Riot.caritas release.xcconfig */,
+				79E3D9F1666184FF8CABCF1C /* Pods-RiotPods-Riot.ampchat release.xcconfig */,
+				E2E6CDE9C7971072B37B37AD /* Pods-RiotPods-RiotShareExtension.caritas debug.xcconfig */,
+				271C4E0382BE0D4588EBBE62 /* Pods-RiotPods-RiotShareExtension.ampchat debug.xcconfig */,
+				FAC32ED04D49F9ED409F67C4 /* Pods-RiotPods-RiotShareExtension.caritas release.xcconfig */,
+				A004C4BA200BCD9777EEF321 /* Pods-RiotPods-RiotShareExtension.ampchat release.xcconfig */,
+				430A96F9CD614098871FFC81 /* Pods-RiotPods-SiriIntents.caritas debug.xcconfig */,
+				D5F453919E3911FD20E68648 /* Pods-RiotPods-SiriIntents.ampchat debug.xcconfig */,
+				7FA86007CE91E707FF79737E /* Pods-RiotPods-SiriIntents.caritas release.xcconfig */,
+				DD195CB68CD1030AFC827C5C /* Pods-RiotPods-SiriIntents.ampchat release.xcconfig */,
+				E5DB5D96C2A36F38A2AEBB30 /* Pods-RiotPods-Riot.amp chat debug.xcconfig */,
+				C2D8F5A099A111858D79369F /* Pods-RiotPods-Riot.amp chat release.xcconfig */,
+				74741378D0B7948BDBB9758B /* Pods-RiotPods-RiotShareExtension.amp chat debug.xcconfig */,
+				079E6CE65DD02846E2624D22 /* Pods-RiotPods-RiotShareExtension.amp chat release.xcconfig */,
+				C81E9B244B25113854F5E94C /* Pods-RiotPods-SiriIntents.amp chat debug.xcconfig */,
+				7CED3737D182BB7FBC942DFE /* Pods-RiotPods-SiriIntents.amp chat release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -1074,9 +1136,9 @@
 		B1098BD921ECE09E000DDA48 /* Generated */ = {
 			isa = PBXGroup;
 			children = (
+				9787D9B52271D9ED0010EA83 /* App-Defaults.swift */,
 				B1098BDA21ECE09E000DDA48 /* Strings.swift */,
 				B1098BDC21ECE09E000DDA48 /* Images.swift */,
-				B1098BDE21ECE09E000DDA48 /* RiotDefaults.swift */,
 				B1098BE421ECE1FC000DDA48 /* Storyboards.swift */,
 			);
 			path = Generated;
@@ -2389,12 +2451,11 @@
 				F083BBDA1E7009EC00A9B29C /* Sounds */,
 				32935CB21F628B98006888C8 /* js */,
 				F083BBEF1E7009EC00A9B29C /* Images.xcassets */,
-				B169328620F3954A00746532 /* SharedImages.xcassets */,
-				B169329320F39E6200746532 /* LaunchScreen.storyboard */,
+				9768F49A226758E700926AFB /* AMP Chat */,
+				9768F499226758C700926AFB /* Caritas */,
 				B169329520F39E6300746532 /* Main.storyboard */,
 				F083BC0E1E7009EC00A9B29C /* third_party_licenses.html */,
 				F083BBEE1E7009EC00A9B29C /* GoogleService-Info.plist */,
-				F083BC181E7009EC00A9B29C /* Riot-Defaults.plist */,
 				9708406F21B1B6B900746099 /* AppIntentVocabulary.plist */,
 			);
 			path = Assets;
@@ -2491,7 +2552,7 @@
 		F094A9A31B78D8F000B1FBBF /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F094A9A21B78D8F000B1FBBF /* Riot.app */,
+				F094A9A21B78D8F000B1FBBF /* Caritas Messenger.app */,
 				F094A9BE1B78D8F000B1FBBF /* RiotTests.xctest */,
 				24CBEC4E1F0EAD310093EABB /* RiotShareExtension.appex */,
 				92726A431F58737A004AD26F /* SiriIntents.appex */,
@@ -2560,7 +2621,7 @@
 			);
 			name = Riot;
 			productName = Vector;
-			productReference = F094A9A21B78D8F000B1FBBF /* Riot.app */;
+			productReference = F094A9A21B78D8F000B1FBBF /* Caritas Messenger.app */;
 			productType = "com.apple.product-type.application";
 		};
 		F094A9BD1B78D8F000B1FBBF /* RiotTests */ = {
@@ -2636,6 +2697,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 				de,
@@ -2664,7 +2726,7 @@
 				B169328520F38BE800746532 /* SegmentedViewController.xib in Resources */,
 				B1664DA420F4F96300808783 /* Vector.strings in Resources */,
 				B1664BC920F4E67600808783 /* ShareViewController.xib in Resources */,
-				B169328820F3954A00746532 /* SharedImages.xcassets in Resources */,
+				B169328820F3954A00746532 /* AMP Chat-SharedImages.xcassets in Resources */,
 				B1664BC520F4E67600808783 /* FallbackViewController.xib in Resources */,
 				B1664BCE20F4E67600808783 /* RecentRoomTableViewCell.xib in Resources */,
 			);
@@ -2697,7 +2759,7 @@
 				B105778B221304FA00334B1E /* KeyBackupSetupSuccessFromPassphraseViewController.storyboard in Resources */,
 				B1664DA220F4F95800808783 /* Localizable.strings in Resources */,
 				97BDA7F52252360C0055EBCE /* TermsView.xib in Resources */,
-				B169328720F3954A00746532 /* SharedImages.xcassets in Resources */,
+				B169328720F3954A00746532 /* AMP Chat-SharedImages.xcassets in Resources */,
 				B1664DA120F4F94F00808783 /* InfoPlist.strings in Resources */,
 				B1B5579B20EF575B00210D55 /* AuthInputsView.xib in Resources */,
 				B1B558EF20EF768F00210D55 /* RoomMembershipCollapsedWithPaginationTitleBubbleCell.xib in Resources */,
@@ -2708,6 +2770,7 @@
 				B1B9194C2118984300FE25B5 /* RoomPredecessorBubbleCell.xib in Resources */,
 				B1B5572120EE6C4D00210D55 /* ContactsTableViewController.xib in Resources */,
 				B1B5593A20EF7BAC00210D55 /* TableViewCellWithLabelAndLargeTextView.xib in Resources */,
+				9768F4922266385A00926AFB /* AMP Chat-LaunchScreen.storyboard in Resources */,
 				B1B558D820EF768F00210D55 /* RoomIncomingEncryptedAttachmentWithPaginationTitleBubbleCell.xib in Resources */,
 				B1B558DA20EF768F00210D55 /* RoomOutgoingEncryptedTextMsgWithoutSenderInfoBubbleCell.xib in Resources */,
 				B1B558D620EF768F00210D55 /* RoomOutgoingEncryptedTextMsgWithPaginationTitleWithoutSenderNameBubbleCell.xib in Resources */,
@@ -2741,7 +2804,9 @@
 				B1B5573020EE6C4D00210D55 /* BugReportViewController.xib in Resources */,
 				B169329B20F39E6300746532 /* Main.storyboard in Resources */,
 				B1B5582020EF625800210D55 /* SimpleRoomTitleView.xib in Resources */,
-				F083BE061E7009ED00A9B29C /* Riot-Defaults.plist in Resources */,
+				9768F4942266391800926AFB /* Caritas Messenger-SharedImages.xcassets in Resources */,
+				F083BE061E7009ED00A9B29C /* Caritas Messenger-Defaults.plist in Resources */,
+				9768F48A2266289F00926AFB /* AMP Chat-Defaults.plist in Resources */,
 				B1B558D120EF768F00210D55 /* RoomIncomingEncryptedAttachmentWithoutSenderInfoBubbleCell.xib in Resources */,
 				B1B558FE20EF768F00210D55 /* RoomMembershipExpandedWithPaginationTitleBubbleCell.xib in Resources */,
 				B1B5581D20EF625800210D55 /* RoomAvatarTitleView.xib in Resources */,
@@ -2758,7 +2823,7 @@
 				B1098BF821ECFE65000DDA48 /* KeyBackupSetupPassphraseViewController.storyboard in Resources */,
 				F083BDF31E7009ED00A9B29C /* Images.xcassets in Resources */,
 				B1B5590720EF768F00210D55 /* RoomOutgoingTextMsgWithPaginationTitleWithoutSenderNameBubbleCell.xib in Resources */,
-				B169329920F39E6300746532 /* LaunchScreen.storyboard in Resources */,
+				B169329920F39E6300746532 /* Caritas Messenger-LaunchScreen.storyboard in Resources */,
 				B1B5595320EF9A8700210D55 /* RecentTableViewCell.xib in Resources */,
 				B1B557AD20EF5A6D00210D55 /* DeviceView.xib in Resources */,
 				B1B5597620EFB02A00210D55 /* InviteRecentTableViewCell.xib in Resources */,
@@ -3057,6 +3122,7 @@
 				3275FD8C21A5A2C500B9C13D /* TermsView.swift in Sources */,
 				B14F143122144F6500FA0595 /* KeyBackupRecoverFromRecoveryKeyViewState.swift in Sources */,
 				B1098C1121ED07E4000DDA48 /* NavigationRouterType.swift in Sources */,
+				9787D9B62271D9EE0010EA83 /* App-Defaults.swift in Sources */,
 				B1B5573D20EE6C4D00210D55 /* WebViewViewController.m in Sources */,
 				B1B5572720EE6C4D00210D55 /* RoomSearchViewController.m in Sources */,
 				F083BDEF1E7009ED00A9B29C /* UINavigationController+Riot.m in Sources */,
@@ -3117,7 +3183,6 @@
 				B104C2942203773C00D9F496 /* KeyBackupBannerPreferences.swift in Sources */,
 				B1B5572020EE6C4D00210D55 /* ContactsTableViewController.m in Sources */,
 				B1B5581920EF625800210D55 /* RoomTitleView.m in Sources */,
-				B1098BE321ECE09F000DDA48 /* RiotDefaults.swift in Sources */,
 				B1B557BE20EF5B4500210D55 /* RoomInputToolbarView.m in Sources */,
 				B1B5579920EF575B00210D55 /* AuthInputsView.m in Sources */,
 				B1B5597520EFB02A00210D55 /* InviteRecentTableViewCell.m in Sources */,
@@ -3238,6 +3303,14 @@
 			name = AppIntentVocabulary.plist;
 			sourceTree = "<group>";
 		};
+		9768F4902266385A00926AFB /* AMP Chat-LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9768F4912266385A00926AFB /* Base */,
+			);
+			name = "AMP Chat-LaunchScreen.storyboard";
+			sourceTree = "<group>";
+		};
 		B1664D5520F4EBEC00808783 /* Vector.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -3265,12 +3338,12 @@
 			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
-		B169329320F39E6200746532 /* LaunchScreen.storyboard */ = {
+		B169329320F39E6200746532 /* Caritas Messenger-LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
 				B169329420F39E6200746532 /* Base */,
 			);
-			name = LaunchScreen.storyboard;
+			name = "Caritas Messenger-LaunchScreen.storyboard";
 			sourceTree = "<group>";
 		};
 		B169329520F39E6300746532 /* Main.storyboard */ = {
@@ -3284,12 +3357,11 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		24CBEC5A1F0EAD310093EABB /* Debug */ = {
+		24CBEC5A1F0EAD310093EABB /* Caritas Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3998C51E0196D42B366E0900 /* Pods-RiotPods-RiotShareExtension.debug.xcconfig */;
+			baseConfigurationReference = E2E6CDE9C7971072B37B37AD /* Pods-RiotPods-RiotShareExtension.caritas debug.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -3309,20 +3381,20 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = care.amp.messenger.caritas.shareExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited).shareExtension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/$(PRODUCT_NAME)/SupportingFiles/RiotShareExtension-Bridging-Header.h";
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "RiotShareExtension-Swift.h";
 				SWIFT_VERSION = 4.2;
 			};
-			name = Debug;
+			name = "Caritas Debug";
 		};
-		24CBEC5B1F0EAD310093EABB /* Release */ = {
+		24CBEC5B1F0EAD310093EABB /* Caritas Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D523D0ED52562EDD393BE0F0 /* Pods-RiotPods-RiotShareExtension.release.xcconfig */;
+			baseConfigurationReference = FAC32ED04D49F9ED409F67C4 /* Pods-RiotPods-RiotShareExtension.caritas release.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -3343,17 +3415,18 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = care.amp.messenger.caritas.shareExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited).shareExtension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/$(PRODUCT_NAME)/SupportingFiles/RiotShareExtension-Bridging-Header.h";
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "RiotShareExtension-Swift.h";
 				SWIFT_VERSION = 4.2;
 			};
-			name = Release;
+			name = "Caritas Release";
 		};
-		92726A4C1F58737A004AD26F /* Debug */ = {
+		92726A4C1F58737A004AD26F /* Caritas Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B4B35D08E11507BEE733BBC4 /* Pods-RiotPods-SiriIntents.debug.xcconfig */;
+			baseConfigurationReference = 430A96F9CD614098871FFC81 /* Pods-RiotPods-SiriIntents.caritas debug.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -3369,15 +3442,15 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = care.amp.messenger.caritas.siriIntents;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited).siriIntents";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
-			name = Debug;
+			name = "Caritas Debug";
 		};
-		92726A4D1F58737A004AD26F /* Release */ = {
+		92726A4D1F58737A004AD26F /* Caritas Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EE8AD7EF51758CA3EFD23BE1 /* Pods-RiotPods-SiriIntents.release.xcconfig */;
+			baseConfigurationReference = 7FA86007CE91E707FF79737E /* Pods-RiotPods-SiriIntents.caritas release.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -3394,16 +3467,18 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = care.amp.messenger.caritas.siriIntents;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited).siriIntents";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
-			name = Release;
+			name = "Caritas Release";
 		};
-		F094A9C61B78D8F000B1FBBF /* Debug */ = {
+		9768F47F2266185500926AFB /* AMP Chat Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				APP_GROUP = group.chat.amp.test;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "$(PRODUCT_NAME)-AppIcon";
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -3433,6 +3508,11 @@
 				DEFINES_MODULE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXCLUDED_SOURCE_FILE_NAMES = (
+					"*-SharedImages.xcassets",
+					"*-LaunchScreen.storyboard",
+					"*-Defaults.plist",
+				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -3448,18 +3528,150 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INCLUDED_SOURCE_FILE_NAMES = (
+					"$(PRODUCT_NAME)-SharedImages.xcassets",
+					"$(PRODUCT_NAME)-Defaults.plist",
+					"$(PRODUCT_NAME)-LaunchScreen.storyboard",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "chat.amp.test";
+				PRODUCT_NAME = "AMP Chat";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = Debug;
+			name = "AMP Chat Debug";
 		};
-		F094A9C71B78D8F000B1FBBF /* Release */ = {
+		9768F4802266185500926AFB /* AMP Chat Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E5DB5D96C2A36F38A2AEBB30 /* Pods-RiotPods-Riot.amp chat debug.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Riot/SupportingFiles/Riot.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = 98C45TS5UN;
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/AFNetworking\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/DTCoreText\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/DTFoundation\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/GBDeviceInfo\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/GZIP\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/HPGrowingTextView\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/MatrixKit\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/MatrixSDK\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/OLMKit\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Realm\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/cmark\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/libPhoneNumber-iOS\"",
+					"\"${PODS_ROOT}/WebRTC\"",
+					"\"$(PROJECT_DIR)/Riot/libs/jitsi-meet\"",
+				);
+				INFOPLIST_FILE = Riot/SupportingFiles/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Riot/SupportingFiles/Riot-Bridging-Header.h";
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "Riot-Swift.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "AMP Chat Debug";
+		};
+		9768F4812266185500926AFB /* AMP Chat Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/AMP Chat.app/AMP Chat";
+				DEVELOPMENT_TEAM = 98C45TS5UN;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = RiotTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.matrix.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AMP Chat.app/AMP Chat";
+			};
+			name = "AMP Chat Debug";
+		};
+		9768F4822266185500926AFB /* AMP Chat Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 74741378D0B7948BDBB9758B /* Pods-RiotPods-RiotShareExtension.amp chat debug.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CODE_SIGN_ENTITLEMENTS = RiotShareExtension/SupportingFiles/RiotShareExtension.entitlements;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 98C45TS5UN;
+				ENABLE_BITCODE = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"COCOAPODS=1",
+					"IS_SHARE_EXTENSION=1",
+				);
+				INFOPLIST_FILE = RiotShareExtension/SupportingFiles/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited).shareExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/$(PRODUCT_NAME)/SupportingFiles/RiotShareExtension-Bridging-Header.h";
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "RiotShareExtension-Swift.h";
+				SWIFT_VERSION = 4.2;
+			};
+			name = "AMP Chat Debug";
+		};
+		9768F4832266185500926AFB /* AMP Chat Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C81E9B244B25113854F5E94C /* Pods-RiotPods-SiriIntents.amp chat debug.xcconfig */;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CODE_SIGN_ENTITLEMENTS = SiriIntents/SiriIntents.entitlements;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 98C45TS5UN;
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = SiriIntents/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited).siriIntents";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = "AMP Chat Debug";
+		};
+		9768F4842266185E00926AFB /* AMP Chat Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				APP_GROUP = group.chat.amp.test;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "$(PRODUCT_NAME)-AppIcon";
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -3489,28 +3701,294 @@
 				DEFINES_MODULE = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXCLUDED_SOURCE_FILE_NAMES = (
+					"*-SharedImages.xcassets",
+					"*-LaunchScreen.storyboard",
+					"*-Defaults.plist",
+				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INCLUDED_SOURCE_FILE_NAMES = (
+					"$(PRODUCT_NAME)-SharedImages.xcassets",
+					"$(PRODUCT_NAME)-Defaults.plist",
+					"$(PRODUCT_NAME)-LaunchScreen.storyboard",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "chat.amp.test";
+				PRODUCT_NAME = "AMP Chat";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
-			name = Release;
+			name = "AMP Chat Release";
 		};
-		F094A9C91B78D8F000B1FBBF /* Debug */ = {
+		9768F4852266185E00926AFB /* AMP Chat Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 78CD06F14060998545642330 /* Pods-RiotPods-Riot.debug.xcconfig */;
+			baseConfigurationReference = C2D8F5A099A111858D79369F /* Pods-RiotPods-Riot.amp chat release.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Riot/SupportingFiles/Riot.entitlements;
+				DEVELOPMENT_TEAM = 98C45TS5UN;
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/AFNetworking\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/DTCoreText\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/DTFoundation\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/GBDeviceInfo\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/GZIP\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/HPGrowingTextView\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/MatrixKit\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/MatrixSDK\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/OLMKit\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Realm\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/cmark\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/libPhoneNumber-iOS\"",
+					"\"${PODS_ROOT}/WebRTC\"",
+					"\"$(PROJECT_DIR)/Riot/libs/jitsi-meet\"",
+				);
+				INFOPLIST_FILE = Riot/SupportingFiles/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Riot/SupportingFiles/Riot-Bridging-Header.h";
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "Riot-Swift.h";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "AMP Chat Release";
+		};
+		9768F4862266185E00926AFB /* AMP Chat Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/AMP Chat.app/AMP Chat";
+				DEVELOPMENT_TEAM = 98C45TS5UN;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = RiotTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.matrix.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AMP Chat.app/AMP Chat";
+			};
+			name = "AMP Chat Release";
+		};
+		9768F4872266185E00926AFB /* AMP Chat Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 079E6CE65DD02846E2624D22 /* Pods-RiotPods-RiotShareExtension.amp chat release.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CODE_SIGN_ENTITLEMENTS = RiotShareExtension/SupportingFiles/RiotShareExtension.entitlements;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 98C45TS5UN;
+				ENABLE_BITCODE = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"COCOAPODS=1",
+					"IS_SHARE_EXTENSION=1",
+				);
+				INFOPLIST_FILE = RiotShareExtension/SupportingFiles/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited).shareExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/$(PRODUCT_NAME)/SupportingFiles/RiotShareExtension-Bridging-Header.h";
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "RiotShareExtension-Swift.h";
+				SWIFT_VERSION = 4.2;
+			};
+			name = "AMP Chat Release";
+		};
+		9768F4882266185E00926AFB /* AMP Chat Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7CED3737D182BB7FBC942DFE /* Pods-RiotPods-SiriIntents.amp chat release.xcconfig */;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CODE_SIGN_ENTITLEMENTS = SiriIntents/SiriIntents.entitlements;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 98C45TS5UN;
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = SiriIntents/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited).siriIntents";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = "AMP Chat Release";
+		};
+		F094A9C61B78D8F000B1FBBF /* Caritas Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				APP_GROUP = group.care.amp.messenger.caritas;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "$(PRODUCT_NAME)-AppIcon";
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEFINES_MODULE = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				EXCLUDED_SOURCE_FILE_NAMES = (
+					"*-SharedImages.xcassets",
+					"*-LaunchScreen.storyboard",
+					"*-Defaults.plist",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INCLUDED_SOURCE_FILE_NAMES = (
+					"$(PRODUCT_NAME)-SharedImages.xcassets",
+					"$(PRODUCT_NAME)-Defaults.plist",
+					"$(PRODUCT_NAME)-LaunchScreen.storyboard",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "care.amp.messenger.caritas";
+				PRODUCT_NAME = "Caritas Messenger";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Caritas Debug";
+		};
+		F094A9C71B78D8F000B1FBBF /* Caritas Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				APP_GROUP = group.care.amp.messenger.caritas;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "$(PRODUCT_NAME)-AppIcon";
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				DEFINES_MODULE = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXCLUDED_SOURCE_FILE_NAMES = (
+					"*-SharedImages.xcassets",
+					"*-LaunchScreen.storyboard",
+					"*-Defaults.plist",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INCLUDED_SOURCE_FILE_NAMES = (
+					"$(PRODUCT_NAME)-SharedImages.xcassets",
+					"$(PRODUCT_NAME)-Defaults.plist",
+					"$(PRODUCT_NAME)-LaunchScreen.storyboard",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "care.amp.messenger.caritas";
+				PRODUCT_NAME = "Caritas Messenger";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = "Caritas Release";
+		};
+		F094A9C91B78D8F000B1FBBF /* Caritas Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D8DDAA86174E7D504982DAC7 /* Pods-RiotPods-Riot.caritas debug.xcconfig */;
+			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Riot/SupportingFiles/Riot.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -3539,20 +4017,18 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = care.amp.messenger.caritas;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/$(PRODUCT_NAME)/SupportingFiles/Riot-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Riot/SupportingFiles/Riot-Bridging-Header.h";
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "Riot-Swift.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = Debug;
+			name = "Caritas Debug";
 		};
-		F094A9CA1B78D8F000B1FBBF /* Release */ = {
+		F094A9CA1B78D8F000B1FBBF /* Caritas Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 319CD7C67A47A3D35959E18F /* Pods-RiotPods-Riot.release.xcconfig */;
+			baseConfigurationReference = 2BD5F3FDF532569CB9622C5A /* Pods-RiotPods-Riot.caritas release.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Riot/SupportingFiles/Riot.entitlements;
 				DEVELOPMENT_TEAM = 98C45TS5UN;
@@ -3580,19 +4056,18 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = care.amp.messenger.caritas;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/$(PRODUCT_NAME)/SupportingFiles/Riot-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Riot/SupportingFiles/Riot-Bridging-Header.h";
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "Riot-Swift.h";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = Release;
+			name = "Caritas Release";
 		};
-		F094A9CC1B78D8F000B1FBBF /* Debug */ = {
+		F094A9CC1B78D8F000B1FBBF /* Caritas Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Caritas Messenger.app/Caritas Messenger";
 				DEVELOPMENT_TEAM = 98C45TS5UN;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -3610,15 +4085,15 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.matrix.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Riot.app/Riot";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Caritas Messenger.app/Caritas Messenger";
 			};
-			name = Debug;
+			name = "Caritas Debug";
 		};
-		F094A9CD1B78D8F000B1FBBF /* Release */ = {
+		F094A9CD1B78D8F000B1FBBF /* Caritas Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Caritas Messenger.app/Caritas Messenger";
 				DEVELOPMENT_TEAM = 98C45TS5UN;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -3632,9 +4107,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.matrix.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Riot.app/Riot";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Caritas Messenger.app/Caritas Messenger";
 			};
-			name = Release;
+			name = "Caritas Release";
 		};
 /* End XCBuildConfiguration section */
 
@@ -3642,47 +4117,57 @@
 		24CBEC5C1F0EAD310093EABB /* Build configuration list for PBXNativeTarget "RiotShareExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				24CBEC5A1F0EAD310093EABB /* Debug */,
-				24CBEC5B1F0EAD310093EABB /* Release */,
+				24CBEC5A1F0EAD310093EABB /* Caritas Debug */,
+				9768F4822266185500926AFB /* AMP Chat Debug */,
+				24CBEC5B1F0EAD310093EABB /* Caritas Release */,
+				9768F4872266185E00926AFB /* AMP Chat Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = "Caritas Release";
 		};
 		92726A4E1F58737A004AD26F /* Build configuration list for PBXNativeTarget "SiriIntents" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				92726A4C1F58737A004AD26F /* Debug */,
-				92726A4D1F58737A004AD26F /* Release */,
+				92726A4C1F58737A004AD26F /* Caritas Debug */,
+				9768F4832266185500926AFB /* AMP Chat Debug */,
+				92726A4D1F58737A004AD26F /* Caritas Release */,
+				9768F4882266185E00926AFB /* AMP Chat Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = "Caritas Release";
 		};
 		F094A99D1B78D8F000B1FBBF /* Build configuration list for PBXProject "Riot" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				F094A9C61B78D8F000B1FBBF /* Debug */,
-				F094A9C71B78D8F000B1FBBF /* Release */,
+				F094A9C61B78D8F000B1FBBF /* Caritas Debug */,
+				9768F47F2266185500926AFB /* AMP Chat Debug */,
+				F094A9C71B78D8F000B1FBBF /* Caritas Release */,
+				9768F4842266185E00926AFB /* AMP Chat Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = "Caritas Release";
 		};
 		F094A9C81B78D8F000B1FBBF /* Build configuration list for PBXNativeTarget "Riot" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				F094A9C91B78D8F000B1FBBF /* Debug */,
-				F094A9CA1B78D8F000B1FBBF /* Release */,
+				F094A9C91B78D8F000B1FBBF /* Caritas Debug */,
+				9768F4802266185500926AFB /* AMP Chat Debug */,
+				F094A9CA1B78D8F000B1FBBF /* Caritas Release */,
+				9768F4852266185E00926AFB /* AMP Chat Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = "Caritas Release";
 		};
 		F094A9CB1B78D8F000B1FBBF /* Build configuration list for PBXNativeTarget "RiotTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				F094A9CC1B78D8F000B1FBBF /* Debug */,
-				F094A9CD1B78D8F000B1FBBF /* Release */,
+				F094A9CC1B78D8F000B1FBBF /* Caritas Debug */,
+				9768F4812266185500926AFB /* AMP Chat Debug */,
+				F094A9CD1B78D8F000B1FBBF /* Caritas Release */,
+				9768F4862266185E00926AFB /* AMP Chat Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = "Caritas Release";
 		};
 /* End XCConfigurationList section */
 	};

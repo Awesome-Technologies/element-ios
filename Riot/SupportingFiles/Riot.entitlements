@@ -22,7 +22,7 @@
 	<string>$(TeamIdentifierPrefix)$(CFBundleIdentifier)</string>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.care.amp.messenger.caritas</string>
+		<string>$(APP_GROUP)</string>
 	</array>
 </dict>
 </plist>

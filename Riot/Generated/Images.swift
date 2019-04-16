@@ -18,12 +18,28 @@
 
 // swiftlint:disable identifier_name line_length nesting type_body_length type_name
 internal enum Asset {
+  internal enum AMPChatSharedImages {
+    internal static let animatedLogo0 = ImageAsset(name: "animatedLogo-0")
+    internal static let animatedLogo1 = ImageAsset(name: "animatedLogo-1")
+    internal static let animatedLogo2 = ImageAsset(name: "animatedLogo-2")
+    internal static let animatedLogo3 = ImageAsset(name: "animatedLogo-3")
+    internal static let animatedLogo4 = ImageAsset(name: "animatedLogo-4")
+    internal static let logo = ImageAsset(name: "Logo")
+    internal static let logoNavBar = ImageAsset(name: "Logo_NavBar")
+  }
+  internal enum CaritasMessengerSharedImages {
+    internal static let animatedLogo0 = ImageAsset(name: "animatedLogo-0")
+    internal static let animatedLogo1 = ImageAsset(name: "animatedLogo-1")
+    internal static let animatedLogo2 = ImageAsset(name: "animatedLogo-2")
+    internal static let animatedLogo3 = ImageAsset(name: "animatedLogo-3")
+    internal static let animatedLogo4 = ImageAsset(name: "animatedLogo-4")
+    internal static let logo = ImageAsset(name: "Logo")
+    internal static let logoNavBar = ImageAsset(name: "Logo_NavBar")
+  }
   internal enum Images {
-    internal static let ampLogo = ImageAsset(name: "AMP_Logo")
-    internal static let caritasLogo = ImageAsset(name: "Caritas_Logo")
-    internal static let caritasLogoNavBar = ImageAsset(name: "Caritas_Logo_NavBar")
     internal static let adminIcon = ImageAsset(name: "admin_icon")
     internal static let backIcon = ImageAsset(name: "back_icon")
+    internal static let cancel = ImageAsset(name: "cancel")
     internal static let chevron = ImageAsset(name: "chevron")
     internal static let disclosureIcon = ImageAsset(name: "disclosure_icon")
     internal static let group = ImageAsset(name: "group")
@@ -36,6 +52,7 @@ internal enum Asset {
     internal static let startChat = ImageAsset(name: "start_chat")
     internal static let e2eBlocked = ImageAsset(name: "e2e_blocked")
     internal static let e2eUnencrypted = ImageAsset(name: "e2e_unencrypted")
+    internal static let e2eVerified = ImageAsset(name: "e2e_verified")
     internal static let e2eWarning = ImageAsset(name: "e2e_warning")
     internal static let leave = ImageAsset(name: "leave")
     internal static let notifications = ImageAsset(name: "notifications")
@@ -72,15 +89,6 @@ internal enum Asset {
     internal static let tabPeople = ImageAsset(name: "tab_people")
     internal static let tabRooms = ImageAsset(name: "tab_rooms")
     internal static let tabSettings = ImageAsset(name: "tab_settings")
-  }
-  internal enum SharedImages {
-    internal static let animatedLogo0 = ImageAsset(name: "animatedLogo-0")
-    internal static let animatedLogo1 = ImageAsset(name: "animatedLogo-1")
-    internal static let animatedLogo2 = ImageAsset(name: "animatedLogo-2")
-    internal static let animatedLogo3 = ImageAsset(name: "animatedLogo-3")
-    internal static let animatedLogo4 = ImageAsset(name: "animatedLogo-4")
-    internal static let cancel = ImageAsset(name: "cancel")
-    internal static let e2eVerified = ImageAsset(name: "e2e_verified")
   }
 }
 // swiftlint:enable identifier_name line_length nesting type_body_length type_name
