@@ -16,14 +16,17 @@ strings:
 xcassets:  
   - inputs:
       - Assets/Images.xcassets
-      - Assets/SharedImages.xcassets
+      - Assets/Caritas/Caritas Messenger-SharedImages.xcassets
+      - Assets/AMP Chat/AMP Chat-SharedImages.xcassets
     outputs:
       - templateName: swift4
         output: Images.swift
 plist:
-  inputs: Assets/Riot-Defaults.plist
-  outputs:
-    templateName: runtime-swift4
-    output: RiotDefaults.swift
-    params:
-        enumName: RiotDefaults
+  - inputs:
+      - Assets/Caritas/Caritas Messenger-Defaults.plist
+      - Assets/AMP Chat/AMP Chat-Defaults.plist
+    outputs:
+        templateName: runtime-swift4
+        output: App-Defaults.swift
+        params:
+            enumName: AppDefaults

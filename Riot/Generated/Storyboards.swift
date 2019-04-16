@@ -15,37 +15,37 @@ internal enum StoryboardScene {
   internal enum KeyBackupRecoverFromPassphraseViewController: StoryboardType {
     internal static let storyboardName = "KeyBackupRecoverFromPassphraseViewController"
 
-    internal static let initialScene = InitialSceneType<Riot.KeyBackupRecoverFromPassphraseViewController>(storyboard: KeyBackupRecoverFromPassphraseViewController.self)
+    internal static let initialScene = InitialSceneType<AMP_Chat.KeyBackupRecoverFromPassphraseViewController>(storyboard: KeyBackupRecoverFromPassphraseViewController.self)
   }
   internal enum KeyBackupRecoverFromRecoveryKeyViewController: StoryboardType {
     internal static let storyboardName = "KeyBackupRecoverFromRecoveryKeyViewController"
 
-    internal static let initialScene = InitialSceneType<Riot.KeyBackupRecoverFromRecoveryKeyViewController>(storyboard: KeyBackupRecoverFromRecoveryKeyViewController.self)
+    internal static let initialScene = InitialSceneType<AMP_Chat.KeyBackupRecoverFromRecoveryKeyViewController>(storyboard: KeyBackupRecoverFromRecoveryKeyViewController.self)
   }
   internal enum KeyBackupRecoverSuccessViewController: StoryboardType {
     internal static let storyboardName = "KeyBackupRecoverSuccessViewController"
 
-    internal static let initialScene = InitialSceneType<Riot.KeyBackupRecoverSuccessViewController>(storyboard: KeyBackupRecoverSuccessViewController.self)
+    internal static let initialScene = InitialSceneType<AMP_Chat.KeyBackupRecoverSuccessViewController>(storyboard: KeyBackupRecoverSuccessViewController.self)
   }
   internal enum KeyBackupSetupIntroViewController: StoryboardType {
     internal static let storyboardName = "KeyBackupSetupIntroViewController"
 
-    internal static let initialScene = InitialSceneType<Riot.KeyBackupSetupIntroViewController>(storyboard: KeyBackupSetupIntroViewController.self)
+    internal static let initialScene = InitialSceneType<AMP_Chat.KeyBackupSetupIntroViewController>(storyboard: KeyBackupSetupIntroViewController.self)
   }
   internal enum KeyBackupSetupPassphraseViewController: StoryboardType {
     internal static let storyboardName = "KeyBackupSetupPassphraseViewController"
 
-    internal static let initialScene = InitialSceneType<Riot.KeyBackupSetupPassphraseViewController>(storyboard: KeyBackupSetupPassphraseViewController.self)
+    internal static let initialScene = InitialSceneType<AMP_Chat.KeyBackupSetupPassphraseViewController>(storyboard: KeyBackupSetupPassphraseViewController.self)
   }
   internal enum KeyBackupSetupSuccessFromPassphraseViewController: StoryboardType {
     internal static let storyboardName = "KeyBackupSetupSuccessFromPassphraseViewController"
 
-    internal static let initialScene = InitialSceneType<Riot.KeyBackupSetupSuccessFromPassphraseViewController>(storyboard: KeyBackupSetupSuccessFromPassphraseViewController.self)
+    internal static let initialScene = InitialSceneType<AMP_Chat.KeyBackupSetupSuccessFromPassphraseViewController>(storyboard: KeyBackupSetupSuccessFromPassphraseViewController.self)
   }
   internal enum KeyBackupSetupSuccessFromRecoveryKeyViewController: StoryboardType {
     internal static let storyboardName = "KeyBackupSetupSuccessFromRecoveryKeyViewController"
 
-    internal static let initialScene = InitialSceneType<Riot.KeyBackupSetupSuccessFromRecoveryKeyViewController>(storyboard: KeyBackupSetupSuccessFromRecoveryKeyViewController.self)
+    internal static let initialScene = InitialSceneType<AMP_Chat.KeyBackupSetupSuccessFromRecoveryKeyViewController>(storyboard: KeyBackupSetupSuccessFromRecoveryKeyViewController.self)
   }
 }
 // swiftlint:enable explicit_type_interface identifier_name line_length type_body_length type_name
