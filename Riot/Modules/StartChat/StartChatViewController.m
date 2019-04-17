@@ -279,6 +279,10 @@
     }
 }
 
+- (void)updateCreateButtonState {
+    [createBarButtonItem setEnabled:participants.count == 1];
+}
+
 #pragma mark - UITableView data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -475,6 +479,8 @@
         
         [self refreshContactsTable];
     }
+    
+    [self updateCreateButtonState];
 }
 
 - (IBAction)onButtonPressed:(id)sender
@@ -669,12 +675,15 @@
 {
     if (contact)
     {
-        // Update here the mutable list of participants
+        // We only want 1 participant, so we have to replace any existing ones
+        [participants removeAllObjects];
         [participants addObject:contact];
     }
     
     // Refresh display by leaving search session
     [self searchBarCancelButtonClicked:_searchBarView];
+    
+    [self updateCreateButtonState];
 }
 
 @end
