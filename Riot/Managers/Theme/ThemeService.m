@@ -81,8 +81,8 @@ NSString *const kThemeServiceDidChangeThemeNotification = @"kThemeServiceDidChan
     }
     else
     {
-        // Use light theme by default
-        theme = [DefaultTheme new];
+        // AMP is the default theme if no other is selected
+        theme = [AMPTheme new];
     }
 
     return theme;
