@@ -2175,106 +2175,9 @@
                                                            }
                                                            
                                                        }]];
-        
-        [currentAlert addAction:[UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"room_event_action_share", @"Vector", nil)
-                                                         style:UIAlertActionStyleDefault
-                                                       handler:^(UIAlertAction * action) {
-                                                           
-                                                           if (weakSelf)
-                                                           {
-                                                               typeof(self) self = weakSelf;
-                                                               
-                                                               [self cancelEventSelection];
-                                                               
-                                                               NSArray *activityItems = [NSArray arrayWithObjects:selectedComponent.textMessage, nil];
-                                                               
-                                                               UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
-                                                               
-                                                               if (activityViewController)
-                                                               {
-                                                                   activityViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-                                                                   activityViewController.popoverPresentationController.sourceView = roomBubbleTableViewCell;
-                                                                   activityViewController.popoverPresentationController.sourceRect = roomBubbleTableViewCell.bounds;
-                                                                   
-                                                                   [self presentViewController:activityViewController animated:YES completion:nil];
-                                                               }
-                                                           }
-                                                           
-                                                       }]];
     }
     else // Add action for attachment
     {
-        if (attachment.type == MXKAttachmentTypeImage || attachment.type == MXKAttachmentTypeVideo)
-        {
-            [currentAlert addAction:[UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"room_event_action_save", @"Vector", nil)
-                                                             style:UIAlertActionStyleDefault
-                                                           handler:^(UIAlertAction * action) {
-                                                               
-                                                               if (weakSelf)
-                                                               {
-                                                                   typeof(self) self = weakSelf;
-                                                                   
-                                                                   [self cancelEventSelection];
-                                                                   
-                                                                   [self startActivityIndicator];
-                                                                   
-                                                                   [attachment save:^{
-                                                                       
-                                                                       __strong __typeof(weakSelf)self = weakSelf;
-                                                                       [self stopActivityIndicator];
-                                                                       
-                                                                   } failure:^(NSError *error) {
-                                                                       
-                                                                       __strong __typeof(weakSelf)self = weakSelf;
-                                                                       [self stopActivityIndicator];
-                                                                       
-                                                                       //Alert user
-                                                                       [[AppDelegate theDelegate] showErrorAsAlert:error];
-                                                                       
-                                                                   }];
-                                                                   
-                                                                   // Start animation in case of download during attachment preparing
-                                                                   [roomBubbleTableViewCell startProgressUI];
-                                                               }
-                                                               
-                                                           }]];
-        }
-        
-        if (attachment.type != MXKAttachmentTypeSticker)
-        {
-            [currentAlert addAction:[UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"room_event_action_copy", @"Vector", nil)
-                                                             style:UIAlertActionStyleDefault
-                                                           handler:^(UIAlertAction * action) {
-                                                               
-                                                               if (weakSelf)
-                                                               {
-                                                                   typeof(self) self = weakSelf;
-                                                                   
-                                                                   [self cancelEventSelection];
-                                                                   
-                                                                   [self startActivityIndicator];
-                                                                   
-                                                                   [attachment copy:^{
-                                                                       
-                                                                       __strong __typeof(weakSelf)self = weakSelf;
-                                                                       [self stopActivityIndicator];
-                                                                       
-                                                                   } failure:^(NSError *error) {
-                                                                       
-                                                                       __strong __typeof(weakSelf)self = weakSelf;
-                                                                       [self stopActivityIndicator];
-                                                                       
-                                                                       //Alert user
-                                                                       [[AppDelegate theDelegate] showErrorAsAlert:error];
-                                                                       
-                                                                   }];
-                                                                   
-                                                                   // Start animation in case of download during attachment preparing
-                                                                   [roomBubbleTableViewCell startProgressUI];
-                                                               }
-                                                               
-                                                           }]];
-        }
         
         // Check status of the selected event
         if (selectedEvent.sentState == MXEventSentStatePreparing ||
@@ -2318,46 +2221,6 @@
                                                                    
                                                                }]];
             }
-        }
-        
-        if ((attachment.type != MXKAttachmentTypeSticker))
-        {
-            [currentAlert addAction:[UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"room_event_action_share", @"Vector", nil)
-                                                             style:UIAlertActionStyleDefault
-                                                           handler:^(UIAlertAction * action) {
-                                                               
-                                                               if (weakSelf)
-                                                               {
-                                                                   typeof(self) self = weakSelf;
-                                                                   
-                                                                   [self cancelEventSelection];
-                                                                   
-                                                                   [attachment prepareShare:^(NSURL *fileURL) {
-                                                                       
-                                                                       __strong __typeof(weakSelf)self = weakSelf;
-                                                                       self->documentInteractionController = [UIDocumentInteractionController interactionControllerWithURL:fileURL];
-                                                                       [self->documentInteractionController setDelegate:self];
-                                                                       self->currentSharedAttachment = attachment;
-                                                                       
-                                                                       if (![self->documentInteractionController presentOptionsMenuFromRect:self.view.frame inView:self.view animated:YES])
-                                                                       {
-                                                                           self->documentInteractionController = nil;
-                                                                           [attachment onShareEnded];
-                                                                           self->currentSharedAttachment = nil;
-                                                                       }
-                                                                       
-                                                                   } failure:^(NSError *error) {
-                                                                       
-                                                                       //Alert user
-                                                                       [[AppDelegate theDelegate] showErrorAsAlert:error];
-                                                                       
-                                                                   }];
-                                                                   
-                                                                   // Start animation in case of download during attachment preparing
-                                                                   [roomBubbleTableViewCell startProgressUI];
-                                                               }
-                                                               
-                                                           }]];
         }
     }
     
