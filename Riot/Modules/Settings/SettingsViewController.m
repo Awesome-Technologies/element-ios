@@ -897,9 +897,18 @@ SignOutAlertPresenterDelegate>
 
             cell.textLabel.text = NSLocalizedStringFromTable(@"settings_ui_theme", @"Vector", nil);
             cell.detailTextLabel.text = i18nTheme;
-
-            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-            cell.selectionStyle = UITableViewCellSelectionStyleDefault;
+            
+            // Only add indicators if there's more than 1 theme selectable
+            NSInteger supportedThemesCount = [[[NSUserDefaults standardUserDefaults] arrayForKey:@"supportedThemes"] count];
+            if (supportedThemesCount > 1)
+            {
+                cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                cell.selectionStyle = UITableViewCellSelectionStyleDefault;
+            }
+            else
+            {
+                cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            }
         }
     }
     else if (section == SETTINGS_SECTION_IGNORED_USERS_INDEX)
@@ -1255,7 +1264,9 @@ SignOutAlertPresenterDelegate>
             }
             else if (row == USER_INTERFACE_THEME_INDEX)
             {
-                [self showThemePicker];
+                if ([[NSUserDefaults standardUserDefaults] arrayForKey:@"supportedThemes"].count > 1) {
+                    [self showThemePicker];
+                }
             }
         }
         else if (section == SETTINGS_SECTION_IGNORED_USERS_INDEX)
@@ -1821,9 +1832,8 @@ SignOutAlertPresenterDelegate>
 - (void)showThemePicker
 {
     __weak typeof(self) weakSelf = self;
-
-    __block UIAlertAction *autoAction, *caritasAction, *darkAction, *ampAction;
-    NSString *themePickerMessage;
+    
+    __block NSArray *supportedThemes = [[NSUserDefaults standardUserDefaults] arrayForKey:@"supportedThemes"];
 
     void (^actionBlock)(UIAlertAction *action) = ^(UIAlertAction * action) {
 
@@ -1832,21 +1842,21 @@ SignOutAlertPresenterDelegate>
             typeof(self) self = weakSelf;
 
             NSString *newTheme;
-            if (action == autoAction)
+            
+            if ([action.title isEqualToString:[ThemeService localizedStringForThemeId:@"auto"]])
             {
                 newTheme = @"auto";
             }
-            if (action == darkAction)
+            else
             {
-                newTheme = @"dark";
-            }
-            else if (action == caritasAction)
-            {
-                newTheme = @"caritas";
-            }
-            else if (action == ampAction)
-            {
-                newTheme = @"amp";
+                for (NSString *themeId in supportedThemes)
+                {
+                    if ([action.title isEqualToString:[ThemeService localizedStringForThemeId:themeId]])
+                    {
+                        newTheme = themeId;
+                        break;
+                    }
+                }
             }
 
             NSString *theme = RiotSettings.shared.userInterfaceTheme;
@@ -1863,7 +1873,8 @@ SignOutAlertPresenterDelegate>
             }
         }
     };
-
+    UIAlertAction *autoAction;
+    NSString *themePickerMessage;
     if (@available(iOS 11.0, *))
     {
         // Show "auto" only from iOS 11
@@ -1874,18 +1885,6 @@ SignOutAlertPresenterDelegate>
         // Explain what is "auto"
         themePickerMessage = NSLocalizedStringFromTable(@"settings_ui_theme_picker_message", @"Vector", nil);
     }
-    
-    darkAction = [UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"settings_ui_theme_dark", @"Vector", nil)
-                                             style:UIAlertActionStyleDefault
-                                           handler:actionBlock];
-    
-    caritasAction = [UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"settings_ui_theme_caritas", @"Vector", nil)
-                                             style:UIAlertActionStyleDefault
-                                           handler:actionBlock];
-    
-    ampAction = [UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"settings_ui_theme_amp", @"Vector", nil)
-                                             style:UIAlertActionStyleDefault
-                                           handler:actionBlock];
 
 
     UIAlertController *themePicker = [UIAlertController alertControllerWithTitle:NSLocalizedStringFromTable(@"settings_ui_theme_picker_title", @"Vector", nil)
@@ -1896,11 +1895,12 @@ SignOutAlertPresenterDelegate>
     {
         [themePicker addAction:autoAction];
     }
-    [themePicker addAction:caritasAction];
-    [themePicker addAction:darkAction];
-#if DEBUG
-    [themePicker addAction:ampAction];
-#endif
+    
+    for (NSString *themeId in supportedThemes) {
+        [themePicker addAction:[UIAlertAction actionWithTitle:[ThemeService localizedStringForThemeId:themeId]
+                                                        style:UIAlertActionStyleDefault
+                                                      handler:actionBlock]];
+    }
 
     // Cancel button
     [themePicker addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"cancel"]

@@ -64,5 +64,9 @@
 	</dict>
 	<key>userInterfaceTheme</key>
 	<string>amp</string>
+	<key>supportedThemes</key>
+	<array>
+		<string>amp</string>
+	</array>
 </dict>
 </plist>

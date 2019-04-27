@@ -41,6 +41,13 @@ NSString *const kThemeServiceDidChangeThemeNotification = @"kThemeServiceDidChan
     return sharedOnceInstance;
 }
 
++ (NSString *)localizedStringForThemeId:(NSString *)themeId
+{
+    NSString *locKey = [NSString stringWithFormat:@"settings_ui_theme_%@", themeId];
+    
+    return NSLocalizedStringFromTable(locKey, @"Vector", nil);
+}
+
 - (void)setThemeId:(NSString *)theThemeId
 {
     // Update the current theme
@@ -60,11 +67,12 @@ NSString *const kThemeServiceDidChangeThemeNotification = @"kThemeServiceDidChan
 - (id<Theme>)themeWithThemeId:(NSString*)themeId
 {
     id<Theme> theme;
-
-    if ([themeId isEqualToString:@"auto"])
+    NSArray *supportedThemes = [[NSUserDefaults standardUserDefaults] arrayForKey:@"supportedThemes"];
+    if ([themeId isEqualToString:@"auto"] && supportedThemes.count > 1)
     {
         // Translate "auto" into a theme
-        themeId = UIAccessibilityIsInvertColorsEnabled() ? @"dark" : @"caritas";
+        // First theme in supported themes list is considered light, second one is considered dark
+        themeId = UIAccessibilityIsInvertColorsEnabled() ? [supportedThemes objectAtIndex:1] : [supportedThemes objectAtIndex:0];
     }
 
     if ([themeId isEqualToString:@"dark"])
@@ -81,8 +89,8 @@ NSString *const kThemeServiceDidChangeThemeNotification = @"kThemeServiceDidChan
     }
     else
     {
-        // AMP is the default theme if no other is selected
-        theme = [AMPTheme new];
+        // Return default theme if themeId is not recognized
+        return [self themeWithThemeId:[[NSUserDefaults standardUserDefaults] stringForKey:@"userInterfaceTheme"]];
     }
 
     return theme;

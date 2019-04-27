@@ -37,6 +37,7 @@ internal enum AppDefaults {
     internal static let showRedactionsInRoomHistory: Bool = _document["showRedactionsInRoomHistory"]
     internal static let showUnsupportedEventsInRoomHistory: Bool = _document["showUnsupportedEventsInRoomHistory"]
     internal static let sortRoomMembersUsingLastSeenTime: Bool = _document["sortRoomMembersUsingLastSeenTime"]
+    internal static let supportedThemes: [String] = _document["supportedThemes"]
     internal static let userInterfaceTheme: String = _document["userInterfaceTheme"]
     internal static let webAppUrl: String = _document["webAppUrl"]
   }
@@ -67,6 +68,7 @@ internal enum AppDefaults {
     internal static let showRedactionsInRoomHistory: Bool = _document["showRedactionsInRoomHistory"]
     internal static let showUnsupportedEventsInRoomHistory: Bool = _document["showUnsupportedEventsInRoomHistory"]
     internal static let sortRoomMembersUsingLastSeenTime: Bool = _document["sortRoomMembersUsingLastSeenTime"]
+    internal static let supportedThemes: [String] = _document["supportedThemes"]
     internal static let userInterfaceTheme: String = _document["userInterfaceTheme"]
     internal static let webAppUrl: String = _document["webAppUrl"]
   }

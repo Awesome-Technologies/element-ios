@@ -41,6 +41,14 @@ extern NSString *const kThemeServiceDidChangeThemeNotification;
 + (instancetype)shared;
 
 /**
+ Returns the localization key given the theme id.
+ 
+ @param themeId the theme id.
+ @return the localization key.
+ */
++ (NSString *)localizedStringForThemeId:(NSString *)themeId;
+
+/**
  The id of the theme being used.
  */
 @property (nonatomic, nullable) NSString *themeId;

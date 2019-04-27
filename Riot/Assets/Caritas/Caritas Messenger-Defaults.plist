@@ -64,5 +64,10 @@
 	</dict>
 	<key>userInterfaceTheme</key>
 	<string>caritas</string>
+	<key>supportedThemes</key>
+	<array>
+		<string>caritas</string>
+		<string>dark</string>
+	</array>
 </dict>
 </plist>
