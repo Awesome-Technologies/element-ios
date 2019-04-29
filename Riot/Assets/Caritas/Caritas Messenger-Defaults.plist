@@ -69,5 +69,7 @@
 		<string>caritas</string>
 		<string>dark</string>
 	</array>
+	<key>enableRegistration</key>
+	<false/>
 </dict>
 </plist>

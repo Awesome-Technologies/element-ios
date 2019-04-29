@@ -79,7 +79,7 @@
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
     self.mainNavigationItem.title = nil;
-    self.rightBarButtonItem.title = nil;
+    self.rightBarButtonItem.title = [defaults boolForKey:@"enableRegistration"] ? NSLocalizedStringFromTable(@"auth_register", @"Vector", nil) : nil;
     
     self.defaultHomeServerUrl = [defaults stringForKey:@"homeserverurl"];
     self.defaultIdentityServerUrl = [defaults stringForKey:@"identityserverurl"];
@@ -227,6 +227,11 @@
         [self.submitButton setTitle:NSLocalizedStringFromTable(@"auth_login", @"Vector", nil) forState:UIControlStateNormal];
         [self.submitButton setTitle:NSLocalizedStringFromTable(@"auth_login", @"Vector", nil) forState:UIControlStateHighlighted];
     }
+    else if (authType == MXKAuthenticationTypeRegister)
+    {
+        [self.submitButton setTitle:NSLocalizedStringFromTable(@"auth_register", @"Vector", nil) forState:UIControlStateNormal];
+        [self.submitButton setTitle:NSLocalizedStringFromTable(@"auth_register", @"Vector", nil) forState:UIControlStateHighlighted];
+    }
     else if (authType == MXKAuthenticationTypeForgotPassword)
     {
         if (isPasswordReseted)
@@ -262,6 +267,10 @@
 - (void)setUserInteractionEnabled:(BOOL)userInteractionEnabled
 {
     super.userInteractionEnabled = userInteractionEnabled;
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    // Reset
+    self.rightBarButtonItem.enabled = [defaults boolForKey:@"enableRegistration"];
     
     // Show/Hide server options
     if (_optionsContainer.hidden == userInteractionEnabled)
@@ -289,9 +298,19 @@
         }
 
         // The right bar button is used to switch the authentication type.
-        if (self.authType == MXKAuthenticationTypeLogin)
+        if (self.authType == MXKAuthenticationTypeLogin && [defaults boolForKey:@"enableRegistration"])
         {
-            self.rightBarButtonItem.title = nil;
+            self.rightBarButtonItem.title = NSLocalizedStringFromTable(@"auth_register", @"Vector", nil);
+        }
+        else if (self.authType == MXKAuthenticationTypeRegister)
+        {
+            self.rightBarButtonItem.title = NSLocalizedStringFromTable(@"auth_login", @"Vector", nil);
+            
+            // Restore the back button
+            if (authInputsview)
+            {
+                [self updateRegistrationScreenWithThirdPartyIdentifiersHidden:authInputsview.thirdPartyIdentifiersHidden];
+            }
         }
         else if (self.authType == MXKAuthenticationTypeForgotPassword)
         {
@@ -324,9 +343,15 @@
             // Cancel the current operation
             [self cancel];
         }
+        else if (self.authType == MXKAuthenticationTypeLogin)
+        {
+            self.authType = MXKAuthenticationTypeRegister;
+            self.rightBarButtonItem.title = NSLocalizedStringFromTable(@"auth_login", @"Vector", nil);
+        }
         else
         {
             self.authType = MXKAuthenticationTypeLogin;
+            self.rightBarButtonItem.title = NSLocalizedStringFromTable(@"auth_register", @"Vector", nil);
         }
     }
     else if (sender == self.mainNavigationItem.leftBarButtonItem)
@@ -511,6 +536,8 @@
     
     if (thirdPartyIdentifiersHidden)
     {
+        [self.submitButton setTitle:NSLocalizedStringFromTable(@"auth_register", @"Vector", nil) forState:UIControlStateNormal];
+        [self.submitButton setTitle:NSLocalizedStringFromTable(@"auth_register", @"Vector", nil) forState:UIControlStateHighlighted];
         
         self.mainNavigationItem.leftBarButtonItem = nil;
     }

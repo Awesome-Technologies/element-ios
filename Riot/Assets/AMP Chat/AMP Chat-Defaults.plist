@@ -68,5 +68,7 @@
 	<array>
 		<string>amp</string>
 	</array>
+	<key>enableRegistration</key>
+	<true/>
 </dict>
 </plist>

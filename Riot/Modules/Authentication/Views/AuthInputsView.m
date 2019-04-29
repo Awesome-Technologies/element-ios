@@ -28,6 +28,11 @@
      The current email validation
      */
     MXK3PID  *submittedEmail;
+    
+    /**
+     The set of parameters ready to use for a registration.
+     */
+    NSDictionary *externalRegistrationParameters;
 }
 
 /**
@@ -145,6 +150,9 @@
             submittedEmail = nil;
         }
         
+        // Reset external registration parameters
+        externalRegistrationParameters = nil;
+        
         // Reset UI by hidding all items
         [self hideInputsContainer];
         
@@ -199,6 +207,12 @@
 
 - (NSString*)validateParameters
 {
+    // Consider everything is fine when external registration parameters are ready to use
+    if (externalRegistrationParameters)
+    {
+        return nil;
+    }
+    
     // Check the validity of the parameters
     NSString *errorMsg = nil;
     
@@ -222,6 +236,70 @@
             errorMsg = [NSBundle mxk_localizedStringForKey:@"not_supported_yet"];
         }
     }
+    else if (type == MXKAuthenticationTypeRegister)
+    {
+        if (self.isThirdPartyIdentifiersHidden)
+        {
+            if (!self.userLoginTextField.text.length)
+            {
+                NSLog(@"[AuthInputsView] Invalid user name");
+                errorMsg = NSLocalizedStringFromTable(@"auth_invalid_user_name", @"Vector", nil);
+            }
+            else if (!self.passWordTextField.text.length)
+            {
+                NSLog(@"[AuthInputsView] Missing Passwords");
+                errorMsg = NSLocalizedStringFromTable(@"auth_missing_password", @"Vector", nil);
+            }
+            else if (self.passWordTextField.text.length < 6)
+            {
+                NSLog(@"[AuthInputsView] Invalid Passwords");
+                errorMsg = NSLocalizedStringFromTable(@"auth_invalid_password", @"Vector", nil);
+            }
+            else if ([self.repeatPasswordTextField.text isEqualToString:self.passWordTextField.text] == NO)
+            {
+                NSLog(@"[AuthInputsView] Passwords don't match");
+                errorMsg = NSLocalizedStringFromTable(@"auth_password_dont_match", @"Vector", nil);
+            }
+            else
+            {
+                // Check validity of the non empty user name
+                NSString *user = self.userLoginTextField.text;
+                NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"^[a-z0-9.\\-_]+$" options:NSRegularExpressionCaseInsensitive error:nil];
+                
+                if ([regex firstMatchInString:user options:0 range:NSMakeRange(0, user.length)] == nil)
+                {
+                    NSLog(@"[AuthInputsView] Invalid user name");
+                    errorMsg = NSLocalizedStringFromTable(@"auth_invalid_user_name", @"Vector", nil);
+                }
+            }
+        }
+        else
+        {
+            // Check email field
+            if ([self isFlowSupported:kMXLoginFlowTypeEmailIdentity] && !self.emailTextField.text.length)
+            {
+                if (self.areAllThirdPartyIdentifiersRequired)
+                {
+                    NSLog(@"[AuthInputsView] Missing email");
+                    errorMsg = NSLocalizedStringFromTable(@"auth_missing_email", @"Vector", nil);
+                }
+            }
+            
+            if (!errorMsg)
+            {
+                // Check email/phone validity
+                if (self.emailTextField.text.length)
+                {
+                    // Check validity of the non empty email
+                    if (![MXTools isEmailAddress:self.emailTextField.text])
+                    {
+                        NSLog(@"[AuthInputsView] Invalid email");
+                        errorMsg = NSLocalizedStringFromTable(@"auth_invalid_email", @"Vector", nil);
+                    }
+                }
+            }
+        }
+    }
     
     return errorMsg;
 }
@@ -230,6 +308,18 @@
 {
     if (callback)
     {
+        // Return external registration parameters if any
+        if (externalRegistrationParameters)
+        {
+            // We trigger here a registration based on external inputs. All the required data are handled by the session id.
+            NSLog(@"[AuthInputsView] prepareParameters: return external registration parameters");
+            callback(externalRegistrationParameters, nil);
+            
+            // CAUTION: Do not reset this dictionary here, it is used later to handle this registration until the end (see [updateAuthSessionWithCompletedStages:didUpdateParameters:])
+            
+            return;
+        }
+        
         // Prepare here parameters dict by checking each required fields.
         NSDictionary *parameters = nil;
         
@@ -300,6 +390,121 @@
                     }
                 }
             }
+            else if (type == MXKAuthenticationTypeRegister)
+            {
+                // Check whether an email has been set, and if it is not handled yet
+                if (!self.emailContainer.isHidden && self.emailTextField.text.length && ![self isFlowCompleted:kMXLoginFlowTypeEmailIdentity])
+                {
+                    NSLog(@"[AuthInputsView] Prepare email identity stage");
+                    
+                    // Retrieve the REST client from delegate
+                    MXRestClient *restClient;
+                    
+                    if (self.delegate && [self.delegate respondsToSelector:@selector(authInputsViewThirdPartyIdValidationRestClient:)])
+                    {
+                        restClient = [self.delegate authInputsViewThirdPartyIdValidationRestClient:self];
+                    }
+                    
+                    if (restClient)
+                    {
+                        // Check whether a second 3pid is available
+                        _isThirdPartyIdentifierPending = NO;
+                        
+                        // Launch email validation
+                        submittedEmail = [[MXK3PID alloc] initWithMedium:kMX3PIDMediumEmail andAddress:self.emailTextField.text];
+                        
+                        // Create the next link that is common to all Vector.im clients
+                        NSString *nextLink = [NSString stringWithFormat:@"%@/#/register?client_secret=%@&hs_url=%@&is_url=%@&session_id=%@",
+                                              [Tools webAppUrl],
+                                              [submittedEmail.clientSecret stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLHostAllowedCharacterSet]],
+                                              [restClient.homeserver stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLHostAllowedCharacterSet]],
+                                              [restClient.identityServer stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLHostAllowedCharacterSet]],
+                                              [currentSession.session stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLHostAllowedCharacterSet]]];
+                        
+                        [submittedEmail requestValidationTokenWithMatrixRestClient:restClient
+                                                              isDuringRegistration:YES
+                                                                          nextLink:nextLink
+                                                                           success:^
+                         {
+                             
+                             NSURL *identServerURL = [NSURL URLWithString:restClient.identityServer];
+                             NSDictionary *parameters;
+                             parameters = @{
+                                            @"auth": @{@"session":currentSession.session, @"threepid_creds": @{@"client_secret": submittedEmail.clientSecret, @"id_server": identServerURL.host, @"sid": submittedEmail.sid}, @"type": kMXLoginFlowTypeEmailIdentity},
+                                            @"username": self.userLoginTextField.text,
+                                            @"password": self.passWordTextField.text,
+                                            @"bind_msisdn": @([self isFlowCompleted:kMXLoginFlowTypeMSISDN]),
+                                            @"bind_email": @(YES)
+                                            };
+                             
+                             [self hideInputsContainer];
+                             
+                             self.messageLabel.text = NSLocalizedStringFromTable(@"auth_email_validation_message", @"Vector", nil);
+                             self.messageLabel.hidden = NO;
+                             
+                             callback(parameters, nil);
+                             
+                         }
+                                                                           failure:^(NSError *error)
+                         {
+                             
+                             NSLog(@"[AuthInputsView] Failed to request email token");
+                             
+                             // Ignore connection cancellation error
+                             if (([error.domain isEqualToString:NSURLErrorDomain] && error.code == NSURLErrorCancelled))
+                             {
+                                 return;
+                             }
+                             
+                             // Translate the potential MX error.
+                             MXError *mxError = [[MXError alloc] initWithNSError:error];
+                             if (mxError && ([mxError.errcode isEqualToString:kMXErrCodeStringThreePIDInUse] || [mxError.errcode isEqualToString:kMXErrCodeStringServerNotTrusted]))
+                             {
+                                 NSMutableDictionary *userInfo;
+                                 if (error.userInfo)
+                                 {
+                                     userInfo = [NSMutableDictionary dictionaryWithDictionary:error.userInfo];
+                                 }
+                                 else
+                                 {
+                                     userInfo = [NSMutableDictionary dictionary];
+                                 }
+                                 
+                                 userInfo[NSLocalizedFailureReasonErrorKey] = nil;
+                                 
+                                 if ([mxError.errcode isEqualToString:kMXErrCodeStringThreePIDInUse])
+                                 {
+                                     userInfo[NSLocalizedDescriptionKey] = NSLocalizedStringFromTable(@"auth_email_in_use", @"Vector", nil);
+                                     userInfo[@"error"] = NSLocalizedStringFromTable(@"auth_email_in_use", @"Vector", nil);
+                                 }
+                                 else
+                                 {
+                                     userInfo[NSLocalizedDescriptionKey] = NSLocalizedStringFromTable(@"auth_untrusted_id_server", @"Vector", nil);
+                                     userInfo[@"error"] = NSLocalizedStringFromTable(@"auth_untrusted_id_server", @"Vector", nil);
+                                 }
+                                 
+                                 error = [NSError errorWithDomain:error.domain code:error.code userInfo:userInfo];
+                             }
+                             callback(nil, error);
+                             
+                         }];
+                        
+                        // Async response
+                        return;
+                    }
+                    NSLog(@"[AuthInputsView] Authentication failed during the email identity stage");
+                }
+                else if ([self isFlowSupported:kMXLoginFlowTypeDummy] && ![self isFlowCompleted:kMXLoginFlowTypeDummy])
+                {
+                    parameters = @{
+                                   @"auth": @{@"session":currentSession.session, @"type": kMXLoginFlowTypeDummy},
+                                   @"username": self.userLoginTextField.text,
+                                   @"password": self.passWordTextField.text,
+                                   @"bind_msisdn": @(NO),
+                                   @"bind_email": @(NO)
+                                   };
+                }
+            }
         }
         
         callback(parameters, nil);
@@ -332,14 +537,16 @@
             {
                 NSLog(@"[AuthInputsView] Display reCaptcha stage");
                 
-                [self displayRecaptchaForm:^(NSString *response) {
-
+                if (externalRegistrationParameters)
+                {
+                    [self displayRecaptchaForm:^(NSString *response) {
+                        
                         if (response.length)
                         {
                             // We finalize here a registration triggered from external inputs. All the required data are handled by the session id
                             NSDictionary *parameters = @{
-                                           @"auth": @{@"session": currentSession.session, @"response": response, @"type": kMXLoginFlowTypeRecaptcha},
-                                           };
+                                                         @"auth": @{@"session": currentSession.session, @"response": response, @"type": kMXLoginFlowTypeRecaptcha},
+                                                         };
                             callback (parameters, nil);
                         }
                         else
@@ -348,6 +555,11 @@
                             callback (nil, [NSError errorWithDomain:MXKAuthErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey:[NSBundle mxk_localizedStringForKey:@"not_supported_yet"]}]);
                         }
                     }];
+                }
+                else
+                {
+                    [self prepareParameters:callback];
+                }
                 
                 return;
             }
@@ -364,6 +576,100 @@
         NSLog(@"[AuthInputsView] updateAuthSessionWithCompletedStages failed");
         callback (nil, [NSError errorWithDomain:MXKAuthErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey:[NSBundle mxk_localizedStringForKey:@"not_supported_yet"]}]);
     }
+}
+
+- (BOOL)setExternalRegistrationParameters:(NSDictionary *)registrationParameters
+{
+    // Presently we only support a registration based on next_link associated to a successful email validation.
+    NSString *homeserverURL;
+    NSString *identityURL;
+    
+    // Check the current authentication type
+    if (self.authType != MXKAuthenticationTypeRegister)
+    {
+        NSLog(@"[AuthInputsView] setExternalRegistrationParameters failed: wrong auth type");
+        return NO;
+    }
+    
+    // Retrieve the REST client from delegate
+    MXRestClient *restClient;
+    if (self.delegate && [self.delegate respondsToSelector:@selector(authInputsViewThirdPartyIdValidationRestClient:)])
+    {
+        restClient = [self.delegate authInputsViewThirdPartyIdValidationRestClient:self];
+    }
+    
+    if (restClient)
+    {
+        // Sanity check on home server
+        id hs_url = registrationParameters[@"hs_url"];
+        if (hs_url && [hs_url isKindOfClass:NSString.class])
+        {
+            homeserverURL = hs_url;
+            
+            if ([homeserverURL isEqualToString:restClient.homeserver] == NO)
+            {
+                NSLog(@"[AuthInputsView] setExternalRegistrationParameters failed: wrong homeserver URL");
+                return NO;
+            }
+        }
+        
+        // Sanity check on identity server
+        id is_url = registrationParameters[@"is_url"];
+        if (is_url && [is_url isKindOfClass:NSString.class])
+        {
+            identityURL = is_url;
+            
+            if ([identityURL isEqualToString:restClient.identityServer] == NO)
+            {
+                NSLog(@"[AuthInputsView] setExternalRegistrationParameters failed: wrong identity server URL");
+                return NO;
+            }
+        }
+    }
+    else
+    {
+        NSLog(@"[AuthInputsView] setExternalRegistrationParameters failed: not supported");
+        return NO;
+    }
+    
+    // Retrieve other parameters
+    NSString *clientSecret;
+    NSString *sid;
+    NSString *sessionId;
+    
+    id value = registrationParameters[@"client_secret"];
+    if (value && [value isKindOfClass:NSString.class])
+    {
+        clientSecret = value;
+    }
+    value = registrationParameters[@"sid"];
+    if (value && [value isKindOfClass:NSString.class])
+    {
+        sid = value;
+    }
+    value = registrationParameters[@"session_id"];
+    if (value && [value isKindOfClass:NSString.class])
+    {
+        sessionId = value;
+    }
+    
+    // Check validity of the required parameters
+    if (!homeserverURL.length || !identityURL.length || !clientSecret.length || !sid.length || !sessionId.length)
+    {
+        NSLog(@"[AuthInputsView] setExternalRegistrationParameters failed: wrong parameters");
+        return NO;
+    }
+    
+    // Prepare the registration parameters (Ready to use)
+    NSURL *identServerURL = [NSURL URLWithString:identityURL];
+    externalRegistrationParameters = @{
+                                       @"auth": @{@"session": sessionId, @"threepid_creds": @{@"client_secret": clientSecret, @"id_server": identServerURL.host, @"sid": sid}, @"type": kMXLoginFlowTypeEmailIdentity},
+                                       };
+    
+    // Hide all inputs by default
+    [self hideInputsContainer];
+    
+    return YES;
 }
 
 - (BOOL)areAllRequiredFieldsSet
@@ -407,47 +713,9 @@
     return ([self isFlowSupported:kMXLoginFlowTypeEmailIdentity] || [self isFlowSupported:kMXLoginFlowTypeMSISDN]);
 }
 
-- (BOOL)isThirdPartyIdentifierRequired
-{
-    // Check first whether some 3pids are supported
-    if (!self.areThirdPartyIdentifiersSupported)
-    {
-        return NO;
-    }
-    
-    // Check whether an account may be created without third-party identifiers.
-    for (MXLoginFlow *loginFlow in currentSession.flows)
-    {
-        if ([loginFlow.stages indexOfObject:kMXLoginFlowTypeEmailIdentity] == NSNotFound
-             && [loginFlow.stages indexOfObject:kMXLoginFlowTypeMSISDN] == NSNotFound)
-        {
-            // There is a flow with no 3pids
-            return NO;
-        }
-    }
-    
-    return YES;
-}
-
 - (BOOL)areAllThirdPartyIdentifiersRequired
 {
-    // Check first whether some 3pids are required
-    if (!self.isThirdPartyIdentifierRequired)
-    {
-        return NO;
-    }
-    
-    BOOL isEmailIdentityFlowSupported = [self isFlowSupported:kMXLoginFlowTypeEmailIdentity];
-    
-    for (MXLoginFlow *loginFlow in currentSession.flows)
-    {
-        if (isEmailIdentityFlowSupported && [loginFlow.stages indexOfObject:kMXLoginFlowTypeEmailIdentity] == NSNotFound)
-        {
-            return NO;
-        }
-    }
-    
-    return YES;
+    return NO;
 }
 
 - (void)setThirdPartyIdentifiersHidden:(BOOL)thirdPartyIdentifiersHidden
@@ -476,14 +744,7 @@
     {
         if ([self isFlowSupported:kMXLoginFlowTypeEmailIdentity])
         {
-            if (self.isThirdPartyIdentifierRequired)
-            {
-                self.emailTextField.placeholder = NSLocalizedStringFromTable(@"auth_email_placeholder", @"Vector", nil);
-            }
-            else
-            {
-                self.emailTextField.placeholder = NSLocalizedStringFromTable(@"auth_optional_email_placeholder", @"Vector", nil);
-            }
+            self.emailTextField.placeholder = NSLocalizedStringFromTable(@"auth_optional_email_placeholder", @"Vector", nil);
             
             self.emailTextField.attributedPlaceholder = [[NSAttributedString alloc]
                                                              initWithString:self.emailTextField.placeholder
@@ -665,7 +926,7 @@
     }
     else if ([flowType isEqualToString:kMXLoginFlowTypeMSISDN])
     {
-        return NO;
+        return YES;
     }
     else if ([flowType isEqualToString:kMXLoginFlowTypeDummy])
     {
