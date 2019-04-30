@@ -119,7 +119,7 @@
     
     // Refresh the search results.
     // Note: We wait for 'viewDidAppear' call to consider the actual view size during this update.
-    [self updateSearch];
+    [self updateSearchAndForceResults:false];
 }
 
 #pragma mark -
@@ -196,11 +196,7 @@
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
-    if (!self.searchBar.text.length)
-    {
-        // Reset current search if any
-        [self updateSearch];
-    }
+    [self updateSearchAndForceResults:false];
 }
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
@@ -209,8 +205,7 @@
     
     if (self.selectedViewController == messagesSearchViewController || self.selectedViewController == filesSearchViewController)
     {
-        // As the messages/files search is done homeserver-side, launch it only on the "Search" button
-        [self updateSearch];
+        [self updateSearchAndForceResults:true];
     }
 }
 
@@ -270,7 +265,7 @@
 {
     [super setSelectedIndex:selectedIndex];
     
-    [self updateSearch];
+    [self updateSearchAndForceResults:false];
 }
 
 #pragma mark - Navigation
@@ -316,38 +311,32 @@
 #pragma mark - Search
 
 // Update search results under the currently selected tab
-- (void)updateSearch
+- (void)updateSearchAndForceResults:(BOOL)forceResult
 {
-    if (self.searchBar.text.length)
+    // Show results if more than 2 character have been put in
+    // forceResult allow to bypass that
+    if (self.searchBar.text.length > 2 || forceResult)
     {
         self.backgroundImageView.hidden = YES;
         
         // Forward the search request to the data source
         if (self.selectedViewController == messagesSearchViewController)
         {
-            // Launch the search only if the keyboard is no more visible
-            if (!self.searchBar.isFirstResponder)
-            {
-                // Do it asynchronously to give time to messagesSearchViewController to be set up
-                // so that it can display its loading wheel
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [messagesSearchDataSource searchMessages:self.searchBar.text force:NO];
-                    messagesSearchViewController.shouldScrollToBottomOnRefresh = YES;
-                });
-            }
+            // Do it asynchronously to give time to messagesSearchViewController to be set up
+            // so that it can display its loading wheel
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [messagesSearchDataSource searchMessages:self.searchBar.text force:NO];
+                messagesSearchViewController.shouldScrollToBottomOnRefresh = YES;
+            });
         }
         else if (self.selectedViewController == filesSearchViewController)
         {
-            // Launch the search only if the keyboard is no more visible
-            if (!self.searchBar.isFirstResponder)
-            {
-                // Do it asynchronously to give time to filesSearchViewController to be set up
-                // so that it can display its loading wheel
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [filesSearchDataSource searchMessages:self.searchBar.text force:NO];
-                    filesSearchViewController.shouldScrollToBottomOnRefresh = YES;
-                });
-            }
+            // Do it asynchronously to give time to filesSearchViewController to be set up
+            // so that it can display its loading wheel
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [filesSearchDataSource searchMessages:self.searchBar.text force:NO];
+                filesSearchViewController.shouldScrollToBottomOnRefresh = YES;
+            });
         }
     }
     else
