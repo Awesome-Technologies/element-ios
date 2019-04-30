@@ -87,4 +87,10 @@
     }
 }
 
+// Override super method to prevent UIAlertAction to open
+- (void)onCollectionViewCellLongPress:(UIGestureRecognizer*)gestureRecognizer
+{
+    
+}
+
 @end
