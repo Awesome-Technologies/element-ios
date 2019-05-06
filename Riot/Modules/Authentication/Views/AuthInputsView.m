@@ -710,7 +710,7 @@
 
 - (BOOL)areThirdPartyIdentifiersSupported
 {
-    return ([self isFlowSupported:kMXLoginFlowTypeEmailIdentity] || [self isFlowSupported:kMXLoginFlowTypeMSISDN]);
+    return NO;
 }
 
 - (BOOL)areAllThirdPartyIdentifiersRequired
