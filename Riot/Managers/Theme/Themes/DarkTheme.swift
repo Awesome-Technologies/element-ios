@@ -40,6 +40,7 @@ class DarkTheme: NSObject, Theme {
     var textSecondaryColor: UIColor = UIColor(rgb: 0xADADAD)
 
     var tintColor: UIColor = UIColor(rgb: 0xFFFFFF)
+    var textTintColor: UIColor = UIColor(rgb: 0xCC1E1C)
     var unreadRoomIndentColor: UIColor = UIColor(rgb: 0x2E3648)
     var lineBreakColor: UIColor = UIColor.white.withAlphaComponent(0.15)
     

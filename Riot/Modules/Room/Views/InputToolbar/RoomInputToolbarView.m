@@ -91,7 +91,7 @@
     
     growingTextView.font = [UIFont systemFontOfSize:15];
     growingTextView.textColor = ThemeService.shared.theme.textPrimaryColor;
-    growingTextView.tintColor = ThemeService.shared.theme.tintColor;
+    growingTextView.tintColor = ThemeService.shared.theme.textTintColor;
     
     growingTextView.internalTextView.keyboardAppearance = ThemeService.shared.theme.keyboardAppearance;
 }
