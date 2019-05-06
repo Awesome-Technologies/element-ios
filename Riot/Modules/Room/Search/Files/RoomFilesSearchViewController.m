@@ -81,7 +81,7 @@
     self.view.backgroundColor = self.searchTableView.backgroundColor;
     self.searchTableView.separatorColor = ThemeService.shared.theme.lineBreakColor;
     
-    self.noResultsLabel.textColor = ThemeService.shared.theme.backgroundColor;
+    self.noResultsLabel.textColor = ThemeService.shared.theme.textPrimaryColor;
     
     if (self.searchTableView.dataSource)
     {
