@@ -379,6 +379,12 @@
         barButtonItem.target = self;
         barButtonItem.action = @selector(onButtonPressed:);
     }
+    
+    // Only show search in unencrypted rooms
+    if (self.roomDataSource.room.summary.isEncrypted) {
+        rightBarButtonItems = nil;
+        self.navigationItem.rightBarButtonItems = nil;
+    }
 
     // Prepare missed dicussion badge (if any)
     self.showMissedDiscussionsBadge = _showMissedDiscussionsBadge;
