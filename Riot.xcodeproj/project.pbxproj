@@ -3395,6 +3395,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/$(PRODUCT_NAME)/SupportingFiles/RiotShareExtension-Bridging-Header.h";
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "RiotShareExtension-Swift.h";
 				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = "Caritas Debug";
 		};
@@ -3429,6 +3430,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/$(PRODUCT_NAME)/SupportingFiles/RiotShareExtension-Bridging-Header.h";
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "RiotShareExtension-Swift.h";
 				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = "Caritas Release";
 		};
@@ -3453,6 +3455,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited).siriIntents";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = "Caritas Debug";
 		};
@@ -3478,6 +3481,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited).siriIntents";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = "Caritas Release";
 		};
@@ -3588,7 +3592,7 @@
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "Riot-Swift.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = "AMP Chat Debug";
 		};
@@ -3648,6 +3652,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/$(PRODUCT_NAME)/SupportingFiles/RiotShareExtension-Bridging-Header.h";
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "RiotShareExtension-Swift.h";
 				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = "AMP Chat Debug";
 		};
@@ -3672,6 +3677,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited).siriIntents";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = "AMP Chat Debug";
 		};
@@ -3775,7 +3781,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Riot/SupportingFiles/Riot-Bridging-Header.h";
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "Riot-Swift.h";
 				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = "AMP Chat Release";
 		};
@@ -3832,6 +3838,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/$(PRODUCT_NAME)/SupportingFiles/RiotShareExtension-Bridging-Header.h";
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "RiotShareExtension-Swift.h";
 				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = "AMP Chat Release";
 		};
@@ -3857,6 +3864,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited).siriIntents";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = "AMP Chat Release";
 		};
@@ -4033,7 +4041,7 @@
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "Riot-Swift.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = "Caritas Debug";
 		};
@@ -4071,7 +4079,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Riot/SupportingFiles/Riot-Bridging-Header.h";
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "Riot-Swift.h";
 				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = "Caritas Release";
 		};
