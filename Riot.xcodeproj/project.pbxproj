@@ -46,9 +46,24 @@
 		9768F4922266385A00926AFB /* AMP Chat-LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9768F4902266385A00926AFB /* AMP Chat-LaunchScreen.storyboard */; };
 		9768F4942266391800926AFB /* Caritas Messenger-SharedImages.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9768F4932266391700926AFB /* Caritas Messenger-SharedImages.xcassets */; };
 		9787D9B62271D9EE0010EA83 /* App-Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9787D9B52271D9ED0010EA83 /* App-Defaults.swift */; };
-		97BDA7F52252360C0055EBCE /* TermsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 32B1FEDA21A46F2C00637127 /* TermsView.xib */; };
 		979234BA2244762F0081082E /* AMPTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979234B92244762F0081082E /* AMPTheme.swift */; };
 		97A684AC22448FD000EB1C51 /* AMPTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979234B92244762F0081082E /* AMPTheme.swift */; };
+		97B8859E228312ED00E16C88 /* CallViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 97B88597228312ED00E16C88 /* CallViewController.xib */; };
+		97B8859F228312ED00E16C88 /* CircleButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 97B88599228312ED00E16C88 /* CircleButton.m */; };
+		97B885A0228312ED00E16C88 /* IncomingCallView.m in Sources */ = {isa = PBXBuildFile; fileRef = 97B8859C228312ED00E16C88 /* IncomingCallView.m */; };
+		97B885A1228312ED00E16C88 /* CallViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 97B8859D228312ED00E16C88 /* CallViewController.m */; };
+		97B885A6228313B100E16C88 /* callend.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 97B885A2228313B100E16C88 /* callend.mp3 */; };
+		97B885A7228313B100E16C88 /* busy.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 97B885A3228313B100E16C88 /* busy.mp3 */; };
+		97B885A8228313B100E16C88 /* ring.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 97B885A4228313B100E16C88 /* ring.mp3 */; };
+		97B885A9228313B100E16C88 /* ringback.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 97B885A5228313B100E16C88 /* ringback.mp3 */; };
+		97B885EC22831B1C00E16C88 /* IntegrationManagerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 97B885DD22831B1C00E16C88 /* IntegrationManagerViewController.m */; };
+		97B885ED22831B1C00E16C88 /* WidgetPickerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 97B885DF22831B1C00E16C88 /* WidgetPickerViewController.m */; };
+		97B885EF22831B1C00E16C88 /* JitsiViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 97B885E822831B1C00E16C88 /* JitsiViewController.xib */; };
+		97B885F022831B1C00E16C88 /* JitsiViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 97B885E922831B1C00E16C88 /* JitsiViewController.m */; };
+		97B885F122831B1C00E16C88 /* WidgetViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 97B885EA22831B1C00E16C88 /* WidgetViewController.m */; };
+		97B885FE22831C1D00E16C88 /* Widget.m in Sources */ = {isa = PBXBuildFile; fileRef = 97B885FC22831C1D00E16C88 /* Widget.m */; };
+		97B885FF22831C1D00E16C88 /* WidgetManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 97B885FD22831C1D00E16C88 /* WidgetManager.m */; };
+		97BDA7F52252360C0055EBCE /* TermsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 32B1FEDA21A46F2C00637127 /* TermsView.xib */; };
 		B104C2942203773C00D9F496 /* KeyBackupBannerPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = B104C2932203773B00D9F496 /* KeyBackupBannerPreferences.swift */; };
 		B1057789221304EC00334B1E /* KeyBackupSetupSuccessFromPassphraseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1057788221304EB00334B1E /* KeyBackupSetupSuccessFromPassphraseViewController.swift */; };
 		B105778B221304FA00334B1E /* KeyBackupSetupSuccessFromPassphraseViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B105778A221304FA00334B1E /* KeyBackupSetupSuccessFromPassphraseViewController.storyboard */; };
@@ -473,6 +488,30 @@
 		9768F4932266391700926AFB /* Caritas Messenger-SharedImages.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Caritas Messenger-SharedImages.xcassets"; sourceTree = "<group>"; };
 		9787D9B52271D9ED0010EA83 /* App-Defaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "App-Defaults.swift"; sourceTree = "<group>"; };
 		979234B92244762F0081082E /* AMPTheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMPTheme.swift; sourceTree = "<group>"; };
+		97B88596228312ED00E16C88 /* CallViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallViewController.h; sourceTree = "<group>"; };
+		97B88597228312ED00E16C88 /* CallViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CallViewController.xib; sourceTree = "<group>"; };
+		97B88599228312ED00E16C88 /* CircleButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CircleButton.m; sourceTree = "<group>"; };
+		97B8859A228312ED00E16C88 /* IncomingCallView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IncomingCallView.h; sourceTree = "<group>"; };
+		97B8859B228312ED00E16C88 /* CircleButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CircleButton.h; sourceTree = "<group>"; };
+		97B8859C228312ED00E16C88 /* IncomingCallView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IncomingCallView.m; sourceTree = "<group>"; };
+		97B8859D228312ED00E16C88 /* CallViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CallViewController.m; sourceTree = "<group>"; };
+		97B885A2228313B100E16C88 /* callend.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = callend.mp3; sourceTree = "<group>"; };
+		97B885A3228313B100E16C88 /* busy.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = busy.mp3; sourceTree = "<group>"; };
+		97B885A4228313B100E16C88 /* ring.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = ring.mp3; sourceTree = "<group>"; };
+		97B885A5228313B100E16C88 /* ringback.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = ringback.mp3; sourceTree = "<group>"; };
+		97B885DD22831B1C00E16C88 /* IntegrationManagerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IntegrationManagerViewController.m; sourceTree = "<group>"; };
+		97B885DF22831B1C00E16C88 /* WidgetPickerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WidgetPickerViewController.m; sourceTree = "<group>"; };
+		97B885E022831B1C00E16C88 /* WidgetPickerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WidgetPickerViewController.h; sourceTree = "<group>"; };
+		97B885E122831B1C00E16C88 /* IntegrationManagerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntegrationManagerViewController.h; sourceTree = "<group>"; };
+		97B885E722831B1C00E16C88 /* JitsiViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JitsiViewController.h; sourceTree = "<group>"; };
+		97B885E822831B1C00E16C88 /* JitsiViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = JitsiViewController.xib; sourceTree = "<group>"; };
+		97B885E922831B1C00E16C88 /* JitsiViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JitsiViewController.m; sourceTree = "<group>"; };
+		97B885EA22831B1C00E16C88 /* WidgetViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WidgetViewController.m; sourceTree = "<group>"; };
+		97B885EB22831B1C00E16C88 /* WidgetViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WidgetViewController.h; sourceTree = "<group>"; };
+		97B885FA22831C1D00E16C88 /* Widget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Widget.h; sourceTree = "<group>"; };
+		97B885FB22831C1D00E16C88 /* WidgetManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WidgetManager.h; sourceTree = "<group>"; };
+		97B885FC22831C1D00E16C88 /* Widget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Widget.m; sourceTree = "<group>"; };
+		97B885FD22831C1D00E16C88 /* WidgetManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WidgetManager.m; sourceTree = "<group>"; };
 		97FE8C2121B1F180009ABE88 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = en; path = en.lproj/AppIntentVocabulary.plist; sourceTree = "<group>"; };
 		A004C4BA200BCD9777EEF321 /* Pods-RiotPods-RiotShareExtension.ampchat release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RiotPods-RiotShareExtension.ampchat release.xcconfig"; path = "Pods/Target Support Files/Pods-RiotPods-RiotShareExtension/Pods-RiotPods-RiotShareExtension.ampchat release.xcconfig"; sourceTree = "<group>"; };
 		B104C2932203773B00D9F496 /* KeyBackupBannerPreferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyBackupBannerPreferences.swift; sourceTree = "<group>"; };
@@ -1100,6 +1139,79 @@
 			path = "AMP Chat";
 			sourceTree = "<group>";
 		};
+		97B88595228312ED00E16C88 /* Call */ = {
+			isa = PBXGroup;
+			children = (
+				97B88596228312ED00E16C88 /* CallViewController.h */,
+				97B88597228312ED00E16C88 /* CallViewController.xib */,
+				97B88598228312ED00E16C88 /* Views */,
+				97B8859D228312ED00E16C88 /* CallViewController.m */,
+			);
+			path = Call;
+			sourceTree = "<group>";
+		};
+		97B88598228312ED00E16C88 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				97B88599228312ED00E16C88 /* CircleButton.m */,
+				97B8859A228312ED00E16C88 /* IncomingCallView.h */,
+				97B8859B228312ED00E16C88 /* CircleButton.h */,
+				97B8859C228312ED00E16C88 /* IncomingCallView.m */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		97B885DC22831B1C00E16C88 /* Integrations */ = {
+			isa = PBXGroup;
+			children = (
+				97B885DD22831B1C00E16C88 /* IntegrationManagerViewController.m */,
+				97B885DE22831B1C00E16C88 /* WidgetPicker */,
+				97B885E122831B1C00E16C88 /* IntegrationManagerViewController.h */,
+				97B885E222831B1C00E16C88 /* Widgets */,
+			);
+			path = Integrations;
+			sourceTree = "<group>";
+		};
+		97B885DE22831B1C00E16C88 /* WidgetPicker */ = {
+			isa = PBXGroup;
+			children = (
+				97B885DF22831B1C00E16C88 /* WidgetPickerViewController.m */,
+				97B885E022831B1C00E16C88 /* WidgetPickerViewController.h */,
+			);
+			path = WidgetPicker;
+			sourceTree = "<group>";
+		};
+		97B885E222831B1C00E16C88 /* Widgets */ = {
+			isa = PBXGroup;
+			children = (
+				97B885E622831B1C00E16C88 /* Jitsi */,
+				97B885EA22831B1C00E16C88 /* WidgetViewController.m */,
+				97B885EB22831B1C00E16C88 /* WidgetViewController.h */,
+			);
+			path = Widgets;
+			sourceTree = "<group>";
+		};
+		97B885E622831B1C00E16C88 /* Jitsi */ = {
+			isa = PBXGroup;
+			children = (
+				97B885E722831B1C00E16C88 /* JitsiViewController.h */,
+				97B885E822831B1C00E16C88 /* JitsiViewController.xib */,
+				97B885E922831B1C00E16C88 /* JitsiViewController.m */,
+			);
+			path = Jitsi;
+			sourceTree = "<group>";
+		};
+		97B885F922831C1D00E16C88 /* Widgets */ = {
+			isa = PBXGroup;
+			children = (
+				97B885FA22831C1D00E16C88 /* Widget.h */,
+				97B885FB22831C1D00E16C88 /* WidgetManager.h */,
+				97B885FC22831C1D00E16C88 /* Widget.m */,
+				97B885FD22831C1D00E16C88 /* WidgetManager.m */,
+			);
+			path = Widgets;
+			sourceTree = "<group>";
+		};
 		A237FB70534FB8ADA0D7CFEE /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -1526,6 +1638,8 @@
 				B1B556E020EE6C4C00210D55 /* StartChat */,
 				B169330C20F3CA6000746532 /* PublicRoomList */,
 				B1B5568E20EE6C4C00210D55 /* Room */,
+				97B885DC22831B1C00E16C88 /* Integrations */,
+				97B88595228312ED00E16C88 /* Call */,
 				B1B5568720EE6C4C00210D55 /* Contacts */,
 				B1B556ED20EE6C4C00210D55 /* MediaPicker */,
 				B1B556E420EE6C4C00210D55 /* UserDevices */,
@@ -2318,6 +2432,7 @@
 				B1B5598B20EFC5E400210D55 /* Analytics */,
 				B1B5598920EFC41100210D55 /* BugReport */,
 				B1B5598A20EFC42100210D55 /* Settings */,
+				97B885F922831C1D00E16C88 /* Widgets */,
 				32242F0B21E8FBA900725742 /* Theme */,
 			);
 			path = Managers;
@@ -2474,6 +2589,10 @@
 		F083BBDA1E7009EC00A9B29C /* Sounds */ = {
 			isa = PBXGroup;
 			children = (
+				97B885A3228313B100E16C88 /* busy.mp3 */,
+				97B885A2228313B100E16C88 /* callend.mp3 */,
+				97B885A4228313B100E16C88 /* ring.mp3 */,
+				97B885A5228313B100E16C88 /* ringback.mp3 */,
 				F083BBDD1E7009EC00A9B29C /* message.mp3 */,
 			);
 			path = Sounds;
@@ -2761,6 +2880,7 @@
 				B1B558F720EF768F00210D55 /* RoomIncomingTextMsgWithPaginationTitleWithoutSenderNameBubbleCell.xib in Resources */,
 				B1B5592B20EF7A5D00210D55 /* TableViewCellWithButton.xib in Resources */,
 				B1B5574620EE6C4D00210D55 /* StartChatViewController.xib in Resources */,
+				97B885EF22831B1C00E16C88 /* JitsiViewController.xib in Resources */,
 				B1B5590A20EF768F00210D55 /* RoomOutgoingAttachmentWithoutSenderInfoBubbleCell.xib in Resources */,
 				B1B558D520EF768F00210D55 /* RoomIncomingEncryptedTextMsgWithPaginationTitleWithoutSenderNameBubbleCell.xib in Resources */,
 				B1B5590020EF768F00210D55 /* RoomOutgoingTextMsgWithoutSenderNameBubbleCell.xib in Resources */,
@@ -2771,6 +2891,7 @@
 				B105778B221304FA00334B1E /* KeyBackupSetupSuccessFromPassphraseViewController.storyboard in Resources */,
 				B1664DA220F4F95800808783 /* Localizable.strings in Resources */,
 				97BDA7F52252360C0055EBCE /* TermsView.xib in Resources */,
+				97B885A6228313B100E16C88 /* callend.mp3 in Resources */,
 				B169328720F3954A00746532 /* AMP Chat-SharedImages.xcassets in Resources */,
 				B1664DA120F4F94F00808783 /* InfoPlist.strings in Resources */,
 				B1B5579B20EF575B00210D55 /* AuthInputsView.xib in Resources */,
@@ -2832,16 +2953,20 @@
 				B1B5596520EF9E9B00210D55 /* RoomTableViewCell.xib in Resources */,
 				B1B557C020EF5B4500210D55 /* RoomInputToolbarView.xib in Resources */,
 				B1B5572D20EE6C4D00210D55 /* RoomParticipantsViewController.xib in Resources */,
+				97B885A9228313B100E16C88 /* ringback.mp3 in Resources */,
 				B1B557D720EF5EA900210D55 /* RoomActivitiesView.xib in Resources */,
 				B1098BF821ECFE65000DDA48 /* KeyBackupSetupPassphraseViewController.storyboard in Resources */,
 				F083BDF31E7009ED00A9B29C /* Images.xcassets in Resources */,
 				B1B5590720EF768F00210D55 /* RoomOutgoingTextMsgWithPaginationTitleWithoutSenderNameBubbleCell.xib in Resources */,
 				B169329920F39E6300746532 /* Caritas Messenger-LaunchScreen.storyboard in Resources */,
+				97B885A8228313B100E16C88 /* ring.mp3 in Resources */,
 				B1B5595320EF9A8700210D55 /* RecentTableViewCell.xib in Resources */,
 				B1B557AD20EF5A6D00210D55 /* DeviceView.xib in Resources */,
 				B1B5597620EFB02A00210D55 /* InviteRecentTableViewCell.xib in Resources */,
 				B1B558FB20EF768F00210D55 /* RoomIncomingAttachmentWithoutSenderInfoBubbleCell.xib in Resources */,
+				97B885A7228313B100E16C88 /* busy.mp3 in Resources */,
 				B1B558BB20EF768F00210D55 /* RoomOutgoingTextMsgWithoutSenderInfoBubbleCell.xib in Resources */,
+				97B8859E228312ED00E16C88 /* CallViewController.xib in Resources */,
 				B1B557A720EF5A1B00210D55 /* DeviceTableViewCell.xib in Resources */,
 				B1B557D220EF5E3500210D55 /* MediaAlbumTableCell.xib in Resources */,
 				B1B558C520EF768F00210D55 /* RoomOutgoingEncryptedTextMsgBubbleCell.xib in Resources */,
@@ -3090,7 +3215,7 @@
 				B1B557E320EF60B900210D55 /* MessagesSearchResultAttachmentBubbleCell.m in Sources */,
 				B1CE9F062216FB09000FAE6A /* EncryptionKeysExportPresenter.swift in Sources */,
 				B1B5572220EE6C4D00210D55 /* RoomSettingsViewController.m in Sources */,
-				970878512267925E009F2C7C /* App-Defaults.swift in Sources */,
+				970878512267925E009F2C7C /* (null) in Sources */,
 				B169331620F3CAFC00746532 /* PublicRoomsDirectoryDataSource.m in Sources */,
 				B110871D21F087F4003554A5 /* KeyBackupSetupPassphraseViewState.swift in Sources */,
 				B1098C0121ECFE65000DDA48 /* KeyBackupSetupPassphraseCoordinatorType.swift in Sources */,
@@ -3156,15 +3281,18 @@
 				B1B5582520EF638A00210D55 /* RoomMemberTitleView.m in Sources */,
 				B1B5582C20EF666100210D55 /* DirectoryRecentTableViewCell.m in Sources */,
 				B1B558E420EF768F00210D55 /* RoomMembershipWithPaginationTitleBubbleCell.m in Sources */,
+				97B885F122831B1C00E16C88 /* WidgetViewController.m in Sources */,
 				B1B5572A20EE6C4D00210D55 /* RoomMemberDetailsViewController.m in Sources */,
 				B1B5590120EF768F00210D55 /* RoomMembershipExpandedWithPaginationTitleBubbleCell.m in Sources */,
 				B1B558C920EF768F00210D55 /* RoomIncomingEncryptedAttachmentWithoutSenderInfoBubbleCell.m in Sources */,
+				97B885FF22831C1D00E16C88 /* WidgetManager.m in Sources */,
 				B1B5571B20EE6C4D00210D55 /* DeactivateAccountViewController.m in Sources */,
 				B1B5590620EF768F00210D55 /* RoomMembershipCollapsedWithPaginationTitleBubbleCell.m in Sources */,
 				B139C21D21FE5BF500BB68EC /* KeyBackupRecoverFromPassphraseViewModelType.swift in Sources */,
 				F083BE031E7009ED00A9B29C /* EventFormatter.m in Sources */,
 				B16932F720F3C50E00746532 /* RecentsDataSource.m in Sources */,
 				B1B558FC20EF768F00210D55 /* RoomIncomingTextMsgWithPaginationTitleBubbleCell.m in Sources */,
+				97B885F022831B1C00E16C88 /* JitsiViewController.m in Sources */,
 				B1B5572920EE6C4D00210D55 /* RoomFilesViewController.m in Sources */,
 				B1098C1021ED07E4000DDA48 /* Presentable.swift in Sources */,
 				B1B558E020EF768F00210D55 /* RoomOutgoingTextMsgBubbleCell.m in Sources */,
@@ -3180,6 +3308,7 @@
 				B16932EA20F3C39000746532 /* UnifiedSearchRecentsDataSource.m in Sources */,
 				B1B557DE20EF5FBB00210D55 /* FilesSearchTableViewCell.m in Sources */,
 				B1B5574020EE6C4D00210D55 /* SegmentedViewController.m in Sources */,
+				97B885EC22831B1C00E16C88 /* IntegrationManagerViewController.m in Sources */,
 				B1B5599320EFC5E400210D55 /* DecryptionFailure.m in Sources */,
 				B1098BF921ECFE65000DDA48 /* KeyBackupSetupCoordinator.swift in Sources */,
 				B140B4A821F8AB4600E3F5FE /* KeyBackupRecoverCoordinatorBridgePresenter.swift in Sources */,
@@ -3194,6 +3323,7 @@
 				F083BDFA1E7009ED00A9B29C /* RoomPreviewData.m in Sources */,
 				B1B557B420EF5AEF00210D55 /* EventDetailsView.m in Sources */,
 				B1B5595220EF9A8700210D55 /* RecentTableViewCell.m in Sources */,
+				97B885ED22831B1C00E16C88 /* WidgetPickerViewController.m in Sources */,
 				B1B5574120EE6C4D00210D55 /* RecentsViewController.m in Sources */,
 				B1D250D82118AA0A000F4E93 /* RoomPredecessorBubbleCell.m in Sources */,
 				B104C2942203773C00D9F496 /* KeyBackupBannerPreferences.swift in Sources */,
@@ -3221,10 +3351,12 @@
 				B1B5575120EE6C4D00210D55 /* AuthenticationViewController.m in Sources */,
 				B17982FF2119FED2001FD722 /* GDPRConsentViewController.swift in Sources */,
 				B1098BE121ECE09F000DDA48 /* Images.swift in Sources */,
+				97B885FE22831C1D00E16C88 /* Widget.m in Sources */,
 				B1B5575A20EE6C4D00210D55 /* UnifiedSearchViewController.m in Sources */,
 				B1B5572820EE6C4D00210D55 /* RoomViewController.m in Sources */,
 				B1B558C720EF768F00210D55 /* RoomOutgoingEncryptedTextMsgWithPaginationTitleBubbleCell.m in Sources */,
 				B1B558F020EF768F00210D55 /* RoomOutgoingAttachmentWithPaginationTitleBubbleCell.m in Sources */,
+				97B885A0228312ED00E16C88 /* IncomingCallView.m in Sources */,
 				926FA53F1F4C132000F826C2 /* MXSession+Riot.m in Sources */,
 				B1B5593820EF7BAC00210D55 /* TableViewCellWithLabelAndLargeTextView.m in Sources */,
 				B1B558C820EF768F00210D55 /* RoomIncomingEncryptedAttachmentBubbleCell.m in Sources */,
@@ -3240,12 +3372,14 @@
 				B1098C0D21ED07E4000DDA48 /* NavigationRouter.swift in Sources */,
 				B110872321F098F0003554A5 /* ActivityIndicatorPresenterType.swift in Sources */,
 				B139C22321FF01B200BB68EC /* KeyBackupRecoverFromPassphraseCoordinatorType.swift in Sources */,
+				97B885A1228312ED00E16C88 /* CallViewController.m in Sources */,
 				B14F143222144F6500FA0595 /* KeyBackupRecoverFromRecoveryKeyCoordinator.swift in Sources */,
 				B110872621F098F0003554A5 /* ActivityIndicatorView.swift in Sources */,
 				B19EFA3921F8BB2C00FC070E /* KeyBackupRecoverCoordinatorType.swift in Sources */,
 				B1E5368D21FB7245001F3AFF /* KeyBackupRecoverFromPassphraseViewController.swift in Sources */,
 				B169330320F3C98900746532 /* RoomBubbleCellData.m in Sources */,
 				B1B5575C20EE6C4D00210D55 /* DirectoryViewController.m in Sources */,
+				97B8859F228312ED00E16C88 /* CircleButton.m in Sources */,
 				B1B558BD20EF768F00210D55 /* RoomOutgoingEncryptedTextMsgWithoutSenderNameBubbleCell.m in Sources */,
 				B1B558D320EF768F00210D55 /* RoomOutgoingEncryptedTextMsgBubbleCell.m in Sources */,
 				B1B557AC20EF5A6D00210D55 /* DeviceView.m in Sources */,
@@ -3564,7 +3698,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "chat.amp.test";
+				PRODUCT_BUNDLE_IDENTIFIER = chat.amp.test;
 				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PRODUCT_NAME = "AMP Chat";
 				SDKROOT = iphoneos;
@@ -3757,7 +3891,7 @@
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "chat.amp.test";
+				PRODUCT_BUNDLE_IDENTIFIER = chat.amp.test;
 				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PRODUCT_NAME = "AMP Chat";
 				SDKROOT = iphoneos;
@@ -3955,7 +4089,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "care.amp.messenger.caritas";
+				PRODUCT_BUNDLE_IDENTIFIER = care.amp.messenger.caritas;
 				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PRODUCT_NAME = "Caritas Messenger";
 				SDKROOT = iphoneos;
@@ -4019,7 +4153,7 @@
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "care.amp.messenger.caritas";
+				PRODUCT_BUNDLE_IDENTIFIER = care.amp.messenger.caritas;
 				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PRODUCT_NAME = "Caritas Messenger";
 				SDKROOT = iphoneos;

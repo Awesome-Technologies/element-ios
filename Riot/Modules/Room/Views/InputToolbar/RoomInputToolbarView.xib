@@ -72,10 +72,10 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Hga-l8-Wua" userLabel="attach Button">
-                            <rect key="frame" x="552" y="0.0" width="50" height="50"/>
+                            <rect key="frame" x="508" y="0.0" width="46" height="46"/>
                             <accessibility key="accessibilityConfiguration" identifier="AttachButton"/>
                             <constraints>
-                                <constraint firstAttribute="width" constant="50" id="O2T-T8-EjV"/>
+                                <constraint firstAttribute="width" constant="46" id="O2T-T8-EjV"/>
                                 <constraint firstAttribute="width" secondItem="Hga-l8-Wua" secondAttribute="height" multiplier="1:1" id="f0T-3f-BJu"/>
                             </constraints>
                             <state key="normal" image="photo-camera"/>
@@ -84,23 +84,57 @@
                                 <action selector="onTouchUpInside:" destination="iN0-l3-epB" eventType="touchUpInside" id="WbU-WH-gwL"/>
                             </connections>
                         </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="p4G-1O-xsK" userLabel="voice call Button">
+                            <rect key="frame" x="554" y="0.0" width="46" height="46"/>
+                            <accessibility key="accessibilityConfiguration" identifier="VoiceCallButton"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="46" id="Keq-eP-jUL"/>
+                                <constraint firstAttribute="width" secondItem="p4G-1O-xsK" secondAttribute="height" multiplier="1:1" id="iHy-JM-Z8G"/>
+                            </constraints>
+                            <state key="normal" image="voice_call_icon">
+                                <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </state>
+                            <state key="highlighted" image="voice_call_icon"/>
+                            <connections>
+                                <action selector="onTouchUpInside:" destination="iN0-l3-epB" eventType="touchUpInside" id="9X6-GM-ixg"/>
+                            </connections>
+                        </button>
+                        <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xAN-oF-umo" userLabel="hangup call Button">
+                            <rect key="frame" x="554" y="0.0" width="46" height="46"/>
+                            <accessibility key="accessibilityConfiguration" identifier="HangupCallButton"/>
+                            <constraints>
+                                <constraint firstAttribute="width" secondItem="xAN-oF-umo" secondAttribute="height" multiplier="1:1" id="jzf-x1-Dvq"/>
+                            </constraints>
+                            <state key="normal" image="call_hangup_icon">
+                                <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </state>
+                            <state key="highlighted" image="call_hangup_icon"/>
+                            <connections>
+                                <action selector="onTouchUpInside:" destination="iN0-l3-epB" eventType="touchUpInside" id="sxx-B2-DkB"/>
+                            </connections>
+                        </button>
                     </subviews>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     <constraints>
                         <constraint firstItem="fRI-9x-jgw" firstAttribute="top" secondItem="a84-Vc-6ud" secondAttribute="top" constant="7" id="08y-JY-NN5"/>
                         <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="46" id="1FO-iu-urG"/>
+                        <constraint firstItem="Hga-l8-Wua" firstAttribute="trailing" secondItem="p4G-1O-xsK" secondAttribute="leading" id="1rw-9a-o1D"/>
                         <constraint firstItem="G8Z-CM-tGs" firstAttribute="top" secondItem="a84-Vc-6ud" secondAttribute="top" id="8cV-eb-Kog"/>
                         <constraint firstItem="3ln-yI-ef9" firstAttribute="leading" secondItem="a84-Vc-6ud" secondAttribute="leading" constant="10" id="BwP-sF-qE1"/>
+                        <constraint firstAttribute="trailing" secondItem="p4G-1O-xsK" secondAttribute="trailing" id="DdY-sI-nOs"/>
                         <constraint firstItem="QWp-NV-uh5" firstAttribute="leading" secondItem="a84-Vc-6ud" secondAttribute="leading" constant="62" id="ErD-eB-stF"/>
                         <constraint firstItem="fRI-9x-jgw" firstAttribute="leading" secondItem="a84-Vc-6ud" secondAttribute="leading" constant="41" id="GvU-rY-bWW"/>
+                        <constraint firstAttribute="bottom" secondItem="p4G-1O-xsK" secondAttribute="bottom" id="ILh-F0-rZF"/>
                         <constraint firstItem="dd4-pE-Es1" firstAttribute="leading" secondItem="a84-Vc-6ud" secondAttribute="leading" constant="13" id="Jem-U2-oEq"/>
                         <constraint firstAttribute="bottom" secondItem="QWp-NV-uh5" secondAttribute="bottom" constant="4" id="NGr-2o-sOP"/>
                         <constraint firstAttribute="trailing" secondItem="3ln-yI-ef9" secondAttribute="trailing" constant="10" id="RXB-PN-3n8"/>
                         <constraint firstAttribute="trailing" secondItem="G8Z-CM-tGs" secondAttribute="trailing" constant="4" id="Sua-LC-3yW"/>
+                        <constraint firstAttribute="trailing" secondItem="xAN-oF-umo" secondAttribute="trailing" id="UzG-Sq-a2R"/>
                         <constraint firstItem="QWp-NV-uh5" firstAttribute="top" secondItem="a84-Vc-6ud" secondAttribute="top" constant="4" id="WyZ-3i-OHi"/>
                         <constraint firstAttribute="height" constant="46" id="Yjj-ua-rbe"/>
                         <constraint firstAttribute="trailing" secondItem="QWp-NV-uh5" secondAttribute="trailing" constant="95" id="hXO-cY-Jgz"/>
-                        <constraint firstAttribute="trailing" secondItem="Hga-l8-Wua" secondAttribute="trailing" constant="-2" id="jAX-8H-rwa"/>
+                        <constraint firstItem="xAN-oF-umo" firstAttribute="width" secondItem="p4G-1O-xsK" secondAttribute="width" id="n33-0E-XIO"/>
+                        <constraint firstAttribute="bottom" secondItem="xAN-oF-umo" secondAttribute="bottom" id="oiM-Rt-spu"/>
                         <constraint firstItem="Hga-l8-Wua" firstAttribute="top" secondItem="a84-Vc-6ud" secondAttribute="top" id="pPH-Fp-phr"/>
                         <constraint firstAttribute="bottom" secondItem="G8Z-CM-tGs" secondAttribute="bottom" id="vpk-lw-TnO"/>
                         <constraint firstItem="dd4-pE-Es1" firstAttribute="top" secondItem="a84-Vc-6ud" secondAttribute="top" constant="8" id="xjT-If-1cd"/>
@@ -123,6 +157,7 @@
                 <outlet property="attachMediaButton" destination="Hga-l8-Wua" id="Osr-ek-c91"/>
                 <outlet property="encryptedRoomIcon" destination="fRI-9x-jgw" id="cfG-Sr-Fga"/>
                 <outlet property="growingTextView" destination="wgb-ON-N29" id="nwF-uV-Ng9"/>
+                <outlet property="hangupCallButton" destination="xAN-oF-umo" id="IoE-aI-AVc"/>
                 <outlet property="mainToolbarHeightConstraint" destination="Yjj-ua-rbe" id="Lu8-UC-Vbo"/>
                 <outlet property="mainToolbarMinHeightConstraint" destination="1FO-iu-urG" id="2U6-h2-0zQ"/>
                 <outlet property="mainToolbarView" destination="a84-Vc-6ud" id="5p3-Ft-0gv"/>
@@ -134,12 +169,16 @@
                 <outlet property="pictureView" destination="dd4-pE-Es1" id="rb6-z2-pJ9"/>
                 <outlet property="rightInputToolbarButton" destination="G8Z-CM-tGs" id="NCk-5m-aNF"/>
                 <outlet property="separatorView" destination="3ln-yI-ef9" id="HQ3-B4-Goj"/>
+                <outlet property="voiceCallButton" destination="p4G-1O-xsK" id="eQf-pN-60L"/>
+                <outlet property="voiceCallButtonWidthConstraint" destination="Keq-eP-jUL" id="CNa-P0-Mxt"/>
             </connections>
         </view>
     </objects>
     <resources>
-        <image name="e2e_unencrypted" width="22.399999618530273" height="19.200000762939453"/>
-        <image name="photo-camera" width="37.5" height="37.5"/>
+        <image name="call_hangup_icon" width="24.5" height="26"/>
+        <image name="e2e_unencrypted" width="14" height="12"/>
+        <image name="photo-camera" width="25" height="25"/>
         <image name="upload_icon" width="21" height="26"/>
+        <image name="voice_call_icon" width="16" height="16"/>
     </resources>
 </document>
