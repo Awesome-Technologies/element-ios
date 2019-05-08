@@ -30,10 +30,16 @@
 
 #import <MobileCoreServices/MobileCoreServices.h>
 
+#import "WidgetManager.h"
+#import "IntegrationManagerViewController.h"
+
 @interface RoomInputToolbarView()
 {
     // Image picker
     UIImagePickerController *mediaPicker;
+    
+    // The intermediate action sheet
+    UIAlertController *actionSheet;
 }
 
 @end
@@ -62,6 +68,8 @@
 - (void)awakeFromNib
 {
     [super awakeFromNib];
+    
+    _supportCallOption = YES;
     
     self.rightInputToolbarButton.hidden = YES;
     
@@ -97,6 +105,25 @@
 }
 
 #pragma mark -
+
+- (void)setSupportCallOption:(BOOL)supportCallOption
+{
+    if (_supportCallOption != supportCallOption)
+    {
+        _supportCallOption = supportCallOption;
+        
+        if (supportCallOption)
+        {
+            self.voiceCallButtonWidthConstraint.constant = 46;
+        }
+        else
+        {
+            self.voiceCallButtonWidthConstraint.constant = 0;
+        }
+        
+        [self setNeedsUpdateConstraints];
+    }
+}
 
 - (void)setIsEncryptionEnabled:(BOOL)isEncryptionEnabled
 {
@@ -165,6 +192,17 @@
     self.placeholder = placeholder;
 }
 
+- (void)setActiveCall:(BOOL)activeCall
+{
+    if (_activeCall != activeCall)
+    {
+        _activeCall = activeCall;
+        
+        self.voiceCallButton.hidden = (_activeCall || !self.rightInputToolbarButton.hidden);
+        self.hangupCallButton.hidden = (!_activeCall || !self.rightInputToolbarButton.hidden);
+    }
+}
+
 #pragma mark - HPGrowingTextView delegate
 
 //- (BOOL)growingTextViewShouldReturn:(HPGrowingTextView *)hpGrowingTextView
@@ -189,6 +227,8 @@
     {
         self.rightInputToolbarButton.hidden = NO;
         self.attachMediaButton.hidden = YES;
+        self.voiceCallButton.hidden = YES;
+        self.hangupCallButton.hidden = YES;
         
         self.messageComposerContainerTrailingConstraint.constant = self.frame.size.width - self.rightInputToolbarButton.frame.origin.x + 4;
     }
@@ -196,6 +236,8 @@
     {
         self.rightInputToolbarButton.hidden = YES;
         self.attachMediaButton.hidden = NO;
+        self.voiceCallButton.hidden = _activeCall;
+        self.hangupCallButton.hidden = !_activeCall;
         
         self.messageComposerContainerTrailingConstraint.constant = self.frame.size.width - self.attachMediaButton.frame.origin.x + 4;
     }
@@ -236,6 +278,66 @@
             NSLog(@"[RoomInputToolbarView] Attach media is not supported");
         }
     }
+    else if (button == self.voiceCallButton)
+    {
+        if ([self.delegate respondsToSelector:@selector(roomInputToolbarView:placeCallWithVideo:)])
+        {
+            // Ask the user the kind of the call: voice or video?
+            actionSheet = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+            
+            __weak typeof(self) weakSelf = self;
+            [actionSheet addAction:[UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"voice", @"Vector", nil)
+                                                            style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction * action) {
+                                                              
+                                                              if (weakSelf)
+                                                              {
+                                                                  typeof(self) self = weakSelf;
+                                                                  self->actionSheet = nil;
+                                                                  
+                                                                  [self.delegate roomInputToolbarView:self placeCallWithVideo:NO];
+                                                              }
+                                                              
+                                                          }]];
+            
+            [actionSheet addAction:[UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"video", @"Vector", nil)
+                                                            style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction * action) {
+                                                              
+                                                              if (weakSelf)
+                                                              {
+                                                                  typeof(self) self = weakSelf;
+                                                                  self->actionSheet = nil;
+                                                                  
+                                                                  [self.delegate roomInputToolbarView:self placeCallWithVideo:YES];
+                                                              }
+                                                              
+                                                          }]];
+            
+            [actionSheet addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"cancel"]
+                                                            style:UIAlertActionStyleCancel
+                                                          handler:^(UIAlertAction * action) {
+                                                              
+                                                              if (weakSelf)
+                                                              {
+                                                                  typeof(self) self = weakSelf;
+                                                                  self->actionSheet = nil;
+                                                              }
+                                                              
+                                                          }]];
+            
+            [actionSheet popoverPresentationController].sourceView = self.voiceCallButton;
+            [actionSheet popoverPresentationController].sourceRect = self.voiceCallButton.bounds;
+            [self.window.rootViewController presentViewController:actionSheet animated:YES completion:nil];
+        }
+    }
+    else if (button == self.hangupCallButton)
+    {
+        if ([self.delegate respondsToSelector:@selector(roomInputToolbarViewHangupCall:)])
+        {
+            [self.delegate roomInputToolbarViewHangupCall:self];
+        }
+    }
 
     [super onTouchUpInside:button];
 }
@@ -258,6 +360,12 @@
 - (void)destroy
 {
     [self dismissMediaPicker];
+    
+    if (actionSheet)
+    {
+        [actionSheet dismissViewControllerAnimated:NO completion:nil];
+        actionSheet = nil;
+    }
     
     [super destroy];
 }
