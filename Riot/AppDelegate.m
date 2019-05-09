@@ -2208,6 +2208,14 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
                                                                       kMXEventTypeStringRoomThirdPartyInvite,
                                                                       kMXEventTypeStringRoomRelatedGroups]];
     
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"enableVoiceVideoCall"])
+    {
+        [[MXKAppSettings standardAppSettings] removeSupportedEventTypes:@[kMXEventTypeStringCallAnswer,
+                                                                          kMXEventTypeStringCallHangup,
+                                                                          kMXEventTypeStringCallInvite,
+                                                                          kMXEventTypeStringCallCandidates]];
+    }
+    
     // Enable Call Kit functionality
     [MXKAppSettings standardAppSettings].enableCallKit = YES;
     
@@ -2230,42 +2238,46 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
             // Store this new session
             [self addMatrixSession:mxSession];
             
-            // Set the VoIP call stack (if supported).
-            id<MXCallStack> callStack;
-            
+            if ([[NSUserDefaults standardUserDefaults] boolForKey:@"enableVoiceVideoCall"])
+            {
+                // Set the VoIP call stack (if supported).
+                id<MXCallStack> callStack;
+                
 #ifdef MX_CALL_STACK_OPENWEBRTC
-            callStack = [[MXOpenWebRTCCallStack alloc] init];
+                callStack = [[MXOpenWebRTCCallStack alloc] init];
 #endif
 #ifdef MX_CALL_STACK_ENDPOINT
-            callStack = [[MXEndpointCallStack alloc] initWithMatrixId:mxSession.myUser.userId];
+                callStack = [[MXEndpointCallStack alloc] initWithMatrixId:mxSession.myUser.userId];
 #endif
 #ifdef CALL_STACK_JINGLE
-            callStack = [[MXJingleCallStack alloc] init];
+                callStack = [[MXJingleCallStack alloc] init];
 #endif
-            if (callStack)
-            {
-                [mxSession enableVoIPWithCallStack:callStack];
                 
-                // Let's call invite be valid for 1 minute
-                mxSession.callManager.inviteLifetime = 60000;
-                
-                // Setup CallKit
-                if ([MXCallKitAdapter callKitAvailable])
+                if (callStack)
                 {
-                    BOOL isCallKitEnabled = [MXKAppSettings standardAppSettings].isCallKitEnabled;
-                    [self enableCallKit:isCallKitEnabled forCallManager:mxSession.callManager];
+                    [mxSession enableVoIPWithCallStack:callStack];
                     
-                    // Register for changes performed by the user
-                    [[MXKAppSettings standardAppSettings] addObserver:self
-                                                           forKeyPath:@"enableCallKit"
-                                                              options:NSKeyValueObservingOptionNew
-                                                              context:NULL];
+                    // Let's call invite be valid for 1 minute
+                    mxSession.callManager.inviteLifetime = 60000;
+                    
+                    // Setup CallKit
+                    if ([MXCallKitAdapter callKitAvailable])
+                    {
+                        BOOL isCallKitEnabled = [MXKAppSettings standardAppSettings].isCallKitEnabled;
+                        [self enableCallKit:isCallKitEnabled forCallManager:mxSession.callManager];
+                        
+                        // Register for changes performed by the user
+                        [[MXKAppSettings standardAppSettings] addObserver:self
+                                                               forKeyPath:@"enableCallKit"
+                                                                  options:NSKeyValueObservingOptionNew
+                                                                  context:NULL];
+                    }
                 }
-            }
-            else
-            {
-                // When there is no call stack, display alerts on call invites
-                [self enableNoVoIPOnMatrixSession:mxSession];
+                else
+                {
+                    // When there is no call stack, display alerts on call invites
+                    [self enableNoVoIPOnMatrixSession:mxSession];
+                }
             }
             
             // Each room member will be considered as a potential contact.

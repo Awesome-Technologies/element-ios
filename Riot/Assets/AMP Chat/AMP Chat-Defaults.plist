@@ -70,5 +70,7 @@
 	</array>
 	<key>enableRegistration</key>
 	<true/>
+	<key>enableVoiceVideoCall</key>
+	<true/>
 </dict>
 </plist>
