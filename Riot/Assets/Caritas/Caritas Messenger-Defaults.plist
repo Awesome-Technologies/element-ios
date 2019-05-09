@@ -71,5 +71,7 @@
 	</array>
 	<key>enableRegistration</key>
 	<false/>
+	<key>enableVoiceVideoCall</key>
+	<false/>
 </dict>
 </plist>
