@@ -601,27 +601,6 @@
 
 - (void)authenticationViewController:(MXKAuthenticationViewController *)authenticationViewController didLogWithUserId:(NSString *)userId
 {
-    // Create DM with Riot-bot on new account creation.
-    if (self.authType == MXKAuthenticationTypeRegister)
-    {
-        MXKAccount *account = [[MXKAccountManager sharedManager] accountForUserId:userId];
-        
-        [account.mxSession createRoom:nil
-                           visibility:kMXRoomDirectoryVisibilityPrivate
-                            roomAlias:nil
-                                topic:nil
-                               invite:@[@"@riot-bot:matrix.org"]
-                           invite3PID:nil
-                             isDirect:YES
-                               preset:kMXRoomPresetTrustedPrivateChat
-                              success:nil
-                              failure:^(NSError *error) {
-                                  
-                                  NSLog(@"[AuthenticationVC] Create chat with riot-bot failed");
-                                  
-                              }];
-    }
-    
     // Remove auth view controller on successful login
     if (self.navigationController)
     {
