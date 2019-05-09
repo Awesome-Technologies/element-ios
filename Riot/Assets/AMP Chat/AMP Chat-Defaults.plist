@@ -29,7 +29,7 @@
 		<key>url</key>
 		<string>https://matomo.awesome-technologies.de/piwik.php</string>
 		<key>siteId</key>
-		<string>2</string>
+		<string>3</string>
 	</dict>
 	<key>showAllEventsInRoomHistory</key>
 	<false/>
