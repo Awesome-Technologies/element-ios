@@ -129,6 +129,26 @@
 
 #pragma mark - Private
 
+- (void)sendMessagesToRoom:(MXRoom *)selectedRoom {
+    [ShareExtensionManager sharedManager].delegate = self;
+    
+    [[ShareExtensionManager sharedManager] sendContentToRoom:selectedRoom failureBlock:^(NSError* error) {
+        
+        if ([error.domain isEqualToString:MXEncryptingErrorDomain])
+        {
+            if (error.code == MXEncryptingErrorUnknownDeviceCode) {
+                [self makeDevicesKnownAndResendMessages:selectedRoom];
+            }
+            else
+            {
+                NSString *title = NSLocalizedStringFromTable(@"share_extension_failed_to_encrypt", @"Vector", nil);
+                
+                [self showFailureAlert:title];
+            }
+        }
+    }];
+}
+
 - (void)showShareAlertForRoomPath:(NSIndexPath *)indexPath
 {
     MXKRecentCellData *recentCellData = [self.dataSource cellDataAtIndexPath:indexPath];
@@ -156,18 +176,7 @@
 
             MXRoom *selectedRoom = [MXRoom loadRoomFromStore:[ShareExtensionManager sharedManager].fileStore withRoomId:recentCellData.roomSummary.roomId matrixSession:session];
 
-            [ShareExtensionManager sharedManager].delegate = self;
-
-            [[ShareExtensionManager sharedManager] sendContentToRoom:selectedRoom failureBlock:^(NSError* error) {
-
-                NSString *title;
-                if ([error.domain isEqualToString:MXEncryptingErrorDomain])
-                {
-                    title = NSLocalizedStringFromTable(@"share_extension_failed_to_encrypt", @"Vector", nil);
-                }
-
-                [self showFailureAlert:title];
-            }];
+            [self sendMessagesToRoom:selectedRoom];
 
         } failure:^(NSError *error) {
 
@@ -192,6 +201,35 @@
     }];
     [alertController addAction:okAction];
     [self presentViewController:alertController animated:YES completion:nil];
+}
+
+- (void)makeDevicesKnownAndResendMessages:(MXRoom *)room {
+    // List all unknown devices
+    __block MXUsersDevicesMap *unknownDevices = [[MXUsersDevicesMap alloc] init];
+    
+    NSArray<MXEvent*> *outgoingMsgs = room.outgoingMessages;
+    for (MXEvent *event in outgoingMsgs)
+    {
+        if (event.sentState == MXEventSentStateFailed
+            && [event.sentError.domain isEqualToString:MXEncryptingErrorDomain]
+            && event.sentError.code == MXEncryptingErrorUnknownDeviceCode)
+        {
+            MXUsersDevicesMap<MXDeviceInfo*> *eventUnknownDevices = event.sentError.userInfo[MXEncryptingErrorUnknownDeviceDevicesKey];
+            
+            [unknownDevices addEntriesFromMap:eventUnknownDevices];
+        }
+    }
+    
+    // Acknowledge the existence of all devices
+    [self startActivityIndicator];
+    [room.mxSession.crypto setDevicesKnown:unknownDevices complete:^{
+        
+        unknownDevices = nil;
+        [self stopActivityIndicator];
+        
+        // And resend pending messages
+        [self sendMessagesToRoom:room];
+    }];
 }
 
 #pragma mark - UITableViewDelegate
