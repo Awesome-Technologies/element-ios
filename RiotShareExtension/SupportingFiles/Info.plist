@@ -38,8 +38,8 @@
 		<string>com.apple.share-services</string>
 		<key>NSExtensionPrincipalClass</key>
 		<string>SharePresentingViewController</string>
-		<key>APP_GROUP</key>
-		<string>$(APP_GROUP)</string>
 	</dict>
+	<key>APP_GROUP</key>
+	<string>$(APP_GROUP)</string>
 </dict>
 </plist>
