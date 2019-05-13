@@ -223,7 +223,7 @@
 
     self.activityIndicator.backgroundColor = ThemeService.shared.theme.overlayBackgroundColor;
     
-    self.memberHeaderView.backgroundColor = ThemeService.shared.theme.headerBackgroundColor;
+    self.memberHeaderView.backgroundColor = self.navigationController.navigationBar.barTintColor;
     self.roomMemberNameLabel.textColor = ThemeService.shared.theme.baseTextPrimaryColor;
 
     self.roomMemberStatusLabel.textColor = ThemeService.shared.theme.tintColor;
