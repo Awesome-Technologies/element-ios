@@ -648,11 +648,6 @@
         directChatsIndex = sectionCount++;
     }
     
-    if (devicesArray.count)
-    {
-        devicesIndex = sectionCount++;
-    }
-    
     return sectionCount;
 }
 
