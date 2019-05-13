@@ -663,7 +663,7 @@
     }
     else if (section == directChatsIndex)
     {
-        return (directChatsArray.count + 1);
+        return directChatsArray.count > 0 ? directChatsArray.count : 1;
     }
     else if (section == devicesIndex)
     {
