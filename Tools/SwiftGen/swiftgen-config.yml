@@ -16,6 +16,7 @@ strings:
 xcassets:  
   - inputs:
       - Assets/Images.xcassets
+      - Assets/SharedImages.xcassets
       - Assets/Caritas/Caritas Messenger-SharedImages.xcassets
       - Assets/AMP Chat/AMP Chat-SharedImages.xcassets
     outputs:

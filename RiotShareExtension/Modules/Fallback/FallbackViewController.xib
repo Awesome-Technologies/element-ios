@@ -24,8 +24,8 @@
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4cM-h2-CkH">
                     <rect key="frame" x="56.5" y="133.5" width="262.5" height="400"/>
                     <subviews>
-                        <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="animatedLogo-4" translatesAutoresizingMaskIntoConstraints="NO" id="bAn-eK-zqg">
-                            <rect key="frame" x="20" y="0.0" width="222.5" height="372.5"/>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Logo" translatesAutoresizingMaskIntoConstraints="NO" id="bAn-eK-zqg">
+                            <rect key="frame" x="20" y="0.0" width="222.5" height="352.5"/>
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         </imageView>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" verticalCompressionResistancePriority="752" text="loc:prompt" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9jC-d4-VqL">
@@ -43,7 +43,7 @@
                         <constraint firstItem="bAn-eK-zqg" firstAttribute="top" secondItem="4cM-h2-CkH" secondAttribute="top" id="HKr-Vy-i8P"/>
                         <constraint firstAttribute="bottom" secondItem="9jC-d4-VqL" secondAttribute="bottom" id="LNV-E1-kCG"/>
                         <constraint firstItem="9jC-d4-VqL" firstAttribute="leading" secondItem="4cM-h2-CkH" secondAttribute="leading" id="RGz-7h-0dt"/>
-                        <constraint firstItem="9jC-d4-VqL" firstAttribute="top" secondItem="bAn-eK-zqg" secondAttribute="bottom" id="bgG-1y-R8q"/>
+                        <constraint firstItem="9jC-d4-VqL" firstAttribute="top" secondItem="bAn-eK-zqg" secondAttribute="bottom" constant="20" id="bgG-1y-R8q"/>
                     </constraints>
                 </view>
             </subviews>
@@ -58,6 +58,6 @@
         </view>
     </objects>
     <resources>
-        <image name="animatedLogo-4" width="480" height="480"/>
+        <image name="Logo" width="307" height="400"/>
     </resources>
 </document>

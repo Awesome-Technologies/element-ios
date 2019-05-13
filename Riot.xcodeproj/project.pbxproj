@@ -37,6 +37,10 @@
 		92726A4B1F58737A004AD26F /* SiriIntents.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 92726A431F58737A004AD26F /* SiriIntents.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		92726A511F587410004AD26F /* Intents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92726A501F587410004AD26F /* Intents.framework */; };
 		970878512267925E009F2C7C /* App-Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970878502267925D009F2C7C /* App-Defaults.swift */; };
+		97206ABB2289930900ED6EF0 /* SharedImages.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97206ABA2289930800ED6EF0 /* SharedImages.xcassets */; };
+		97206ABF2289A60300ED6EF0 /* SharedImages.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97206ABA2289930800ED6EF0 /* SharedImages.xcassets */; };
+		97206AC02289AB5300ED6EF0 /* AMP Chat-SharedImages.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B169328620F3954A00746532 /* AMP Chat-SharedImages.xcassets */; };
+		97206AC12289AB5600ED6EF0 /* Caritas Messenger-SharedImages.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9768F4932266391700926AFB /* Caritas Messenger-SharedImages.xcassets */; };
 		9728D5FE21B1DF9800971E57 /* AppIntentVocabulary.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9708406F21B1B6B900746099 /* AppIntentVocabulary.plist */; };
 		9768F48A2266289F00926AFB /* AMP Chat-Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9768F4892266289F00926AFB /* AMP Chat-Defaults.plist */; };
 		9768F4922266385A00926AFB /* AMP Chat-LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9768F4902266385A00926AFB /* AMP Chat-LaunchScreen.storyboard */; };
@@ -115,7 +119,6 @@
 		B169328420F38BE300746532 /* SegmentedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B556D720EE6C4C00210D55 /* SegmentedViewController.m */; };
 		B169328520F38BE800746532 /* SegmentedViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B1B556D620EE6C4C00210D55 /* SegmentedViewController.xib */; };
 		B169328720F3954A00746532 /* AMP Chat-SharedImages.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B169328620F3954A00746532 /* AMP Chat-SharedImages.xcassets */; };
-		B169328820F3954A00746532 /* AMP Chat-SharedImages.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B169328620F3954A00746532 /* AMP Chat-SharedImages.xcassets */; };
 		B169329920F39E6300746532 /* Caritas Messenger-LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B169329320F39E6200746532 /* Caritas Messenger-LaunchScreen.storyboard */; };
 		B169329B20F39E6300746532 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B169329520F39E6300746532 /* Main.storyboard */; };
 		B16932A320F3A21C00746532 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B169329F20F3A21B00746532 /* main.m */; };
@@ -464,6 +467,7 @@
 		92726A4F1F587393004AD26F /* SiriIntents.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = SiriIntents.entitlements; sourceTree = "<group>"; };
 		92726A501F587410004AD26F /* Intents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Intents.framework; path = System/Library/Frameworks/Intents.framework; sourceTree = SDKROOT; };
 		9708407021B1B6BD00746099 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = de; path = de.lproj/AppIntentVocabulary.plist; sourceTree = "<group>"; };
+		97206ABA2289930800ED6EF0 /* SharedImages.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = SharedImages.xcassets; sourceTree = "<group>"; };
 		9768F4892266289F00926AFB /* AMP Chat-Defaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "AMP Chat-Defaults.plist"; sourceTree = "<group>"; };
 		9768F4912266385A00926AFB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = "Base.lproj/AMP Chat-LaunchScreen.storyboard"; sourceTree = "<group>"; };
 		9768F4932266391700926AFB /* Caritas Messenger-SharedImages.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Caritas Messenger-SharedImages.xcassets"; sourceTree = "<group>"; };
@@ -2456,6 +2460,7 @@
 				F083BBDA1E7009EC00A9B29C /* Sounds */,
 				32935CB21F628B98006888C8 /* js */,
 				F083BBEF1E7009EC00A9B29C /* Images.xcassets */,
+				97206ABA2289930800ED6EF0 /* SharedImages.xcassets */,
 				9768F49A226758E700926AFB /* AMP Chat */,
 				9768F499226758C700926AFB /* Caritas */,
 				B169329520F39E6300746532 /* Main.storyboard */,
@@ -2728,11 +2733,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1664BCB20F4E67600808783 /* RoomsListViewController.xib in Resources */,
+				97206ABF2289A60300ED6EF0 /* SharedImages.xcassets in Resources */,
+				97206AC02289AB5300ED6EF0 /* AMP Chat-SharedImages.xcassets in Resources */,
 				B169328520F38BE800746532 /* SegmentedViewController.xib in Resources */,
 				B1664DA420F4F96300808783 /* Vector.strings in Resources */,
 				B1664BC920F4E67600808783 /* ShareViewController.xib in Resources */,
-				B169328820F3954A00746532 /* AMP Chat-SharedImages.xcassets in Resources */,
 				B1664BC520F4E67600808783 /* FallbackViewController.xib in Resources */,
+				97206AC12289AB5600ED6EF0 /* Caritas Messenger-SharedImages.xcassets in Resources */,
 				B1664BCE20F4E67600808783 /* RecentRoomTableViewCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2819,6 +2826,7 @@
 				B1B558E720EF768F00210D55 /* RoomIncomingTextMsgWithoutSenderInfoBubbleCell.xib in Resources */,
 				B1B558DC20EF768F00210D55 /* RoomIncomingEncryptedTextMsgWithPaginationTitleBubbleCell.xib in Resources */,
 				B1B5572E20EE6C4D00210D55 /* ReadReceiptsViewController.xib in Resources */,
+				97206ABB2289930900ED6EF0 /* SharedImages.xcassets in Resources */,
 				B1B5574220EE6C4D00210D55 /* RecentsViewController.xib in Resources */,
 				B1B5571C20EE6C4D00210D55 /* DeactivateAccountViewController.storyboard in Resources */,
 				B1B5596520EF9E9B00210D55 /* RoomTableViewCell.xib in Resources */,
@@ -3370,6 +3378,7 @@
 			baseConfigurationReference = E2E6CDE9C7971072B37B37AD /* Pods-RiotPods-RiotShareExtension.caritas debug.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "$(DISPLAY_NAME)-AppIcon";
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -3378,11 +3387,13 @@
 				DEVELOPMENT_TEAM = 98C45TS5UN;
 				DISPLAY_NAME = "Caritas Messenger";
 				ENABLE_BITCODE = NO;
+				EXCLUDED_SOURCE_FILE_NAMES = "\"AMP Chat-SharedImages.xcassets\"";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"COCOAPODS=1",
 					"IS_SHARE_EXTENSION=1",
 				);
+				INCLUDED_SOURCE_FILE_NAMES = "";
 				INFOPLIST_FILE = RiotShareExtension/SupportingFiles/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3405,6 +3416,7 @@
 			baseConfigurationReference = FAC32ED04D49F9ED409F67C4 /* Pods-RiotPods-RiotShareExtension.caritas release.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "$(DISPLAY_NAME)-AppIcon";
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -3414,11 +3426,13 @@
 				DEVELOPMENT_TEAM = 98C45TS5UN;
 				DISPLAY_NAME = "Caritas Messenger";
 				ENABLE_BITCODE = NO;
+				EXCLUDED_SOURCE_FILE_NAMES = "\"AMP Chat-SharedImages.xcassets\"";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"COCOAPODS=1",
 					"IS_SHARE_EXTENSION=1",
 				);
+				INCLUDED_SOURCE_FILE_NAMES = "";
 				INFOPLIST_FILE = RiotShareExtension/SupportingFiles/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3629,6 +3643,7 @@
 			baseConfigurationReference = 74741378D0B7948BDBB9758B /* Pods-RiotPods-RiotShareExtension.amp chat debug.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "$(DISPLAY_NAME)-AppIcon";
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -3637,11 +3652,13 @@
 				DEVELOPMENT_TEAM = 98C45TS5UN;
 				DISPLAY_NAME = "AMP Chat";
 				ENABLE_BITCODE = NO;
+				EXCLUDED_SOURCE_FILE_NAMES = "\"Caritas Messenger-SharedImages.xcassets\"";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"COCOAPODS=1",
 					"IS_SHARE_EXTENSION=1",
 				);
+				INCLUDED_SOURCE_FILE_NAMES = "";
 				INFOPLIST_FILE = RiotShareExtension/SupportingFiles/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3815,6 +3832,7 @@
 			baseConfigurationReference = 079E6CE65DD02846E2624D22 /* Pods-RiotPods-RiotShareExtension.amp chat release.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "$(DISPLAY_NAME)-AppIcon";
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -3824,11 +3842,13 @@
 				DEVELOPMENT_TEAM = 98C45TS5UN;
 				DISPLAY_NAME = "AMP Chat";
 				ENABLE_BITCODE = NO;
+				EXCLUDED_SOURCE_FILE_NAMES = "\"Caritas Messenger-SharedImages.xcassets\"";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"COCOAPODS=1",
 					"IS_SHARE_EXTENSION=1",
 				);
+				INCLUDED_SOURCE_FILE_NAMES = "";
 				INFOPLIST_FILE = RiotShareExtension/SupportingFiles/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
