@@ -103,6 +103,9 @@
     self.barTitleColor = ThemeService.shared.theme.textPrimaryColor;
     self.activityIndicator.backgroundColor = ThemeService.shared.theme.overlayBackgroundColor;
     
+    self.backToAppButton.tintColor = ThemeService.shared.theme.textPrimaryColor;
+    self.cameraSwitchButton.tintColor = ThemeService.shared.theme.textPrimaryColor;
+    
     self.callerNameLabel.textColor = ThemeService.shared.theme.textPrimaryColor;
     self.callStatusLabel.textColor = ThemeService.shared.theme.baseTextSecondaryColor;
     
