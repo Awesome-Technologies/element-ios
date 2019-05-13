@@ -2023,16 +2023,6 @@
                 [super dataSource:dataSource didRecognizeAction:actionIdentifier inCell:cell userInfo:userInfo];
             }
         }
-        else if ([actionIdentifier isEqualToString:kRoomEncryptedDataBubbleCellTapOnEncryptionIcon])
-        {
-            // Retrieve the tapped event
-            MXEvent *tappedEvent = userInfo[kMXKRoomBubbleCellEventKey];
-            
-            if (tappedEvent)
-            {
-                [self showEncryptionInformation:tappedEvent];
-            }
-        }
         else if ([actionIdentifier isEqualToString:kMXKRoomBubbleCellTapOnReceiptsContainer])
         {
             MXKReceiptSendersContainer *container = userInfo[kMXKRoomBubbleCellReceiptsContainerKey];
