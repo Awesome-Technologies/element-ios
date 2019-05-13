@@ -87,10 +87,15 @@ NSString *const kThemeServiceDidChangeThemeNotification = @"kThemeServiceDidChan
     {
         theme = [AMPTheme new];
     }
-    else
+    else if ([[NSUserDefaults standardUserDefaults] stringForKey:@"userInterfaceTheme"])
     {
         // Return default theme if themeId is not recognized
         return [self themeWithThemeId:[[NSUserDefaults standardUserDefaults] stringForKey:@"userInterfaceTheme"]];
+    }
+    else
+    {
+        // Return AMP Theme if no default theme is set
+        theme = [AMPTheme new];
     }
 
     return theme;
