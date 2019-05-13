@@ -18,6 +18,7 @@
 
 #import "AppDelegate.h"
 #import "Riot-Swift.h"
+#import <sys/utsname.h>
 
 // All metrics are store under a Piwik category called "Metrics".
 // Then, there are 2 Piwik actions: "iOS.startup" and "iOS.stats" (these actions
@@ -68,7 +69,7 @@ NSString *const kAnalyticsE2eDecryptionFailureAction = @"Decryption failure";
         [[PiwikTracker shared] setCustomVariableWithIndex:3 name:@"Chosen Language" value:language];
         
         // Device and OS version
-        [[PiwikTracker shared] setCustomVariableWithIndex:4 name:@"Device" value:[[UIDevice currentDevice] name]];
+        [[PiwikTracker shared] setCustomVariableWithIndex:4 name:@"Device Model" value:deviceModel()];
         [[PiwikTracker shared] setCustomVariableWithIndex:5 name:@"OS Version" value:[[UIDevice currentDevice] systemVersion]];
 
         // Catch and log crashes
@@ -118,6 +119,15 @@ NSString *const kAnalyticsE2eDecryptionFailureAction = @"Decryption failure";
                                                  name:kMXAnalyticsStartupLaunchScreen
                                                number:@(seconds * 1000)
                                                   url:nil];
+}
+
+NSString* deviceModel()
+{
+    struct utsname systemInfo;
+    uname(&systemInfo);
+    
+    return [NSString stringWithCString:systemInfo.machine
+                              encoding:NSUTF8StringEncoding];
 }
 
 #pragma mark - MXAnalyticsDelegate
