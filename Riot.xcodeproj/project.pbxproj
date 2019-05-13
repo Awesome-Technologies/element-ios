@@ -3376,6 +3376,7 @@
 				CODE_SIGN_ENTITLEMENTS = RiotShareExtension/SupportingFiles/RiotShareExtension.entitlements;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 98C45TS5UN;
+				DISPLAY_NAME = "Caritas Messenger";
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -3411,6 +3412,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 98C45TS5UN;
+				DISPLAY_NAME = "Caritas Messenger";
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -3633,6 +3635,7 @@
 				CODE_SIGN_ENTITLEMENTS = RiotShareExtension/SupportingFiles/RiotShareExtension.entitlements;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 98C45TS5UN;
+				DISPLAY_NAME = "AMP Chat";
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -3819,6 +3822,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 98C45TS5UN;
+				DISPLAY_NAME = "AMP Chat";
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
