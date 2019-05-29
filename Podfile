@@ -82,6 +82,8 @@ abstract_target 'RiotPods' do
 
     target "Riot" do
         import_MatrixKit
+        pod 'Firebase/MLVision'
+        pod 'Firebase/MLVisionBarcodeModel'
     end
     
     target "RiotShareExtension" do
