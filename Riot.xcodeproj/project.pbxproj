@@ -166,6 +166,7 @@
 		97A031FC22F4922D002511B7 /* CaseUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A031FB22F4922D002511B7 /* CaseUpdater.swift */; };
 		97A031FE22F49236002511B7 /* CaseUpdaterDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A031FD22F49236002511B7 /* CaseUpdaterDelegate.swift */; };
 		97A9F210233CCF4900A2CD5E /* StringsAMPcare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A9F20F233CCF4800A2CD5E /* StringsAMPcare.swift */; };
+		976D4B03233CC3FC00E9F8A7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 976D4B02233CC3FC00E9F8A7 /* GoogleService-Info.plist */; };
 		97EB1F2322F84EEA00C569F2 /* AMPcare.strings in Resources */ = {isa = PBXBuildFile; fileRef = 97EB1F2122F84EE900C569F2 /* AMPcare.strings */; };
 		97EB1F2522F84F0900C569F2 /* AMPcare.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 97EB1F2722F84F0900C569F2 /* AMPcare.stringsdict */; };
 		B104C2942203773C00D9F496 /* KeyBackupBannerPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = B104C2932203773B00D9F496 /* KeyBackupBannerPreferences.swift */; };
@@ -610,7 +611,6 @@
 		F083BDEE1E7009ED00A9B29C /* MXRoom+Riot.m in Sources */ = {isa = PBXBuildFile; fileRef = F083BBE81E7009EC00A9B29C /* MXRoom+Riot.m */; };
 		F083BDEF1E7009ED00A9B29C /* UINavigationController+Riot.m in Sources */ = {isa = PBXBuildFile; fileRef = F083BBEA1E7009EC00A9B29C /* UINavigationController+Riot.m */; };
 		F083BDF01E7009ED00A9B29C /* UIViewController+RiotSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = F083BBEC1E7009EC00A9B29C /* UIViewController+RiotSearch.m */; };
-		F083BDF21E7009ED00A9B29C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F083BBEE1E7009EC00A9B29C /* GoogleService-Info.plist */; };
 		F083BDF31E7009ED00A9B29C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F083BBEF1E7009EC00A9B29C /* Images.xcassets */; };
 		F083BDF91E7009ED00A9B29C /* RoomEmailInvitation.m in Sources */ = {isa = PBXBuildFile; fileRef = F083BBFC1E7009EC00A9B29C /* RoomEmailInvitation.m */; };
 		F083BDFA1E7009ED00A9B29C /* RoomPreviewData.m in Sources */ = {isa = PBXBuildFile; fileRef = F083BBFE1E7009EC00A9B29C /* RoomPreviewData.m */; };
@@ -828,6 +828,7 @@
 		97A031FB22F4922D002511B7 /* CaseUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaseUpdater.swift; sourceTree = "<group>"; };
 		97A031FD22F49236002511B7 /* CaseUpdaterDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaseUpdaterDelegate.swift; sourceTree = "<group>"; };
 		97A9F20F233CCF4800A2CD5E /* StringsAMPcare.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringsAMPcare.swift; sourceTree = "<group>"; };
+		976D4B02233CC3FC00E9F8A7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		97EB1F2222F84EE900C569F2 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/AMPcare.strings; sourceTree = "<group>"; };
 		97EB1F2422F84EF000C569F2 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/AMPcare.strings; sourceTree = "<group>"; };
 		97EB1F2622F84F0900C569F2 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = de; path = de.lproj/AMPcare.stringsdict; sourceTree = "<group>"; };
@@ -1444,7 +1445,6 @@
 		F083BBEA1E7009EC00A9B29C /* UINavigationController+Riot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UINavigationController+Riot.m"; sourceTree = "<group>"; };
 		F083BBEB1E7009EC00A9B29C /* UIViewController+RiotSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+RiotSearch.h"; sourceTree = "<group>"; };
 		F083BBEC1E7009EC00A9B29C /* UIViewController+RiotSearch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+RiotSearch.m"; sourceTree = "<group>"; };
-		F083BBEE1E7009EC00A9B29C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		F083BBEF1E7009EC00A9B29C /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		F083BBFB1E7009EC00A9B29C /* RoomEmailInvitation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoomEmailInvitation.h; sourceTree = "<group>"; };
 		F083BBFC1E7009EC00A9B29C /* RoomEmailInvitation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RoomEmailInvitation.m; sourceTree = "<group>"; };
@@ -3744,8 +3744,8 @@
 				B169329320F39E6200746532 /* LaunchScreen.storyboard */,
 				B169329520F39E6300746532 /* Main.storyboard */,
 				F083BC0E1E7009EC00A9B29C /* third_party_licenses.html */,
-				F083BBEE1E7009EC00A9B29C /* GoogleService-Info.plist */,
 				F083BC181E7009EC00A9B29C /* Riot-Defaults.plist */,
+				976D4B02233CC3FC00E9F8A7 /* GoogleService-Info.plist */,
 			);
 			path = Assets;
 			sourceTree = "<group>";
@@ -4107,7 +4107,6 @@
 				B14F142E22144F6500FA0595 /* KeyBackupRecoverFromRecoveryKeyViewController.storyboard in Resources */,
 				B1B5574320EE6C4D00210D55 /* CallViewController.xib in Resources */,
 				F083BDEA1E7009ED00A9B29C /* ringback.mp3 in Resources */,
-				F083BDF21E7009ED00A9B29C /* GoogleService-Info.plist in Resources */,
 				329E746622CD02EA006F9797 /* BubbleReactionActionViewCell.xib in Resources */,
 				B1B558E320EF768F00210D55 /* RoomEmptyBubbleCell.xib in Resources */,
 				B1E5368F21FB7258001F3AFF /* KeyBackupRecoverFromPassphraseViewController.storyboard in Resources */,
@@ -4123,6 +4122,7 @@
 				B1B9DEF522EB426D0065E677 /* ReactionHistoryViewCell.xib in Resources */,
 				B1B5579C20EF575B00210D55 /* ForgotPasswordInputsView.xib in Resources */,
 				F083BE011E7009ED00A9B29C /* third_party_licenses.html in Resources */,
+				976D4B03233CC3FC00E9F8A7 /* GoogleService-Info.plist in Resources */,
 				B1098BFC21ECFE65000DDA48 /* PasswordStrengthView.xib in Resources */,
 				9705067122F3296B006CAF27 /* CaseTableViewCell.xib in Resources */,
 				B1B5573720EE6C4D00210D55 /* GroupParticipantsViewController.xib in Resources */,

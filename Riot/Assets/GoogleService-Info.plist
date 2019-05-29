@@ -2,25 +2,37 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>TRACKING_ID</key>
-	<string>UA-65410662-3</string>
+	<key>CLIENT_ID</key>
+	<string>194842688140-h6ehvdi9qvo6akjtsju767nm39poqurv.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.194842688140-h6ehvdi9qvo6akjtsju767nm39poqurv</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>194842688140-bv0g6kfegopqsf8ptofqmdbqsm7v4e19.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBVXA0DAFhj0bdeYpWzT_Fq94TATUdveec</string>
+	<key>GCM_SENDER_ID</key>
+	<string>194842688140</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>im.vector.app</string>
+	<string>care.amp.mobile</string>
 	<key>PROJECT_ID</key>
-	<string>vector-ios</string>
+	<string>awesome-technologies</string>
+	<key>STORAGE_BUCKET</key>
+	<string>awesome-technologies.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
-	<false/>
+	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
-	<true/>
+	<false></false>
 	<key>IS_APPINVITE_ENABLED</key>
-	<false/>
+	<true></true>
 	<key>IS_GCM_ENABLED</key>
-	<false/>
+	<true></true>
 	<key>IS_SIGNIN_ENABLED</key>
-	<false/>
+	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:802695454745:ios:3120c24f6ef22f2b</string>
+	<string>1:194842688140:ios:11419f4369bfefb5ae99a9</string>
+	<key>DATABASE_URL</key>
+	<string>https://awesome-technologies.firebaseio.com</string>
 </dict>
 </plist>
