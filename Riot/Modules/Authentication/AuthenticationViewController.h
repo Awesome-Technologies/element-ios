@@ -17,7 +17,9 @@
 
 #import <MatrixKit/MatrixKit.h>
 
-@interface AuthenticationViewController : MXKAuthenticationViewController <MXKAuthenticationViewControllerDelegate>
+@protocol QRReaderViewDelegate;
+
+@interface AuthenticationViewController : MXKAuthenticationViewController <MXKAuthenticationViewControllerDelegate, QRReaderViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UINavigationBar *navigationBar;
 @property (weak, nonatomic) IBOutlet UIView *navigationBarSeparatorView;
@@ -31,6 +33,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *forgotPasswordButton;
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *submitButtonMinLeadingConstraint;
+
+@property (weak, nonatomic) IBOutlet UIButton *alternativeLoginButton;
 
 @property (weak, nonatomic) IBOutlet UIView *serverOptionsContainer;
 @property (weak, nonatomic) IBOutlet UIButton *customServersTickButton;

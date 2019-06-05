@@ -169,6 +169,9 @@
 		976D4B03233CC3FC00E9F8A7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 976D4B02233CC3FC00E9F8A7 /* GoogleService-Info.plist */; };
 		97EB1F2322F84EEA00C569F2 /* AMPcare.strings in Resources */ = {isa = PBXBuildFile; fileRef = 97EB1F2122F84EE900C569F2 /* AMPcare.strings */; };
 		97EB1F2522F84F0900C569F2 /* AMPcare.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 97EB1F2722F84F0900C569F2 /* AMPcare.stringsdict */; };
+		97906E4E229EF354006B6DCD /* QRReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97906E4C229EF354006B6DCD /* QRReaderView.swift */; };
+		97906E52229EF99F006B6DCD /* QRReaderViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97906E51229EF99F006B6DCD /* QRReaderViewDelegate.swift */; };
+		97906E5922A564EA006B6DCD /* QRReaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 97906E5822A564EA006B6DCD /* QRReaderView.xib */; };
 		B104C2942203773C00D9F496 /* KeyBackupBannerPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = B104C2932203773B00D9F496 /* KeyBackupBannerPreferences.swift */; };
 		B1057789221304EC00334B1E /* KeyBackupSetupSuccessFromPassphraseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1057788221304EB00334B1E /* KeyBackupSetupSuccessFromPassphraseViewController.swift */; };
 		B105778B221304FA00334B1E /* KeyBackupSetupSuccessFromPassphraseViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B105778A221304FA00334B1E /* KeyBackupSetupSuccessFromPassphraseViewController.storyboard */; };
@@ -835,6 +838,9 @@
 		97EB1F2822F84F1200C569F2 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/AMPcare.stringsdict; sourceTree = "<group>"; };
 		9C3242E3FE95BCDA9562C75D /* Pods-RiotPods-RiotShareExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RiotPods-RiotShareExtension.debug.xcconfig"; path = "Target Support Files/Pods-RiotPods-RiotShareExtension/Pods-RiotPods-RiotShareExtension.debug.xcconfig"; sourceTree = "<group>"; };
 		AC34BF67FD21A9D01C16AE5D /* Pods-RiotTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RiotTests.release.xcconfig"; path = "Target Support Files/Pods-RiotTests/Pods-RiotTests.release.xcconfig"; sourceTree = "<group>"; };
+		97906E4C229EF354006B6DCD /* QRReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRReaderView.swift; sourceTree = "<group>"; };
+		97906E51229EF99F006B6DCD /* QRReaderViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRReaderViewDelegate.swift; sourceTree = "<group>"; };
+		97906E5822A564EA006B6DCD /* QRReaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = QRReaderView.xib; sourceTree = "<group>"; };
 		B104C2932203773B00D9F496 /* KeyBackupBannerPreferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyBackupBannerPreferences.swift; sourceTree = "<group>"; };
 		B1057788221304EB00334B1E /* KeyBackupSetupSuccessFromPassphraseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyBackupSetupSuccessFromPassphraseViewController.swift; sourceTree = "<group>"; };
 		B105778A221304FA00334B1E /* KeyBackupSetupSuccessFromPassphraseViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = KeyBackupSetupSuccessFromPassphraseViewController.storyboard; sourceTree = "<group>"; };
@@ -1531,6 +1537,16 @@
 				3209451121F1C1430088CAA2 /* BlackTheme.swift */,
 			);
 			path = Themes;
+			sourceTree = "<group>";
+		};
+		97906E50229EF981006B6DCD /* QR Reader Login */ = {
+			isa = PBXGroup;
+			children = (
+				97906E4C229EF354006B6DCD /* QRReaderView.swift */,
+				97906E51229EF99F006B6DCD /* QRReaderViewDelegate.swift */,
+				97906E5822A564EA006B6DCD /* QRReaderView.xib */,
+			);
+			path = "QR Reader Login";
 			sourceTree = "<group>";
 		};
 		3232AAFE22564D9100AD6A5C /* Tools */ = {
@@ -3069,6 +3085,7 @@
 		B1B5579220EF575A00210D55 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				97906E50229EF981006B6DCD /* QR Reader Login */,
 				B1B5579520EF575A00210D55 /* AuthInputsView.h */,
 				B1B5579320EF575A00210D55 /* AuthInputsView.m */,
 				B1B5579620EF575A00210D55 /* AuthInputsView.xib */,
@@ -4121,6 +4138,7 @@
 				B1107ECA2200B09F0038014B /* KeyBackupRecoverSuccessViewController.storyboard in Resources */,
 				B1B9DEF522EB426D0065E677 /* ReactionHistoryViewCell.xib in Resources */,
 				B1B5579C20EF575B00210D55 /* ForgotPasswordInputsView.xib in Resources */,
+				97906E5922A564EA006B6DCD /* QRReaderView.xib in Resources */,
 				F083BE011E7009ED00A9B29C /* third_party_licenses.html in Resources */,
 				976D4B03233CC3FC00E9F8A7 /* GoogleService-Info.plist in Resources */,
 				B1098BFC21ECFE65000DDA48 /* PasswordStrengthView.xib in Resources */,
@@ -4619,6 +4637,7 @@
 				B1B5583E20EF6E7F00210D55 /* GroupRoomTableViewCell.m in Sources */,
 				B14F143522144F6500FA0595 /* KeyBackupRecoverFromRecoveryKeyViewController.swift in Sources */,
 				B1DCC61E22E5E17100625807 /* EmojiPickerViewModel.swift in Sources */,
+				97906E4E229EF354006B6DCD /* QRReaderView.swift in Sources */,
 				B1B5574F20EE6C4D00210D55 /* RoomsViewController.m in Sources */,
 				B1B9DEDA22E9B7350065E677 /* SerializationService.swift in Sources */,
 				B1B5572520EE6C4D00210D55 /* RoomMessagesSearchViewController.m in Sources */,
@@ -4810,6 +4829,7 @@
 				B109D6F1222D8C400061B6D9 /* UIApplication.swift in Sources */,
 				B1B558FF20EF768F00210D55 /* RoomIncomingTextMsgBubbleCell.m in Sources */,
 				B1098C0021ECFE65000DDA48 /* KeyBackupSetupPassphraseViewController.swift in Sources */,
+				97906E52229EF99F006B6DCD /* QRReaderViewDelegate.swift in Sources */,
 				B1B5591020EF782800210D55 /* TableViewCellWithPhoneNumberTextField.m in Sources */,
 				9705066C22F3296B006CAF27 /* UITableViewCellExtensions.swift in Sources */,
 				B1DB4F06223015080065DBFA /* Character.swift in Sources */,

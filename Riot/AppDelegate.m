@@ -84,6 +84,8 @@
 NSString *const kAppDelegateDidTapStatusBarNotification = @"kAppDelegateDidTapStatusBarNotification";
 NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateNetworkStatusDidChangeNotification";
 
+@import Firebase;
+
 @interface AppDelegate () <PKPushRegistryDelegate, GDPRConsentViewControllerDelegate, DeviceVerificationCoordinatorBridgePresenterDelegate>
 {
     /**
@@ -420,6 +422,9 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     NSLog(@"------------------------------\n");
     
     [self setupUserDefaults];
+    
+    // Setup Firebase
+    [FIRApp configure];
 
     // Set up theme
     ThemeService.shared.themeId = RiotSettings.shared.userInterfaceTheme;

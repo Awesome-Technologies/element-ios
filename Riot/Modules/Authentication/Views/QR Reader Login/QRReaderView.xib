@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="x74-04-ezp" customClass="QRReaderView" customModule="Riot" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="600" height="350"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JKj-GX-4VG">
+                    <rect key="frame" x="275" y="0.0" width="50" height="50"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="JKj-GX-4VG" secondAttribute="height" multiplier="1:1" id="Zf5-tj-w8N"/>
+                        <constraint firstAttribute="width" constant="50" id="mpq-1v-PHh"/>
+                    </constraints>
+                </view>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Scan QR Code to log in" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hYz-5T-AGy">
+                    <rect key="frame" x="0.0" y="110" width="600" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Allow access to the camera in system settings." textAlignment="center" lineBreakMode="wordWrap" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SnA-uz-w2d">
+                    <rect key="frame" x="45" y="0.0" width="510" height="20.5"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="N5s-2G-8Ef" userLabel="Toggle Flash">
+                    <rect key="frame" x="340" y="5" width="30" height="30"/>
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="N5s-2G-8Ef" secondAttribute="height" multiplier="1:1" id="F2a-iX-8LB"/>
+                        <constraint firstAttribute="height" constant="30" id="ySo-g7-4xE"/>
+                    </constraints>
+                    <state key="normal" image="flash_off"/>
+                    <connections>
+                        <action selector="onToggleTorchPressed:" destination="x74-04-ezp" eventType="touchUpInside" id="R11-34-MTV"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cKz-4s-ANY">
+                    <rect key="frame" x="236" y="35.5" width="128" height="30"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="30" id="EAg-u8-Cbn"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="16"/>
+                    <inset key="contentEdgeInsets" minX="10" minY="0.0" maxX="10" maxY="0.0"/>
+                    <state key="normal" title="Open Settings"/>
+                    <connections>
+                        <action selector="onOpenSettingsButtonPressed:" destination="x74-04-ezp" eventType="touchUpInside" id="AgN-xq-eBf"/>
+                    </connections>
+                </button>
+                <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="ZE9-3e-jah">
+                    <rect key="frame" x="281.5" y="6.5" width="37" height="37"/>
+                </activityIndicatorView>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="qr-code" translatesAutoresizingMaskIntoConstraints="NO" id="hf1-aY-nfB">
+                    <rect key="frame" x="270" y="151" width="60" height="60"/>
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="hf1-aY-nfB" secondAttribute="height" multiplier="1:1" id="iX3-Qe-b4V"/>
+                        <constraint firstAttribute="width" constant="60" id="lBi-WB-ofq"/>
+                    </constraints>
+                </imageView>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <accessibility key="accessibilityConfiguration" identifier="AuthInputsView"/>
+            <constraints>
+                <constraint firstItem="hYz-5T-AGy" firstAttribute="width" secondItem="x74-04-ezp" secondAttribute="width" id="1TS-HM-xJE"/>
+                <constraint firstItem="SnA-uz-w2d" firstAttribute="top" secondItem="JKj-GX-4VG" secondAttribute="top" id="3ae-fO-Lon"/>
+                <constraint firstItem="hYz-5T-AGy" firstAttribute="top" secondItem="JKj-GX-4VG" secondAttribute="bottom" constant="60" id="7MJ-S2-PQZ"/>
+                <constraint firstItem="ZE9-3e-jah" firstAttribute="centerY" secondItem="JKj-GX-4VG" secondAttribute="centerY" id="CgO-VM-hEF"/>
+                <constraint firstItem="hYz-5T-AGy" firstAttribute="centerX" secondItem="x74-04-ezp" secondAttribute="centerX" id="Eoe-wx-FMN"/>
+                <constraint firstItem="JKj-GX-4VG" firstAttribute="centerX" secondItem="x74-04-ezp" secondAttribute="centerX" id="KfA-d3-toT"/>
+                <constraint firstItem="hf1-aY-nfB" firstAttribute="centerX" secondItem="x74-04-ezp" secondAttribute="centerX" id="N5U-vR-pln"/>
+                <constraint firstItem="SnA-uz-w2d" firstAttribute="width" secondItem="x74-04-ezp" secondAttribute="width" multiplier="0.85" id="NPs-ev-l6B"/>
+                <constraint firstItem="ZE9-3e-jah" firstAttribute="centerX" secondItem="JKj-GX-4VG" secondAttribute="centerX" id="VSS-na-gQP"/>
+                <constraint firstItem="JKj-GX-4VG" firstAttribute="bottom" secondItem="N5s-2G-8Ef" secondAttribute="bottom" constant="15" id="ZGF-t4-Jbu"/>
+                <constraint firstItem="cKz-4s-ANY" firstAttribute="centerX" secondItem="x74-04-ezp" secondAttribute="centerX" id="bCb-UY-Sp6"/>
+                <constraint firstItem="SnA-uz-w2d" firstAttribute="centerX" secondItem="x74-04-ezp" secondAttribute="centerX" id="i26-sj-glt"/>
+                <constraint firstAttribute="top" secondItem="JKj-GX-4VG" secondAttribute="top" id="pe5-WY-TnI"/>
+                <constraint firstAttribute="height" constant="350" id="r7L-Ja-sCw"/>
+                <constraint firstItem="cKz-4s-ANY" firstAttribute="top" secondItem="SnA-uz-w2d" secondAttribute="bottom" constant="15" id="rVu-07-DbR"/>
+                <constraint firstItem="hf1-aY-nfB" firstAttribute="top" secondItem="hYz-5T-AGy" secondAttribute="bottom" constant="20" id="vgJ-6p-mfI"/>
+                <constraint firstItem="N5s-2G-8Ef" firstAttribute="leading" secondItem="JKj-GX-4VG" secondAttribute="trailing" constant="15" id="z0D-aJ-IQP"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+            <nil key="simulatedTopBarMetrics"/>
+            <nil key="simulatedBottomBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="activityIndicator" destination="ZE9-3e-jah" id="SEI-QI-yiM"/>
+                <outlet property="cameraPermissionButton" destination="cKz-4s-ANY" id="p4M-9d-LWT"/>
+                <outlet property="cameraPermissionLabel" destination="SnA-uz-w2d" id="Ccq-2U-LUK"/>
+                <outlet property="previewView" destination="JKj-GX-4VG" id="c13-x8-uNk"/>
+                <outlet property="previewViewWidthConstraint" destination="mpq-1v-PHh" id="pdy-Lh-yQ0"/>
+                <outlet property="qrCodeImageView" destination="hf1-aY-nfB" id="MJK-Gv-NhM"/>
+                <outlet property="qrCodeInfoLabel" destination="hYz-5T-AGy" id="Ce1-1D-nJN"/>
+                <outlet property="qrInfoVerticalConstraint" destination="7MJ-S2-PQZ" id="4Ov-0z-F6J"/>
+                <outlet property="torchToggleButton" destination="N5s-2G-8Ef" id="gQu-In-SaO"/>
+                <outlet property="viewHeightConstraint" destination="r7L-Ja-sCw" id="OtS-4c-swY"/>
+            </connections>
+            <point key="canvasLocation" x="129.59999999999999" y="153.82308845577214"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="flash_off" width="30" height="30"/>
+        <image name="qr-code" width="60" height="60"/>
+    </resources>
+</document>

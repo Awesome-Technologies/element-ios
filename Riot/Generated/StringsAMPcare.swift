@@ -14,6 +14,22 @@ internal enum AMPcareL10n {
   internal static var anamnesis: String { 
     return AMPcareL10n.tr("AMPcare", "anamnesis") 
   }
+  /// Alternative Login
+  internal static var authAlternativeLogin: String { 
+    return AMPcareL10n.tr("AMPcare", "auth_alternative_login") 
+  }
+  /// Open Settings
+  internal static var authQrAuthorize: String { 
+    return AMPcareL10n.tr("AMPcare", "auth_qr_authorize") 
+  }
+  /// Allow access to the camera in system settings to scan QR codes.
+  internal static var authQrNoPermission: String { 
+    return AMPcareL10n.tr("AMPcare", "auth_qr_no_permission") 
+  }
+  /// Scan QR Code to log in
+  internal static var authQrTitle: String { 
+    return AMPcareL10n.tr("AMPcare", "auth_qr_title") 
+  }
   /// Blood Pressure
   internal static var bloodPressure: String { 
     return AMPcareL10n.tr("AMPcare", "blood-pressure") 

@@ -102,3 +102,9 @@
 "patient_gender_female" = "Weiblich";
 "patient_gender_other" = "Divers";
 "patient_gender_unknown" = "Unbekannt";
+
+// Authentication
+"auth_qr_title" = "QR Code scannen um einzuloggen";
+"auth_qr_no_permission" = "Erlauben Sie den Zugriff auf die Kamera in den Systemeinstellungen, um QR Codes zu scannen.";
+"auth_alternative_login" = "Alternativer Login";
+"auth_qr_authorize" = "Einstellungen öffnen";

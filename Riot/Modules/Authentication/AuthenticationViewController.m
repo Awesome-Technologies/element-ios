@@ -46,6 +46,11 @@
      Server discovery.
      */
     MXAutoDiscovery *autoDiscovery;
+
+    /**
+     Last used AuthInputClass. Used to show correct login when cancelling registration
+     */
+    Class lastUsedAuthInputClass;
 }
 
 @end
@@ -129,13 +134,20 @@
     [self registerAuthInputsViewClass:ForgotPasswordInputsView.class forAuthType:MXKAuthenticationTypeForgotPassword];
     
     // Initialize the auth inputs display
-    AuthInputsView *authInputsView = [AuthInputsView authInputsView];
-    MXAuthenticationSession *authSession = [MXAuthenticationSession modelFromJSON:@{@"flows":@[@{@"stages":@[kMXLoginFlowTypePassword]}]}];
-    [authInputsView setAuthSession:authSession withAuthType:MXKAuthenticationTypeLogin];
-    self.authInputsView = authInputsView;
-
-    // Listen to action within the child view
-    [authInputsView.ssoButton addTarget:self action:@selector(onButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    
+    // Show QR Reader
+    [self showQRAuthInput];
+    
+    // Show alternative login
+    self.alternativeLoginButton.hidden = NO;
+    [self.alternativeLoginButton.layer setCornerRadius:5];
+    self.alternativeLoginButton.clipsToBounds = YES;
+    
+    self.alternativeLoginButton.backgroundColor = ThemeService.shared.theme.baseColor;
+    [self.alternativeLoginButton setTitleColor:ThemeService.shared.theme.baseTextPrimaryColor forState:UIControlStateNormal];
+    
+    [self.alternativeLoginButton setTitle:NSLocalizedStringFromTable(@"auth_alternative_login", @"AMPcare", nil) forState:UIControlStateNormal];
+    [self.alternativeLoginButton setTitle:NSLocalizedStringFromTable(@"auth_alternative_login", @"AMPcare", nil) forState:UIControlStateHighlighted];
 
     // Observe user interface theme change.
     kThemeServiceDidChangeThemeNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kThemeServiceDidChangeThemeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notif) {
@@ -245,6 +257,17 @@
     }
 }
 
+- (void)onFoundLoginParametersWithUsername:(NSString *)username password:(NSString *)password homeServerUrl:(NSString *)homeServerUrl
+{
+    NSLog(@"[AuthenticationVC] onFoundLoginParameters: QR Reader found login parameters");
+    
+    if ([self.authInputsView isKindOfClass:QRReaderView.class])
+    {
+        [self setHomeServerTextFieldText:homeServerUrl];
+        [super onButtonPressed:self.submitButton];
+    }
+}
+
 - (void)destroy
 {
     [super destroy];
@@ -307,39 +330,9 @@
 
 - (void)setAuthInputsView:(MXKAuthInputsView *)authInputsView
 {
-    // Keep the current country code if any.
-    if ([self.authInputsView isKindOfClass:AuthInputsView.class])
-    {
-        // We will reuse the current country code
-        defaultCountryCode = ((AuthInputsView*)self.authInputsView).isoCountryCode;
-    }
-    
-    // Finalize the new auth inputs view
-    if ([authInputsView isKindOfClass:AuthInputsView.class])
-    {
-        AuthInputsView *authInputsview = (AuthInputsView*)authInputsView;
-        
-        // Retrieve the MCC from the SIM card information (Note: the phone book country code is not defined yet)
-        NSString *countryCode = [MXKAppSettings standardAppSettings].phonebookCountryCode;
-        if (!countryCode)
-        {
-            // If none, consider the preferred locale
-            NSLocale *local = [[NSLocale alloc] initWithLocaleIdentifier:[[NSBundle mainBundle] preferredLocalizations][0]];
-            if ([local respondsToSelector:@selector(countryCode)])
-            {
-                countryCode = local.countryCode;
-            }
-            
-            if (!countryCode)
-            {
-                countryCode = defaultCountryCode;
-            }
-        }
-        authInputsview.isoCountryCode = countryCode;
-        authInputsview.delegate = self;
-    }
-    
     [super setAuthInputsView:authInputsView];
+    
+    [self updateButtonVisibility];
     
     // Restore here the actual content view height.
     // Indeed this height has been modified according to the authInputsView height in the default implementation of MXKAuthenticationViewController.
@@ -500,31 +493,69 @@
     }];
 }
 
-
 - (void)handleAuthenticationSession:(MXAuthenticationSession *)authSession
 {
     [super handleAuthenticationSession:authSession];
+    
+    [self updateButtonVisibility];
+}
 
+- (void)updateButtonVisibility
+{
     AuthInputsView *authInputsview;
     if ([self.authInputsView isKindOfClass:AuthInputsView.class])
     {
         authInputsview = (AuthInputsView*)self.authInputsView;
     }
+    
+    self.submitButton.hidden = authInputsview.isSingleSignOnRequired || [self.authInputsView isKindOfClass:QRReaderView.class];
+}
 
-    // Hide "Forgot password" and "Log in" buttons in case of SSO
-    [self updateForgotPwdButtonVisibility];
-    [self updateSoftLogoutClearDataContainerVisibility];
+- (void)showQRAuthInput
+{
+    QRReaderView *qrView = [QRReaderView fromNib];
+    qrView.qrReaderDelegate = self;
+    qrView.delegate = self;
+    MXAuthenticationSession *authSession = [MXAuthenticationSession modelFromJSON:@{@"flows":@[@{@"stages":@[kMXLoginFlowTypePassword]}]}];
+    [qrView setAuthSession:authSession withAuthType:MXKAuthenticationTypeLogin];
+    self.authInputsView = qrView;
+    
+    // Custom used authInputsView
+    [self registerAuthInputsViewClass:QRReaderView.class forAuthType:MXKAuthenticationTypeLogin];
+}
 
-    self.submitButton.hidden = authInputsview.isSingleSignOnRequired;
-
-    // Bind ssoButton again if self.authInputsView has changed
-    [authInputsview.ssoButton addTarget:self action:@selector(onButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-
-    if (authInputsview.isSingleSignOnRequired && self.softLogoutCredentials)
+- (void)showRegularAuthInput
+{
+    if ([self.authInputsView isKindOfClass:QRReaderView.class])
     {
-        // Remove submitButton so that the 2nd contraint on softLogoutClearDataContainer.top will be applied
-        // That makes softLogoutClearDataContainer appear upper in the screen
-        [self.submitButton removeFromSuperview];
+        QRReaderView *qrView = (QRReaderView *)self.authInputsView;
+        [qrView willHide];
+    }
+    
+    AuthInputsView *regularAuthInputsView = [AuthInputsView authInputsView];
+    MXAuthenticationSession *authSession = [MXAuthenticationSession modelFromJSON:@{@"flows":@[@{@"stages":@[kMXLoginFlowTypePassword]}]}];
+    [regularAuthInputsView setAuthSession:authSession withAuthType:MXKAuthenticationTypeLogin];
+    regularAuthInputsView.delegate = self;
+    
+    // Listen to action within the child view
+    [regularAuthInputsView.ssoButton addTarget:self action:@selector(onButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    
+    // Custom used authInputsView
+    [self registerAuthInputsViewClass:AuthInputsView.class forAuthType:MXKAuthenticationTypeLogin];
+    [self registerAuthInputsViewClass:AuthInputsView.class forAuthType:MXKAuthenticationTypeRegister];
+    
+    self.authInputsView = regularAuthInputsView;
+}
+
+- (IBAction)onAlternativeLoginPressed:(id)sender
+{
+    if ([self.authInputsView isKindOfClass:QRReaderView.class])
+    {
+        [self showRegularAuthInput];
+    }
+    else
+    {
+        [self showQRAuthInput];
     }
 }
 
@@ -551,6 +582,9 @@
         }
         else if (self.authType == MXKAuthenticationTypeLogin)
         {
+            lastUsedAuthInputClass = self.authInputsView.class;
+            [self showRegularAuthInput];
+            
             self.authType = MXKAuthenticationTypeRegister;
             self.rightBarButtonItem.title = NSLocalizedStringFromTable(@"auth_login", @"Vector", nil);
         }
@@ -558,6 +592,11 @@
         {
             self.authType = MXKAuthenticationTypeLogin;
             self.rightBarButtonItem.title = NSLocalizedStringFromTable(@"auth_register", @"Vector", nil);
+            
+            if ([lastUsedAuthInputClass isEqual:QRReaderView.class])
+            {
+                [self showQRAuthInput];
+            }
         }
     }
     else if (sender == self.mainNavigationItem.leftBarButtonItem)
@@ -734,6 +773,12 @@
             [super onFailureDuringAuthRequest:error];
         }
     }
+    
+    if ([self.authInputsView isKindOfClass:QRReaderView.class])
+    {
+        QRReaderView *qrView = (QRReaderView *)self.authInputsView;
+        [qrView loginFailed];
+    }
 }
 
 - (void)onSuccessfulLogin:(MXCredentials*)credentials
@@ -763,6 +808,11 @@
             [self presentViewController:alert animated:YES completion:nil];
             return;
         }
+    }
+    
+    if ([self.authInputsView isKindOfClass:QRReaderView.class]) {
+        QRReaderView *qrView = (QRReaderView *)self.authInputsView;
+        [qrView loginSuccessful];
     }
     
     [super onSuccessfulLogin:credentials];
