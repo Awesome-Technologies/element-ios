@@ -72,5 +72,7 @@
 	<true/>
 	<key>enableVoiceVideoCall</key>
 	<true/>
+	<key>enableQRCodeLogin</key>
+	<false/>
 </dict>
 </plist>

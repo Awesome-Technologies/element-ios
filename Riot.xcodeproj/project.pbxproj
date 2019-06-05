@@ -36,7 +36,7 @@
 		92726A471F58737A004AD26F /* IntentHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 92726A461F58737A004AD26F /* IntentHandler.m */; };
 		92726A4B1F58737A004AD26F /* SiriIntents.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 92726A431F58737A004AD26F /* SiriIntents.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		92726A511F587410004AD26F /* Intents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92726A501F587410004AD26F /* Intents.framework */; };
-		970878512267925E009F2C7C /* BuildFile in Sources */ = {isa = PBXBuildFile; };
+		970878512267925E009F2C7C /* (null) in Sources */ = {isa = PBXBuildFile; };
 		97206ABB2289930900ED6EF0 /* SharedImages.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97206ABA2289930800ED6EF0 /* SharedImages.xcassets */; };
 		97206ABF2289A60300ED6EF0 /* SharedImages.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97206ABA2289930800ED6EF0 /* SharedImages.xcassets */; };
 		97206AC02289AB5300ED6EF0 /* AMP Chat-SharedImages.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B169328620F3954A00746532 /* AMP Chat-SharedImages.xcassets */; };
@@ -46,6 +46,9 @@
 		9768F4922266385A00926AFB /* AMP Chat-LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9768F4902266385A00926AFB /* AMP Chat-LaunchScreen.storyboard */; };
 		9768F4942266391800926AFB /* Caritas Messenger-SharedImages.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9768F4932266391700926AFB /* Caritas Messenger-SharedImages.xcassets */; };
 		9787D9B62271D9EE0010EA83 /* App-Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9787D9B52271D9ED0010EA83 /* App-Defaults.swift */; };
+		97906E4E229EF354006B6DCD /* QRReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97906E4C229EF354006B6DCD /* QRReaderView.swift */; };
+		97906E52229EF99F006B6DCD /* QRReaderViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97906E51229EF99F006B6DCD /* QRReaderViewDelegate.swift */; };
+		97906E5922A564EA006B6DCD /* QRReaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 97906E5822A564EA006B6DCD /* QRReaderView.xib */; };
 		979234BA2244762F0081082E /* AMPTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979234B92244762F0081082E /* AMPTheme.swift */; };
 		97A684AC22448FD000EB1C51 /* AMPTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979234B92244762F0081082E /* AMPTheme.swift */; };
 		97B8859E228312ED00E16C88 /* CallViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 97B88597228312ED00E16C88 /* CallViewController.xib */; };
@@ -488,6 +491,9 @@
 		976C9EF122A93C7D00E109B2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		976C9EF322A93C8500E109B2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		9787D9B52271D9ED0010EA83 /* App-Defaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "App-Defaults.swift"; sourceTree = "<group>"; };
+		97906E4C229EF354006B6DCD /* QRReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRReaderView.swift; sourceTree = "<group>"; };
+		97906E51229EF99F006B6DCD /* QRReaderViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRReaderViewDelegate.swift; sourceTree = "<group>"; };
+		97906E5822A564EA006B6DCD /* QRReaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = QRReaderView.xib; sourceTree = "<group>"; };
 		979234B92244762F0081082E /* AMPTheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMPTheme.swift; sourceTree = "<group>"; };
 		97B88596228312ED00E16C88 /* CallViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallViewController.h; sourceTree = "<group>"; };
 		97B88597228312ED00E16C88 /* CallViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CallViewController.xib; sourceTree = "<group>"; };
@@ -1139,6 +1145,16 @@
 				976C9EF322A93C8500E109B2 /* GoogleService-Info.plist */,
 			);
 			path = "AMP Chat";
+			sourceTree = "<group>";
+		};
+		97906E50229EF981006B6DCD /* QR Reader Login */ = {
+			isa = PBXGroup;
+			children = (
+				97906E4C229EF354006B6DCD /* QRReaderView.swift */,
+				97906E51229EF99F006B6DCD /* QRReaderViewDelegate.swift */,
+				97906E5822A564EA006B6DCD /* QRReaderView.xib */,
+			);
+			path = "QR Reader Login";
 			sourceTree = "<group>";
 		};
 		97B88595228312ED00E16C88 /* Call */ = {
@@ -2035,6 +2051,7 @@
 		B1B5579220EF575A00210D55 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				97906E50229EF981006B6DCD /* QR Reader Login */,
 				B1B5579520EF575A00210D55 /* AuthInputsView.h */,
 				B1B5579320EF575A00210D55 /* AuthInputsView.m */,
 				B1B5579620EF575A00210D55 /* AuthInputsView.xib */,
@@ -2925,6 +2942,7 @@
 				B1B5590820EF768F00210D55 /* RoomMembershipWithPaginationTitleBubbleCell.xib in Resources */,
 				F083BDE81E7009ED00A9B29C /* message.mp3 in Resources */,
 				B1107ECA2200B09F0038014B /* KeyBackupRecoverSuccessViewController.storyboard in Resources */,
+				97906E5922A564EA006B6DCD /* QRReaderView.xib in Resources */,
 				F083BE011E7009ED00A9B29C /* third_party_licenses.html in Resources */,
 				B1098BFC21ECFE65000DDA48 /* PasswordStrengthView.xib in Resources */,
 				B110872421F098F0003554A5 /* ActivityIndicatorView.xib in Resources */,
@@ -3244,7 +3262,7 @@
 				B1B557E320EF60B900210D55 /* MessagesSearchResultAttachmentBubbleCell.m in Sources */,
 				B1CE9F062216FB09000FAE6A /* EncryptionKeysExportPresenter.swift in Sources */,
 				B1B5572220EE6C4D00210D55 /* RoomSettingsViewController.m in Sources */,
-				970878512267925E009F2C7C /* BuildFile in Sources */,
+				970878512267925E009F2C7C /* (null) in Sources */,
 				B169331620F3CAFC00746532 /* PublicRoomsDirectoryDataSource.m in Sources */,
 				B110871D21F087F4003554A5 /* KeyBackupSetupPassphraseViewState.swift in Sources */,
 				B1098C0121ECFE65000DDA48 /* KeyBackupSetupPassphraseCoordinatorType.swift in Sources */,
@@ -3330,6 +3348,7 @@
 				F0D2ADA11F6AA5FD00A7097D /* MXRoomSummary+Riot.m in Sources */,
 				B1B5596F20EFA85D00210D55 /* EncryptionInfoView.m in Sources */,
 				B14F143522144F6500FA0595 /* KeyBackupRecoverFromRecoveryKeyViewController.swift in Sources */,
+				97906E4E229EF354006B6DCD /* QRReaderView.swift in Sources */,
 				B1B5574F20EE6C4D00210D55 /* RoomsViewController.m in Sources */,
 				B1B5572520EE6C4D00210D55 /* RoomMessagesSearchViewController.m in Sources */,
 				B139C22121FE5D9D00BB68EC /* KeyBackupRecoverFromPassphraseViewState.swift in Sources */,
@@ -3437,6 +3456,7 @@
 				B109D6F1222D8C400061B6D9 /* UIApplication.swift in Sources */,
 				B1B558FF20EF768F00210D55 /* RoomIncomingTextMsgBubbleCell.m in Sources */,
 				B1098C0021ECFE65000DDA48 /* KeyBackupSetupPassphraseViewController.swift in Sources */,
+				97906E52229EF99F006B6DCD /* QRReaderViewDelegate.swift in Sources */,
 				B1B5591020EF782800210D55 /* TableViewCellWithPhoneNumberTextField.m in Sources */,
 				B1DB4F06223015080065DBFA /* Character.swift in Sources */,
 				B14F143022144F6500FA0595 /* KeyBackupRecoverFromRecoveryKeyCoordinatorType.swift in Sources */,

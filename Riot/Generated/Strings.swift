@@ -50,6 +50,10 @@ internal enum VectorL10n {
   internal static var authAddPhoneMessage: String { 
     return VectorL10n.tr("Vector", "auth_add_phone_message") 
   }
+  /// Alternative Login
+  internal static var authAlternativeLogin: String { 
+    return VectorL10n.tr("Vector", "auth_alternative_login") 
+  }
   /// Invalid homeserver discovery response
   internal static var authAutodiscoverInvalidResponse: String { 
     return VectorL10n.tr("Vector", "auth_autodiscover_invalid_response") 
@@ -165,6 +169,18 @@ internal enum VectorL10n {
   /// Phone number
   internal static var authPhonePlaceholder: String { 
     return VectorL10n.tr("Vector", "auth_phone_placeholder") 
+  }
+  /// Open Settings
+  internal static var authQrAuthorize: String { 
+    return VectorL10n.tr("Vector", "auth_qr_authorize") 
+  }
+  /// Allow access to the camera in system settings to scan QR codes.
+  internal static var authQrNoPermission: String { 
+    return VectorL10n.tr("Vector", "auth_qr_no_permission") 
+  }
+  /// Scan QR Code to log in
+  internal static var authQrTitle: String { 
+    return VectorL10n.tr("Vector", "auth_qr_title") 
   }
   /// This Home Server would like to make sure you are not a robot
   internal static var authRecaptchaMessage: String { 

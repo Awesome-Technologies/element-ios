@@ -64,6 +64,10 @@
 "auth_reset_password_missing_password" = "Ein neues Passwort muss eingegeben werden.";
 "auth_reset_password_next_step_button" = "Ich habe meine E-Mail-Adresse verifiziert";
 "auth_reset_password_email_validation_message" = "Eine E-Mail wurde an %@ gesendet. Wenn du dem Link dort gefolgt bist, klicke unten.";
+"auth_qr_title" = "QR Code scannen um einzuloggen";
+"auth_qr_no_permission" = "Erlauben Sie den Zugriff auf die Kamera in den Systemeinstellungen, um QR Codes zu scannen.";
+"auth_alternative_login" = "Alternativer Login";
+"auth_qr_authorize" = "Einstellungen öffnen";
 // Chat creation
 "room_creation_title" = "Neuer Chat";
 "room_creation_account" = "Konto";

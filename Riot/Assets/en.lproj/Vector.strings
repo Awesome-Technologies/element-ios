@@ -114,6 +114,10 @@
 "auth_add_email_and_phone_warning" = "Registration with email and phone number at once is not supported yet until the api exists. Only the phone number will be taken into account. You may add your email to your profile in settings.";
 "auth_accept_policies" = "Please review and accept the policies of this homeserver:";
 "auth_autodiscover_invalid_response" = "Invalid homeserver discovery response";
+"auth_qr_title" = "Scan QR Code to log in";
+"auth_qr_no_permission" = "Allow access to the camera in system settings to scan QR codes.";
+"auth_alternative_login" = "Alternative Login";
+"auth_qr_authorize" = "Open Settings";
 
 // Chat creation
 "room_creation_title" = "New Chat";
