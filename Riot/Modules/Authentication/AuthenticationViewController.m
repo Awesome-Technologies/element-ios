@@ -269,9 +269,6 @@
     super.userInteractionEnabled = userInteractionEnabled;
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
-    // Reset
-    self.rightBarButtonItem.enabled = [defaults boolForKey:@"enableRegistration"];
-    
     // Show/Hide server options
     if (_optionsContainer.hidden == userInteractionEnabled)
     {
@@ -317,6 +314,10 @@
             // The right bar button is used to return to login.
             self.rightBarButtonItem.title = NSLocalizedStringFromTable(@"cancel", @"Vector", nil);
         }
+        else
+        {
+            self.rightBarButtonItem.title = nil;
+        }
     }
 }
 
@@ -337,18 +338,20 @@
 {
     if (sender == self.rightBarButtonItem)
     {
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        
         // Check whether a request is in progress
         if (!self.userInteractionEnabled)
         {
             // Cancel the current operation
             [self cancel];
         }
-        else if (self.authType == MXKAuthenticationTypeLogin)
+        else if (self.authType == MXKAuthenticationTypeLogin && [defaults boolForKey:@"enableRegistration"])
         {
             self.authType = MXKAuthenticationTypeRegister;
             self.rightBarButtonItem.title = NSLocalizedStringFromTable(@"auth_login", @"Vector", nil);
         }
-        else
+        else if ([defaults boolForKey:@"enableRegistration"])
         {
             self.authType = MXKAuthenticationTypeLogin;
             self.rightBarButtonItem.title = NSLocalizedStringFromTable(@"auth_register", @"Vector", nil);
