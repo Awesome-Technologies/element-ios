@@ -38,6 +38,20 @@
 
     [self updateUserNameColor];
     [RoomOutgoingAttachmentBubbleCell render:cellData inBubbleCell:self];
+    
+    if (bubbleData) {
+        if (bubbleData.attachment.type == MXKAttachmentTypeAudio)
+        {
+            [self.audioAttachment setAttachment:bubbleData.attachment];
+            [self.audioAttachment setHidden:NO];
+            [self.attachmentView setHidden:YES];
+        }
+        else
+        {
+            [self.audioAttachment setHidden:YES];
+            [self.attachmentView setHidden:NO];
+        }
+    }
 }
 
 - (void)didEndDisplay
@@ -47,7 +61,7 @@
 
 + (void)render:(MXKCellData *)cellData inBubbleCell:(MXKRoomOutgoingAttachmentBubbleCell *)bubbleCell
 {
-    if (bubbleCell.attachmentView && bubbleCell->bubbleData.isAttachmentWithThumbnail)
+    if (bubbleCell.attachmentView && (bubbleCell->bubbleData.isAttachmentWithThumbnail || bubbleCell->bubbleData.isAttachmentWithIcon))
     {
         // Show a red border when the attachment sending failed
         if (bubbleCell->bubbleData.attachment.eventSentState == MXEventSentStateFailed)

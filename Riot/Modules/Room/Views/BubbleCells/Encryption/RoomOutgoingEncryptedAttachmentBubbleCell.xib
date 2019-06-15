@@ -114,6 +114,13 @@
                             <constraint firstAttribute="trailing" secondItem="eU5-iK-u8i" secondAttribute="trailing" id="teG-8q-BOX"/>
                         </constraints>
                     </view>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iD8-1G-Wj8" customClass="AudioAttachmentView" customModule="Riot" customModuleProvider="target">
+                        <rect key="frame" x="67" y="26" width="448" height="42"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="42" id="K3G-Zv-pHr"/>
+                        </constraints>
+                    </view>
                     <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="UyS-dv-e6D">
                         <rect key="frame" x="12" y="3" width="576" height="69"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -137,6 +144,7 @@
                     <constraint firstItem="q9c-0p-QyP" firstAttribute="top" secondItem="ef1-Tq-U3Z" secondAttribute="top" constant="10" id="Ixr-7h-f8j"/>
                     <constraint firstItem="OrM-nA-kyg" firstAttribute="centerY" secondItem="5IE-JS-uf3" secondAttribute="centerY" id="QAm-TS-Q44"/>
                     <constraint firstAttribute="bottom" secondItem="5IE-JS-uf3" secondAttribute="bottom" constant="10" id="SHN-tC-zsJ"/>
+                    <constraint firstAttribute="trailing" secondItem="iD8-1G-Wj8" secondAttribute="trailing" constant="85" id="SUJ-0z-vgT"/>
                     <constraint firstAttribute="bottom" secondItem="IOg-Kt-8vW" secondAttribute="bottom" id="TPw-iE-nii"/>
                     <constraint firstItem="BXy-3h-2Db" firstAttribute="leading" secondItem="ef1-Tq-U3Z" secondAttribute="leading" constant="41" id="WAM-fG-yld"/>
                     <constraint firstItem="IOg-Kt-8vW" firstAttribute="top" secondItem="ef1-Tq-U3Z" secondAttribute="top" constant="10" id="XSL-TG-m62"/>
@@ -150,10 +158,12 @@
                     <constraint firstItem="5IE-JS-uf3" firstAttribute="leading" secondItem="K9X-gn-noF" secondAttribute="leading" id="p93-5h-lvW"/>
                     <constraint firstItem="5IE-JS-uf3" firstAttribute="centerX" secondItem="Cot-3X-2cU" secondAttribute="centerX" id="sF7-QL-vdj"/>
                     <constraint firstItem="hgp-Z5-rAj" firstAttribute="leading" secondItem="ef1-Tq-U3Z" secondAttribute="leading" constant="13" id="tuw-aU-ncu"/>
+                    <constraint firstItem="iD8-1G-Wj8" firstAttribute="leading" secondItem="hgp-Z5-rAj" secondAttribute="trailing" constant="24" id="um2-B2-ke7"/>
                     <constraint firstItem="5IE-JS-uf3" firstAttribute="centerY" secondItem="fdx-qs-8en" secondAttribute="centerY" id="v0F-Ts-14P"/>
                     <constraint firstAttribute="trailingMargin" secondItem="UyS-dv-e6D" secondAttribute="trailing" constant="-8" id="v9l-9W-ReX"/>
                     <constraint firstItem="5IE-JS-uf3" firstAttribute="top" secondItem="K9X-gn-noF" secondAttribute="top" id="wkX-zQ-iQS"/>
                     <constraint firstAttribute="trailing" secondItem="fdx-qs-8en" secondAttribute="trailing" constant="13" id="xKk-Gz-moE"/>
+                    <constraint firstItem="iD8-1G-Wj8" firstAttribute="centerY" secondItem="K9X-gn-noF" secondAttribute="centerY" id="xio-u9-Vi1"/>
                 </constraints>
             </tableViewCellContentView>
             <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
@@ -165,6 +175,7 @@
                 <outlet property="attachViewTopConstraint" destination="96U-67-5TP" id="Ugm-cH-32E"/>
                 <outlet property="attachViewWidthConstraint" destination="9zO-jU-qTb" id="fOO-VW-fe1"/>
                 <outlet property="attachmentView" destination="5IE-JS-uf3" id="imT-1z-hR1"/>
+                <outlet property="audioAttachment" destination="iD8-1G-Wj8" id="ybf-pd-Xdj"/>
                 <outlet property="bubbleInfoContainer" destination="IOg-Kt-8vW" id="TAw-QY-Y9e"/>
                 <outlet property="bubbleInfoContainerTopConstraint" destination="XSL-TG-m62" id="qVf-vJ-4aP"/>
                 <outlet property="bubbleOverlayContainer" destination="UyS-dv-e6D" id="e6a-Pm-uvq"/>

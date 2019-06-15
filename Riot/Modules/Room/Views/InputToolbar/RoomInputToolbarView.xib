@@ -78,10 +78,33 @@
                                 <constraint firstAttribute="width" constant="46" id="O2T-T8-EjV"/>
                                 <constraint firstAttribute="width" secondItem="Hga-l8-Wua" secondAttribute="height" multiplier="1:1" id="f0T-3f-BJu"/>
                             </constraints>
-                            <state key="normal" image="photo-camera"/>
-                            <state key="highlighted" image="upload_icon"/>
+                            <state key="normal" image="upload"/>
                             <connections>
                                 <action selector="onTouchUpInside:" destination="iN0-l3-epB" eventType="touchUpInside" id="WbU-WH-gwL"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5Aj-N5-RS7" userLabel="pause Recording Button">
+                            <rect key="frame" x="457" y="0.0" width="46" height="46"/>
+                            <accessibility key="accessibilityConfiguration" identifier="AttachButton"/>
+                            <constraints>
+                                <constraint firstAttribute="width" secondItem="5Aj-N5-RS7" secondAttribute="height" multiplier="1:1" id="Wmk-tX-EZo"/>
+                                <constraint firstAttribute="width" constant="46" id="gDn-3O-aJ0"/>
+                            </constraints>
+                            <state key="normal" image="pause-audio"/>
+                            <connections>
+                                <action selector="onTouchUpInside:" destination="iN0-l3-epB" eventType="touchUpInside" id="r3d-c3-c7F"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mrW-XG-btr" userLabel="cancel Recording Button">
+                            <rect key="frame" x="406" y="0.0" width="46" height="46"/>
+                            <accessibility key="accessibilityConfiguration" identifier="AttachButton"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="46" id="dmO-LT-bjB"/>
+                                <constraint firstAttribute="width" secondItem="mrW-XG-btr" secondAttribute="height" multiplier="1:1" id="qat-LK-NNs"/>
+                            </constraints>
+                            <state key="normal" image="garbage"/>
+                            <connections>
+                                <action selector="onTouchUpInside:" destination="iN0-l3-epB" eventType="touchUpInside" id="nbC-CV-uGQ"/>
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="p4G-1O-xsK" userLabel="voice call Button">
@@ -124,11 +147,15 @@
                         <constraint firstAttribute="trailing" secondItem="p4G-1O-xsK" secondAttribute="trailing" id="DdY-sI-nOs"/>
                         <constraint firstItem="QWp-NV-uh5" firstAttribute="leading" secondItem="a84-Vc-6ud" secondAttribute="leading" constant="62" id="ErD-eB-stF"/>
                         <constraint firstItem="fRI-9x-jgw" firstAttribute="leading" secondItem="a84-Vc-6ud" secondAttribute="leading" constant="41" id="GvU-rY-bWW"/>
+                        <constraint firstItem="Hga-l8-Wua" firstAttribute="leading" secondItem="5Aj-N5-RS7" secondAttribute="trailing" constant="5" id="H54-mu-RoL"/>
                         <constraint firstAttribute="bottom" secondItem="p4G-1O-xsK" secondAttribute="bottom" id="ILh-F0-rZF"/>
+                        <constraint firstItem="5Aj-N5-RS7" firstAttribute="leading" secondItem="mrW-XG-btr" secondAttribute="trailing" constant="5" id="Ioe-ha-Z7N"/>
                         <constraint firstItem="dd4-pE-Es1" firstAttribute="leading" secondItem="a84-Vc-6ud" secondAttribute="leading" constant="13" id="Jem-U2-oEq"/>
                         <constraint firstAttribute="bottom" secondItem="QWp-NV-uh5" secondAttribute="bottom" constant="4" id="NGr-2o-sOP"/>
+                        <constraint firstItem="mrW-XG-btr" firstAttribute="top" secondItem="a84-Vc-6ud" secondAttribute="top" id="O3d-Sk-UMf"/>
                         <constraint firstAttribute="trailing" secondItem="3ln-yI-ef9" secondAttribute="trailing" constant="10" id="RXB-PN-3n8"/>
                         <constraint firstAttribute="trailing" secondItem="G8Z-CM-tGs" secondAttribute="trailing" constant="4" id="Sua-LC-3yW"/>
+                        <constraint firstItem="5Aj-N5-RS7" firstAttribute="top" secondItem="a84-Vc-6ud" secondAttribute="top" id="UpO-K0-KHL"/>
                         <constraint firstAttribute="trailing" secondItem="xAN-oF-umo" secondAttribute="trailing" id="UzG-Sq-a2R"/>
                         <constraint firstItem="QWp-NV-uh5" firstAttribute="top" secondItem="a84-Vc-6ud" secondAttribute="top" constant="4" id="WyZ-3i-OHi"/>
                         <constraint firstAttribute="height" constant="46" id="Yjj-ua-rbe"/>
@@ -155,6 +182,7 @@
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <connections>
                 <outlet property="attachMediaButton" destination="Hga-l8-Wua" id="Osr-ek-c91"/>
+                <outlet property="cancelAudioButton" destination="mrW-XG-btr" id="3l7-lG-716"/>
                 <outlet property="encryptedRoomIcon" destination="fRI-9x-jgw" id="cfG-Sr-Fga"/>
                 <outlet property="growingTextView" destination="wgb-ON-N29" id="nwF-uV-Ng9"/>
                 <outlet property="hangupCallButton" destination="xAN-oF-umo" id="IoE-aI-AVc"/>
@@ -166,6 +194,7 @@
                 <outlet property="messageComposerContainerLeadingConstraint" destination="ErD-eB-stF" id="Ha9-DG-Nw2"/>
                 <outlet property="messageComposerContainerTopConstraint" destination="WyZ-3i-OHi" id="OcO-1f-bNA"/>
                 <outlet property="messageComposerContainerTrailingConstraint" destination="hXO-cY-Jgz" id="lHZ-MU-vyC"/>
+                <outlet property="pauseAudioButton" destination="5Aj-N5-RS7" id="vsP-Qy-3jL"/>
                 <outlet property="pictureView" destination="dd4-pE-Es1" id="rb6-z2-pJ9"/>
                 <outlet property="rightInputToolbarButton" destination="G8Z-CM-tGs" id="NCk-5m-aNF"/>
                 <outlet property="separatorView" destination="3ln-yI-ef9" id="HQ3-B4-Goj"/>
@@ -175,10 +204,11 @@
         </view>
     </objects>
     <resources>
-        <image name="call_hangup_icon" width="24.5" height="26"/>
+        <image name="call_hangup_icon" width="24" height="26"/>
         <image name="e2e_unencrypted" width="14" height="12"/>
-        <image name="photo-camera" width="25" height="25"/>
-        <image name="upload_icon" width="21" height="26"/>
-        <image name="voice_call_icon" width="16" height="16"/>
+        <image name="garbage" width="25" height="25"/>
+        <image name="pause-audio" width="28" height="28"/>
+        <image name="upload" width="25" height="25"/>
+        <image name="voice_call_icon" width="24" height="27"/>
     </resources>
 </document>

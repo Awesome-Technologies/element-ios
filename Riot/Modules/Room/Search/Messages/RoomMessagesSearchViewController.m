@@ -144,7 +144,7 @@
         id<MXKRoomBubbleCellDataStoring> bubbleData = (id<MXKRoomBubbleCellDataStoring>)cellData;
 
         // Select the suitable table view cell class
-        if (bubbleData.isAttachmentWithThumbnail)
+        if (bubbleData.isAttachmentWithThumbnail || bubbleData.isAttachmentWithIcon)
         {
             cellViewClass = RoomIncomingAttachmentBubbleCell.class;
         }

@@ -22,4 +22,6 @@
  */
 @interface RoomOutgoingAttachmentWithoutSenderInfoBubbleCell : MXKRoomOutgoingAttachmentWithoutSenderInfoBubbleCell
 
+@property (weak, nonatomic) IBOutlet AudioAttachmentView *audioAttachment;
+
 @end

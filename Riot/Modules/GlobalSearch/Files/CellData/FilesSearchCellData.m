@@ -42,6 +42,8 @@
         {
             // Note: event.eventType may be equal here to MXEventTypeRoomMessage or MXEventTypeSticker
             attachment = [[MXKAttachment alloc] initWithEvent:event andMediaManager:searchDataSource.mxSession.mediaManager];
+            
+            title = [self titleForAttachment:attachment];
         }
         
         // Append the file size if any
@@ -120,6 +122,57 @@
 - (BOOL)isAttachmentWithThumbnail
 {
     return (attachment && (attachment.type == MXKAttachmentTypeImage || attachment.type == MXKAttachmentTypeVideo || attachment.type == MXKAttachmentTypeSticker));
+}
+
+- (NSString *)titleForAttachment:(MXKAttachment *)attachment {
+    MXKAttachmentType attachmentType = attachment.type;
+    
+    if (attachmentType == MXKAttachmentTypeAudio)
+    {
+        if (attachment.contentInfo && attachment.contentInfo[@"duration"])
+        {
+            double duration = [attachment.contentInfo[@"duration"] doubleValue] / 1000;
+            
+            NSDateComponentsFormatter *formatter = [[NSDateComponentsFormatter alloc] init];
+            formatter.allowedUnits = NSCalendarUnitMinute | NSCalendarUnitSecond;
+            formatter.unitsStyle = NSDateComponentsFormatterUnitsStylePositional;
+            formatter.zeroFormattingBehavior = NSDateComponentsFormatterZeroFormattingBehaviorPad;
+            
+            return [NSString stringWithFormat:@"%@ - %@", NSLocalizedStringFromTable(@"audio", @"Vector", nil), [formatter stringFromTimeInterval:duration]];
+        }
+        else
+        {
+            return NSLocalizedStringFromTable(@"audio", @"Vector", nil);
+        }
+    }
+    else if (attachmentType == MXKAttachmentTypeVideo)
+    {
+        if (attachment.contentInfo && attachment.contentInfo[@"duration"])
+        {
+            double duration = [attachment.contentInfo[@"duration"] doubleValue] / 1000;
+            
+            NSDateComponentsFormatter *formatter = [[NSDateComponentsFormatter alloc] init];
+            formatter.allowedUnits = NSCalendarUnitMinute | NSCalendarUnitSecond;
+            formatter.unitsStyle = NSDateComponentsFormatterUnitsStylePositional;
+            formatter.zeroFormattingBehavior = NSDateComponentsFormatterZeroFormattingBehaviorPad;
+            
+            return [NSString stringWithFormat:@"%@ - %@", NSLocalizedStringFromTable(@"video", @"Vector", nil), [formatter stringFromTimeInterval:duration]];
+        }
+        else
+        {
+            return NSLocalizedStringFromTable(@"video", @"Vector", nil);
+        }
+    }
+    else if (attachmentType == MXKAttachmentTypeImage)
+    {
+        return NSLocalizedStringFromTable(@"image", @"Vector", nil);
+    }
+    else if (attachmentType == MXKAttachmentTypeFile)
+    {
+        return NSLocalizedStringFromTable(@"file", @"Vector", nil);
+    }
+    
+    return attachment.originalFileName;
 }
 
 - (UIImage*)attachmentIcon

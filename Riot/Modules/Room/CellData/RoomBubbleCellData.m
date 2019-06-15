@@ -519,4 +519,12 @@ static NSAttributedString *readReceiptVerticalWhitespace = nil;
     return [super addEvent:event andRoomState:roomState];
 }
 
+#pragma mark - MXKRoomBubbleCellData Override
+
+- (BOOL)isAttachmentWithIcon
+{
+    // Partly not supported yet (TODO for file).
+    return (self.attachment && self.attachment.type == MXKAttachmentTypeAudio);
+}
+
 @end

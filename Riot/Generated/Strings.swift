@@ -26,6 +26,10 @@ internal enum VectorL10n {
   internal static func activeCallDetails(_ p1: String) -> String {
     return VectorL10n.tr("Vector", "active_call_details", p1)
   }
+  /// Audio
+  internal static var audio: String { 
+    return VectorL10n.tr("Vector", "audio") 
+  }
   /// Please review and accept the policies of this homeserver:
   internal static var authAcceptPolicies: String { 
     return VectorL10n.tr("Vector", "auth_accept_policies") 
@@ -350,6 +354,18 @@ internal enum VectorL10n {
   internal static var cancel: String { 
     return VectorL10n.tr("Vector", "cancel") 
   }
+  /// Do you want to cancel the voice recording?
+  internal static var cancelVoiceRecordingMessage: String { 
+    return VectorL10n.tr("Vector", "cancel_voice_recording_message") 
+  }
+  /// Cancel voice recording
+  internal static var cancelVoiceRecordingTitle: String { 
+    return VectorL10n.tr("Vector", "cancel_voice_recording_title") 
+  }
+  /// Close
+  internal static var close: String { 
+    return VectorL10n.tr("Vector", "close") 
+  }
   /// collapse
   internal static var collapse: String { 
     return VectorL10n.tr("Vector", "collapse") 
@@ -582,6 +598,10 @@ internal enum VectorL10n {
   internal static func eventFormatterWidgetRemoved(_ p1: String, _ p2: String) -> String {
     return VectorL10n.tr("Vector", "event_formatter_widget_removed", p1, p2)
   }
+  /// File
+  internal static var file: String { 
+    return VectorL10n.tr("Vector", "file") 
+  }
   /// To continue using the %@ homeserver you must review and agree to the terms and conditions.
   internal static func gdprConsentNotGivenAlertMessage(_ p1: String) -> String {
     return VectorL10n.tr("Vector", "gdpr_consent_not_given_alert_message", p1)
@@ -693,6 +713,10 @@ internal enum VectorL10n {
   /// Could not connect to the homeserver.
   internal static var homeserverConnectionLost: String { 
     return VectorL10n.tr("Vector", "homeserver_connection_lost") 
+  }
+  /// Image
+  internal static var image: String { 
+    return VectorL10n.tr("Vector", "image") 
   }
   /// Invite
   internal static var invite: String { 
@@ -946,6 +970,14 @@ internal enum VectorL10n {
   internal static var next: String { 
     return VectorL10n.tr("Vector", "next") 
   }
+  /// Allow access to the microphone in system settings to send voice messages.
+  internal static var noMicrophoneAccessMessage: String { 
+    return VectorL10n.tr("Vector", "no_microphone_access_message") 
+  }
+  /// No access to the microphone
+  internal static var noMicrophoneAccessTitle: String { 
+    return VectorL10n.tr("Vector", "no_microphone_access_title") 
+  }
   /// %@ is calling you but %@ does not support calls yet.\nYou can ignore this notification and answer the call from another device or you can reject it.
   internal static func noVoip(_ p1: String, _ p2: String) -> String {
     return VectorL10n.tr("Vector", "no_voip", p1, p2)
@@ -965,6 +997,10 @@ internal enum VectorL10n {
   /// or
   internal static var or: String { 
     return VectorL10n.tr("Vector", "or") 
+  }
+  /// Paused
+  internal static var paused: String { 
+    return VectorL10n.tr("Vector", "paused") 
   }
   /// CONVERSATIONS
   internal static var peopleConversationSection: String { 
@@ -1449,6 +1485,10 @@ internal enum VectorL10n {
   /// Send a message (unencrypted)…
   internal static var roomMessagePlaceholder: String { 
     return VectorL10n.tr("Vector", "room_message_placeholder") 
+  }
+  /// Recording… %@
+  internal static func roomMessageRecordingVoicePlaceholder(_ p1: String) -> String {
+    return VectorL10n.tr("Vector", "room_message_recording_voice_placeholder", p1)
   }
   /// Send a reply (unencrypted)…
   internal static var roomMessageReplyToPlaceholder: String { 
@@ -2441,6 +2481,10 @@ internal enum VectorL10n {
   /// Voice
   internal static var voice: String { 
     return VectorL10n.tr("Vector", "voice") 
+  }
+  /// Voice message
+  internal static var voiceMessage: String { 
+    return VectorL10n.tr("Vector", "voice_message") 
   }
   /// Warning
   internal static var warning: String { 

@@ -56,7 +56,7 @@
         
         if (bubbleData.attachment)
         {
-            self.title.text = bubbleData.attachment.originalFileName;
+            self.title.text = [self titleForAttachment:bubbleData.attachment];
             
             // In case of attachment, the bubble data is composed by only one component.
             if (bubbleData.bubbleComponents.count)
@@ -96,6 +96,57 @@
             self.iconImage.image = nil;
         }
     }
+}
+
+- (NSString *)titleForAttachment:(MXKAttachment *)attachment {
+    MXKAttachmentType attachmentType = attachment.type;
+    
+    if (attachmentType == MXKAttachmentTypeAudio)
+    {
+        if (attachment.contentInfo && attachment.contentInfo[@"duration"])
+        {
+            double duration = [attachment.contentInfo[@"duration"] doubleValue] / 1000;
+            
+            NSDateComponentsFormatter *formatter = [[NSDateComponentsFormatter alloc] init];
+            formatter.allowedUnits = NSCalendarUnitMinute | NSCalendarUnitSecond;
+            formatter.unitsStyle = NSDateComponentsFormatterUnitsStylePositional;
+            formatter.zeroFormattingBehavior = NSDateComponentsFormatterZeroFormattingBehaviorPad;
+            
+            return [NSString stringWithFormat:@"%@ - %@", NSLocalizedStringFromTable(@"audio", @"Vector", nil), [formatter stringFromTimeInterval:duration]];
+        }
+        else
+        {
+            return NSLocalizedStringFromTable(@"audio", @"Vector", nil);
+        }
+    }
+    else if (attachmentType == MXKAttachmentTypeVideo)
+    {
+        if (attachment.contentInfo && attachment.contentInfo[@"duration"])
+        {
+            double duration = [attachment.contentInfo[@"duration"] doubleValue] / 1000;
+            
+            NSDateComponentsFormatter *formatter = [[NSDateComponentsFormatter alloc] init];
+            formatter.allowedUnits = NSCalendarUnitMinute | NSCalendarUnitSecond;
+            formatter.unitsStyle = NSDateComponentsFormatterUnitsStylePositional;
+            formatter.zeroFormattingBehavior = NSDateComponentsFormatterZeroFormattingBehaviorPad;
+            
+            return [NSString stringWithFormat:@"%@ - %@", NSLocalizedStringFromTable(@"video", @"Vector", nil), [formatter stringFromTimeInterval:duration]];
+        }
+        else
+        {
+            return NSLocalizedStringFromTable(@"video", @"Vector", nil);
+        }
+    }
+    else if (attachmentType == MXKAttachmentTypeImage)
+    {
+        return NSLocalizedStringFromTable(@"image", @"Vector", nil);
+    }
+    else if (attachmentType == MXKAttachmentTypeFile)
+    {
+        return NSLocalizedStringFromTable(@"file", @"Vector", nil);
+    }
+    
+    return attachment.originalFileName;
 }
 
 #pragma mark -

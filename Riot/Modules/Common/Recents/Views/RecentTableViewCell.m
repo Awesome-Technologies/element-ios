@@ -94,8 +94,75 @@ static const CGFloat kDirectRoomBorderWidth = 3.0;
         // Manage lastEventAttributedTextMessage optional property
         if ([roomCellData respondsToSelector:@selector(lastEventAttributedTextMessage)])
         {
-            // Force the default text color for the last message (cancel highlighted message color)
+            NSString *descriptionText = nil;
+            if (roomCellData.lastEvent.isMediaAttachment)
+            {
+                
+                NSString *msgtype = roomCellData.lastEvent.content[@"msgtype"];
+                if ([msgtype isEqualToString:kMXMessageTypeAudio])
+                {
+                    NSDictionary *contentInfo = roomCellData.lastEvent.content[@"info"];
+                    if (contentInfo && contentInfo[@"duration"])
+                    {
+                        double duration = [contentInfo[@"duration"] doubleValue] / 1000;
+                        
+                        NSDateComponentsFormatter *formatter = [[NSDateComponentsFormatter alloc] init];
+                        formatter.allowedUnits = NSCalendarUnitMinute | NSCalendarUnitSecond;
+                        formatter.unitsStyle = NSDateComponentsFormatterUnitsStylePositional;
+                        formatter.zeroFormattingBehavior = NSDateComponentsFormatterZeroFormattingBehaviorPad;
+                        
+                        descriptionText = [NSString stringWithFormat:@"%@ - %@", NSLocalizedStringFromTable(@"audio", @"Vector", nil), [formatter stringFromTimeInterval:duration]];
+                    }
+                    else
+                    {
+                        descriptionText = NSLocalizedStringFromTable(@"audio", @"Vector", nil);
+                    }
+                }
+                else if ([msgtype isEqualToString:kMXMessageTypeVideo])
+                {
+                    NSDictionary *contentInfo = roomCellData.lastEvent.content[@"info"];
+                    if (contentInfo && contentInfo[@"duration"])
+                    {
+                        double duration = [contentInfo[@"duration"] doubleValue] / 1000;
+                        
+                        NSDateComponentsFormatter *formatter = [[NSDateComponentsFormatter alloc] init];
+                        formatter.allowedUnits = NSCalendarUnitMinute | NSCalendarUnitSecond;
+                        formatter.unitsStyle = NSDateComponentsFormatterUnitsStylePositional;
+                        formatter.zeroFormattingBehavior = NSDateComponentsFormatterZeroFormattingBehaviorPad;
+                        
+                        descriptionText = [NSString stringWithFormat:@"%@ - %@", NSLocalizedStringFromTable(@"video", @"Vector", nil), [formatter stringFromTimeInterval:duration]];
+                    }
+                    else
+                    {
+                        descriptionText = NSLocalizedStringFromTable(@"video", @"Vector", nil);
+                    }
+                }
+                else if ([msgtype isEqualToString:kMXMessageTypeImage])
+                {
+                    descriptionText = NSLocalizedStringFromTable(@"image", @"Vector", nil);
+                }
+                else if ([msgtype isEqualToString:kMXMessageTypeFile])
+                {
+                    descriptionText = NSLocalizedStringFromTable(@"file", @"Vector", nil);
+                }
+            }
+            
+            // Replace filename with more abstract description
             NSMutableAttributedString *lastEventDescription = [[NSMutableAttributedString alloc] initWithAttributedString:roomCellData.lastEventAttributedTextMessage];
+            if (descriptionText)
+            {
+                if (roomCellData.lastEventTextMessage)
+                {
+                    NSRange range = [lastEventDescription.string rangeOfString:roomCellData.lastEventTextMessage];
+                    [lastEventDescription replaceCharactersInRange:range withString:descriptionText];
+                }
+                else
+                {
+                    [lastEventDescription appendAttributedString:[[NSMutableAttributedString alloc] initWithString:descriptionText]];
+                }
+            }
+            
+            // Force the default text color for the last message (cancel highlighted message color)
             [lastEventDescription addAttribute:NSForegroundColorAttributeName value:ThemeService.shared.theme.textSecondaryColor range:NSMakeRange(0, lastEventDescription.length)];
             self.lastEventDescription.attributedText = lastEventDescription;
         }

@@ -45,12 +45,15 @@
 		9768F48A2266289F00926AFB /* AMP Chat-Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9768F4892266289F00926AFB /* AMP Chat-Defaults.plist */; };
 		9768F4922266385A00926AFB /* AMP Chat-LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9768F4902266385A00926AFB /* AMP Chat-LaunchScreen.storyboard */; };
 		9768F4942266391800926AFB /* Caritas Messenger-SharedImages.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9768F4932266391700926AFB /* Caritas Messenger-SharedImages.xcassets */; };
+		9772E9A322B3D4A900932A29 /* AudioAttachmentView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9772E9A222B3D4A900932A29 /* AudioAttachmentView.xib */; };
 		9787D9B62271D9EE0010EA83 /* App-Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9787D9B52271D9ED0010EA83 /* App-Defaults.swift */; };
 		97906E4E229EF354006B6DCD /* QRReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97906E4C229EF354006B6DCD /* QRReaderView.swift */; };
 		97906E52229EF99F006B6DCD /* QRReaderViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97906E51229EF99F006B6DCD /* QRReaderViewDelegate.swift */; };
 		97906E5922A564EA006B6DCD /* QRReaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 97906E5822A564EA006B6DCD /* QRReaderView.xib */; };
 		979234BA2244762F0081082E /* AMPTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979234B92244762F0081082E /* AMPTheme.swift */; };
+		979CCC1A22B0DAC3004C67DD /* AudioAttachmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979CCC1922B0DAC3004C67DD /* AudioAttachmentView.swift */; };
 		97A684AC22448FD000EB1C51 /* AMPTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979234B92244762F0081082E /* AMPTheme.swift */; };
+		97AEE84722B8474700B789C1 /* AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97AEE84622B8474700B789C1 /* AudioManager.swift */; };
 		97B8859E228312ED00E16C88 /* CallViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 97B88597228312ED00E16C88 /* CallViewController.xib */; };
 		97B8859F228312ED00E16C88 /* CircleButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 97B88599228312ED00E16C88 /* CircleButton.m */; };
 		97B885A0228312ED00E16C88 /* IncomingCallView.m in Sources */ = {isa = PBXBuildFile; fileRef = 97B8859C228312ED00E16C88 /* IncomingCallView.m */; };
@@ -67,6 +70,9 @@
 		97B885FE22831C1D00E16C88 /* Widget.m in Sources */ = {isa = PBXBuildFile; fileRef = 97B885FC22831C1D00E16C88 /* Widget.m */; };
 		97B885FF22831C1D00E16C88 /* WidgetManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 97B885FD22831C1D00E16C88 /* WidgetManager.m */; };
 		97BDA7F52252360C0055EBCE /* TermsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 32B1FEDA21A46F2C00637127 /* TermsView.xib */; };
+		97C9EABD22B036E100918B38 /* AudioRecorderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97C9EABC22B036E100918B38 /* AudioRecorderDelegate.swift */; };
+		97C9EABF22B0512300918B38 /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97C9EABE22B0512300918B38 /* AudioRecorder.swift */; };
+		97DCB39322B4863D000ED2DE /* MXKRoomDataSource+Audio.m in Sources */ = {isa = PBXBuildFile; fileRef = 97DCB39222B4863D000ED2DE /* MXKRoomDataSource+Audio.m */; };
 		B104C2942203773C00D9F496 /* KeyBackupBannerPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = B104C2932203773B00D9F496 /* KeyBackupBannerPreferences.swift */; };
 		B1057789221304EC00334B1E /* KeyBackupSetupSuccessFromPassphraseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1057788221304EB00334B1E /* KeyBackupSetupSuccessFromPassphraseViewController.swift */; };
 		B105778B221304FA00334B1E /* KeyBackupSetupSuccessFromPassphraseViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B105778A221304FA00334B1E /* KeyBackupSetupSuccessFromPassphraseViewController.storyboard */; };
@@ -490,11 +496,14 @@
 		9768F4932266391700926AFB /* Caritas Messenger-SharedImages.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Caritas Messenger-SharedImages.xcassets"; sourceTree = "<group>"; };
 		976C9EF122A93C7D00E109B2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		976C9EF322A93C8500E109B2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		9772E9A222B3D4A900932A29 /* AudioAttachmentView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AudioAttachmentView.xib; sourceTree = "<group>"; };
 		9787D9B52271D9ED0010EA83 /* App-Defaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "App-Defaults.swift"; sourceTree = "<group>"; };
 		97906E4C229EF354006B6DCD /* QRReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRReaderView.swift; sourceTree = "<group>"; };
 		97906E51229EF99F006B6DCD /* QRReaderViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRReaderViewDelegate.swift; sourceTree = "<group>"; };
 		97906E5822A564EA006B6DCD /* QRReaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = QRReaderView.xib; sourceTree = "<group>"; };
 		979234B92244762F0081082E /* AMPTheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMPTheme.swift; sourceTree = "<group>"; };
+		979CCC1922B0DAC3004C67DD /* AudioAttachmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioAttachmentView.swift; sourceTree = "<group>"; };
+		97AEE84622B8474700B789C1 /* AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioManager.swift; sourceTree = "<group>"; };
 		97B88596228312ED00E16C88 /* CallViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallViewController.h; sourceTree = "<group>"; };
 		97B88597228312ED00E16C88 /* CallViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CallViewController.xib; sourceTree = "<group>"; };
 		97B88599228312ED00E16C88 /* CircleButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CircleButton.m; sourceTree = "<group>"; };
@@ -519,6 +528,10 @@
 		97B885FB22831C1D00E16C88 /* WidgetManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WidgetManager.h; sourceTree = "<group>"; };
 		97B885FC22831C1D00E16C88 /* Widget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Widget.m; sourceTree = "<group>"; };
 		97B885FD22831C1D00E16C88 /* WidgetManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WidgetManager.m; sourceTree = "<group>"; };
+		97C9EABC22B036E100918B38 /* AudioRecorderDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorderDelegate.swift; sourceTree = "<group>"; };
+		97C9EABE22B0512300918B38 /* AudioRecorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioRecorder.swift; sourceTree = "<group>"; };
+		97DCB39122B4863D000ED2DE /* MXKRoomDataSource+Audio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MXKRoomDataSource+Audio.h"; sourceTree = "<group>"; };
+		97DCB39222B4863D000ED2DE /* MXKRoomDataSource+Audio.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "MXKRoomDataSource+Audio.m"; sourceTree = "<group>"; };
 		97FE8C2121B1F180009ABE88 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = en; path = en.lproj/AppIntentVocabulary.plist; sourceTree = "<group>"; };
 		A004C4BA200BCD9777EEF321 /* Pods-RiotPods-RiotShareExtension.ampchat release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RiotPods-RiotShareExtension.ampchat release.xcconfig"; path = "Pods/Target Support Files/Pods-RiotPods-RiotShareExtension/Pods-RiotPods-RiotShareExtension.ampchat release.xcconfig"; sourceTree = "<group>"; };
 		B104C2932203773B00D9F496 /* KeyBackupBannerPreferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyBackupBannerPreferences.swift; sourceTree = "<group>"; };
@@ -1157,6 +1170,23 @@
 			path = "QR Reader Login";
 			sourceTree = "<group>";
 		};
+		979CCC0622B0CFBC004C67DD /* Audio Attachment */ = {
+			isa = PBXGroup;
+			children = (
+				979CCC1922B0DAC3004C67DD /* AudioAttachmentView.swift */,
+				9772E9A222B3D4A900932A29 /* AudioAttachmentView.xib */,
+			);
+			path = "Audio Attachment";
+			sourceTree = "<group>";
+		};
+		97AEE84522B8472700B789C1 /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				97AEE84622B8474700B789C1 /* AudioManager.swift */,
+			);
+			path = Audio;
+			sourceTree = "<group>";
+		};
 		97B88595228312ED00E16C88 /* Call */ = {
 			isa = PBXGroup;
 			children = (
@@ -1228,6 +1258,17 @@
 				97B885FD22831C1D00E16C88 /* WidgetManager.m */,
 			);
 			path = Widgets;
+			sourceTree = "<group>";
+		};
+		97DCB38B22B4831F000ED2DE /* AudioRecorder */ = {
+			isa = PBXGroup;
+			children = (
+				97C9EABE22B0512300918B38 /* AudioRecorder.swift */,
+				97C9EABC22B036E100918B38 /* AudioRecorderDelegate.swift */,
+				97DCB39122B4863D000ED2DE /* MXKRoomDataSource+Audio.h */,
+				97DCB39222B4863D000ED2DE /* MXKRoomDataSource+Audio.m */,
+			);
+			path = AudioRecorder;
 			sourceTree = "<group>";
 		};
 		A237FB70534FB8ADA0D7CFEE /* Pods */ = {
@@ -2113,6 +2154,7 @@
 				B1B557BA20EF5B4400210D55 /* DisabledRoomInputToolbarView.xib */,
 				B1B557BB20EF5B4400210D55 /* DisabledRoomInputToolbarView.h */,
 				B1B557BC20EF5B4400210D55 /* RoomInputToolbarView.h */,
+				97DCB38B22B4831F000ED2DE /* AudioRecorder */,
 			);
 			path = InputToolbar;
 			sourceTree = "<group>";
@@ -2240,6 +2282,7 @@
 		B1B5583F20EF768E00210D55 /* BubbleCells */ = {
 			isa = PBXGroup;
 			children = (
+				979CCC0622B0CFBC004C67DD /* Audio Attachment */,
 				B1B5584220EF768E00210D55 /* Encryption */,
 				B1B5589220EF768E00210D55 /* RoomEmptyBubbleCell.h */,
 				B1B558B620EF768E00210D55 /* RoomEmptyBubbleCell.m */,
@@ -2446,6 +2489,7 @@
 		B1B5597C20EFC3DF00210D55 /* Managers */ = {
 			isa = PBXGroup;
 			children = (
+				97AEE84522B8472700B789C1 /* Audio */,
 				B1FDF56321F68C0700BA3834 /* PasswordStrength */,
 				B1798300211B137B001FD722 /* OnBoarding */,
 				B1B5598B20EFC5E400210D55 /* Analytics */,
@@ -2915,6 +2959,7 @@
 				B1664DA120F4F94F00808783 /* InfoPlist.strings in Resources */,
 				B1B5579B20EF575B00210D55 /* AuthInputsView.xib in Resources */,
 				B1B558EF20EF768F00210D55 /* RoomMembershipCollapsedWithPaginationTitleBubbleCell.xib in Resources */,
+				9772E9A322B3D4A900932A29 /* AudioAttachmentView.xib in Resources */,
 				B1B557E420EF60B900210D55 /* MessagesSearchResultAttachmentBubbleCell.xib in Resources */,
 				B1B558F220EF768F00210D55 /* RoomIncomingTextMsgWithoutSenderNameBubbleCell.xib in Resources */,
 				B1B558EA20EF768F00210D55 /* RoomOutgoingTextMsgWithPaginationTitleBubbleCell.xib in Resources */,
@@ -3323,6 +3368,7 @@
 				B1D4752821EE4E630067973F /* KeyboardNotification.swift in Sources */,
 				B1B5573C20EE6C4D00210D55 /* MasterTabBarController.m in Sources */,
 				B1B5592C20EF7A5D00210D55 /* TableViewCellWithButton.m in Sources */,
+				97C9EABD22B036E100918B38 /* AudioRecorderDelegate.swift in Sources */,
 				32242F1421E8FBA900725742 /* DefaultTheme.swift in Sources */,
 				32242F1321E8FBA900725742 /* Theme.swift in Sources */,
 				B1B5582520EF638A00210D55 /* RoomMemberTitleView.m in Sources */,
@@ -3398,6 +3444,7 @@
 				B140B4A221F87F7100E3F5FE /* OperationQueue.swift in Sources */,
 				B1B5575120EE6C4D00210D55 /* AuthenticationViewController.m in Sources */,
 				B17982FF2119FED2001FD722 /* GDPRConsentViewController.swift in Sources */,
+				979CCC1A22B0DAC3004C67DD /* AudioAttachmentView.swift in Sources */,
 				B1098BE121ECE09F000DDA48 /* Images.swift in Sources */,
 				97B885FE22831C1D00E16C88 /* Widget.m in Sources */,
 				B1B5575A20EE6C4D00210D55 /* UnifiedSearchViewController.m in Sources */,
@@ -3406,7 +3453,9 @@
 				B1B558F020EF768F00210D55 /* RoomOutgoingAttachmentWithPaginationTitleBubbleCell.m in Sources */,
 				97B885A0228312ED00E16C88 /* IncomingCallView.m in Sources */,
 				926FA53F1F4C132000F826C2 /* MXSession+Riot.m in Sources */,
+				97AEE84722B8474700B789C1 /* AudioManager.swift in Sources */,
 				B1B5593820EF7BAC00210D55 /* TableViewCellWithLabelAndLargeTextView.m in Sources */,
+				97C9EABF22B0512300918B38 /* AudioRecorder.swift in Sources */,
 				B1B558C820EF768F00210D55 /* RoomIncomingEncryptedAttachmentBubbleCell.m in Sources */,
 				B1B5590920EF768F00210D55 /* RoomEmptyBubbleCell.m in Sources */,
 				B139C21F21FE5D6600BB68EC /* KeyBackupRecoverFromPassphraseViewAction.swift in Sources */,
@@ -3434,6 +3483,7 @@
 				3281BCF72201FA4200F4A383 /* UIControl.swift in Sources */,
 				B16932EE20F3C3C900746532 /* FilesSearchCellData.m in Sources */,
 				B1B558E520EF768F00210D55 /* RoomMembershipExpandedBubbleCell.m in Sources */,
+				97DCB39322B4863D000ED2DE /* MXKRoomDataSource+Audio.m in Sources */,
 				32BF995121FA29DC00698084 /* SettingsKeyBackupViewModelType.swift in Sources */,
 				32BF995321FA2A1300698084 /* SettingsKeyBackupViewState.swift in Sources */,
 				B1B5599420EFC5E400210D55 /* DecryptionFailureTracker.m in Sources */,

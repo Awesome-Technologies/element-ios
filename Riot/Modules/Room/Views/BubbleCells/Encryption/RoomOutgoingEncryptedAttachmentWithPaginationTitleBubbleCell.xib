@@ -144,6 +144,13 @@
                             <constraint firstAttribute="trailing" secondItem="eU5-iK-u8i" secondAttribute="trailing" id="teG-8q-BOX"/>
                         </constraints>
                     </view>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MsS-Ic-4rN" customClass="AudioAttachmentView" customModule="Riot" customModuleProvider="target">
+                        <rect key="frame" x="67" y="70" width="448" height="42"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="42" id="qhn-Ah-CM0"/>
+                        </constraints>
+                    </view>
                     <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3b7-4a-YL0">
                         <rect key="frame" x="12" y="3" width="576" height="114"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -159,6 +166,7 @@
                     <constraint firstItem="hgp-Z5-rAj" firstAttribute="top" secondItem="ef1-Tq-U3Z" secondAttribute="top" constant="54" id="2Ih-ga-N9s"/>
                     <constraint firstItem="y8m-dS-1Df" firstAttribute="trailing" secondItem="q9c-0p-QyP" secondAttribute="trailing" id="6XL-SF-Mbj"/>
                     <constraint firstItem="5IE-JS-uf3" firstAttribute="leading" secondItem="hgp-Z5-rAj" secondAttribute="trailing" constant="24" id="6mM-Ag-m0K"/>
+                    <constraint firstItem="MsS-Ic-4rN" firstAttribute="leading" secondItem="hgp-Z5-rAj" secondAttribute="trailing" constant="24" id="8pk-bX-YkO"/>
                     <constraint firstItem="5IE-JS-uf3" firstAttribute="top" secondItem="ef1-Tq-U3Z" secondAttribute="top" constant="75" id="96U-67-5TP"/>
                     <constraint firstAttribute="trailing" secondItem="q9c-0p-QyP" secondAttribute="trailing" constant="85" id="Bkh-h2-JOQ"/>
                     <constraint firstItem="9Ke-Gc-Pal" firstAttribute="top" secondItem="SFg-55-RF4" secondAttribute="bottom" constant="34" id="Cc4-aR-SCV"/>
@@ -168,6 +176,7 @@
                     <constraint firstItem="q9c-0p-QyP" firstAttribute="top" secondItem="ef1-Tq-U3Z" secondAttribute="top" constant="54" id="Ixr-7h-f8j"/>
                     <constraint firstAttribute="bottom" secondItem="5IE-JS-uf3" secondAttribute="bottom" constant="10" id="SHN-tC-zsJ"/>
                     <constraint firstAttribute="bottom" secondItem="IOg-Kt-8vW" secondAttribute="bottom" id="TPw-iE-nii"/>
+                    <constraint firstItem="MsS-Ic-4rN" firstAttribute="centerY" secondItem="K9X-gn-noF" secondAttribute="centerY" id="Vdi-oU-TwJ"/>
                     <constraint firstItem="IOg-Kt-8vW" firstAttribute="top" secondItem="ef1-Tq-U3Z" secondAttribute="top" constant="54" id="XSL-TG-m62"/>
                     <constraint firstItem="q9c-0p-QyP" firstAttribute="leading" secondItem="hgp-Z5-rAj" secondAttribute="trailing" constant="24" id="YWK-C2-15w"/>
                     <constraint firstItem="3b7-4a-YL0" firstAttribute="leading" secondItem="ef1-Tq-U3Z" secondAttribute="leadingMargin" constant="-8" id="aGh-ad-trR"/>
@@ -176,6 +185,7 @@
                     <constraint firstItem="y8m-dS-1Df" firstAttribute="top" secondItem="q9c-0p-QyP" secondAttribute="top" constant="-6" id="euk-Q0-Li4"/>
                     <constraint firstAttribute="trailing" secondItem="IOg-Kt-8vW" secondAttribute="trailing" constant="15" id="hQV-lO-7aQ"/>
                     <constraint firstAttribute="trailing" secondItem="SFg-55-RF4" secondAttribute="trailing" constant="10" id="jvR-oT-EQF"/>
+                    <constraint firstAttribute="trailing" secondItem="MsS-Ic-4rN" secondAttribute="trailing" constant="85" id="nRE-Hu-Taf"/>
                     <constraint firstItem="5IE-JS-uf3" firstAttribute="leading" secondItem="K9X-gn-noF" secondAttribute="leading" id="p93-5h-lvW"/>
                     <constraint firstItem="jmK-pe-WZd" firstAttribute="centerY" secondItem="5IE-JS-uf3" secondAttribute="centerY" id="qqJ-jh-rGK"/>
                     <constraint firstItem="5IE-JS-uf3" firstAttribute="centerX" secondItem="Cot-3X-2cU" secondAttribute="centerX" id="sF7-QL-vdj"/>
@@ -198,6 +208,7 @@
                 <outlet property="attachViewTopConstraint" destination="96U-67-5TP" id="Ugm-cH-32E"/>
                 <outlet property="attachViewWidthConstraint" destination="9zO-jU-qTb" id="fOO-VW-fe1"/>
                 <outlet property="attachmentView" destination="5IE-JS-uf3" id="imT-1z-hR1"/>
+                <outlet property="audioAttachment" destination="MsS-Ic-4rN" id="E4p-7i-4eW"/>
                 <outlet property="bubbleInfoContainer" destination="IOg-Kt-8vW" id="TAw-QY-Y9e"/>
                 <outlet property="bubbleInfoContainerTopConstraint" destination="XSL-TG-m62" id="qVf-vJ-4aP"/>
                 <outlet property="bubbleOverlayContainer" destination="3b7-4a-YL0" id="KNb-h4-YHD"/>

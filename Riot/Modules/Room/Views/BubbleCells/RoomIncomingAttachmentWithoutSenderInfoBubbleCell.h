@@ -15,10 +15,13 @@
  */
 
 #import <MatrixKit/MatrixKit.h>
+#import "Riot-Swift.h"
 
 /**
  `RoomIncomingAttachmentWithoutSenderInfoBubbleCell` displays incoming message bubbles without sender's information.
  */
 @interface RoomIncomingAttachmentWithoutSenderInfoBubbleCell : MXKRoomIncomingAttachmentWithoutSenderInfoBubbleCell
+
+@property (weak, nonatomic) IBOutlet AudioAttachmentView *audioAttachment;
 
 @end

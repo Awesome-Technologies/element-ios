@@ -25,7 +25,17 @@
 "preview" = "Vorschau";
 "camera" = "Kamera";
 "voice" = "Sprache";
+"voice_message" = "Sprachnachricht";
+"audio" = "Audio";
+"no_microphone_access_title" = "Kein Zugriff auf das Mikrofon";
+"no_microphone_access_message" = "Erlauben Sie den Zugriff auf das Mikrofon in den Systemeinstellungen, um Sprachnachrichten zu senden.";
+"cancel_voice_recording_title" = "Sprachaufnahme abbrechen";
+"cancel_voice_recording_message" = "Möchten Sie die Sprachaufnahme abbrechen?";
+"paused" = "Pausiert";
+"close" = "Schließen";
 "video" = "Video";
+"image" = "Bild";
+"file" = "Datei";
 "active_call" = "Aktives Gespräch";
 "active_call_details" = "Aktives Gespräch (%@)";
 "later" = "Später";
@@ -544,6 +554,7 @@
 "rerequest_keys_alert_message" = "Öffne Riot bitte auf einem anderen Gerät, dass die Nachricht entschlüsseln kann, damit es die Schlüssel an dieses Gerät senden kann.";
 "room_message_reply_to_placeholder" = "Sende eine unverschlüsselte Antwort…";
 "encrypted_room_message_reply_to_placeholder" = "Sende eine verschlüsselte Antwort…";
+"room_message_recording_voice_placeholder" = "Aufnahme… %@";
 "room_message_reply_to_short_placeholder" = "Sende eine Antwort…";
 "room_replacement_information" = "Dieser Raum wurde ersetzt und ist nicht länger aktiv.";
 "room_replacement_link" = "Die Konversation wird hier fortgesetzt.";

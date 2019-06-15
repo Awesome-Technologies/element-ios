@@ -94,13 +94,21 @@
                             <constraint firstAttribute="trailing" secondItem="eU5-iK-u8i" secondAttribute="trailing" id="teG-8q-BOX"/>
                         </constraints>
                     </view>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="osX-8b-pbQ" customClass="AudioAttachmentView" customModule="Riot" customModuleProvider="target">
+                        <rect key="frame" x="67" y="0.0" width="448" height="42"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="42" id="U6h-Cr-W6X"/>
+                        </constraints>
+                    </view>
                     <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="WiZ-KM-lSH">
-                        <rect key="frame" x="12" y="3" width="576" height="34"/>
+                        <rect key="frame" x="12" y="3" width="576" height="36"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
                 </subviews>
                 <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                 <constraints>
+                    <constraint firstItem="osX-8b-pbQ" firstAttribute="leading" secondItem="ef1-Tq-U3Z" secondAttribute="leading" constant="67" id="07R-s4-2bG"/>
                     <constraint firstItem="8Bq-Mk-bN8" firstAttribute="centerY" secondItem="5IE-JS-uf3" secondAttribute="centerY" id="5xu-oS-Iyd"/>
                     <constraint firstItem="5IE-JS-uf3" firstAttribute="top" secondItem="ef1-Tq-U3Z" secondAttribute="top" constant="3" id="96U-67-5TP"/>
                     <constraint firstItem="og4-CH-o2D" firstAttribute="leading" secondItem="ef1-Tq-U3Z" secondAttribute="leading" constant="41" id="9n8-oP-8zp"/>
@@ -112,7 +120,9 @@
                     <constraint firstAttribute="bottom" secondItem="IOg-Kt-8vW" secondAttribute="bottom" id="TPw-iE-nii"/>
                     <constraint firstItem="IOg-Kt-8vW" firstAttribute="top" secondItem="ef1-Tq-U3Z" secondAttribute="top" constant="3" id="XSL-TG-m62"/>
                     <constraint firstItem="5IE-JS-uf3" firstAttribute="leading" secondItem="ef1-Tq-U3Z" secondAttribute="leading" constant="67" id="bSL-lG-ued"/>
+                    <constraint firstAttribute="trailing" secondItem="osX-8b-pbQ" secondAttribute="trailing" constant="85" id="dJm-fw-mqJ"/>
                     <constraint firstAttribute="trailing" secondItem="IOg-Kt-8vW" secondAttribute="trailing" constant="15" id="hQV-lO-7aQ"/>
+                    <constraint firstItem="osX-8b-pbQ" firstAttribute="centerY" secondItem="K9X-gn-noF" secondAttribute="centerY" constant="2" id="kIf-5F-HpY"/>
                     <constraint firstAttribute="bottomMargin" secondItem="WiZ-KM-lSH" secondAttribute="bottom" constant="-8" id="ofs-BR-F97"/>
                     <constraint firstItem="5IE-JS-uf3" firstAttribute="leading" secondItem="K9X-gn-noF" secondAttribute="leading" id="p93-5h-lvW"/>
                     <constraint firstItem="WiZ-KM-lSH" firstAttribute="leading" secondItem="ef1-Tq-U3Z" secondAttribute="leadingMargin" constant="-8" id="qKa-jp-T43"/>
@@ -132,6 +142,7 @@
                 <outlet property="attachViewTopConstraint" destination="96U-67-5TP" id="Ugm-cH-32E"/>
                 <outlet property="attachViewWidthConstraint" destination="9zO-jU-qTb" id="fOO-VW-fe1"/>
                 <outlet property="attachmentView" destination="5IE-JS-uf3" id="imT-1z-hR1"/>
+                <outlet property="audioAttachment" destination="osX-8b-pbQ" id="UZO-Pa-0Hp"/>
                 <outlet property="bubbleInfoContainer" destination="IOg-Kt-8vW" id="TAw-QY-Y9e"/>
                 <outlet property="bubbleInfoContainerTopConstraint" destination="XSL-TG-m62" id="qVf-vJ-4aP"/>
                 <outlet property="bubbleOverlayContainer" destination="WiZ-KM-lSH" id="07W-1f-K5G"/>

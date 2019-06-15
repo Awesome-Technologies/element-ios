@@ -18,7 +18,6 @@
 #import "RoomIncomingAttachmentBubbleCell.h"
 
 #import "ThemeService.h"
-#import "Riot-Swift.h"
 #import "MXKRoomBubbleTableViewCell+Riot.h"
 
 @implementation RoomIncomingAttachmentBubbleCell
@@ -37,6 +36,21 @@
     [super render:cellData];
  
     [self updateUserNameColor];
+    
+    if (bubbleData)
+    {
+        if (bubbleData.attachment.type == MXKAttachmentTypeAudio)
+        {
+            [self.audioAttachment setAttachment:bubbleData.attachment];
+            [self.audioAttachment setHidden:NO];
+            [self.attachmentView setHidden:YES];
+        }
+        else
+        {
+            [self.audioAttachment setHidden:YES];
+            [self.attachmentView setHidden:NO];
+        }
+    }
 }
 
 @end

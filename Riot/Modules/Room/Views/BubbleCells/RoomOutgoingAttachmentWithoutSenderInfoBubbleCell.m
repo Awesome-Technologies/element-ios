@@ -34,6 +34,20 @@
     [super render:cellData];
 
     [RoomOutgoingAttachmentBubbleCell render:cellData inBubbleCell:self];
+    
+    if (bubbleData) {
+        if (bubbleData.attachment.type == MXKAttachmentTypeAudio)
+        {
+            [self.audioAttachment setAttachment:bubbleData.attachment];
+            [self.audioAttachment setHidden:NO];
+            [self.attachmentView setHidden:YES];
+        }
+        else
+        {
+            [self.audioAttachment setHidden:YES];
+            [self.attachmentView setHidden:NO];
+        }
+    }
 }
 
 @end

@@ -19,6 +19,7 @@
 #import "RoomViewController.h"
 
 #import "RoomDataSource.h"
+#import "MXKRoomDataSource+Audio.h"
 #import "RoomBubbleCellData.h"
 
 #import "AppDelegate.h"
@@ -524,6 +525,9 @@
 {
     [super viewWillDisappear:animated];
     
+    // Pause audio
+    [[AudioManager shared] pauseAllPlayersAndRecorders];
+    
     // hide action
     if (currentAlert)
     {
@@ -804,6 +808,12 @@
 }
 
 #pragma mark - Override MXKRoomViewController
+
+- (void)mention:(MXRoomMember*)roomMember {
+    if (![AudioRecorder shared].isRecordingOrPaused) {
+        [super mention:roomMember];
+    }
+}
 
 - (void)onMatrixSessionChange
 {
@@ -1367,6 +1377,9 @@
     {
         RoomInputToolbarView *roomInputToolbarView = (RoomInputToolbarView*)self.inputToolbarView;
         
+        // Check room id so we don't end up with a voice recording in another room
+        [[AudioRecorder shared] checkWithRoomId:self.roomDataSource.roomId];
+        
         // Check whether the call option is supported
         roomInputToolbarView.supportCallOption = self.roomDataSource.mxSession.callManager && self.roomDataSource.room.isDirect;
         
@@ -1395,6 +1408,8 @@
             // Encrypt the user's messages as soon as the user supports the encryption?
             roomInputToolbarView.isEncryptionEnabled = (self.mainSession.crypto != nil);
         }
+        
+        [roomInputToolbarView reconstructAudioRecorderState];
     }
     else if (self.inputToolbarView && [self.inputToolbarView isKindOfClass:DisabledRoomInputToolbarView.class])
     {
@@ -1855,7 +1870,7 @@
         }
         else if (bubbleData.isIncoming)
         {
-            if (bubbleData.isAttachmentWithThumbnail)
+            if (bubbleData.isAttachmentWithThumbnail || bubbleData.isAttachmentWithIcon)
             {
                 // Check whether the provided celldata corresponds to a selected sticker
                 if (customizedRoomDataSource.selectedEventId && (bubbleData.attachment.type == MXKAttachmentTypeSticker) && [bubbleData.attachment.eventId isEqualToString:customizedRoomDataSource.selectedEventId])
@@ -1905,7 +1920,7 @@
         else
         {
             // Handle here outgoing bubbles
-            if (bubbleData.isAttachmentWithThumbnail)
+            if (bubbleData.isAttachmentWithThumbnail || bubbleData.isAttachmentWithIcon)
             {
                 // Check whether the provided celldata corresponds to a selected sticker
                 if (customizedRoomDataSource.selectedEventId && (bubbleData.attachment.type == MXKAttachmentTypeSticker) && [bubbleData.attachment.eventId isEqualToString:customizedRoomDataSource.selectedEventId])
@@ -2118,7 +2133,7 @@
                                                                [self cancelEventSelection];
                                                                
                                                                // Let the datasource resend. It will manage local echo, etc.
-                                                               [self.roomDataSource resendEventWithEventId:selectedEvent.eventId success:nil failure:nil];
+                                                               [self.roomDataSource resendAudioEventWithEventId:selectedEvent.eventId success:nil failure:nil];
                                                            }
                                                            
                                                        }]];
@@ -2953,6 +2968,13 @@
             savedInputToolbarPlaceholder = nil;
         }];
     }
+}
+
+- (void)roomInputToolbarView:(MXKRoomInputToolbarView*)toolbarView sendAudio:(NSURL*)audioFileURL
+{
+    [self.roomDataSource sendAudioFile:audioFileURL mimeType:@"audio/aac" success:^(NSString *eventId) {} failure:^(NSError *error) {
+        NSLog(@"[RoomViewController] sendAudio failed.");
+    }];
 }
 
 #pragma mark - RoomParticipantsViewControllerDelegate
@@ -4079,7 +4101,7 @@
         NSUInteger nextIndex = index + 1;
         
         // Let the datasource resend. It will manage local echo, etc.
-        [self.roomDataSource resendEventWithEventId:failedEventId success:^(NSString *eventId) {
+        [self.roomDataSource resendAudioEventWithEventId:failedEventId success:^(NSString *error) {
             
             [self resendFailedEvent:nextIndex inArray:failedEventIds];
             

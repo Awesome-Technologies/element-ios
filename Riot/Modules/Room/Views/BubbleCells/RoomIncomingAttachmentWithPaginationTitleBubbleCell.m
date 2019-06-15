@@ -18,7 +18,6 @@
 #import "RoomIncomingAttachmentWithPaginationTitleBubbleCell.h"
 
 #import "ThemeService.h"
-#import "Riot-Swift.h"
 #import "MXKRoomBubbleTableViewCell+Riot.h"
 
 @implementation RoomIncomingAttachmentWithPaginationTitleBubbleCell
@@ -42,6 +41,18 @@
         self.paginationLabel.text = [[bubbleData.eventFormatter dateStringFromDate:bubbleData.date withTime:NO] uppercaseString];
         
         [self updateUserNameColor];
+        
+        if (bubbleData.attachment.type == MXKAttachmentTypeAudio)
+        {
+            [self.audioAttachment setAttachment:bubbleData.attachment];
+            [self.audioAttachment setHidden:NO];
+            [self.attachmentView setHidden:YES];
+        }
+        else
+        {
+            [self.audioAttachment setHidden:YES];
+            [self.attachmentView setHidden:NO];
+        }
     }
 }
 

@@ -18,7 +18,6 @@
 #import "RoomIncomingAttachmentWithoutSenderInfoBubbleCell.h"
 
 #import "ThemeService.h"
-#import "Riot-Swift.h"
 
 @implementation RoomIncomingAttachmentWithoutSenderInfoBubbleCell
 
@@ -27,6 +26,26 @@
     [super customizeTableViewCellRendering];
 
     self.messageTextView.tintColor = ThemeService.shared.theme.textPrimaryColor;
+}
+
+- (void)render:(MXKCellData *)cellData
+{
+    [super render:cellData];
+    
+    if (bubbleData)
+    {
+        if (bubbleData.attachment.type == MXKAttachmentTypeAudio)
+        {
+            [self.audioAttachment setAttachment:bubbleData.attachment];
+            [self.audioAttachment setHidden:NO];
+            [self.attachmentView setHidden:YES];
+        }
+        else
+        {
+            [self.audioAttachment setHidden:YES];
+            [self.attachmentView setHidden:NO];
+        }
+    }
 }
 
 @end

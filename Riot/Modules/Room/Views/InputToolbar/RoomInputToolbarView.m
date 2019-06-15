@@ -40,6 +40,9 @@
     
     // The intermediate action sheet
     UIAlertController *actionSheet;
+    
+    // Timer to update placerholder when recording voice message
+    CADisplayLink *placeholderTimer;
 }
 
 @end
@@ -79,6 +82,16 @@
     self.isEncryptionEnabled = _isEncryptionEnabled;
     
     self.attachMediaButton.imageView.tintColor = ThemeService.shared.theme.textPrimaryColor;
+    [self.cancelAudioButton.imageView setTintColor:ThemeService.shared.theme.warningColor];
+    
+    [self.pauseAudioButton setHidden:YES];
+    [self.cancelAudioButton setHidden:YES];
+    
+    placeholderTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(setVoiceRecordingPlaceholder)];
+    [placeholderTimer addToRunLoop:NSRunLoop.mainRunLoop forMode:NSRunLoopCommonModes];
+    [placeholderTimer setPaused:YES];
+    
+    [AudioRecorder shared].delegate = self;
 }
 
 #pragma mark - Override MXKView
@@ -112,16 +125,7 @@
     {
         _supportCallOption = supportCallOption;
         
-        if (supportCallOption)
-        {
-            self.voiceCallButtonWidthConstraint.constant = 46;
-        }
-        else
-        {
-            self.voiceCallButtonWidthConstraint.constant = 0;
-        }
-        
-        [self setNeedsUpdateConstraints];
+        [self updateVoiceCallInterfaceElements];
     }
 }
 
@@ -153,8 +157,14 @@
         }
     }
     
-    
-    self.placeholder = placeholder;
+    if ([AudioRecorder shared].isRecordingOrPaused)
+    {
+        [self setVoiceRecordingPlaceholder];
+    }
+    else
+    {
+        self.placeholder = placeholder;
+    }
 }
 
 - (void)setReplyToEnabled:(BOOL)isReplyToEnabled
@@ -189,7 +199,31 @@
         }
     }
     
-    self.placeholder = placeholder;
+    if ([AudioRecorder shared].isRecordingOrPaused)
+    {
+        [self setVoiceRecordingPlaceholder];
+    }
+    else
+    {
+        self.placeholder = placeholder;
+    }
+}
+
+- (void)setVoiceRecordingPlaceholder
+{
+    if ([AudioRecorder shared].isPaused)
+    {
+        self.placeholder = [NSString stringWithFormat:NSLocalizedStringFromTable(@"room_message_recording_voice_placeholder", @"Vector", nil), NSLocalizedStringFromTable(@"paused", @"Vector", nil)];
+    }
+    else if ([AudioRecorder shared].isRecordingOrPaused)
+    {
+        self.placeholder = [NSString stringWithFormat:NSLocalizedStringFromTable(@"room_message_recording_voice_placeholder", @"Vector", nil), [AudioRecorder shared].recordingTimeString];
+    }
+    else
+    {
+        [placeholderTimer setPaused:YES];
+        [self updatePlaceholder];
+    }
 }
 
 - (void)setActiveCall:(BOOL)activeCall
@@ -198,9 +232,28 @@
     {
         _activeCall = activeCall;
         
-        self.voiceCallButton.hidden = (_activeCall || !self.rightInputToolbarButton.hidden);
-        self.hangupCallButton.hidden = (!_activeCall || !self.rightInputToolbarButton.hidden);
+        [self updateVoiceCallInterfaceElements];
     }
+}
+
+- (void)updateVoiceCallInterfaceElements
+{
+    if (_supportCallOption && ![AudioRecorder shared].isRecordingOrPaused)
+    {
+        self.voiceCallButtonWidthConstraint.constant = 46;
+    }
+    else
+    {
+        self.voiceCallButtonWidthConstraint.constant = 0;
+    }
+    
+    [self setNeedsUpdateConstraints];
+    
+    self.attachMediaButton.hidden = _activeCall;
+    self.voiceCallButton.hidden = (_activeCall || !self.rightInputToolbarButton.hidden) || [AudioRecorder shared].isRecordingOrPaused;
+    self.hangupCallButton.hidden = (!_activeCall || !self.rightInputToolbarButton.hidden) || [AudioRecorder shared].isRecordingOrPaused;
+    
+    [self updatePlaceholder];
 }
 
 #pragma mark - HPGrowingTextView delegate
@@ -235,7 +288,7 @@
     else if (!self.rightInputToolbarButton.isEnabled && !self.rightInputToolbarButton.isHidden)
     {
         self.rightInputToolbarButton.hidden = YES;
-        self.attachMediaButton.hidden = NO;
+        self.attachMediaButton.hidden = _activeCall;
         self.voiceCallButton.hidden = _activeCall;
         self.hangupCallButton.hidden = !_activeCall;
         
@@ -262,16 +315,141 @@
     }
 }
 
+#pragma mark - AudioRecorderDelegate
+
+- (void)voiceRecordingDidStartRecording
+{
+    [placeholderTimer setPaused:NO];
+    
+    [self.attachMediaButton.imageView setTintColor:[UIColor colorWithRed:0.13 green:0.7 blue:0.52 alpha:1]];
+    
+    [self->growingTextView setEditable:NO];
+    [self updateVoiceCallInterfaceElements];
+    
+    [self.cancelAudioButton setHidden:NO];
+    [self.pauseAudioButton setHidden:NO];
+    [self.pauseAudioButton setImage:[UIImage imageNamed:@"pause-audio"] forState:UIControlStateNormal];
+    
+    [self setReplyToEnabled:NO];
+    
+    [self setNeedsUpdateConstraints];
+}
+
+- (void)voiceRecordingDidPauseRecording
+{
+    [self.pauseAudioButton setImage:[UIImage imageNamed:@"play-audio"] forState:UIControlStateNormal];
+    [placeholderTimer setPaused:YES];
+    [self setVoiceRecordingPlaceholder];
+}
+
+- (void)presentAlertController:(UIAlertController *)alertController
+{
+    [self.window.rootViewController presentViewController:alertController animated:YES completion:nil];
+}
+
+- (void)voiceRecordingDidFinishRecordingWithURL:(NSURL *)audioFileURL
+{
+    [self.delegate roomInputToolbarView:self sendAudio:audioFileURL];
+    [self resetFromVoiceRecording];
+}
+
+- (void)voiceRecordingDidStopRecording
+{
+    [self resetFromVoiceRecording];
+}
+
+- (void)resetFromVoiceRecording
+{
+    [placeholderTimer setPaused:YES];
+    [self.attachMediaButton.imageView setTintColor:ThemeService.shared.theme.textPrimaryColor];
+    
+    [self->growingTextView setEditable:YES];
+    [self.pauseAudioButton setHidden:YES];
+    [self.cancelAudioButton setHidden:YES];
+    [self updateVoiceCallInterfaceElements];
+    
+    [self setReplyToEnabled:YES];
+}
+
+- (void)reconstructAudioRecorderState {
+    // Checking if a paused audio recorder exists
+    if (![AudioRecorder shared].isPaused) {
+        return;
+    }
+    [self voiceRecordingDidStartRecording];
+    [self voiceRecordingDidPauseRecording];
+}
+
 #pragma mark - Override MXKRoomInputToolbarView
 
 - (IBAction)onTouchUpInside:(UIButton*)button
 {
-    if (button == self.attachMediaButton)
+    if (button == self.pauseAudioButton)
     {
-        // Check whether media attachment is supported
-        if ([self.delegate respondsToSelector:@selector(roomInputToolbarView:presentViewController:)])
+        [[AudioRecorder shared] togglePauseRecording];
+    }
+    else if (button == self.cancelAudioButton)
+    {
+        [[AudioRecorder shared] cancelRecordingWithForceCancel:NO];
+    }
+    else if (button == self.attachMediaButton)
+    {
+        if ([AudioRecorder shared].isRecordingOrPaused)
         {
-            [self showMediaPicker];
+            [[AudioRecorder shared] stopRecording];
+        }
+        // Check whether media attachment is supported
+        else if ([self.delegate respondsToSelector:@selector(roomInputToolbarView:presentViewController:)])
+        {
+            // Ask the user the kind of the call: voice or video?
+            actionSheet = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+            
+            [[AudioRecorder shared] prepareRecorder];
+            
+            __weak typeof(self) weakSelf = self;
+            [actionSheet addAction:[UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"voice_message", @"Vector", nil)
+                                                            style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction * action) {
+                                                              
+                                                              if (weakSelf)
+                                                              {
+                                                                  typeof(self) self = weakSelf;
+                                                                  
+                                                                  NSLog(@"[onTouchUpInside] Recording Audio");
+                                                                  
+                                                                  [[AudioRecorder shared] initRecorder];
+                                                              }
+                                                              
+                                                          }]];
+            
+            [actionSheet addAction:[UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"camera", @"Vector", nil)
+                                                            style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction * action) {
+                                                              
+                                                              if (weakSelf)
+                                                              {
+                                                                  typeof(self) self = weakSelf;
+                                                                  
+                                                                  [self showMediaPicker];
+                                                              }
+                                                              
+                                                          }]];
+            
+            [actionSheet addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"cancel"]
+                                                            style:UIAlertActionStyleCancel
+                                                          handler:^(UIAlertAction * action) {
+                                                              
+                                                              if (weakSelf)
+                                                              {
+                                                                  typeof(self) self = weakSelf;
+                                                                  self->actionSheet = nil;
+                                                              }
+                                                              
+                                                          }]];
+            
+            [actionSheet popoverPresentationController].sourceView = self.voiceCallButton;
+            [actionSheet popoverPresentationController].sourceRect = self.voiceCallButton.bounds;
+            [self.window.rootViewController presentViewController:actionSheet animated:YES completion:nil];
         }
         else
         {
@@ -331,7 +509,7 @@
             [self.window.rootViewController presentViewController:actionSheet animated:YES completion:nil];
         }
     }
-    else if (button == self.hangupCallButton)
+    else if (button == self.hangupCallButton && ![AudioRecorder shared].isRecordingOrPaused)
     {
         if ([self.delegate respondsToSelector:@selector(roomInputToolbarViewHangupCall:)])
         {

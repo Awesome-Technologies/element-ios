@@ -15,11 +15,14 @@
  */
 
 #import <MatrixKit/MatrixKit.h>
+#import <Riot-Swift.h>
 
 /**
  `RoomOutgoingAttachmentBubbleCell` displays outgoing attachment bubbles.
  */
 @interface RoomOutgoingAttachmentBubbleCell : MXKRoomOutgoingAttachmentBubbleCell
+
+@property (weak, nonatomic) IBOutlet AudioAttachmentView *audioAttachment;
 
 /**
  Render specifically outgoing attachment.

@@ -15,10 +15,13 @@
  */
 
 #import <MatrixKit/MatrixKit.h>
+#import "Riot-Swift.h"
 
 /**
  `RoomIncomingAttachmentBubbleCell` displays incoming attachment bubbles with sender's information.
  */
 @interface RoomIncomingAttachmentBubbleCell : MXKRoomIncomingAttachmentBubbleCell
+
+@property (weak, nonatomic) IBOutlet AudioAttachmentView *audioAttachment;
 
 @end

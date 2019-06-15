@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="AudioAttachmentView" customModule="Riot" customModuleProvider="target">
+            <connections>
+                <outlet property="activityIndicator" destination="24l-bV-MQQ" id="vbf-sV-MvQ"/>
+                <outlet property="durationLabel" destination="eGh-FP-fWp" id="sDj-NV-HKD"/>
+                <outlet property="playStopToggleButton" destination="B2w-U9-hAC" id="uhU-Q0-E6Z"/>
+                <outlet property="timeSlider" destination="xdX-XG-gQ3" id="JXv-pB-gDa"/>
+                <outlet property="view" destination="iN0-l3-epB" id="tJq-Hn-amo"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="349" height="42"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="B2w-U9-hAC">
+                    <rect key="frame" x="6" y="9" width="24" height="24"/>
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="B2w-U9-hAC" secondAttribute="height" multiplier="1:1" id="9xo-pX-A2V"/>
+                        <constraint firstAttribute="width" constant="24" id="gw6-i9-CjV"/>
+                    </constraints>
+                    <state key="normal" image="play-audio"/>
+                    <connections>
+                        <action selector="togglePlayback:" destination="-1" eventType="touchUpInside" id="V5f-D3-uV6"/>
+                    </connections>
+                </button>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:00 / 00:00" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eGh-FP-fWp">
+                    <rect key="frame" x="270" y="5" width="67" height="12"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="xdX-XG-gQ3">
+                    <rect key="frame" x="40" y="12" width="299" height="31"/>
+                    <connections>
+                        <action selector="startScrubbing:" destination="-1" eventType="touchDown" id="qoq-a2-XPD"/>
+                        <action selector="stopScrubbing:" destination="-1" eventType="touchCancel" id="DoT-iG-4jN"/>
+                        <action selector="stopScrubbing:" destination="-1" eventType="touchUpOutside" id="Vfk-1N-AAO"/>
+                        <action selector="stopScrubbing:" destination="-1" eventType="touchUpInside" id="ojo-PQ-v2e"/>
+                        <action selector="timeSliderValueChanged:" destination="-1" eventType="valueChanged" id="fx6-EL-Y1P"/>
+                    </connections>
+                </slider>
+                <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="24l-bV-MQQ">
+                    <rect key="frame" x="164.5" y="11" width="20" height="20"/>
+                </activityIndicatorView>
+            </subviews>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="xdX-XG-gQ3" secondAttribute="trailing" constant="12" id="11O-DS-cFD"/>
+                <constraint firstItem="xdX-XG-gQ3" firstAttribute="trailing" secondItem="eGh-FP-fWp" secondAttribute="trailing" id="28d-b7-IqR"/>
+                <constraint firstItem="eGh-FP-fWp" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="5" id="9p2-I7-7nY"/>
+                <constraint firstItem="24l-bV-MQQ" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="AEs-We-Ck1"/>
+                <constraint firstItem="24l-bV-MQQ" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="DjJ-Mf-eZz"/>
+                <constraint firstItem="xdX-XG-gQ3" firstAttribute="leading" secondItem="B2w-U9-hAC" secondAttribute="trailing" constant="12" id="Hcr-d9-yE7"/>
+                <constraint firstItem="xdX-XG-gQ3" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" constant="6" id="btQ-cM-9Lr"/>
+                <constraint firstItem="B2w-U9-hAC" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="6" id="e9p-Rg-TDs"/>
+                <constraint firstItem="B2w-U9-hAC" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="fAf-Bf-BEn"/>
+            </constraints>
+            <nil key="simulatedTopBarMetrics"/>
+            <nil key="simulatedBottomBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="103.2" y="289.20539730134936"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="play-audio" width="28" height="28"/>
+    </resources>
+</document>

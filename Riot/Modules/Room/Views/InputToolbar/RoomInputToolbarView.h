@@ -15,6 +15,7 @@
  */
 
 #import <MatrixKit/MatrixKit.h>
+#import <Riot-Swift.h>
 
 @protocol RoomInputToolbarViewDelegate <MXKRoomInputToolbarViewDelegate>
 
@@ -25,13 +26,21 @@
  */
 - (void)roomInputToolbarViewPresentStickerPicker:(MXKRoomInputToolbarView*)toolbarView;
 
+/**
+ Tells the delegate that the user wants to send an audio file.
+ 
+ @param toolbarView the room input toolbar view.
+ @param audioFileURL local url to the audio file.
+ */
+- (void)roomInputToolbarView:(MXKRoomInputToolbarView*)toolbarView sendAudio:(NSURL*)audioFileURL;
+
 @end
 
 /**
  `RoomInputToolbarView` instance is a view used to handle all kinds of available inputs
  for a room (message composer, attachments selection...).
  */
-@interface RoomInputToolbarView : MXKRoomInputToolbarViewWithHPGrowingText
+@interface RoomInputToolbarView : MXKRoomInputToolbarViewWithHPGrowingText <AudioRecorderDelegate>
 
 /**
  The delegate notified when inputs are ready.
@@ -54,6 +63,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *attachMediaButton;
 @property (weak, nonatomic) IBOutlet UIButton *voiceCallButton;
 @property (weak, nonatomic) IBOutlet UIButton *hangupCallButton;
+@property (weak, nonatomic) IBOutlet UIButton *pauseAudioButton;
+@property (weak, nonatomic) IBOutlet UIButton *cancelAudioButton;
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *voiceCallButtonWidthConstraint;
 
@@ -76,5 +87,10 @@
  Tell whether a call is active.
  */
 @property (nonatomic) BOOL activeCall;
+
+/**
+ Reconstruct paused audio recorder user interface
+ */
+- (void)reconstructAudioRecorderState;
 
 @end
