@@ -1728,6 +1728,10 @@ SignOutAlertPresenterDelegate>
 
 - (void)updateSaveButtonStatus
 {
+    if ([AppDelegate theDelegate].masterTabBarController.selectedViewController != self)
+    {
+        return;
+    }
     if ([AppDelegate theDelegate].mxSessions.count > 0)
     {
         MXSession* session = [AppDelegate theDelegate].mxSessions[0];
