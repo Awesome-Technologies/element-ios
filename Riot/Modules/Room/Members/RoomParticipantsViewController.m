@@ -1162,7 +1162,7 @@
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.section == participantsSection || indexPath.section == invitedSection)
+    if ((indexPath.section == participantsSection || indexPath.section == invitedSection) && !self.mxRoom.isDirect)
     {
         return YES;
     }
