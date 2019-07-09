@@ -502,7 +502,10 @@
     {
         isOneself = YES;
         
-        [otherActionsArray addObject:@(MXKRoomMemberDetailsActionLeave)];
+        if (!self.mxRoom.isDirect)
+        {
+            [otherActionsArray addObject:@(MXKRoomMemberDetailsActionLeave)];
+        }
         
         if (oneSelfPowerLevel >= [powerLevels minimumPowerLevelForSendingEventAsStateEvent:kMXEventTypeStringRoomPowerLevels])
         {
