@@ -107,7 +107,7 @@
     // Check the table view style to select its bg color.
     self.receiptsTableView.backgroundColor = ((self.receiptsTableView.style == UITableViewStylePlain) ? ThemeService.shared.theme.backgroundColor : ThemeService.shared.theme.headerBackgroundColor);
     
-    self.closeButton.tintColor = ThemeService.shared.theme.tintColor;
+    self.closeButton.tintColor = ThemeService.shared.theme.textPrimaryColor;
     
     if (self.receiptsTableView.dataSource)
     {
