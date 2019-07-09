@@ -943,6 +943,8 @@
     self.jumpToLastUnreadBannerContainer.hidden = YES;
     
     [super leaveRoomOnEvent:event];
+    
+    self.leftRoomReasonLabel.textColor = ThemeService.shared.theme.textPrimaryColor;
 }
 
 // Set the input toolbar according to the current display
