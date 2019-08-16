@@ -437,8 +437,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo" translatesAutoresizingMaskIntoConstraints="NO" id="6LG-qc-7jf">
-                                <rect key="frame" x="127" y="283" width="120" height="101"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="AMPcare" translatesAutoresizingMaskIntoConstraints="NO" id="6LG-qc-7jf">
+                                <rect key="frame" x="71.5" y="208.5" width="232" height="250"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="250" id="rUy-0U-AbX"/>
+                                </constraints>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -594,8 +597,8 @@
     </scenes>
     <resources>
         <image name="apps-icon" width="24" height="24"/>
-        <image name="logo" width="120" height="101"/>
         <image name="search_icon" width="22" height="22"/>
+        <image name="AMPcare" width="232" height="400"/>
         <image name="settings_icon" width="24" height="24"/>
         <image name="tab_favourites" width="25" height="25"/>
         <image name="tab_favourites_selected" width="25" height="25"/>
