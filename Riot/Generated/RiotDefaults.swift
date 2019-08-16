@@ -39,10 +39,7 @@ internal enum RiotDefaults {
   internal static let showRedactionsInRoomHistory: Bool = _document["showRedactionsInRoomHistory"]
   internal static let showUnsupportedEventsInRoomHistory: Bool = _document["showUnsupportedEventsInRoomHistory"]
   internal static let sortRoomMembersUsingLastSeenTime: Bool = _document["sortRoomMembersUsingLastSeenTime"]
-  internal static let syncLocalContacts: Bool = _document["syncLocalContacts"]
   internal static let webAppUrl: String = _document["webAppUrl"]
-  internal static let webAppUrlBeta: String = _document["webAppUrlBeta"]
-  internal static let webAppUrlDev: String = _document["webAppUrlDev"]
 }
 // swiftlint:enable identifier_name line_length type_body_length
 

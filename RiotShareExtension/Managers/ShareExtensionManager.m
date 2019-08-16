@@ -75,7 +75,7 @@ typedef NS_ENUM(NSInteger, ImageCompressionMode)
         
         MXSDKOptions *sdkOptions = [MXSDKOptions sharedInstance];
         // Apply the application group
-        sdkOptions.applicationGroupIdentifier = @"group.im.vector";
+        sdkOptions.applicationGroupIdentifier = @"group.care.amp";
         // Disable identicon use
         sdkOptions.disableIdenticonUseForUserAvatar = YES;
         // Enable e2e encryption for newly created MXSession

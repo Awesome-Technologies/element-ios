@@ -110,6 +110,7 @@
    </AnalyzeAction>
    <ArchiveAction
       buildConfiguration = "Release"
+      customArchiveName = "AMP Care"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>
