@@ -29,25 +29,11 @@
         <!--Room-->
         <scene sceneID="UrN-g2-oG1">
             <objects>
-                <viewController storyboardIdentifier="RoomViewControllerStoryboardId" title="Room" hidesBottomBarWhenPushed="YES" id="msb-ol-2LB" customClass="RoomViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="RoomViewControllerStoryboardId" title="Room" hidesBottomBarWhenPushed="YES" id="msb-ol-2LB" customClass="CaseDetailRoomViewController" customModule="Riot" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationItem key="navigationItem" id="3Zt-Wl-J6o">
                         <nil key="title"/>
-                        <view key="titleView" contentMode="scaleToFill" id="aas-th-FW1" userLabel="Room title view container">
-                            <rect key="frame" x="8" y="2" width="312" height="40"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
-                        </view>
-                        <rightBarButtonItems>
-                            <barButtonItem image="search_icon" id="wyR-qv-IxC" userLabel="Menu Bar Button Item">
-                                <inset key="imageInsets" minX="-5" minY="0.0" maxX="5" maxY="0.0"/>
-                            </barButtonItem>
-                            <barButtonItem image="apps-icon" id="cal-D0-6Fw">
-                                <inset key="imageInsets" minX="10" minY="0.0" maxX="-10" maxY="0.0"/>
-                            </barButtonItem>
-                        </rightBarButtonItems>
                     </navigationItem>
                     <connections>
-                        <outlet property="roomTitleViewContainer" destination="aas-th-FW1" id="SFz-1s-ywg"/>
                         <segue destination="e7G-NU-7ck" kind="show" identifier="showRoomDetails" id="vCz-dl-6xQ"/>
                         <segue destination="KDg-aD-xlK" kind="show" identifier="showRoomSearch" id="hdA-V1-9AF"/>
                         <segue destination="nDS-pp-sWM" kind="show" identifier="showMemberDetails" id="cUw-vU-gJq"/>
@@ -259,7 +245,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pEk-LO-Ij0" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="942" y="-2818"/>
+            <point key="canvasLocation" x="1127" y="-2910"/>
         </scene>
         <!--Master Tab Bar Controller-->
         <scene sceneID="iBe-Y5-gBt">
@@ -274,14 +260,6 @@
                                 <segue destination="taU-5Q-sdv" kind="show" identifier="showSettings" id="3jh-kY-vVn"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" image="search_icon" id="pud-Fh-Usd">
-                            <userDefinedRuntimeAttributes>
-                                <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="MasterTabBarControllerSearchBarButton"/>
-                            </userDefinedRuntimeAttributes>
-                            <connections>
-                                <segue destination="nJt-uq-tV9" kind="show" identifier="showUnifiedSearch" id="5no-rS-zX7"/>
-                            </connections>
-                        </barButtonItem>
                     </navigationItem>
                     <tabBar key="tabBar" contentMode="scaleToFill" id="7jP-3G-C0b">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="49"/>
@@ -289,17 +267,18 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </tabBar>
                     <connections>
-                        <outlet property="searchBarButtonIem" destination="pud-Fh-Usd" id="DiH-Re-nZE"/>
                         <outlet property="settingsBarButtonItem" destination="QSE-cg-V2m" id="N6b-Ju-w9g"/>
                         <segue destination="vC3-pB-5Vb" kind="showDetail" identifier="showRoomDetails" id="tk8-vF-K4T"/>
                         <segue destination="ZlD-EU-ncw" kind="presentation" identifier="showAuth" id="fpJ-zM-Qpo"/>
-                        <segue destination="pBa-To-3YT" kind="relationship" relationship="viewControllers" id="Sfs-mh-GOz"/>
                         <segue destination="vC3-pB-5Vb" kind="showDetail" identifier="showContactDetails" id="p4M-yR-DLA"/>
+                        <segue destination="vC3-pB-5Vb" kind="showDetail" identifier="showGroupDetails" id="fIR-e3-ssz"/>
+                        <segue destination="g9z-mK-hCf" kind="showDetail" identifier="showCases" id="Qpf-Eh-sXR"/>
+                        <segue destination="g9z-mK-hCf" kind="relationship" relationship="viewControllers" id="rnS-en-AEw"/>
+                        <segue destination="pBa-To-3YT" kind="relationship" relationship="viewControllers" id="Sfs-mh-GOz"/>
                         <segue destination="HnD-LA-psC" kind="relationship" relationship="viewControllers" id="zON-Qp-EVq"/>
                         <segue destination="IGB-jr-yFz" kind="relationship" relationship="viewControllers" id="CeF-yL-aO0"/>
                         <segue destination="HPQ-zg-lZR" kind="relationship" relationship="viewControllers" id="y12-eg-vhO"/>
                         <segue destination="SLx-Wj-p7E" kind="relationship" relationship="viewControllers" id="MLn-VT-30W"/>
-                        <segue destination="vC3-pB-5Vb" kind="showDetail" identifier="showGroupDetails" id="fIR-e3-ssz"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="k1S-FF-3Zu" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -328,10 +307,10 @@
         <scene sceneID="9we-7Q-LBo">
             <objects>
                 <tableViewController title="Settings" id="taU-5Q-sdv" customClass="SettingsViewController" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="interactive" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="egL-pK-Xhr">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="interactive" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="egL-pK-Xhr">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <connections>
                             <outlet property="dataSource" destination="taU-5Q-sdv" id="Ipf-IM-E39"/>
                             <outlet property="delegate" destination="taU-5Q-sdv" id="kIU-uT-h9Y"/>
@@ -594,10 +573,32 @@
             </objects>
             <point key="canvasLocation" x="4174" y="-2050"/>
         </scene>
+        <!--Cases View Controller-->
+        <scene sceneID="nih-0s-9VU">
+            <objects>
+                <viewController id="g9z-mK-hCf" customClass="CasesViewController" customModule="Riot" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="VWT-ON-2NC"/>
+                        <viewControllerLayoutGuide type="bottom" id="GQz-T2-J8e"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="GAY-Vm-hKW">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="" image="tab_home" selectedImage="tab_home_selected" id="Dpn-yh-edQ">
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="TabBarItemHome"/>
+                        </userDefinedRuntimeAttributes>
+                    </tabBarItem>
+                    <navigationItem key="navigationItem" id="p7c-9C-gk9"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="rZm-NA-eYY" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="336.80000000000001" y="-3187.5562218890559"/>
+        </scene>
     </scenes>
     <resources>
-        <image name="apps-icon" width="24" height="24"/>
-        <image name="search_icon" width="22" height="22"/>
         <image name="AMPcare" width="232" height="400"/>
         <image name="settings_icon" width="24" height="24"/>
         <image name="tab_favourites" width="25" height="25"/>
@@ -611,8 +612,9 @@
         <image name="tab_rooms" width="25" height="25"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Tfl-tq-LQp"/>
-        <segue reference="fIR-e3-ssz"/>
+        <segue reference="Qpf-Eh-sXR"/>
+        <segue reference="mhb-l9-pM3"/>
+        <segue reference="p4M-yR-DLA"/>
         <segue reference="f5u-Y1-7nt"/>
         <segue reference="vCz-dl-6xQ"/>
         <segue reference="cUw-vU-gJq"/>

@@ -102,6 +102,8 @@
     
     childViewControllers = [NSMutableArray array];
     
+    [self.tabBar setHidden:YES];
+    
     // Initialize here the data sources if a matrix session has been already set.
     [self initializeDataSources];
     
@@ -269,6 +271,8 @@
         [_favouritesViewController displayList:recentsDataSource];
         [_peopleViewController displayList:recentsDataSource];
         [_roomsViewController displayList:recentsDataSource];
+        MXKRecentsDataSource *source = [[MXKRecentsDataSource alloc] initWithMatrixSession:mainSession];
+        [(CasesViewController *)self.viewControllers[TABBAR_CASES_INDEX] displayList:source];
         
         // Restore the right delegate of the shared recent data source.
         id<MXKDataSourceDelegate> recentsDataSourceDelegate = _homeViewController;
@@ -580,53 +584,39 @@
         
         if ([[segue identifier] isEqualToString:@"showRoomDetails"])
         {
-            if (_selectedRoomPreviewData)
-            {
+            MXWeakify(self);
+            void (^openRoomDataSource)(MXKRoomDataSource *roomDataSource) = ^(MXKRoomDataSource *roomDataSource) {
+                MXStrongifyAndReturnIfNil(self);
+                
                 // Replace the rootviewcontroller with a room view controller
                 // Get the RoomViewController from the storyboard
                 UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
-                _currentRoomViewController = [storyboard instantiateViewControllerWithIdentifier:@"RoomViewControllerStoryboardId"];
-
-                navigationController.viewControllers = @[_currentRoomViewController];
-
-                [_currentRoomViewController displayRoomPreview:_selectedRoomPreviewData];
-                _selectedRoomPreviewData = nil;
-
+                self->_currentRoomViewController = [storyboard instantiateViewControllerWithIdentifier:@"RoomViewControllerStoryboardId"];
+                
+                navigationController.viewControllers = @[self.currentRoomViewController];
+                
+                [self.currentRoomViewController setSession:self.selectedRoomSession];
+                [self.currentRoomViewController setRoom:[self.selectedRoomSession roomWithRoomId:self.selectedRoomId]];
+                
+                [self.currentRoomViewController setupHeader];
+                
                 [self setupLeftBarButtonItem];
+                
+            };
+            
+            if (_selectedRoomDataSource)
+            {
+                // If the room data source is already loaded, display it
+                openRoomDataSource(_selectedRoomDataSource);
+                _selectedRoomDataSource = nil;
             }
             else
             {
-                MXWeakify(self);
-                void (^openRoomDataSource)(MXKRoomDataSource *roomDataSource) = ^(MXKRoomDataSource *roomDataSource) {
-                    MXStrongifyAndReturnIfNil(self);
-
-                    // Replace the rootviewcontroller with a room view controller
-                    // Get the RoomViewController from the storyboard
-                    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
-                    self->_currentRoomViewController = [storyboard instantiateViewControllerWithIdentifier:@"RoomViewControllerStoryboardId"];
-
-                    navigationController.viewControllers = @[self.currentRoomViewController];
-
-                    [self.currentRoomViewController displayRoom:roomDataSource];
-
-                    [self setupLeftBarButtonItem];
-
-                };
-
-                if (_selectedRoomDataSource)
-                {
-                    // If the room data source is already loaded, display it
-                    openRoomDataSource(_selectedRoomDataSource);
-                    _selectedRoomDataSource = nil;
-                }
-                else
-                {
-                    // Else, load it. The user may see the EmptyDetailsViewControllerStoryboardId
-                    // screen in this case
-                    [self dataSourceOfRoomToDisplay:^(MXKRoomDataSource *roomDataSource) {
-                        openRoomDataSource(roomDataSource);
-                    }];
-                }
+                // Else, load it. The user may see the EmptyDetailsViewControllerStoryboardId
+                // screen in this case
+                [self dataSourceOfRoomToDisplay:^(MXKRoomDataSource *roomDataSource) {
+                    openRoomDataSource(roomDataSource);
+                }];
             }
         }
         else if ([[segue identifier] isEqualToString:@"showContactDetails"])
@@ -736,9 +726,6 @@
 
                 ((RoomDataSource*)roomDataSource).markTimelineInitialEvent = YES;
 
-                // Give the data source ownership to the room view controller.
-                self.currentRoomViewController.hasRoomDataSourceOwnership = YES;
-
                 onComplete(roomDataSource);
             }];
         }
@@ -751,9 +738,6 @@
             [roomDataSource finalizeInitialization];
 
             ((RoomDataSource*)roomDataSource).markTimelineInitialEvent = YES;
-
-            // Give the data source ownership to the room view controller.
-            self.currentRoomViewController.hasRoomDataSourceOwnership = YES;
 
             onComplete(roomDataSource);
         }];
@@ -811,14 +795,11 @@
     {
         // If the displayed data is not a preview, let the manager release the room data source
         // (except if the view controller has the room data source ownership).
-        if (!_currentRoomViewController.roomPreviewData && _currentRoomViewController.roomDataSource && !_currentRoomViewController.hasRoomDataSourceOwnership)
-        {
-            MXSession *mxSession = _currentRoomViewController.roomDataSource.mxSession;
-            MXKRoomDataSourceManager *roomDataSourceManager = [MXKRoomDataSourceManager sharedManagerForMatrixSession:mxSession];
-            
-            // Let the manager release live room data sources where the user is in
-            [roomDataSourceManager closeRoomDataSourceWithRoomId:_currentRoomViewController.roomDataSource.roomId forceClose:NO];
-        }
+        MXSession *mxSession = _currentRoomViewController.session;
+        MXKRoomDataSourceManager *roomDataSourceManager = [MXKRoomDataSourceManager sharedManagerForMatrixSession:mxSession];
+        
+        // Let the manager release live room data sources where the user is in
+        [roomDataSourceManager closeRoomDataSourceWithRoomId:_currentRoomViewController.room.roomId forceClose:NO];
         
         [_currentRoomViewController destroy];
         _currentRoomViewController = nil;

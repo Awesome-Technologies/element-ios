@@ -28,12 +28,15 @@
 #import "ContactDetailsViewController.h"
 #import "GroupDetailsViewController.h"
 
-#define TABBAR_HOME_INDEX         0
-#define TABBAR_FAVOURITES_INDEX   1
-#define TABBAR_PEOPLE_INDEX       2
-#define TABBAR_ROOMS_INDEX        3
-#define TABBAR_GROUPS_INDEX       4
-#define TABBAR_COUNT              5
+#define TABBAR_CASES_INDEX        0
+#define TABBAR_HOME_INDEX         1
+#define TABBAR_FAVOURITES_INDEX   2
+#define TABBAR_PEOPLE_INDEX       3
+#define TABBAR_ROOMS_INDEX        4
+#define TABBAR_GROUPS_INDEX       5
+#define TABBAR_COUNT              6
+
+@class CaseDetailRoomViewController;
 
 @interface MasterTabBarController : UITabBarController
 
@@ -147,7 +150,7 @@
 @property (nonatomic, readonly) GroupsViewController *groupsViewController;
 
 // References on the currently selected room and its view controller
-@property (nonatomic, readonly) RoomViewController *currentRoomViewController;
+@property (nonatomic, readonly) CaseDetailRoomViewController *currentRoomViewController;
 @property (nonatomic, readonly) NSString  *selectedRoomId;
 @property (nonatomic, readonly) NSString  *selectedEventId;
 @property (nonatomic, readonly) MXSession *selectedRoomSession;

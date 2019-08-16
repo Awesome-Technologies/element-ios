@@ -1085,8 +1085,8 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     }
     else
     {
-        // Select the Home tab
-        _masterTabBarController.selectedIndex = TABBAR_HOME_INDEX;
+        // Select the Cases tab
+        _masterTabBarController.selectedIndex = TABBAR_CASES_INDEX;
         
         if (completion)
         {
