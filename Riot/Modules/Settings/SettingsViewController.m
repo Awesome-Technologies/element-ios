@@ -362,7 +362,7 @@ SingleImagePickerPresenterDelegate>
     self.activityIndicator.backgroundColor = ThemeService.shared.theme.overlayBackgroundColor;
     
     // Check the table view style to select its bg color.
-    self.tableView.backgroundColor = ((self.tableView.style == UITableViewStylePlain) ? ThemeService.shared.theme.backgroundColor : ThemeService.shared.theme.headerBackgroundColor);
+    self.tableView.backgroundColor = ThemeService.shared.theme.backgroundColor;
     self.view.backgroundColor = self.tableView.backgroundColor;
     self.tableView.separatorColor = ThemeService.shared.theme.lineBreakColor;
     

@@ -47,6 +47,8 @@ class DarkTheme: NSObject, Theme {
     var noticeSecondaryColor: UIColor = UIColor(rgb: 0x61708B)
 
     var warningColor: UIColor = UIColor(rgb: 0xFF4B55)
+    
+    var confirmColor: UIColor = UIColor(red: 0.15, green: 0.87, blue: 0.51, alpha: 1.0)
 
     var avatarColors: [UIColor] = [
         UIColor(rgb: 0x03B381),

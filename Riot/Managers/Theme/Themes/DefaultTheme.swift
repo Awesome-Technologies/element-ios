@@ -20,38 +20,42 @@ import UIKit
 /// Color constants for the default theme
 @objcMembers
 class DefaultTheme: NSObject, Theme {
-
+    var tintBackgroundColor: UIColor = UIColor(rgb: 0xFFFFFF)
+    
     var backgroundColor: UIColor = UIColor(rgb: 0xFFFFFF)
-
-    var baseColor: UIColor = UIColor(rgb: 0x27303A)
-    var baseTextPrimaryColor: UIColor = UIColor(rgb: 0xFFFFFF)
-    var baseTextSecondaryColor: UIColor = UIColor(rgb: 0xFFFFFF)
-
-    var searchBackgroundColor: UIColor = UIColor(rgb: 0xFFFFFF)
-    var searchPlaceholderColor: UIColor = UIColor(rgb: 0x61708B)
-
-    var headerBackgroundColor: UIColor = UIColor(rgb: 0xF3F8FD)
-    var headerBorderColor: UIColor  = UIColor(rgb: 0xE9EDF1)
-    var headerTextPrimaryColor: UIColor = UIColor(rgb: 0x61708B)
-    var headerTextSecondaryColor: UIColor = UIColor(rgb: 0xC8C8CD)
-
+    
+    var baseColor: UIColor = UIColor(rgb: 0xecf0f1)
+    var baseTextPrimaryColor: UIColor = UIColor(rgb: 0x000000)
+    var baseTextSecondaryColor: UIColor = UIColor(rgb: 0x000000)
+    
+    var searchBackgroundColor: UIColor = UIColor(rgb: 0xecf0f1)
+    var searchPlaceholderColor: UIColor = UIColor(rgb: 0x8e8e8e)
+    var searchCancelColor: UIColor = UIColor(rgb: 0x000000)
+    
+    var headerBackgroundColor: UIColor = UIColor(rgb: 0x2c3e50)
+    var headerBorderColor: UIColor  = UIColor(rgb: 0xecf0f1)
+    var headerTextPrimaryColor: UIColor = UIColor(rgb: 0xFFFFFF)
+    var headerTextSecondaryColor: UIColor = UIColor.white.withAlphaComponent(0.7)
+    
     var textPrimaryColor: UIColor = UIColor(rgb: 0x2E2F32)
     var textSecondaryColor: UIColor = UIColor(rgb: 0x9E9E9E)
-
-    var tintColor: UIColor = UIColor(rgb: 0x03B381)
-    var tintBackgroundColor: UIColor = UIColor(rgb: 0xe9fff9)
+    
+    var tintColor: UIColor = UIColor(rgb: 0x2f3640)
+    var textTintColor: UIColor = UIColor(rgb: 0x00c5d5)
     var unreadRoomIndentColor: UIColor = UIColor(rgb: 0x2E3648)
-    var lineBreakColor: UIColor = UIColor(rgb: 0xEEEFEF)
+    var lineBreakColor: UIColor = UIColor.black.withAlphaComponent(0.15)
     
     var noticeColor: UIColor = UIColor(rgb: 0xFF4B55)
     var noticeSecondaryColor: UIColor = UIColor(rgb: 0x61708B)
-
+    
     var warningColor: UIColor = UIColor(rgb: 0xFF4B55)
-
+    
+    var confirmColor: UIColor = UIColor(red: 0.15, green: 0.87, blue: 0.51, alpha: 1.0)
+    
     var avatarColors: [UIColor] = [
-        UIColor(rgb: 0x03B381),
-        UIColor(rgb: 0x368BD6),
-        UIColor(rgb: 0xAC3BA8)]
+        UIColor(rgb: 0x9d0490),
+        UIColor(rgb: 0x21264e),
+        UIColor(rgb: 0x59fff7)]
     
     var userNameColors: [UIColor] = [
         UIColor(rgb: 0x368BD6),
@@ -63,11 +67,11 @@ class DefaultTheme: NSObject, Theme {
         UIColor(rgb: 0x5C56F5),
         UIColor(rgb: 0x74D12C)
     ]
-
-    var statusBarStyle: UIStatusBarStyle = .lightContent
+    
+    var statusBarStyle: UIStatusBarStyle = .default
     var scrollBarStyle: UIScrollView.IndicatorStyle = .default
     var keyboardAppearance: UIKeyboardAppearance = .light
-
+    
     var placeholderTextColor: UIColor = UIColor(white: 0.7, alpha: 1.0) // Use default 70% gray color
     var selectedBackgroundColor: UIColor?  // Use the default selection color
     var overlayBackgroundColor: UIColor = UIColor(white: 0.7, alpha: 0.5)
@@ -81,12 +85,15 @@ class DefaultTheme: NSObject, Theme {
 
     func applyStyle(onNavigationBar navigationBar: UINavigationBar) {
         navigationBar.tintColor = self.baseTextPrimaryColor
+        if #available(iOS 11.0, *) {
+            navigationBar.largeTitleTextAttributes = [
+                NSAttributedString.Key.foregroundColor: self.baseTextPrimaryColor
+            ]
+        }
         navigationBar.titleTextAttributes = [
             NSAttributedString.Key.foregroundColor: self.baseTextPrimaryColor
         ]
         navigationBar.barTintColor = self.baseColor
-
-        // The navigation bar needs to be opaque so that its background color is the expected one
         navigationBar.isTranslucent = false
     }
 
@@ -107,6 +114,9 @@ class DefaultTheme: NSObject, Theme {
     
     func applyStyle(onButton button: UIButton) {
         // NOTE: Tint color does nothing by default on button type `UIButtonType.custom`
-        button.tintColor = self.tintColor
+        button.backgroundColor = self.headerBackgroundColor
+        button.tintColor = self.backgroundColor
+        button.setTitleColor(self.headerTextPrimaryColor, for: .normal)
+        button.setTitleColor(self.headerTextPrimaryColor.withAlphaComponent(0.4), for: .disabled)
     }
 }

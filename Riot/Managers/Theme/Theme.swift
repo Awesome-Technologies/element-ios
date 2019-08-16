@@ -46,6 +46,8 @@ import UIKit
 
     var noticeColor: UIColor { get }
     var noticeSecondaryColor: UIColor { get }
+    
+    var confirmColor: UIColor { get }
 
     /// Color for errors or warnings
     var warningColor: UIColor { get }
