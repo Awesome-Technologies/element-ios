@@ -2012,15 +2012,7 @@
         }
         
         
-        if ([actionIdentifier isEqualToString:kMXKRoomBubbleCellTapOnAvatarView])
-        {
-            selectedRoomMember = [self.roomDataSource.roomState.members memberWithUserId:userInfo[kMXKRoomBubbleCellUserIdKey]];
-            if (selectedRoomMember)
-            {
-                [self performSegueWithIdentifier:@"showMemberDetails" sender:self];
-            }
-        }
-        else if ([actionIdentifier isEqualToString:kMXKRoomBubbleCellLongPressOnAvatarView])
+        if ([actionIdentifier isEqualToString:kMXKRoomBubbleCellLongPressOnAvatarView])
         {
             // Add the member display name in text input
             MXRoomMember *roomMember = [self.roomDataSource.roomState.members memberWithUserId:userInfo[kMXKRoomBubbleCellUserIdKey]];
@@ -2743,35 +2735,6 @@
             NSURL *fixedURL = [Tools fixURLWithSeveralHashKeys:url];
             
             [[AppDelegate theDelegate] handleUniversalLinkFragment:fixedURL.fragment];
-        }
-        // Open a detail screen about the clicked user
-        else if ([MXTools isMatrixUserIdentifier:absoluteURLString])
-        {
-            shouldDoAction = NO;
-            
-            NSString *userId = absoluteURLString;
-            
-            MXRoomMember* member = [self.roomDataSource.roomState.members memberWithUserId:userId];
-            if (member)
-            {
-                // Use the room member detail VC for room members
-                selectedRoomMember = member;
-                [self performSegueWithIdentifier:@"showMemberDetails" sender:self];
-            }
-            else
-            {
-                // Use the contact detail VC for other users
-                MXUser *user = [self.roomDataSource.room.mxSession userWithUserId:userId];
-                if (user)
-                {
-                    selectedContact = [[MXKContact alloc] initMatrixContactWithDisplayName:((user.displayname.length > 0) ? user.displayname : user.userId) andMatrixID:user.userId];
-                }
-                else
-                {
-                    selectedContact = [[MXKContact alloc] initMatrixContactWithDisplayName:userId andMatrixID:userId];
-                }
-                [self performSegueWithIdentifier:@"showContactDetails" sender:self];
-            }
         }
         // Open the clicked room
         else if ([MXTools isMatrixRoomIdentifier:absoluteURLString] || [MXTools isMatrixRoomAlias:absoluteURLString])
