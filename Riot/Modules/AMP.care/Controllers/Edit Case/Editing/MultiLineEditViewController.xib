@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MultiLineEditViewController" customModule="Riot" customModuleProvider="target">
+            <connections>
+                <outlet property="measurementTime" destination="kM4-wQ-N41" id="SBA-nn-nBT"/>
+                <outlet property="measurementTimeLabel" destination="dP3-oE-yg7" id="Jna-Q7-PBT"/>
+                <outlet property="placeholderLabel" destination="Dkd-8V-44S" id="h7p-y8-UQp"/>
+                <outlet property="showDatePickerSwitch" destination="P7S-s5-Xv8" id="Sz6-zB-q9D"/>
+                <outlet property="textView" destination="3mV-lA-WLC" id="hxR-33-7Fh"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="3mV-lA-WLC">
+                    <rect key="frame" x="10" y="28" width="355" height="155"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="155" id="sp8-pH-cLl"/>
+                    </constraints>
+                    <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                    <connections>
+                        <outlet property="delegate" destination="-1" id="oPT-nO-jEF"/>
+                    </connections>
+                </textView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Dkd-8V-44S">
+                    <rect key="frame" x="14" y="36" width="0.0" height="0.0"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <color key="textColor" red="0.0" green="0.0" blue="0.098039215686274508" alpha="0.21602097602739725" colorSpace="custom" customColorSpace="sRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="kM4-wQ-N41">
+                    <rect key="frame" x="0.0" y="236" width="375" height="216"/>
+                    <date key="date" timeIntervalSinceReferenceDate="591195292.78924501">
+                        <!--2019-09-26 12:54:52 +0000-->
+                    </date>
+                </datePicker>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dP3-oE-yg7">
+                    <rect key="frame" x="20" y="199" width="42" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="P7S-s5-Xv8">
+                    <rect key="frame" x="306" y="194" width="51" height="31"/>
+                    <connections>
+                        <action selector="showDatePickerSwitchChanged:" destination="-1" eventType="valueChanged" id="XOD-eW-Wnu"/>
+                    </connections>
+                </switch>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="P7S-s5-Xv8" firstAttribute="centerY" secondItem="dP3-oE-yg7" secondAttribute="centerY" id="1GP-hc-5cW"/>
+                <constraint firstItem="kM4-wQ-N41" firstAttribute="centerX" secondItem="fnl-2z-Ty3" secondAttribute="centerX" id="6WB-df-pkn"/>
+                <constraint firstItem="Dkd-8V-44S" firstAttribute="top" secondItem="3mV-lA-WLC" secondAttribute="top" constant="8" id="ELT-kG-PZF"/>
+                <constraint firstItem="kM4-wQ-N41" firstAttribute="width" secondItem="i5M-Pr-FkT" secondAttribute="width" id="Jyw-dq-P6K"/>
+                <constraint firstItem="kM4-wQ-N41" firstAttribute="top" secondItem="dP3-oE-yg7" secondAttribute="bottom" constant="16" id="MFq-Kp-nfi"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="P7S-s5-Xv8" secondAttribute="trailing" constant="20" id="Wg5-cb-BaY"/>
+                <constraint firstItem="3mV-lA-WLC" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" constant="8" id="ZmM-1J-6lv"/>
+                <constraint firstItem="dP3-oE-yg7" firstAttribute="top" secondItem="3mV-lA-WLC" secondAttribute="bottom" constant="16" id="aNA-pN-KCE"/>
+                <constraint firstItem="Dkd-8V-44S" firstAttribute="leading" secondItem="3mV-lA-WLC" secondAttribute="leading" constant="4" id="cDS-Gs-X5Q"/>
+                <constraint firstItem="3mV-lA-WLC" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="10" id="ciz-xI-d6t"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="3mV-lA-WLC" secondAttribute="trailing" constant="10" id="f92-Of-ine"/>
+                <constraint firstItem="dP3-oE-yg7" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="20" id="tFa-dy-QcK"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
+            <point key="canvasLocation" x="130.40000000000001" y="152.47376311844079"/>
+        </view>
+    </objects>
+</document>

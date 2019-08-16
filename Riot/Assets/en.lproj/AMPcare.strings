@@ -24,6 +24,7 @@
 "glucose" = "Glucose";
 "blood-pressure" = "Blood Pressure";
 "heart-rate" = "Heart Rate";
+"oxygen" = "Oxygen Saturation";
 "vitals" = "Vitals";
 "anamnesis" = "Anamnesis";
 "pictures" = "Pictures";
@@ -64,6 +65,8 @@
 "edit_case_patient_placeholder" = "Patient name…";
 
 "edit_case_add_pictures" = "Added pictures";
+"edit_case_measurement_date_label" = "Time of measurement";
+"edit_case_remove_date" = "Remove date";
 
 // Editing anamnesis
 "edit_case_anamnesis_title" = "Anamnesis";
@@ -83,6 +86,7 @@
 "edit_case_glucose_title" = "Glucose";
 "edit_case_blood-pressure_title" = "Blood Pressure";
 "edit_case_heart-rate_title" = "Heart Rate";
+"edit_case_oxygen_title" = "Oxygen Saturation";
 
 "patient_edit_gender_label" = "Gender";
 "patient_edit_birthDate_label" = "Birthdate";

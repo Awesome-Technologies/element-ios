@@ -84,17 +84,12 @@ class DefaultTheme: NSObject, Theme {
     }
 
     func applyStyle(onNavigationBar navigationBar: UINavigationBar) {
+        navigationBar.isTranslucent = false
         navigationBar.tintColor = self.baseTextPrimaryColor
-        if #available(iOS 11.0, *) {
-            navigationBar.largeTitleTextAttributes = [
-                NSAttributedString.Key.foregroundColor: self.baseTextPrimaryColor
-            ]
-        }
+        navigationBar.barTintColor = self.baseColor
         navigationBar.titleTextAttributes = [
             NSAttributedString.Key.foregroundColor: self.baseTextPrimaryColor
         ]
-        navigationBar.barTintColor = self.baseColor
-        navigationBar.isTranslucent = false
     }
 
     func applyStyle(onSearchBar searchBar: UISearchBar) {
