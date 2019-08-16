@@ -50,16 +50,16 @@
                         </constraints>
                     </view>
                     <view clipsSubviews="YES" contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="hgp-Z5-rAj" userLabel="Picture View" customClass="MXKImageView">
-                        <rect key="frame" x="13" y="54" width="30" height="30"/>
+                        <rect key="frame" x="13" y="54" width="0.0" height="30"/>
                         <color key="backgroundColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <accessibility key="accessibilityConfiguration" identifier="PictureView"/>
                         <constraints>
-                            <constraint firstAttribute="width" constant="30" id="NQk-ck-Lo8"/>
+                            <constraint firstAttribute="width" id="NQk-ck-Lo8"/>
                             <constraint firstAttribute="height" constant="30" id="dNT-QU-CUG"/>
                         </constraints>
                     </view>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="User name:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="8" translatesAutoresizingMaskIntoConstraints="NO" id="q9c-0p-QyP">
-                        <rect key="frame" x="56" y="54" width="459" height="18"/>
+                        <rect key="frame" x="26" y="54" width="489" height="18"/>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                         <accessibility key="accessibilityConfiguration" identifier="UserNameLabel"/>
                         <constraints>
@@ -70,7 +70,7 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <view contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="5IE-JS-uf3" userLabel="Attachment View" customClass="MXKImageView">
-                        <rect key="frame" x="56" y="75" width="192" height="34"/>
+                        <rect key="frame" x="26" y="75" width="192" height="34.5"/>
                         <color key="backgroundColor" red="0.93725490196078431" green="0.93725490196078431" blue="0.95686274509803926" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <accessibility key="accessibilityConfiguration" identifier="AttachmentView"/>
                         <constraints>
@@ -79,7 +79,7 @@
                         </constraints>
                     </view>
                     <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="K9X-gn-noF" userLabel="File Type Image View">
-                        <rect key="frame" x="56" y="75" width="32" height="32"/>
+                        <rect key="frame" x="26" y="75" width="32" height="32"/>
                         <accessibility key="accessibilityConfiguration" identifier="FileTypeImageView"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="32" id="OE8-oh-B7Q"/>
@@ -87,7 +87,7 @@
                         </constraints>
                     </imageView>
                     <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Cot-3X-2cU" userLabel="Play Icon Image View">
-                        <rect key="frame" x="136" y="76" width="32" height="32"/>
+                        <rect key="frame" x="106" y="76.5" width="32" height="32"/>
                         <accessibility key="accessibilityConfiguration" identifier="PlayIconImageView"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="32" id="8io-Wk-GzF"/>
@@ -95,13 +95,13 @@
                         </constraints>
                     </imageView>
                     <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="jmK-pe-WZd">
-                        <rect key="frame" x="142" y="82" width="20" height="20"/>
+                        <rect key="frame" x="112" y="82.5" width="20" height="20"/>
                         <userDefinedRuntimeAttributes>
                             <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="ActivityIndicator"/>
                         </userDefinedRuntimeAttributes>
                     </activityIndicatorView>
                     <view hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="IOg-Kt-8vW">
-                        <rect key="frame" x="515" y="54" width="70" height="65"/>
+                        <rect key="frame" x="515" y="54" width="70" height="65.5"/>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                         <accessibility key="accessibilityConfiguration" identifier="BubbleInfoContainer"/>
                         <constraints>
@@ -109,7 +109,7 @@
                         </constraints>
                     </view>
                     <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fdx-qs-8en" userLabel="ProgressView">
-                        <rect key="frame" x="487" y="57" width="100" height="70"/>
+                        <rect key="frame" x="487" y="57.5" width="100" height="70"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="rate" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" minimumFontSize="4" preferredMaxLayoutWidth="100" translatesAutoresizingMaskIntoConstraints="NO" id="eU5-iK-u8i" userLabel="Progress stats">
                                 <rect key="frame" x="0.0" y="60" width="100" height="10"/>
@@ -140,11 +140,11 @@
                         </constraints>
                     </view>
                     <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3b7-4a-YL0">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="119"/>
+                        <rect key="frame" x="12" y="3" width="576" height="114"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="y8m-dS-1Df">
-                        <rect key="frame" x="46" y="48" width="469" height="30"/>
+                        <rect key="frame" x="16" y="48" width="499" height="30"/>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
                 </subviews>
