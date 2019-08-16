@@ -16,44 +16,60 @@ $matrixKitVersion = '0.10.2'
 # Note that MatrixSDK must be cloned into a folder called matrix-ios-sdk next to the MatrixKit folder
 #$matrixKitVersion = 'local'
 
+# Use Awesome MatrixSDK
+$useAwesomeSDK = true
+$matrixSDKGit = 'https://github.com/Awesome-Technologies/matrix-ios-sdk.git'
 
 # Method to import the right MatrixKit flavour
 def import_MatrixKit
-    if $matrixKitVersion == 'local'
-        pod 'MatrixSDK', :path => '../matrix-ios-sdk/MatrixSDK.podspec'
-        pod 'MatrixSDK/SwiftSupport', :path => '../matrix-ios-sdk/MatrixSDK.podspec'
-        pod 'MatrixSDK/JingleCallStack', :path => '../matrix-ios-sdk/MatrixSDK.podspec'
-        pod 'MatrixKit', :path => '../matrix-ios-kit/MatrixKit.podspec'
+    if $useAwesomeSDK
+        pod 'MatrixSDK', :git => $matrixSDKGit, :branch => 'AMP.care'
+        pod 'MatrixSDK/SwiftSupport', :git => $matrixSDKGit, :branch => 'AMP.care'
+        pod 'MatrixSDK/JingleCallStack', :git => $matrixSDKGit, :branch => 'AMP.care'
+        pod 'MatrixKit', $matrixKitVersion
     else
-        if $matrixKitVersion == 'develop'
-            pod 'MatrixSDK', :git => 'https://github.com/matrix-org/matrix-ios-sdk.git', :branch => 'develop'
-            pod 'MatrixSDK/SwiftSupport', :git => 'https://github.com/matrix-org/matrix-ios-sdk.git', :branch => 'develop'
-            pod 'MatrixSDK/JingleCallStack', :git => 'https://github.com/matrix-org/matrix-ios-sdk.git', :branch => 'develop'
-            pod 'MatrixKit', :git => 'https://github.com/matrix-org/matrix-ios-kit.git', :branch => 'develop'
+        if $matrixKitVersion == 'local'
+            pod 'MatrixSDK', :path => '../matrix-ios-sdk/MatrixSDK.podspec'
+            pod 'MatrixSDK/SwiftSupport', :path => '../matrix-ios-sdk/MatrixSDK.podspec'
+            pod 'MatrixSDK/JingleCallStack', :path => '../matrix-ios-sdk/MatrixSDK.podspec'
+            pod 'MatrixKit', :path => '../matrix-ios-kit/MatrixKit.podspec'
         else
-            pod 'MatrixKit', $matrixKitVersion
-            pod 'MatrixSDK/SwiftSupport'
-            pod 'MatrixSDK/JingleCallStack'
+            if $matrixKitVersion == 'develop'
+                pod 'MatrixSDK', :git => 'https://github.com/matrix-org/matrix-ios-sdk.git', :branch => 'develop'
+                pod 'MatrixSDK/SwiftSupport', :git => 'https://github.com/matrix-org/matrix-ios-sdk.git', :branch => 'develop'
+                pod 'MatrixSDK/JingleCallStack', :git => 'https://github.com/matrix-org/matrix-ios-sdk.git', :branch => 'develop'
+                pod 'MatrixKit', :git => 'https://github.com/matrix-org/matrix-ios-kit.git', :branch => 'develop'
+            else
+                pod 'MatrixKit', $matrixKitVersion
+                pod 'MatrixSDK/SwiftSupport'
+                pod 'MatrixSDK/JingleCallStack'
+            end
         end
-    end 
+    end
 end
 
 # Method to import the right MatrixKit/AppExtension flavour
 def import_MatrixKitAppExtension
-    if $matrixKitVersion == 'local'
-        pod 'MatrixSDK', :path => '../matrix-ios-sdk/MatrixSDK.podspec'
-        pod 'MatrixSDK/SwiftSupport', :path => '../matrix-ios-sdk/MatrixSDK.podspec'
-        pod 'MatrixKit/AppExtension', :path => '../matrix-ios-kit/MatrixKit.podspec'
+    if $useAwesomeSDK
+        pod 'MatrixSDK', :git => $matrixSDKGit, :branch => 'AMP.care'
+        pod 'MatrixSDK/SwiftSupport', :git => $matrixSDKGit, :branch => 'AMP.care'
+        pod 'MatrixKit/AppExtension', $matrixKitVersion
     else
-        if $matrixKitVersion == 'develop'
-            pod 'MatrixSDK', :git => 'https://github.com/matrix-org/matrix-ios-sdk.git', :branch => 'develop'
-            pod 'MatrixSDK/SwiftSupport', :git => 'https://github.com/matrix-org/matrix-ios-sdk.git', :branch => 'develop'
-            pod 'MatrixKit/AppExtension', :git => 'https://github.com/matrix-org/matrix-ios-kit.git', :branch => 'develop'
+        if $matrixKitVersion == 'local'
+            pod 'MatrixSDK', :path => '../matrix-ios-sdk/MatrixSDK.podspec'
+            pod 'MatrixSDK/SwiftSupport', :path => '../matrix-ios-sdk/MatrixSDK.podspec'
+            pod 'MatrixKit/AppExtension', :path => '../matrix-ios-kit/MatrixKit.podspec'
         else
-            pod 'MatrixKit/AppExtension', $matrixKitVersion
-            pod 'MatrixSDK/SwiftSupport'
+            if $matrixKitVersion == 'develop'
+                pod 'MatrixSDK', :git => 'https://github.com/matrix-org/matrix-ios-sdk.git', :branch => 'develop'
+                pod 'MatrixSDK/SwiftSupport', :git => 'https://github.com/matrix-org/matrix-ios-sdk.git', :branch => 'develop'
+                pod 'MatrixKit/AppExtension', :git => 'https://github.com/matrix-org/matrix-ios-kit.git', :branch => 'develop'
+            else
+                pod 'MatrixKit/AppExtension', $matrixKitVersion
+                pod 'MatrixSDK/SwiftSupport'
+            end
         end
-    end 
+    end
 end
 
 
@@ -104,6 +120,8 @@ post_install do |installer|
         # Plus the app does not enable it
         target.build_configurations.each do |config|
             config.build_settings['ENABLE_BITCODE'] = 'NO'
+            config.build_settings['DEBUG_INFORMATION_FORMAT'] = 'dwarf'
+            config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '10.0'
             
             # Force SwiftUTI Swift version to 5.0 (as there is no code changes to perform for SwiftUTI fork using Swift 4.2)
             if target.name.include? 'SwiftUTI'
@@ -112,4 +130,3 @@ post_install do |installer|
         end
     end
 end
-
