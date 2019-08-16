@@ -24,7 +24,7 @@
 #define CONTACTSDATASOURCE_LOCALCONTACTS_BITWISE 0x01
 #define CONTACTSDATASOURCE_USERDIRECTORY_BITWISE 0x02
 
-#define CONTACTSDATASOURCE_DEFAULT_SECTION_HEADER_HEIGHT 30.0
+#define CONTACTSDATASOURCE_DEFAULT_SECTION_HEADER_HEIGHT 0
 #define CONTACTSDATASOURCE_LOCALCONTACTS_SECTION_HEADER_HEIGHT 65.0
 
 @interface ContactsDataSource ()
@@ -209,8 +209,11 @@
                 // Keep the response order as the hs ordered users by relevance
                 for (MXUser *mxUser in userSearchResponse.results)
                 {
-                    MXKContact *contact = [[MXKContact alloc] initMatrixContactWithDisplayName:mxUser.displayname andMatrixID:mxUser.userId];
-                    [filteredMatrixContacts addObject:contact];
+                    // Remove user itself from search
+                    if (![mxUser.userId isEqualToString:self.mxSession.myUser.userId]) {
+                        MXKContact *contact = [[MXKContact alloc] initMatrixContactWithDisplayName:mxUser.displayname andMatrixID:mxUser.userId];
+                        [filteredMatrixContacts addObject:contact];
+                    }
                 }
 
                 hsUserDirectoryOperation = nil;
@@ -472,7 +475,6 @@
         }
         
         // Keep visible the header for the both contact sections, even if their are empty.
-        filteredLocalContactsSection = count++;
         filteredMatrixContactsSection = count++;
     }
     else
@@ -708,57 +710,7 @@
 
 - (NSAttributedString *)attributedStringForHeaderTitleInSection:(NSInteger)section
 {
-    NSAttributedString *sectionTitle;
-    NSString* title;
-    NSUInteger count = 0;
-    
-    if (section == filteredLocalContactsSection)
-    {
-        count = filteredLocalContacts.count;
-        title = NSLocalizedStringFromTable(@"contacts_address_book_section", @"Vector", nil);
-    }
-    else //if (section == filteredMatrixContactsSection)
-    {
-        switch (_userDirectoryState)
-        {
-            case ContactsDataSourceUserDirectoryStateOfflineLoading:
-            case ContactsDataSourceUserDirectoryStateOfflineLoaded:
-                title = NSLocalizedStringFromTable(@"contacts_user_directory_offline_section", @"Vector", nil);
-                break;
-
-            default:
-                title = NSLocalizedStringFromTable(@"contacts_user_directory_section", @"Vector", nil);
-                break;
-        }
-        
-        if (currentSearchText.length)
-        {
-            count = filteredMatrixContacts.count;
-        }
-    }
-    
-    if (count)
-    {
-        NSString *roomCountFormat = (_userDirectoryState == ContactsDataSourceUserDirectoryStateLoadedButLimited) ? @"   > %tu" : @"   %tu";
-        NSString *roomCount = [NSString stringWithFormat:roomCountFormat, count];
-        
-        NSMutableAttributedString *mutableSectionTitle = [[NSMutableAttributedString alloc] initWithString:title
-                                                                                         attributes:@{NSForegroundColorAttributeName : ThemeService.shared.theme.headerTextPrimaryColor,
-                                                                                                      NSFontAttributeName: [UIFont boldSystemFontOfSize:15.0]}];
-        [mutableSectionTitle appendAttributedString:[[NSMutableAttributedString alloc] initWithString:roomCount
-                                                                                    attributes:@{NSForegroundColorAttributeName : ThemeService.shared.theme.headerTextSecondaryColor,
-                                                                                                 NSFontAttributeName: [UIFont boldSystemFontOfSize:15.0]}]];
-        
-        sectionTitle = mutableSectionTitle;
-    }
-    else if (title)
-    {
-        sectionTitle = [[NSAttributedString alloc] initWithString:title
-                                               attributes:@{NSForegroundColorAttributeName : ThemeService.shared.theme.headerTextPrimaryColor,
-                                                            NSFontAttributeName: [UIFont boldSystemFontOfSize:15.0]}];
-    }
-    
-    return sectionTitle;
+    return nil;
 }
 
 - (UIView *)viewForHeaderInSection:(NSInteger)section withFrame:(CGRect)frame
