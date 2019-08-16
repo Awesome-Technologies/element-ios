@@ -1383,8 +1383,7 @@
             // Do not change title view class here if the expanded header is visible.
             if (self.expandedHeaderContainer.hidden)
             {
-                [self setRoomTitleViewClass:RoomTitleView.class];
-                ((RoomTitleView*)self.titleView).tapGestureDelegate = self;
+                [self setRoomTitleViewClass:SimpleRoomTitleView.class];
             }
             else
             {
@@ -1587,87 +1586,7 @@
 
 - (void)showExpandedHeader:(BOOL)isVisible
 {
-    if (self.expandedHeaderContainer.isHidden == isVisible)
-    {
-        // Check conditions before making the expanded room header visible.
-        // This operation is ignored:
-        // - if a screen rotation is in progress.
-        // - if the room data source has been removed.
-        // - if the room data source does not manage a live timeline.
-        // - if the user's membership is not 'join'.
-        // - if the view controller is not embedded inside a split view controller yet.
-        // - if the encryption view is displayed
-        // - if the event details view is displayed
-        if (isVisible && (isSizeTransitionInProgress == YES || !self.roomDataSource || !self.roomDataSource.isLive || (self.roomDataSource.room.summary.membership != MXMembershipJoin) || !self.splitViewController || encryptionInfoView.superview || eventDetailsView.superview))
-        {
-            NSLog(@"[RoomVC] Show expanded header ignored");
-            return;
-        }
-        
-        self.expandedHeaderContainer.hidden = !isVisible;
-        
-        // Consider the main navigation controller if the current view controller is embedded inside a split view controller.
-        UINavigationController *mainNavigationController = self.navigationController;
-        if (self.splitViewController.isCollapsed && self.splitViewController.viewControllers.count)
-        {
-            mainNavigationController = self.splitViewController.viewControllers.firstObject;
-        }
-        
-        // When the expanded header is displayed, we hide the bottom border of the navigation bar (the shadow image).
-        // The default shadow image is nil. When non-nil, this property represents a custom shadow image to show instead
-        // of the default. For a custom shadow image to be shown, a custom background image must also be set with the
-        // setBackgroundImage:forBarMetrics: method. If the default background image is used, then the default shadow
-        // image will be used regardless of the value of this property.
-        UIImage *shadowImage = nil;
-        
-        if (isVisible)
-        {
-            [self setRoomTitleViewClass:RoomAvatarTitleView.class];
-            // Note the avatar title view does not define tap gesture.
-            
-            expandedHeader.roomAvatar.alpha = 0.0;
-            
-            shadowImage = [[UIImage alloc] init];
-            
-            // Dismiss the keyboard when header is expanded.
-            [self.inputToolbarView dismissKeyboard];
-        }
-        else
-        {
-            [self setRoomTitleViewClass:RoomTitleView.class];
-            ((RoomTitleView*)self.titleView).tapGestureDelegate = self;
-        }
-        
-        // Force the layout of expandedHeader to update the position of 'bottomBorderView' which is used
-        // to define the actual height of the expandedHeader container.
-        [expandedHeader layoutIfNeeded];
-        CGRect frame = expandedHeader.bottomBorderView.frame;
-        self.expandedHeaderContainerHeightConstraint.constant = frame.origin.y + frame.size.height;
-        
-        // Report shadow image
-        [mainNavigationController.navigationBar setShadowImage:shadowImage];
-        [mainNavigationController.navigationBar setBackgroundImage:shadowImage forBarMetrics:UIBarMetricsDefault];
-        mainNavigationController.navigationBar.translucent = isVisible;
-        self.navigationController.navigationBar.translucent = isVisible;
-        
-        // Hide contextual menu if needed
-        [self hideContextualMenuAnimated:YES];
-        
-        [UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseIn
-                         animations:^{
-                             
-                             self.bubblesTableViewTopConstraint.constant = (isVisible ? self.expandedHeaderContainerHeightConstraint.constant - self.bubblesTableView.mxk_adjustedContentInset.top : 0);
-                             self.jumpToLastUnreadBannerContainerTopConstraint.constant = (isVisible ? self.expandedHeaderContainerHeightConstraint.constant : self.bubblesTableView.mxk_adjustedContentInset.top);
-                             
-                             expandedHeader.roomAvatar.alpha = 1;
-                             
-                             // Force to render the view
-                             [self forceLayoutRefresh];
-                             
-                         }
-                         completion:^(BOOL finished){
-                         }];
-    }
+    
 }
 
 #pragma mark - Hide/Show preview header
