@@ -1,0 +1,100 @@
+/*
+ AMPcare.strings
+ Riot
+ 
+ Created by Marco Festini on 17.07.19.
+ Copyright © 2019 Awesome Technologies Innovationslabor GmbH. All rights reserved.
+ */
+
+// Cases
+"case_list_title" = "Cases";
+
+"patient" = "Patient";
+"recipient" = "Recipient";
+"requester" = "Requester";
+"severity" = "Severity";
+"title" = "Title";
+"note" = "Note";
+"responsiveness" = "Responsiveness";
+"pain" = "Pain";
+"misc" = "Misc";
+"last-defecation" = "Last Defecation";
+"body-weight" = "Body Weight";
+"body-temperature" = "Body Temperature";
+"glucose" = "Glucose";
+"blood-pressure" = "Blood Pressure";
+"heart-rate" = "Heart Rate";
+"vitals" = "Vitals";
+"anamnesis" = "Anamnesis";
+"pictures" = "Pictures";
+"created" = "Created";
+"years" = "Years";
+"systolic_placeholder" = "Systolic…";
+"diastolic_placeholder" = "Diastolic…";
+
+// Case Preview
+"case_preview_title" = "Preview";
+
+// Case Detail
+"case_detail_title" = "Case";
+
+// New Case
+"case_detail_section_message" = "Message";
+"case_detail_section_data" = "Data";
+"case_detail_section_heart" = "Heart";
+"case_detail_section_vitals" = "Vitals";
+"case_detail_section_anamnesis" = "Anamnesis";
+
+"edit_case_button" = "Edit Case";
+"new_case_button" = "New Case";
+"edit_case_title" = "Edit Case";
+"new_case_title" = "New Case";
+
+// Editing basics
+"edit_case_recipient_title" = "Recipient";
+"edit_case_note_title" = "Note";
+"edit_case_requester_title" = "Requester";
+"edit_case_title_title" = "Title";
+"edit_case_severity_title" = "Severity";
+"edit_case_patient_title" = "Patient";
+"edit_case_pictures_title" = "Pictures";
+
+"edit_case_note_placeholder" = "Note…";
+"edit_case_title_placeholder" = "Title…";
+"edit_case_patient_placeholder" = "Patient name…";
+
+"edit_case_add_pictures" = "Added pictures";
+
+// Editing anamnesis
+"edit_case_anamnesis_title" = "Anamnesis";
+"edit_case_responsiveness_title" = "Responsiveness";
+"edit_case_pain_title" = "Pain";
+"edit_case_misc_title" = "Misc";
+"edit_case_last-defecation_title" = "Last Defecation";
+
+"edit_case_responsiveness_placeholder" = "Responsiveness…";
+"edit_case_pain_placeholder" = "Pain…";
+"edit_case_misc_placeholder" = "Misc…";
+
+// Editing vitals
+"edit_case_vitals_title" = "Vitals";
+"edit_case_body-weight_title" = "Body Weight";
+"edit_case_body-temperature_title" = "Body Temperature";
+"edit_case_glucose_title" = "Glucose";
+"edit_case_blood-pressure_title" = "Blood Pressure";
+"edit_case_heart-rate_title" = "Heart Rate";
+
+"patient_edit_gender_label" = "Gender";
+"patient_edit_birthDate_label" = "Birthdate";
+
+// CaseCore
+"case_severity_info" = "Info";
+"case_severity_request" = "Request";
+"case_severity_urgent" = "Urgent";
+"case_severity_critical" = "Critical";
+
+// Patient
+"patient_gender_male" = "Male";
+"patient_gender_female" = "Female";
+"patient_gender_other" = "Other";
+"patient_gender_unknown" = "Unknown";

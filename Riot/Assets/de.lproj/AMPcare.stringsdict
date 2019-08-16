@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>number_of_pictures</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@picture_count@</string>
+		<key>picture_count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>zero</key>
+			<string>Keine Bilder</string>
+			<key>one</key>
+			<string>1 Bild</string>
+			<key>other</key>
+			<string>%d Bilder</string>
+		</dict>
+	</dict>
+	<key>number_of_entries</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@entry_count@</string>
+		<key>entry_count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>zero</key>
+			<string>Keine Einträge</string>
+			<key>one</key>
+			<string>1 Eintrag</string>
+			<key>other</key>
+			<string>%d Einträge</string>
+		</dict>
+	</dict>
+</dict>
+</plist>
