@@ -99,38 +99,38 @@ PODS:
   - HPGrowingTextView (1.1)
   - libbase58 (0.1.4)
   - libPhoneNumber-iOS (0.9.13)
-  - MatrixKit (0.9.7):
+  - MatrixKit (0.9.8):
     - cmark (~> 0.24.1)
     - DTCoreText (~> 1.6.21)
     - HPGrowingTextView (~> 1.1)
     - libPhoneNumber-iOS (~> 0.9.13)
-    - MatrixKit/Core (= 0.9.7)
-    - MatrixSDK (= 0.12.3)
-  - MatrixKit/AppExtension (0.9.7):
+    - MatrixKit/Core (= 0.9.8)
+    - MatrixSDK (= 0.12.4)
+  - MatrixKit/AppExtension (0.9.8):
     - cmark (~> 0.24.1)
     - DTCoreText (~> 1.6.21)
     - DTCoreText/Extension
     - HPGrowingTextView (~> 1.1)
     - libPhoneNumber-iOS (~> 0.9.13)
-    - MatrixSDK (= 0.12.3)
-  - MatrixKit/Core (0.9.7):
+    - MatrixSDK (= 0.12.4)
+  - MatrixKit/Core (0.9.8):
     - cmark (~> 0.24.1)
     - DTCoreText (~> 1.6.21)
     - HPGrowingTextView (~> 1.1)
     - libPhoneNumber-iOS (~> 0.9.13)
-    - MatrixSDK (= 0.12.3)
-  - MatrixSDK (0.12.3):
-    - MatrixSDK/Core (= 0.12.3)
-  - MatrixSDK/Core (0.12.3):
+    - MatrixSDK (= 0.12.4)
+  - MatrixSDK (0.12.4):
+    - MatrixSDK/Core (= 0.12.4)
+  - MatrixSDK/Core (0.12.4):
     - AFNetworking (~> 3.2.0)
     - GZIP (~> 1.2.2)
     - libbase58 (~> 0.1.4)
     - OLMKit (~> 3.0.0)
     - Realm (~> 3.13.1)
-  - MatrixSDK/JingleCallStack (0.12.3):
+  - MatrixSDK/JingleCallStack (0.12.4):
     - MatrixSDK/Core
     - WebRTC (= 63.11.20455)
-  - MatrixSDK/SwiftSupport (0.12.3):
+  - MatrixSDK/SwiftSupport (0.12.4):
     - MatrixSDK/Core
   - OLMKit (3.0.0):
     - OLMKit/olmc (= 3.0.0)
@@ -160,8 +160,8 @@ DEPENDENCIES:
   - Firebase/MLVision
   - Firebase/MLVisionBarcodeModel
   - GBDeviceInfo (~> 5.2.0)
-  - MatrixKit (= 0.9.7)
-  - MatrixKit/AppExtension (= 0.9.7)
+  - MatrixKit (= 0.9.8)
+  - MatrixKit/AppExtension (= 0.9.8)
   - MatrixSDK/JingleCallStack
   - MatrixSDK/SwiftSupport
   - OLMKit
@@ -235,8 +235,8 @@ SPEC CHECKSUMS:
   HPGrowingTextView: 88a716d97fb853bcb08a4a08e4727da17efc9b19
   libbase58: 7c040313537b8c44b6e2d15586af8e21f7354efd
   libPhoneNumber-iOS: e444379ac18bbfbdefad571da735b2cd7e096caa
-  MatrixKit: da43b16842298fe0987ca8a98267bee775c10a35
-  MatrixSDK: 36c1a0da01a2745d4ffcca73e080610f05d47009
+  MatrixKit: 098ddd270d1dec86a85ea93a85a00e37b2d80c11
+  MatrixSDK: 310efb69f70b4d7772f6f134b06fbb9ec238e6a7
   OLMKit: 88eda69110489f817d59bcb4353b7c247570aa4f
   PiwikTracker: 42862c7b13028065c3dfd36b4dc38db8a5765acf
   Protobuf: 7a877b7f3e5964e3fce995e2eb323dbc6831bb5a
