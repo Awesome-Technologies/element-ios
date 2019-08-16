@@ -2566,6 +2566,20 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     
     // Use UIKit BackgroundTask for handling background tasks in the SDK
     sdkOptions.backgroundModeHandler = [[MXUIKitBackgroundModeHandler alloc] init];
+    
+    // Define supported events to be shown in room history
+    [[MXKAppSettings standardAppSettings] removeSupportedEventTypes:@[kMXEventTypeStringRoomName,
+                                                                      kMXEventTypeStringSticker,
+                                                                      kMXEventTypeStringRoomAvatar,
+                                                                      kMXEventTypeStringRoomCreate,
+                                                                      kMXEventTypeStringRoomMember,
+                                                                      kMXEventTypeStringRoomAliases,
+                                                                      kMXEventTypeStringRoomHistoryVisibility,
+                                                                      kMXEventTypeStringRoomEncryption,
+                                                                      kMXEventTypeStringRoomJoinRules,
+                                                                      kMXEventTypeStringRoomPowerLevels,
+                                                                      kMXEventTypeStringRoomThirdPartyInvite,
+                                                                      kMXEventTypeStringRoomRelatedGroups]];
 
     // Get modular widget events in rooms histories
     [[MXKAppSettings standardAppSettings] addSupportedEventTypes:@[kWidgetMatrixEventTypeString, kWidgetModularEventTypeString]];
