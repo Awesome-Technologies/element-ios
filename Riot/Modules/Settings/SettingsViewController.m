@@ -1221,10 +1221,10 @@ SingleImagePickerPresenterDelegate>
     {
         MXKAccount* account = [MXKAccountManager sharedManager].activeAccounts.firstObject;
 
-        userSettingsProfilePictureIndex = 0;
-        userSettingsDisplayNameIndex = 1;
-        userSettingsChangePasswordIndex = 2;
-        userSettingsEmailStartIndex = 3;
+        userSettingsProfilePictureIndex = -1;
+        userSettingsDisplayNameIndex = 0;
+        userSettingsChangePasswordIndex = 1;
+        userSettingsEmailStartIndex = 2;
         userSettingsNewEmailIndex = userSettingsEmailStartIndex + account.linkedEmails.count;
         userSettingsPhoneStartIndex = userSettingsNewEmailIndex + 1;
         userSettingsNewPhoneIndex = userSettingsPhoneStartIndex + account.linkedPhoneNumbers.count;
