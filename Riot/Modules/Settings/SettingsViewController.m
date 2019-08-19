@@ -1224,10 +1224,10 @@ SingleImagePickerPresenterDelegate>
         userSettingsProfilePictureIndex = -1;
         userSettingsDisplayNameIndex = 0;
         userSettingsChangePasswordIndex = 1;
-        userSettingsEmailStartIndex = 2;
-        userSettingsNewEmailIndex = userSettingsEmailStartIndex + account.linkedEmails.count;
-        userSettingsPhoneStartIndex = userSettingsNewEmailIndex + 1;
-        userSettingsNewPhoneIndex = userSettingsPhoneStartIndex + account.linkedPhoneNumbers.count;
+        userSettingsEmailStartIndex = -1;
+        userSettingsNewEmailIndex = -1;
+        userSettingsPhoneStartIndex = -1;
+        userSettingsNewPhoneIndex = -1;
 
         // Hide some unsupported account settings
         userSettingsFirstNameIndex = -1;
@@ -1235,7 +1235,7 @@ SingleImagePickerPresenterDelegate>
         userSettingsNightModeSepIndex = -1;
         userSettingsNightModeIndex = -1;
 
-        count = userSettingsNewPhoneIndex + 1;
+        count = userSettingsChangePasswordIndex + 1;
     }
     else if (section == SETTINGS_SECTION_NOTIFICATIONS_SETTINGS_INDEX)
     {
