@@ -73,7 +73,7 @@
 	<key>enableVoiceVideoCall</key>
 	<true/>
 	<key>enableQRCodeLogin</key>
-	<false/>
+	<true/>
 	<key>enableCustomHomeserver</key>
 	<true/>
 </dict>
