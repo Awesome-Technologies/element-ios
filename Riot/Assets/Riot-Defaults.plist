@@ -62,7 +62,7 @@
 	<key>bugReportEndpointUrl</key>
 	<string>https://test.amp.care/bugreports</string>
 	<key>bugReportApp</key>
-	<string>amp_chat-ios</string>
+	<string>amp_care-ios</string>
 	<key>roomDirectoryServers</key>
 	<dict>
 		<key>matrix.org</key>
