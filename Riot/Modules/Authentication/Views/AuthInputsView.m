@@ -217,13 +217,13 @@
                                                                  attributes:@{NSForegroundColorAttributeName: ThemeService.shared.theme.placeholderTextColor}];
 
                     self.userLoginContainer.hidden = NO;
-                    self.messageLabel.hidden = NO;
-                    self.phoneContainer.hidden = NO;
+                    self.messageLabel.hidden = YES;
+                    self.phoneContainer.hidden = YES;
                     self.passwordContainer.hidden = NO;
 
                     self.messageLabelTopConstraint.constant = 59;
                     self.phoneContainerTopConstraint.constant = 70;
-                    self.passwordContainerTopConstraint.constant = 150;
+                    self.passwordContainerTopConstraint.constant = 55;
 
                     self.currentLastContainer = self.passwordContainer;
                 }

@@ -282,7 +282,7 @@ internal enum VectorL10n {
   internal static var authUseServerOptions: String { 
     return VectorL10n.tr("Vector", "auth_use_server_options") 
   }
-  /// Email or user name
+  /// User name
   internal static var authUserIdPlaceholder: String { 
     return VectorL10n.tr("Vector", "auth_user_id_placeholder") 
   }

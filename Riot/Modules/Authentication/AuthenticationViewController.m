@@ -83,14 +83,14 @@
 {
     [super viewDidLoad];
     
-    self.mainNavigationItem.title = nil;
-    self.rightBarButtonItem.title = NSLocalizedStringFromTable(@"auth_register", @"Vector", nil);
-    
+    self.mainNavigationItem.title = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
+    self.rightBarButtonItem.title = nil;
+
     self.defaultHomeServerUrl = [[NSUserDefaults standardUserDefaults] objectForKey:@"homeserverurl"];
     
     self.defaultIdentityServerUrl = [[NSUserDefaults standardUserDefaults] objectForKey:@"identityserverurl"];
     
-    self.welcomeImageView.image = [UIImage imageNamed:@"logo"];
+    self.welcomeImageView.image = [UIImage imageNamed:@"AMPcare"];
     
     [self.submitButton.layer setCornerRadius:5];
     self.submitButton.clipsToBounds = YES;
@@ -144,6 +144,8 @@
         
     }];
     [self userInterfaceThemeDidChange];
+    
+    self.serverOptionsContainer.hidden = YES;
 }
 
 - (void)userInterfaceThemeDidChange
@@ -364,6 +366,7 @@
     {
         // The right bar button is used to cancel the running request.
         self.rightBarButtonItem.title = NSLocalizedStringFromTable(@"cancel", @"Vector", nil);
+        self.rightBarButtonItem.enabled = YES;
 
         // Remove the potential back button.
         self.mainNavigationItem.leftBarButtonItem = nil;
@@ -381,7 +384,7 @@
         {
             if (!authInputsview.isSingleSignOnRequired && !self.softLogoutCredentials)
             {
-                self.rightBarButtonItem.title = NSLocalizedStringFromTable(@"auth_register", @"Vector", nil);
+                self.rightBarButtonItem.title = nil;
             }
             else
             {
@@ -543,6 +546,8 @@
         {
             // Cancel the current operation
             [self cancel];
+            self.rightBarButtonItem.title = nil;
+            self.rightBarButtonItem.enabled = NO;
         }
         else if (self.authType == MXKAuthenticationTypeLogin)
         {
@@ -771,7 +776,7 @@
         authInputsview = (AuthInputsView*)self.authInputsView;
     }
 
-    self.forgotPasswordButton.hidden = (self.authType != MXKAuthenticationTypeLogin) || authInputsview.isSingleSignOnRequired;
+    self.forgotPasswordButton.hidden = YES;
     
     // Adjust minimum leading constraint of the submit button
     if (self.forgotPasswordButton.isHidden)
