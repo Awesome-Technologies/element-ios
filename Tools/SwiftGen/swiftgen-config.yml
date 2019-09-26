@@ -15,6 +15,13 @@ strings:
       output: Strings.swift
       params:
         enumName: VectorL10n
+strings:
+  inputs: Assets/en.lproj/AMPcare.strings
+  outputs:
+    - templatePath: Templates/Strings/flat-swift4-vector.stencil
+      output: StringsAMPcare.swift
+      params:
+        enumName: AMPcareL10n
 xcassets:  
   - inputs:
       - Assets/Images.xcassets

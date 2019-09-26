@@ -165,6 +165,7 @@
 		97A031FA22F48AFD002511B7 /* CaseListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A031F922F48AFD002511B7 /* CaseListener.swift */; };
 		97A031FC22F4922D002511B7 /* CaseUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A031FB22F4922D002511B7 /* CaseUpdater.swift */; };
 		97A031FE22F49236002511B7 /* CaseUpdaterDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A031FD22F49236002511B7 /* CaseUpdaterDelegate.swift */; };
+		97A9F210233CCF4900A2CD5E /* StringsAMPcare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A9F20F233CCF4800A2CD5E /* StringsAMPcare.swift */; };
 		97EB1F2322F84EEA00C569F2 /* AMPcare.strings in Resources */ = {isa = PBXBuildFile; fileRef = 97EB1F2122F84EE900C569F2 /* AMPcare.strings */; };
 		97EB1F2522F84F0900C569F2 /* AMPcare.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 97EB1F2722F84F0900C569F2 /* AMPcare.stringsdict */; };
 		B104C2942203773C00D9F496 /* KeyBackupBannerPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = B104C2932203773B00D9F496 /* KeyBackupBannerPreferences.swift */; };
@@ -826,6 +827,7 @@
 		97A031F922F48AFD002511B7 /* CaseListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaseListener.swift; sourceTree = "<group>"; };
 		97A031FB22F4922D002511B7 /* CaseUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaseUpdater.swift; sourceTree = "<group>"; };
 		97A031FD22F49236002511B7 /* CaseUpdaterDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaseUpdaterDelegate.swift; sourceTree = "<group>"; };
+		97A9F20F233CCF4800A2CD5E /* StringsAMPcare.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringsAMPcare.swift; sourceTree = "<group>"; };
 		97EB1F2222F84EE900C569F2 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/AMPcare.strings; sourceTree = "<group>"; };
 		97EB1F2422F84EF000C569F2 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/AMPcare.strings; sourceTree = "<group>"; };
 		97EB1F2622F84F0900C569F2 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = de; path = de.lproj/AMPcare.stringsdict; sourceTree = "<group>"; };
@@ -2010,6 +2012,7 @@
 			isa = PBXGroup;
 			children = (
 				B1098BDA21ECE09E000DDA48 /* Strings.swift */,
+				97A9F20F233CCF4800A2CD5E /* StringsAMPcare.swift */,
 				B1098BDC21ECE09E000DDA48 /* Images.swift */,
 				B1098BDE21ECE09E000DDA48 /* RiotDefaults.swift */,
 				B1098BE421ECE1FC000DDA48 /* Storyboards.swift */,
@@ -4449,6 +4452,7 @@
 				B16932A320F3A21C00746532 /* main.m in Sources */,
 				B1B5574520EE6C4D00210D55 /* StartChatViewController.m in Sources */,
 				3232AB4C2256558300AD6A5C /* TemplateScreenCoordinator.swift in Sources */,
+				97A9F210233CCF4900A2CD5E /* StringsAMPcare.swift in Sources */,
 				B1B5575920EE6C4D00210D55 /* HomeMessagesSearchViewController.m in Sources */,
 				B1B558DE20EF768F00210D55 /* RoomIncomingAttachmentBubbleCell.m in Sources */,
 				B1B5574820EE6C4D00210D55 /* PeopleViewController.m in Sources */,
