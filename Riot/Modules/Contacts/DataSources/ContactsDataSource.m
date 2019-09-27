@@ -547,50 +547,15 @@
     
     if (contact)
     {
-        ContactTableViewCell *contactCell = [tableView dequeueReusableCellWithIdentifier:[ContactTableViewCell defaultReuseIdentifier]];
-        if (!contactCell)
+        NSString *cellIdentifier = @"DefaultCell";
+        UITableViewCell *cell =  [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+        if (!cell)
         {
-            contactCell = [[ContactTableViewCell alloc] init];
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
         }
+        [cell.textLabel setText:contact.displayName];
         
-        // Make the cell display the contact
-        [contactCell render:contact];
-        
-        contactCell.selectionStyle = UITableViewCellSelectionStyleDefault;
-        contactCell.showMatrixIdInDisplayName = showMatrixIdInDisplayName;
-        
-        // The search displays contacts to invite.
-        if (indexPath.section == filteredLocalContactsSection || indexPath.section == filteredMatrixContactsSection)
-        {
-            // Add the right accessory view if any
-            contactCell.accessoryType = self.contactCellAccessoryType;
-            if (self.contactCellAccessoryImage)
-            {
-                contactCell.accessoryView = [[UIImageView alloc] initWithImage:self.contactCellAccessoryImage];
-            }
-            
-        }
-        else if (indexPath.section == searchInputSection)
-        {
-            // This is the text entered by the user
-            // Check whether the search input is a valid email or a Matrix user ID before adding the accessory view.
-            if (![MXTools isEmailAddress:currentSearchText] && ![MXTools isMatrixUserIdentifier:currentSearchText])
-            {
-                contactCell.contentView.alpha = 0.5;
-                contactCell.userInteractionEnabled = NO;
-            }
-            else
-            {
-                // Add the right accessory view if any
-                contactCell.accessoryType = self.contactCellAccessoryType;
-                if (self.contactCellAccessoryImage)
-                {
-                    contactCell.accessoryView = [[UIImageView alloc] initWithImage:self.contactCellAccessoryImage];
-                }
-            }
-        }
-        
-        return contactCell;
+        return cell;
     }
     else
     {
