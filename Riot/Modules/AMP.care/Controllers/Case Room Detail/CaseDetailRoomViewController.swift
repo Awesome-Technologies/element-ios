@@ -66,6 +66,14 @@ class CaseDetailRoomViewController: CaseDetailViewController, CaseListener {
         registerListeners()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        if room != nil {
+            room.markAllAsRead()
+        }
+    }
+    
     override func setupSections() {
         sections.removeAll()
         

@@ -15,6 +15,7 @@ class CaseTableViewCell: MXKRecentTableViewCell, CaseListener {
     @IBOutlet weak var creationDateLabel: UILabel!
     @IBOutlet weak var severityView: UIView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var unreadIndicator: UIView!
     
     private var caseCellData: MXKRecentCellDataStoring!
     private var listener: ObserverToken!
@@ -52,6 +53,9 @@ class CaseTableViewCell: MXKRecentTableViewCell, CaseListener {
     // MARK: - MXKCellRendering
     
     fileprivate func pullDataForUI(_ room: MXRoom) {
+        // Update unread indicator
+        unreadIndicator.backgroundColor = caseCellData.hasUnread ? UIColor(red: 0.00, green: 0.48, blue: 1.00, alpha: 1.0) : nil
+        
         if let `case` = CaseManager.shared.getCase(for: room.roomId) {
             listener = `case`.addObserver(self)
             self.updateCaseUserInterface()

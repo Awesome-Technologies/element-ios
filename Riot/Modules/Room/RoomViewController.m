@@ -568,6 +568,9 @@
     self.roomDataSource.showReadMarker = YES;
     self.updateRoomReadMarker = NO;
     isAppeared = NO;
+    
+    // Unregister delegate so we don't mark Events as read in Cases list view
+    self.roomDataSource.delegate = nil;
 }
 
 - (void)viewDidAppear:(BOOL)animated

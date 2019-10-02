@@ -2654,7 +2654,20 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
             NSMutableArray<MXEventTypeString> *acknowledgableEventTypes = [NSMutableArray arrayWithArray:mxSession.acknowledgableEventTypes];
             [acknowledgableEventTypes addObject:kWidgetMatrixEventTypeString];
             [acknowledgableEventTypes addObject:kWidgetModularEventTypeString];
+            // And Care events
+            [acknowledgableEventTypes addObject:@"care.amp.case"];
+            [acknowledgableEventTypes addObject:@"care.amp.patient"];
+            [acknowledgableEventTypes addObject:@"care.amp.observation"];
+            [acknowledgableEventTypes addObject:@"care.amp.done"];
             mxSession.acknowledgableEventTypes = acknowledgableEventTypes;
+            
+            // Consider Care events for unread counter
+            NSMutableArray<MXEventTypeString> *unreadEventTypes = [NSMutableArray arrayWithArray:mxSession.unreadEventTypes];
+            [unreadEventTypes addObject:@"care.amp.case"];
+            [unreadEventTypes addObject:@"care.amp.patient"];
+            [unreadEventTypes addObject:@"care.amp.observation"];
+            [unreadEventTypes addObject:@"care.amp.done"];
+            mxSession.unreadEventTypes = unreadEventTypes;
         }
         else if (mxSession.state == MXSessionStateStoreDataReady)
         {

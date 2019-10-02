@@ -47,15 +47,29 @@
                     <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="ouN-vI-Lvq">
                         <rect key="frame" x="150" y="15" width="20" height="20"/>
                     </activityIndicatorView>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hrE-Jq-9T8">
+                        <rect key="frame" x="298" y="6" width="10" height="10"/>
+                        <constraints>
+                            <constraint firstAttribute="width" secondItem="hrE-Jq-9T8" secondAttribute="height" multiplier="1:1" id="5D2-ST-avk"/>
+                            <constraint firstAttribute="width" constant="10" id="Tl1-YT-aDk"/>
+                        </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                <integer key="value" value="5"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </view>
                 </subviews>
                 <constraints>
                     <constraint firstAttribute="bottom" secondItem="fy4-um-aRr" secondAttribute="bottom" constant="6" id="7Rn-3S-LcX"/>
                     <constraint firstItem="f2b-H4-LQg" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="16" id="AFx-10-JEF"/>
+                    <constraint firstItem="hrE-Jq-9T8" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="6" id="F5H-5i-8wu"/>
                     <constraint firstItem="ouN-vI-Lvq" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="PYj-v4-NAa"/>
                     <constraint firstItem="f2b-H4-LQg" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="6" id="UcW-0t-6RJ"/>
                     <constraint firstItem="I9e-82-WTH" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="Ul0-l9-bSc"/>
                     <constraint firstAttribute="bottom" secondItem="I9e-82-WTH" secondAttribute="bottom" id="VuS-3q-YvI"/>
                     <constraint firstAttribute="trailing" secondItem="fy4-um-aRr" secondAttribute="trailing" constant="16" id="bMn-sZ-sdM"/>
+                    <constraint firstAttribute="trailing" secondItem="hrE-Jq-9T8" secondAttribute="trailing" constant="12" id="bZC-le-eEa"/>
                     <constraint firstItem="oje-fa-BCh" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="16" id="dGk-zU-nR0"/>
                     <constraint firstItem="ouN-vI-Lvq" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" id="lQa-b0-HNf"/>
                     <constraint firstItem="I9e-82-WTH" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="uFh-eE-kdr"/>
@@ -71,6 +85,7 @@
                 <outlet property="nameLabel" destination="f2b-H4-LQg" id="wfp-fU-E1s"/>
                 <outlet property="patientNameLabel" destination="oje-fa-BCh" id="PhM-b8-tBp"/>
                 <outlet property="severityView" destination="I9e-82-WTH" id="veC-Ek-dHT"/>
+                <outlet property="unreadIndicator" destination="hrE-Jq-9T8" id="95f-3m-hMW"/>
             </connections>
             <point key="canvasLocation" x="129.59999999999999" y="153.82308845577214"/>
         </tableViewCell>
