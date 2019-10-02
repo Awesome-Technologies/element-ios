@@ -20,6 +20,7 @@ public class Case: NSObject, Observable, CaseUpdaterDelegate, NSCopying {
         case `case` = "care.amp.case"
         case patient = "care.amp.patient"
         case observation = "care.amp.observation"
+        case done = "care.amp.done"
         
         /// Return a MXEventType enum object used in MXEvent.
         func mxEventType() -> MXEventType {
