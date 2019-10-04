@@ -49,9 +49,9 @@
                     </activityIndicatorView>
                 </subviews>
                 <constraints>
+                    <constraint firstAttribute="bottom" secondItem="fy4-um-aRr" secondAttribute="bottom" constant="6" id="7Rn-3S-LcX"/>
                     <constraint firstItem="f2b-H4-LQg" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="16" id="AFx-10-JEF"/>
                     <constraint firstItem="ouN-vI-Lvq" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="PYj-v4-NAa"/>
-                    <constraint firstItem="fy4-um-aRr" firstAttribute="centerY" secondItem="oje-fa-BCh" secondAttribute="centerY" id="TlS-zm-Klj"/>
                     <constraint firstItem="f2b-H4-LQg" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="6" id="UcW-0t-6RJ"/>
                     <constraint firstItem="I9e-82-WTH" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="Ul0-l9-bSc"/>
                     <constraint firstAttribute="bottom" secondItem="I9e-82-WTH" secondAttribute="bottom" id="VuS-3q-YvI"/>

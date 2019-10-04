@@ -31,8 +31,11 @@ class CaseTableViewCell: MXKRecentTableViewCell, CaseListener {
     }
     
     func updatePatientUserInterface() {
-        let patient = CaseManager.shared.getCase(for: room.roomId)?.patient
-        self.patientNameLabel.text = patient?.name
+        if let patient = CaseManager.shared.getCase(for: room.roomId)?.patient, let name = patient.name, !name.isEmpty {
+            self.patientNameLabel.text = name
+        } else {
+            self.patientNameLabel.text = "-"
+        }
     }
     
     fileprivate func unregisterListeners() {

@@ -133,11 +133,11 @@ class CaseEditViewController: CaseDetailViewController, RowEditingDelegate, Pict
         switch editMode {
         case .new:
             let caseCore = caseData?.caseCore
-            guard let title = caseCore?.title, caseCore?.severity != nil, let requester = caseCore?.requester, let patientName = caseData?.patient?.name else {
+            guard let title = caseCore?.title, caseCore?.severity != nil, let requester = caseCore?.requester else {
                 navigationItem.rightBarButtonItem?.isEnabled = false
                 return
             }
-            navigationItem.rightBarButtonItem?.isEnabled = selectedContact != nil && !title.isEmpty && !requester.isEmpty && !patientName.isEmpty
+            navigationItem.rightBarButtonItem?.isEnabled = selectedContact != nil && !title.isEmpty && !requester.isEmpty
             
         case .edit:
             if let caseData = caseData {
