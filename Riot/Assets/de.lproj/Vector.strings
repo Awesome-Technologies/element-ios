@@ -466,11 +466,11 @@
 "do_not_ask_again" = "Nicht erneut fragen";
 "settings_ui_theme_black" = "Schwarz";
 // Room key request dialog
-"e2e_room_key_request_title" = "Verschlüsselungs-Schlüssel-Anfrage";
-"e2e_room_key_request_message" = "Dein nicht verifiziertes Gerät '%@' fragt Verschlüsselungs-Schlüssel an.";
+"e2e_room_key_request_title" = "Schlüssel-Anfrage";
+"e2e_room_key_request_message" = "Das Gerät '%@' fragt Verschlüsselungs-Schlüssel zum entschlüsseln von Daten an.";
 "e2e_room_key_request_start_verification" = "Starte Verifikation...";
-"e2e_room_key_request_share_without_verifying" = "Teile ohne zu verifizieren";
-"e2e_room_key_request_ignore_request" = "Ignoriere Anfrage";
+"e2e_room_key_request_share_without_verifying" = "Schlüssel teilen";
+"e2e_room_key_request_ignore_request" = "Anfrage ignorieren";
 "title_groups" = "Communities";
 // Groups tab
 "group_invite_section" = "EINLADUNGEN";
@@ -507,7 +507,7 @@
 "group_participants_invited_section" = "EINGELADEN";
 // Group rooms
 "group_rooms_filter_rooms" = "Filtere Community-Räume";
-"e2e_room_key_request_message_new_device" = "Du hast ein neues Gerät '%@' hinzugefügt, welches Verschlüsselungs-Schlüssel anfordert.";
+"e2e_room_key_request_message_new_device" = "Du hast ein neues Gerät '%@' hinzugefügt, welches Verschlüsselungs-Schlüssel anfordert.\n";
 "room_do_not_have_permission_to_post" = "Du hast keine Berechtigung in diesem Raum zu posten";
 "room_event_action_kick_prompt_reason" = "Grund für den Rauswurf des Benutzers";
 "room_event_action_ban_prompt_reason" = "Grund für die Verbannung des Benutzers";

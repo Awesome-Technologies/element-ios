@@ -898,7 +898,7 @@ internal enum VectorL10n {
   internal static var e2eRoomKeyRequestIgnoreRequest: String { 
     return VectorL10n.tr("Vector", "e2e_room_key_request_ignore_request") 
   }
-  /// Your unverified device '%@' is requesting encryption keys.
+  /// The device '%@' is requesting encryption keys to decrypt data.
   internal static func e2eRoomKeyRequestMessage(_ p1: String) -> String {
     return VectorL10n.tr("Vector", "e2e_room_key_request_message", p1)
   }
@@ -906,7 +906,7 @@ internal enum VectorL10n {
   internal static func e2eRoomKeyRequestMessageNewDevice(_ p1: String) -> String {
     return VectorL10n.tr("Vector", "e2e_room_key_request_message_new_device", p1)
   }
-  /// Share without verifying
+  /// Share keys
   internal static var e2eRoomKeyRequestShareWithoutVerifying: String { 
     return VectorL10n.tr("Vector", "e2e_room_key_request_share_without_verifying") 
   }
@@ -914,7 +914,7 @@ internal enum VectorL10n {
   internal static var e2eRoomKeyRequestStartVerification: String { 
     return VectorL10n.tr("Vector", "e2e_room_key_request_start_verification") 
   }
-  /// Encryption key request
+  /// Key Share Request
   internal static var e2eRoomKeyRequestTitle: String { 
     return VectorL10n.tr("Vector", "e2e_room_key_request_title") 
   }

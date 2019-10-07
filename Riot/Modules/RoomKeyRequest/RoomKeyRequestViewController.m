@@ -51,34 +51,13 @@
     if (rootViewController)
     {
         NSString *title = NSLocalizedStringFromTable(@"e2e_room_key_request_title", @"Vector", nil);
-        NSString *message;
-        if (wasNewDevice)
-        {
-            message = [NSString stringWithFormat:NSLocalizedStringFromTable(@"e2e_room_key_request_message_new_device", @"Vector", nil), _device.displayName];
-        }
-        else
-        {
-            message = [NSString stringWithFormat:NSLocalizedStringFromTable(@"e2e_room_key_request_message", @"Vector", nil), _device.displayName];
-        }
+        NSString *message = [NSString stringWithFormat:NSLocalizedStringFromTable(@"e2e_room_key_request_message", @"Vector", nil), _device.displayName];
 
         _alertController = [UIAlertController alertControllerWithTitle:title
                                                                message:message
                                                         preferredStyle:UIAlertControllerStyleAlert];
 
         __weak typeof(self) weakSelf = self;
-
-        [_alertController addAction:[UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"e2e_room_key_request_start_verification", @"Vector", nil)
-                                                             style:UIAlertActionStyleDefault
-                                                           handler:^(UIAlertAction * action) {
-
-                                                               if (weakSelf)
-                                                               {
-                                                                   typeof(self) self = weakSelf;
-
-                                                                   self->_alertController = nil;
-                                                                   [self showVerificationView];
-                                                               }
-                                                           }]];
 
         [_alertController addAction:[UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"e2e_room_key_request_share_without_verifying", @"Vector", nil)
                                                              style:UIAlertActionStyleDefault
