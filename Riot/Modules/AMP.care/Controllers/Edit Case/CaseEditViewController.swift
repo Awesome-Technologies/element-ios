@@ -479,7 +479,8 @@ class CaseEditViewController: CaseDetailViewController, RowEditingDelegate, Pict
             viewController.contactsTableViewControllerDelegate = self
             
             let dataSource = ContactsDataSource(matrixSession: session)
-            dataSource?.search(withPattern: RiotDefaults.homeserver, forceReset: true)
+            let url = URL(string: session.matrixRestClient.homeserver)
+            dataSource?.search(withPattern: url?.host, forceReset: true)
             viewController.displayList(dataSource)
             
             vc = viewController
