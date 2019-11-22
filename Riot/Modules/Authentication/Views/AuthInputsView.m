@@ -62,6 +62,8 @@
     self.repeatPasswordTextField.placeholder = NSLocalizedStringFromTable(@"auth_repeat_password_placeholder", @"Vector", nil);
     self.passWordTextField.placeholder = NSLocalizedStringFromTable(@"auth_password_placeholder", @"Vector", nil);
 
+    [self.demoNoticeLabel setText:NSLocalizedStringFromTable(@"auth_demo_notice", @"Vector", nil)];
+    
     // Apply placeholder color
     [self customizeViewRendering];
 }
@@ -96,6 +98,7 @@
     self.emailTextField.textColor = ThemeService.shared.theme.textPrimaryColor;
     
     self.messageLabel.textColor = ThemeService.shared.theme.textSecondaryColor;
+    self.demoNoticeLabel.textColor = ThemeService.shared.theme.textPrimaryColor;
     self.messageLabel.numberOfLines = 0;
     
     [self.ssoButton.layer setCornerRadius:5];
@@ -176,6 +179,7 @@
                     self.userLoginContainer.hidden = NO;
                     self.messageLabel.hidden = YES;
                     self.passwordContainer.hidden = NO;
+                    self.demoNoticeLabel.hidden = YES;
 
                     self.messageLabelTopConstraint.constant = 59;
                     self.passwordContainerTopConstraint.constant = 50;
@@ -735,10 +739,11 @@
         self.userLoginContainer.hidden = NO;
         self.passwordContainer.hidden = NO;
         self.repeatPasswordContainer.hidden = NO;
+        self.demoNoticeLabel.hidden = NO;
         
         self.passwordContainerTopConstraint.constant = 50;
         
-        lastViewContainer = self.repeatPasswordContainer;
+        lastViewContainer = self.demoNoticeLabel;
     }
     else
     {
@@ -825,6 +830,7 @@
     self.repeatPasswordContainer.hidden = YES;
     
     // Hide other items
+    self.demoNoticeLabel.hidden = YES;
     self.messageLabelTopConstraint.constant = 8;
     self.messageLabel.hidden = YES;
     self.recaptchaContainer.hidden = YES;

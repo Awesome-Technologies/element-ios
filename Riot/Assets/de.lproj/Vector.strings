@@ -78,6 +78,8 @@
 "auth_qr_no_permission" = "Erlauben Sie den Zugriff auf die Kamera in den Systemeinstellungen, um QR Codes zu scannen.";
 "auth_alternative_login" = "Alternativer Login";
 "auth_qr_authorize" = "Einstellungen öffnen";
+"auth_demo_notice" = "Hinweis: Diese Registrierung legt einen\nTest-Nutzer für Sie an.";
+
 // Chat creation
 "room_creation_title" = "Neuer Chat";
 "room_creation_account" = "Konto";

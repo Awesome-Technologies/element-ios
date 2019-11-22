@@ -62,6 +62,10 @@ internal enum VectorL10n {
   internal static var authAutodiscoverInvalidResponse: String { 
     return VectorL10n.tr("Vector", "auth_autodiscover_invalid_response") 
   }
+  /// Notice: This registration creates a\ntest user for you.
+  internal static var authDemoNotice: String { 
+    return VectorL10n.tr("Vector", "auth_demo_notice") 
+  }
   /// This email address is already in use
   internal static var authEmailInUse: String { 
     return VectorL10n.tr("Vector", "auth_email_in_use") 

@@ -192,6 +192,12 @@
                         <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="AuthInputsViewRecaptchaWebView"/>
                     </userDefinedRuntimeAttributes>
                 </view>
+                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="F52-51-DyG">
+                    <rect key="frame" x="12" y="168" width="576" height="17"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
                 <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Sz8-Gm-Piu" customClass="TermsView" customModule="Riot" customModuleProvider="target">
                     <rect key="frame" x="0.0" y="27.5" width="600" height="183"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -216,6 +222,7 @@
                 <constraint firstItem="Sz8-Gm-Piu" firstAttribute="leading" secondItem="UfH-jv-6w4" secondAttribute="leading" id="DSd-rm-Ild"/>
                 <constraint firstItem="bXz-VI-5FS" firstAttribute="leading" secondItem="x74-04-ezp" secondAttribute="leading" id="Frq-sH-HZT"/>
                 <constraint firstItem="xOW-lo-QGC" firstAttribute="leading" secondItem="x74-04-ezp" secondAttribute="leading" id="NOu-LR-RvE"/>
+                <constraint firstAttribute="trailing" secondItem="F52-51-DyG" secondAttribute="trailing" constant="12" id="NYD-gL-Hg5"/>
                 <constraint firstAttribute="trailing" secondItem="bXz-VI-5FS" secondAttribute="trailing" id="NiV-pJ-PfV"/>
                 <constraint firstItem="ckH-mV-Yds" firstAttribute="centerY" secondItem="x74-04-ezp" secondAttribute="centerY" id="PNx-SK-FZY"/>
                 <constraint firstAttribute="trailing" secondItem="xOW-lo-QGC" secondAttribute="trailing" id="SNm-WQ-Piu"/>
@@ -226,14 +233,17 @@
                 <constraint firstItem="Sz8-Gm-Piu" firstAttribute="top" secondItem="whs-Ob-uzD" secondAttribute="top" id="e5z-gO-fV7"/>
                 <constraint firstItem="bXz-VI-5FS" firstAttribute="top" secondItem="x74-04-ezp" secondAttribute="top" id="enV-j0-cgR"/>
                 <constraint firstItem="whs-Ob-uzD" firstAttribute="top" secondItem="68j-f9-JG4" secondAttribute="bottom" id="g87-rp-bgb"/>
+                <constraint firstItem="F52-51-DyG" firstAttribute="leading" secondItem="x74-04-ezp" secondAttribute="leading" constant="12" id="lTu-7z-cYo"/>
                 <constraint firstAttribute="height" constant="200" id="qBF-0J-3VM"/>
                 <constraint firstItem="whs-Ob-uzD" firstAttribute="width" secondItem="x74-04-ezp" secondAttribute="width" id="wa3-pP-FzX"/>
+                <constraint firstItem="F52-51-DyG" firstAttribute="top" secondItem="rb1-L5-udI" secondAttribute="bottom" constant="18" id="xMI-Es-bfm"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <nil key="simulatedTopBarMetrics"/>
             <nil key="simulatedBottomBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <connections>
+                <outlet property="demoNoticeLabel" destination="F52-51-DyG" id="Pod-nV-6CW"/>
                 <outlet property="emailContainer" destination="bXz-VI-5FS" id="4J7-D0-Dmf"/>
                 <outlet property="emailContainerTopConstraint" destination="enV-j0-cgR" id="zY3-YX-7Bg"/>
                 <outlet property="emailSeparator" destination="YQ4-Kj-XPh" id="iub-NG-iJR"/>

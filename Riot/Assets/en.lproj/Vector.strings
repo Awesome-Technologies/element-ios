@@ -129,6 +129,7 @@
 "auth_qr_no_permission" = "Allow access to the camera in system settings to scan QR codes.";
 "auth_alternative_login" = "Alternative Login";
 "auth_qr_authorize" = "Open Settings";
+"auth_demo_notice" = "Notice: This registration creates a\ntest user for you.";
 
 // Chat creation
 "room_creation_title" = "New Chat";

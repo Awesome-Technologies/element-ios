@@ -42,6 +42,7 @@
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *messageLabelTopConstraint;
 
 @property (weak, nonatomic) IBOutlet UILabel *messageLabel;
+@property (weak, nonatomic) IBOutlet UILabel *demoNoticeLabel;
 
 @property (weak, nonatomic) IBOutlet UIView *recaptchaContainer;
 @property (weak, nonatomic) IBOutlet TermsView *termsView;
