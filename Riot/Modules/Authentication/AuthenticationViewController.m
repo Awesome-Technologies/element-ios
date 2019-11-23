@@ -44,6 +44,11 @@
      Last used AuthInputClass. Used to show correct login when cancelling registration
      */
     Class lastUsedAuthInputClass;
+    
+    /**
+     Custom homeserver so we can restore when coming back from regsitration
+     */
+    NSString *customHomeServer;
 }
 
 @end
@@ -102,6 +107,11 @@
     [self.skipButton setTitle:NSLocalizedStringFromTable(@"auth_skip", @"Vector", nil) forState:UIControlStateNormal];
     [self.skipButton setTitle:NSLocalizedStringFromTable(@"auth_skip", @"Vector", nil) forState:UIControlStateHighlighted];
     self.skipButton.enabled = YES;
+    
+    self.homeServerTextField.placeholder = NSLocalizedStringFromTable(@"auth_home_server_placeholder", @"Vector", nil);
+    self.homeServerLabel.text = NSLocalizedStringFromTable(@"auth_home_server_label", @"Vector", nil);
+    // Show homeserver textfield if enabled
+    self.homeServerContainer.hidden = ![defaults boolForKey:@"enableCustomHomeserver"];
     
     // The view controller dismiss itself on successful login.
     self.delegate = self;
@@ -176,6 +186,8 @@
     [self.submitButton setTitleColor:ThemeService.shared.theme.baseTextPrimaryColor forState:UIControlStateNormal];
     [self.skipButton setTitleColor:ThemeService.shared.theme.baseTextPrimaryColor forState:UIControlStateNormal];
     
+    self.homeServerTextField.textColor = ThemeService.shared.theme.textPrimaryColor;
+    
     self.noFlowLabel.textColor = ThemeService.shared.theme.warningColor;
     
     self.activityIndicator.backgroundColor = ThemeService.shared.theme.overlayBackgroundColor;
@@ -247,16 +259,32 @@
     }
     
     super.authType = authType;
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
     if (authType == MXKAuthenticationTypeLogin)
     {
         [self.submitButton setTitle:NSLocalizedStringFromTable(@"auth_login", @"Vector", nil) forState:UIControlStateNormal];
         [self.submitButton setTitle:NSLocalizedStringFromTable(@"auth_login", @"Vector", nil) forState:UIControlStateHighlighted];
+        
+        if ([defaults boolForKey:@"enableCustomHomeserver"] && customHomeServer != nil)
+        {
+            [self setHomeServerTextFieldText:customHomeServer];
+            customHomeServer = nil;
+            self.homeServerTextField.enabled = YES;
+        }
     }
     else if (authType == MXKAuthenticationTypeRegister)
     {
         [self.submitButton setTitle:NSLocalizedStringFromTable(@"auth_register", @"Vector", nil) forState:UIControlStateNormal];
         [self.submitButton setTitle:NSLocalizedStringFromTable(@"auth_register", @"Vector", nil) forState:UIControlStateHighlighted];
+        
+        if ([defaults boolForKey:@"enableCustomHomeserver"] && customHomeServer == nil)
+        {
+            customHomeServer = self.homeServerTextField.text;
+        }
+        [self setHomeServerTextFieldText:self.defaultHomeServerUrl];
+        self.homeServerTextField.enabled = NO;
+        [self.homeServerTextField resignFirstResponder];
     }
     else if (authType == MXKAuthenticationTypeForgotPassword)
     {
@@ -370,6 +398,9 @@
     
     // Custom used authInputsView
     [self registerAuthInputsViewClass:QRReaderView.class forAuthType:MXKAuthenticationTypeLogin];
+    
+    // Hide homeserver textfield
+    self.homeServerContainer.hidden = YES;
 }
 
 - (void)showRegularAuthInput
@@ -393,6 +424,12 @@
     [self registerAuthInputsViewClass:AuthInputsView.class forAuthType:MXKAuthenticationTypeRegister];
     
     self.authInputsView = regularAuthInputsView;
+    
+    // Show homeserver textfield when showing login
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if ([defaults boolForKey:@"enableCustomHomeserver"]) {
+        self.homeServerContainer.hidden = NO;
+    }
 }
 
 - (IBAction)onAlternativeLoginPressed:(id)sender
@@ -426,6 +463,7 @@
             
             self.authType = MXKAuthenticationTypeRegister;
             self.rightBarButtonItem.title = NSLocalizedStringFromTable(@"auth_login", @"Vector", nil);
+            self.homeServerContainer.hidden = YES;
         }
         else if ([defaults boolForKey:@"enableRegistration"])
         {
@@ -435,6 +473,8 @@
             if ([lastUsedAuthInputClass isEqual:QRReaderView.class])
             {
                 [self showQRAuthInput];
+            } else {
+                self.homeServerContainer.hidden = NO;
             }
         }
     }
@@ -649,7 +689,7 @@
 - (void)refreshContentViewHeightConstraint
 {
     // Refresh content view height by considering the options container display.
-    CGFloat constant = self.optionsContainer.frame.origin.y + 100;
+    CGFloat constant = self.optionsContainer.frame.origin.y + self.homeServerContainer.frame.size.height + 100;
     
     self.contentViewHeightConstraint.constant = constant;
 }

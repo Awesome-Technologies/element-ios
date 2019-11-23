@@ -75,5 +75,7 @@
 	<false/>
 	<key>enableQRCodeLogin</key>
 	<true/>
+	<key>enableCustomHomeserver</key>
+	<false/>
 </dict>
 </plist>

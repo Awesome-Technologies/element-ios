@@ -27,6 +27,7 @@
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *rightBarButtonItem;
 
 @property (weak, nonatomic) IBOutlet UIView *optionsContainer;
+@property (weak, nonatomic) IBOutlet UIView *homeServerContainer;
 
 @property (weak, nonatomic) IBOutlet UIButton *skipButton;
 

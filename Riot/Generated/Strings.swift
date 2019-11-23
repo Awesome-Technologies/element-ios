@@ -82,7 +82,11 @@ internal enum VectorL10n {
   internal static var authForgotPassword: String { 
     return VectorL10n.tr("Vector", "auth_forgot_password") 
   }
-  /// URL (e.g. https://matrix.org)
+  /// Server
+  internal static var authHomeServerLabel: String { 
+    return VectorL10n.tr("Vector", "auth_home_server_label") 
+  }
+  /// URL (e.g. https://test.amp.chat)
   internal static var authHomeServerPlaceholder: String { 
     return VectorL10n.tr("Vector", "auth_home_server_placeholder") 
   }

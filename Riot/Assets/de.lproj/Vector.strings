@@ -429,7 +429,8 @@
 "event_formatter_member_updates" = "%tu Änderungen der Mitgliedschaft";
 "contacts_user_directory_section" = "NUTZER VERZEICHNIS";
 "contacts_user_directory_offline_section" = "NUTZER VERZEICHNIS (offline)";
-"auth_home_server_placeholder" = "URL (z.B. https://matrix.org)";
+"auth_home_server_placeholder" = "URL (z.B. https://test.amp.chat)";
+"auth_home_server_label" = "Server";
 "auth_identity_server_placeholder" = "URL (z.B. https://matrix.org)";
 "room_ongoing_conference_call_close" = "Schließen";
 "room_conference_call_no_power" = "Du brauchst die Berechtigung Konferenzgespräche in diesem Raum zu verwalten";

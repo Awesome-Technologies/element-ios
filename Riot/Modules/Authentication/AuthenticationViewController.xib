@@ -23,8 +23,9 @@
                 <outlet property="cancelAuthFallbackButton" destination="9qj-5c-Sfb" id="IH4-cc-kKx"/>
                 <outlet property="contentView" destination="rhx-dD-4EJ" id="XXc-2j-Gi6"/>
                 <outlet property="contentViewHeightConstraint" destination="6v6-fz-e8o" id="wHX-YX-3gE"/>
-                <outlet property="homeServerLabel" destination="kHf-s1-cZa" id="nSI-4K-aQq"/>
-                <outlet property="homeServerTextField" destination="G8l-AP-iRs" id="F4s-Sf-TTZ"/>
+                <outlet property="homeServerContainer" destination="VYS-mz-HOq" id="LCt-M6-Jec"/>
+                <outlet property="homeServerLabel" destination="5zc-LZ-rJi" id="D5B-tB-NAc"/>
+                <outlet property="homeServerTextField" destination="S8m-gW-kox" id="POr-WX-a3F"/>
                 <outlet property="identityServerLabel" destination="5CT-Ht-Z3v" id="9h4-6J-n3X"/>
                 <outlet property="identityServerTextField" destination="PZC-Hd-Q6a" id="vKg-sd-dzJ"/>
                 <outlet property="mainNavigationItem" destination="rj9-wP-8QS" id="yNN-Dg-4Yw"/>
@@ -170,7 +171,7 @@
                                             </connections>
                                         </button>
                                         <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FIn-2w-e6H">
-                                            <rect key="frame" x="0.0" y="68" width="375" height="178"/>
+                                            <rect key="frame" x="0.0" y="142" width="375" height="178"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6yx-o1-vbD">
                                                     <rect key="frame" x="19" y="5" width="337" height="30"/>
@@ -318,11 +319,56 @@
                                                 <constraint firstAttribute="trailing" secondItem="6yx-o1-vbD" secondAttribute="trailing" constant="19" id="rWk-Mp-KPS"/>
                                             </constraints>
                                         </view>
+                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VYS-mz-HOq" userLabel="Homeserver Container">
+                                            <rect key="frame" x="0.0" y="81" width="375" height="56"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5zc-LZ-rJi">
+                                                    <rect key="frame" x="15" y="0.0" width="345" height="20.333333333333332"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="TtB-Th-2Y7">
+                                                    <rect key="frame" x="10" y="55" width="355" height="1"/>
+                                                    <color key="backgroundColor" red="0.66666666669999997" green="0.66666666669999997" blue="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="1" id="nfV-YK-t0x"/>
+                                                    </constraints>
+                                                </view>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="URL (e.g. https://test.amp.chat)" adjustsFontSizeToFit="NO" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="S8m-gW-kox">
+                                                    <rect key="frame" x="18" y="30" width="339" height="21"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="AuthenticationVCHSTextField"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="21" id="5XX-wq-SNc"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="URL" returnKeyType="done" textContentType="url"/>
+                                                    <connections>
+                                                        <outlet property="delegate" destination="-1" id="Z7K-4p-2P4"/>
+                                                    </connections>
+                                                </textField>
+                                            </subviews>
+                                            <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <accessibility key="accessibilityConfiguration" identifier="AuthInputsViewHomeserverContainer"/>
+                                            <constraints>
+                                                <constraint firstItem="TtB-Th-2Y7" firstAttribute="leading" secondItem="VYS-mz-HOq" secondAttribute="leading" constant="10" id="5Jc-GS-tH9"/>
+                                                <constraint firstItem="S8m-gW-kox" firstAttribute="top" secondItem="VYS-mz-HOq" secondAttribute="top" constant="30" id="856-xv-LZZ"/>
+                                                <constraint firstAttribute="height" constant="56" id="9av-bi-PBQ"/>
+                                                <constraint firstAttribute="trailing" secondItem="TtB-Th-2Y7" secondAttribute="trailing" constant="10" id="JFe-Kg-N9n"/>
+                                                <constraint firstItem="S8m-gW-kox" firstAttribute="leading" secondItem="VYS-mz-HOq" secondAttribute="leading" constant="18" id="XtL-R0-AkJ"/>
+                                                <constraint firstAttribute="trailing" secondItem="S8m-gW-kox" secondAttribute="trailing" constant="18" id="j7L-aQ-iWF"/>
+                                                <constraint firstItem="5zc-LZ-rJi" firstAttribute="leading" secondItem="VYS-mz-HOq" secondAttribute="leading" constant="15" id="kK7-sW-NuI"/>
+                                                <constraint firstAttribute="bottom" secondItem="TtB-Th-2Y7" secondAttribute="bottom" id="p1U-Yy-le6"/>
+                                                <constraint firstItem="5zc-LZ-rJi" firstAttribute="top" secondItem="VYS-mz-HOq" secondAttribute="top" id="wRK-gT-nM8"/>
+                                                <constraint firstAttribute="trailing" secondItem="5zc-LZ-rJi" secondAttribute="trailing" constant="15" id="z3j-oW-M95"/>
+                                            </constraints>
+                                        </view>
                                     </subviews>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                     <accessibility key="accessibilityConfiguration" identifier="AuthenticationVCOptionsContainer"/>
                                     <constraints>
                                         <constraint firstItem="FIn-2w-e6H" firstAttribute="leading" secondItem="Gg0-TE-OGb" secondAttribute="leading" id="3G8-Tb-KaN"/>
+                                        <constraint firstItem="VYS-mz-HOq" firstAttribute="top" secondItem="k3J-Eg-itz" secondAttribute="bottom" constant="18" id="3UZ-U3-MAb"/>
                                         <constraint firstItem="wEJ-AF-rdH" firstAttribute="width" secondItem="k3J-Eg-itz" secondAttribute="width" id="7sB-YJ-eX4"/>
                                         <constraint firstItem="wEJ-AF-rdH" firstAttribute="centerY" secondItem="k3J-Eg-itz" secondAttribute="centerY" id="Vze-EI-oXj"/>
                                         <constraint firstAttribute="trailing" secondItem="k3J-Eg-itz" secondAttribute="trailing" constant="11" id="ZyA-Tq-Sfq"/>
@@ -330,8 +376,10 @@
                                         <constraint firstAttribute="trailing" secondItem="FIn-2w-e6H" secondAttribute="trailing" id="kFj-6g-v3H"/>
                                         <constraint firstAttribute="height" constant="300" id="lXv-gM-CjN"/>
                                         <constraint firstItem="k3J-Eg-itz" firstAttribute="top" secondItem="Gg0-TE-OGb" secondAttribute="top" constant="33" id="mor-t9-7Ke"/>
-                                        <constraint firstItem="FIn-2w-e6H" firstAttribute="top" secondItem="k3J-Eg-itz" secondAttribute="bottom" constant="5" id="oTS-5o-MMW"/>
+                                        <constraint firstItem="FIn-2w-e6H" firstAttribute="top" secondItem="VYS-mz-HOq" secondAttribute="bottom" constant="5" id="oTS-5o-MMW"/>
+                                        <constraint firstItem="VYS-mz-HOq" firstAttribute="leading" secondItem="Gg0-TE-OGb" secondAttribute="leading" id="r4v-O0-qL0"/>
                                         <constraint firstItem="wEJ-AF-rdH" firstAttribute="leading" secondItem="Gg0-TE-OGb" secondAttribute="leading" constant="11" id="sax-RY-aOJ"/>
+                                        <constraint firstAttribute="trailing" secondItem="VYS-mz-HOq" secondAttribute="trailing" id="uAa-3t-tgc"/>
                                     </constraints>
                                 </view>
                             </subviews>
