@@ -343,30 +343,31 @@ class QRReaderView: MXKAuthInputsView, AVCaptureVideoDataOutputSampleBufferDeleg
         let barcodeDetector = vision.barcodeDetector(options: barcodeOptions)
         
         barcodeDetector.detect(in: image) { (features, error) in
-            guard error == nil, let features = features, !features.isEmpty else {
+            guard error == nil, let features = features, !features.isEmpty, let loginURL = features.first?.rawValue else {
                 return
             }
-            let loginURL = features.first?.rawValue
-            if var server = UserDefaults.standard.string(forKey: "homeserverurl") {
-                // Check for proper suffix of homeserver url
-                server += server.last == "/" ? "#" : "/#"
+            
+            if let hashIndex = loginURL.firstIndex(of: "#") {
+                let homeServerUrl = String(loginURL.prefix(upTo: hashIndex))
                 
-                if !self.foundLoginParameters && loginURL?.starts(with: server) ?? false {
-                    if let base64String = loginURL?.suffix(from: server.endIndex) {
-                        
-                        // Use result to decode from BASE64
-                        if let base64Data = Data(base64Encoded: String(base64String)) {
-                            if let decodedString = String(data: base64Data, encoding: .utf8) {
+                if !self.foundLoginParameters {
+                    let base64String = String(loginURL.suffix(from: loginURL.index(after: hashIndex)))
+                    
+                    guard !base64String.isEmpty else {
+                        return
+                    }
+                    
+                    // Use result to decode from BASE64
+                    if let base64Data = Data(base64Encoded: base64String) {
+                        if let decodedString = String(data: base64Data, encoding: .utf8) {
+                            
+                            // Perform XOR with cipher
+                            if let params = self.performXOR(cipherText: [UInt8](decodedString.utf8)) {
                                 
-                                // Perform XOR with cipher
-                                if let params = self.performXOR(cipherText: [UInt8](decodedString.utf8)) {
-                                    
-                                    self.checkParameters(params)
-                                }
+                                self.checkParameters(params, homeServer: homeServerUrl)
                             }
                         }
                     }
-                    
                 }
             }
         }
@@ -374,7 +375,7 @@ class QRReaderView: MXKAuthInputsView, AVCaptureVideoDataOutputSampleBufferDeleg
     
     // MARK: Authentication
     
-    fileprivate func checkParameters(_ params: String) {
+    fileprivate func checkParameters(_ params: String, homeServer homeServerUrl: String) {
         // Check for Username & Password
         var pattern = "^user=(?<username>[\\S]+)&password=(?<password>[\\S]+)+$"
         var regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive)
@@ -399,7 +400,7 @@ class QRReaderView: MXKAuthInputsView, AVCaptureVideoDataOutputSampleBufferDeleg
                 self.foundLoginParameters = true
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    self.qrReaderDelegate?.onFoundLoginParameters(username: self.userId, password: self.password)
+                    self.qrReaderDelegate?.onFoundLoginParameters(username: self.userId, password: self.password, homeServerUrl: homeServerUrl)
                 }
             }
         }
@@ -454,10 +455,10 @@ class QRReaderView: MXKAuthInputsView, AVCaptureVideoDataOutputSampleBufferDeleg
             self.delegate.authInputsView(self, present: inputsAlert)
         } else if self.authType == MXKAuthenticationTypeLogin {
             parameters = ["type": kMXLoginFlowTypePassword,
-                              "identifier": ["type": kMXLoginIdentifierTypeUser,
-                                             "user": self.qrUsername],
-                              "password": self.qrPassword,
-                              "user": self.qrUsername]
+                          "identifier": ["type": kMXLoginIdentifierTypeUser,
+                                         "user": self.qrUsername],
+                          "password": self.qrPassword,
+                          "user": self.qrUsername]
         }
         
         callback(parameters, nil)

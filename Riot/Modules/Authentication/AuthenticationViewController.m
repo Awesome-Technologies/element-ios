@@ -216,12 +216,13 @@
     }
 }
 
-- (void)onFoundLoginParametersWithUsername:(NSString *)username password:(NSString *)password
+- (void)onFoundLoginParametersWithUsername:(NSString *)username password:(NSString *)password homeServerUrl:(NSString *)homeServerUrl
 {
     NSLog(@"[AuthenticationVC] onFoundLoginParameters: QR Reader found login parameters");
     
     if ([self.authInputsView isKindOfClass:QRReaderView.class])
     {
+        [self setHomeServerTextFieldText:homeServerUrl];
         [super onButtonPressed:self.submitButton];
     }
 }

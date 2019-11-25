@@ -9,5 +9,5 @@
 import Foundation
 
 @objc protocol QRReaderViewDelegate: class {
-    @objc func onFoundLoginParameters(username: String, password: String)
+    @objc func onFoundLoginParameters(username: String, password: String, homeServerUrl: String)
 }
