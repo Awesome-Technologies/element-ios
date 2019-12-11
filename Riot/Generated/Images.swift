@@ -88,6 +88,7 @@ internal enum Asset {
     internal static let mainAliasIcon = ImageAsset(name: "main_alias_icon")
     internal static let membersListIcon = ImageAsset(name: "members_list_icon")
     internal static let modIcon = ImageAsset(name: "mod_icon")
+    internal static let moreReactions = ImageAsset(name: "more_reactions")
     internal static let fileDocIcon = ImageAsset(name: "file_doc_icon")
     internal static let fileMusicIcon = ImageAsset(name: "file_music_icon")
     internal static let filePhotoIcon = ImageAsset(name: "file_photo_icon")
@@ -101,6 +102,10 @@ internal enum Asset {
   internal enum SharedImages {
     internal static let cancel = ImageAsset(name: "cancel")
     internal static let e2eVerified = ImageAsset(name: "e2e_verified")
+  }
+  internal enum VitosMessengerSharedImages {
+    internal static let logo = ImageAsset(name: "Logo")
+    internal static let logoNavBar = ImageAsset(name: "Logo_NavBar")
   }
 }
 // swiftlint:enable identifier_name line_length nesting type_body_length type_name

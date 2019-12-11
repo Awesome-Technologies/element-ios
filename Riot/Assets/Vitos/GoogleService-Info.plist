@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>194842688140-nna8fqfhgfh2290l7h7sld1ceoh1r8gc.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.194842688140-nna8fqfhgfh2290l7h7sld1ceoh1r8gc</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>194842688140-bv0g6kfegopqsf8ptofqmdbqsm7v4e19.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBVXA0DAFhj0bdeYpWzT_Fq94TATUdveec</string>
+	<key>GCM_SENDER_ID</key>
+	<string>194842688140</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>chat.amp.test</string>
+	<key>PROJECT_ID</key>
+	<string>awesome-technologies</string>
+	<key>STORAGE_BUCKET</key>
+	<string>awesome-technologies.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false/>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false/>
+	<key>IS_APPINVITE_ENABLED</key>
+	<false/>
+	<key>IS_GCM_ENABLED</key>
+	<false/>
+	<key>IS_SIGNIN_ENABLED</key>
+	<false/>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:194842688140:ios:d317341dd8131297</string>
+	<key>DATABASE_URL</key>
+	<string>https://awesome-technologies.firebaseio.com</string>
+</dict>
+</plist>
