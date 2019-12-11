@@ -3,19 +3,19 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>194842688140-nna8fqfhgfh2290l7h7sld1ceoh1r8gc.apps.googleusercontent.com</string>
+	<string>194842688140-tr2itlo0ejquak8sa9bjgnto1uhd94v1.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.194842688140-nna8fqfhgfh2290l7h7sld1ceoh1r8gc</string>
+	<string>com.googleusercontent.apps.194842688140-tr2itlo0ejquak8sa9bjgnto1uhd94v1</string>
 	<key>ANDROID_CLIENT_ID</key>
 	<string>194842688140-bv0g6kfegopqsf8ptofqmdbqsm7v4e19.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyBVXA0DAFhj0bdeYpWzT_Fq94TATUdveec</string>
+	<string>AIzaSyCzmYe7kpLg24zA88pDqofPOfsXu5CkkK0</string>
 	<key>GCM_SENDER_ID</key>
 	<string>194842688140</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>chat.amp.test</string>
+	<string>care.amp.messenger.vitos</string>
 	<key>PROJECT_ID</key>
 	<string>awesome-technologies</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,7 +31,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<false/>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:194842688140:ios:d317341dd8131297</string>
+	<string>1:194842688140:ios:38edbc6767ddd5f8ae99a9</string>
 	<key>DATABASE_URL</key>
 	<string>https://awesome-technologies.firebaseio.com</string>
 </dict>
