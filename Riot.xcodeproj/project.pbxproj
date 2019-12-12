@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -37,6 +37,7 @@
 		92726A4B1F58737A004AD26F /* SiriIntents.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 92726A431F58737A004AD26F /* SiriIntents.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		92726A511F587410004AD26F /* Intents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92726A501F587410004AD26F /* Intents.framework */; };
 		970878512267925E009F2C7C /* (null) in Sources */ = {isa = PBXBuildFile; };
+		970B6F3923A26A2C005A9296 /* VitosTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9772003823A266B50011CBAE /* VitosTheme.swift */; };
 		97206ABB2289930900ED6EF0 /* SharedImages.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97206ABA2289930800ED6EF0 /* SharedImages.xcassets */; };
 		97206ABF2289A60300ED6EF0 /* SharedImages.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97206ABA2289930800ED6EF0 /* SharedImages.xcassets */; };
 		97206AC02289AB5300ED6EF0 /* AMP Chat-SharedImages.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B169328620F3954A00746532 /* AMP Chat-SharedImages.xcassets */; };
@@ -50,6 +51,7 @@
 		9772003423A12A110011CBAE /* Vitos Messenger-SharedImages.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9772003023A12A110011CBAE /* Vitos Messenger-SharedImages.xcassets */; };
 		9772003523A12A110011CBAE /* Vitos Messenger-Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9772003123A12A110011CBAE /* Vitos Messenger-Defaults.plist */; };
 		9772003623A13C580011CBAE /* Vitos Messenger-SharedImages.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9772003023A12A110011CBAE /* Vitos Messenger-SharedImages.xcassets */; };
+		9772003923A266B50011CBAE /* VitosTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9772003823A266B50011CBAE /* VitosTheme.swift */; };
 		9772E9A322B3D4A900932A29 /* AudioAttachmentView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9772E9A222B3D4A900932A29 /* AudioAttachmentView.xib */; };
 		9787D9B62271D9EE0010EA83 /* App-Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9787D9B52271D9ED0010EA83 /* App-Defaults.swift */; };
 		97906E4E229EF354006B6DCD /* QRReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97906E4C229EF354006B6DCD /* QRReaderView.swift */; };
@@ -509,6 +511,7 @@
 		9772002F23A12A110011CBAE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = "Base.lproj/Vitos Messenger-LaunchScreen.storyboard"; sourceTree = "<group>"; };
 		9772003023A12A110011CBAE /* Vitos Messenger-SharedImages.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Vitos Messenger-SharedImages.xcassets"; sourceTree = "<group>"; };
 		9772003123A12A110011CBAE /* Vitos Messenger-Defaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Vitos Messenger-Defaults.plist"; sourceTree = "<group>"; };
+		9772003823A266B50011CBAE /* VitosTheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VitosTheme.swift; sourceTree = "<group>"; };
 		9772E9A222B3D4A900932A29 /* AudioAttachmentView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AudioAttachmentView.xib; sourceTree = "<group>"; };
 		9787D9B52271D9ED0010EA83 /* App-Defaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "App-Defaults.swift"; sourceTree = "<group>"; };
 		97906E4C229EF354006B6DCD /* QRReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRReaderView.swift; sourceTree = "<group>"; };
@@ -1088,6 +1091,7 @@
 		32242F0E21E8FBA900725742 /* Themes */ = {
 			isa = PBXGroup;
 			children = (
+				9772003823A266B50011CBAE /* VitosTheme.swift */,
 				979234B92244762F0081082E /* AMPTheme.swift */,
 				32242F0F21E8FBA900725742 /* DefaultTheme.swift */,
 				32242F1021E8FBA900725742 /* DarkTheme.swift */,
@@ -3291,6 +3295,7 @@
 				B1664BC620F4E67600808783 /* FallbackViewController.m in Sources */,
 				32242F1621E8FBCC00725742 /* ThemeService.m in Sources */,
 				24EEE5A31F23A8C300B3C705 /* AvatarGenerator.m in Sources */,
+				970B6F3923A26A2C005A9296 /* VitosTheme.swift in Sources */,
 				B1664BCF20F4E67600808783 /* ShareExtensionManager.m in Sources */,
 				B1DB4F0722301AF20065DBFA /* Character.swift in Sources */,
 				24EEE5A21F23A8B400B3C705 /* MXRoom+Riot.m in Sources */,
@@ -3349,6 +3354,7 @@
 				B169331620F3CAFC00746532 /* PublicRoomsDirectoryDataSource.m in Sources */,
 				B110871D21F087F4003554A5 /* KeyBackupSetupPassphraseViewState.swift in Sources */,
 				B1098C0121ECFE65000DDA48 /* KeyBackupSetupPassphraseCoordinatorType.swift in Sources */,
+				9772003923A266B50011CBAE /* VitosTheme.swift in Sources */,
 				32242F1221E8FBA900725742 /* ThemeService.m in Sources */,
 				B1B558E820EF768F00210D55 /* RoomIncomingAttachmentWithPaginationTitleBubbleCell.m in Sources */,
 				B1B558F320EF768F00210D55 /* RoomOutgoingAttachmentWithoutSenderInfoBubbleCell.m in Sources */,
