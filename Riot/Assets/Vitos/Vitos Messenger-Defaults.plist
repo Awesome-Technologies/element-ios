@@ -69,12 +69,12 @@
 		<string>amp</string>
 	</array>
 	<key>enableRegistration</key>
-	<true/>
+	<false/>
 	<key>enableVoiceVideoCall</key>
-	<true/>
+	<false/>
 	<key>enableQRCodeLogin</key>
 	<true/>
 	<key>enableCustomHomeserver</key>
-	<true/>
+	<false/>
 </dict>
 </plist>
