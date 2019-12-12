@@ -81,6 +81,16 @@
     
     // Sanity check
     NSAssert(_peopleViewController && _roomsViewController && _settingsViewController, @"Something wrong in Main.storyboard");
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    BOOL enableDirectChat = [defaults boolForKey:@"enableDirectChat"];
+    if (!enableDirectChat)
+    {
+        NSMutableArray *newControllersArray = [self.viewControllers mutableCopy];
+        [newControllersArray removeObjectAtIndex:TABBAR_PEOPLE_INDEX];
+        [self setViewControllers:newControllersArray animated:NO];
+        _peopleViewController = nil;
+    }
 
     // Adjust the display of the icons in the tabbar.
     for (UITabBarItem *tabBarItem in self.tabBar.items)
@@ -257,14 +267,19 @@
         
         // Init the recents data source
         recentsDataSource = [[RecentsDataSource alloc] initWithMatrixSession:mainSession];
-        
-        [_peopleViewController displayList:recentsDataSource];
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"enableDirectChat"])
+        {
+            [_peopleViewController displayList:recentsDataSource];
+        }
         [_roomsViewController displayList:recentsDataSource];
         
         // Restore the right delegate of the shared recent data source.
         id<MXKDataSourceDelegate> recentsDataSourceDelegate = _peopleViewController;
         RecentsDataSourceMode recentsDataSourceMode = RecentsDataSourceModePeople;
-        if (self.selectedIndex == TABBAR_ROOMS_INDEX)
+        
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        BOOL enableDirectChat = [defaults boolForKey:@"enableDirectChat"];
+        if (self.selectedIndex == TABBAR_ROOMS_INDEX - enableDirectChat ? 0 : 1)
         {
             recentsDataSourceDelegate = _roomsViewController;
             recentsDataSourceMode = RecentsDataSourceModeRooms;
@@ -291,7 +306,9 @@
 - (void)addMatrixSession:(MXSession *)mxSession
 {
     // Check whether the controller's view is loaded into memory.
-    if (_peopleViewController)
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    BOOL enableDirectChat = [defaults boolForKey:@"enableDirectChat"];
+    if ((enableDirectChat && _peopleViewController) || (!enableDirectChat && _roomsViewController))
     {
         // Check whether the data sources have been initialized.
         if (!recentsDataSource)
@@ -745,13 +762,26 @@
 
 - (void)refreshTabBarBadges
 {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    BOOL enableDirectChat = [defaults boolForKey:@"enableDirectChat"];
+    
+    UIColor *badgeColor = (recentsDataSource.missedHighlightDirectDiscussionsCount ? ThemeService.shared.theme.noticeColor : ThemeService.shared.theme.noticeSecondaryColor);
     // Update the badge on People and Rooms tabs
-    [self setMissedDiscussionsCount:recentsDataSource.missedDirectDiscussionsCount
-                       onTabBarItem:TABBAR_PEOPLE_INDEX
-                     withBadgeColor:(recentsDataSource.missedHighlightDirectDiscussionsCount ? ThemeService.shared.theme.noticeColor : ThemeService.shared.theme.noticeSecondaryColor)];
-    [self setMissedDiscussionsCount:recentsDataSource.missedGroupDiscussionsCount
-                       onTabBarItem:TABBAR_ROOMS_INDEX
-                     withBadgeColor:(recentsDataSource.missedHighlightGroupDiscussionsCount ? ThemeService.shared.theme.noticeColor : ThemeService.shared.theme.noticeSecondaryColor)];
+    if (enableDirectChat)
+    {
+        [self setMissedDiscussionsCount:recentsDataSource.missedDirectDiscussionsCount
+                           onTabBarItem:TABBAR_PEOPLE_INDEX
+                         withBadgeColor:badgeColor];
+        [self setMissedDiscussionsCount:recentsDataSource.missedGroupDiscussionsCount
+                           onTabBarItem:TABBAR_ROOMS_INDEX
+                         withBadgeColor:badgeColor];
+    }
+    else
+    {
+        [self setMissedDiscussionsCount:recentsDataSource.missedGroupDiscussionsCount
+                           onTabBarItem:TABBAR_ROOMS_INDEX - 1
+                         withBadgeColor:badgeColor];
+    }
 }
 
 - (void)setMissedDiscussionsCount:(NSUInteger)count onTabBarItem:(NSUInteger)index withBadgeColor:(UIColor*)badgeColor

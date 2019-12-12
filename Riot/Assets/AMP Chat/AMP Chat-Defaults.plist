@@ -76,5 +76,7 @@
 	<true/>
 	<key>enableCustomHomeserver</key>
 	<true/>
+	<key>enableDirectChat</key>
+	<true/>
 </dict>
 </plist>
