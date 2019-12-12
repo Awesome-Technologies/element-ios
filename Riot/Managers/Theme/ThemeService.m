@@ -87,6 +87,10 @@ NSString *const kThemeServiceDidChangeThemeNotification = @"kThemeServiceDidChan
     {
         theme = [AMPTheme new];
     }
+    else if ([themeId isEqualToString:@"vitos"])
+    {
+        theme = [VitosTheme new];
+    }
     else if ([[NSUserDefaults standardUserDefaults] stringForKey:@"userInterfaceTheme"])
     {
         // Return default theme if themeId is not recognized

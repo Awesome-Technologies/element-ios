@@ -63,10 +63,10 @@
 		<string></string>
 	</dict>
 	<key>userInterfaceTheme</key>
-	<string>amp</string>
+	<string>vitos</string>
 	<key>supportedThemes</key>
 	<array>
-		<string>amp</string>
+		<string>vitos</string>
 	</array>
 	<key>enableRegistration</key>
 	<false/>

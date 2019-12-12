@@ -2342,6 +2342,10 @@ internal enum VectorL10n {
   internal static var settingsUiThemePickerTitle: String { 
     return VectorL10n.tr("Vector", "settings_ui_theme_picker_title") 
   }
+  /// Vitos
+  internal static var settingsUiThemeVitos: String { 
+    return VectorL10n.tr("Vector", "settings_ui_theme_vitos") 
+  }
   /// Show all messages from %@?
   internal static func settingsUnignoreUser(_ p1: String) -> String {
     return VectorL10n.tr("Vector", "settings_unignore_user", p1)
