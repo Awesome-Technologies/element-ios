@@ -646,7 +646,9 @@
         adminToolsIndex = sectionCount++;
     }
     
-    if (!isOneself)
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    BOOL enableDirectChat = [defaults boolForKey:@"enableDirectChat"];
+    if (!isOneself && enableDirectChat)
     {
         directChatsIndex = sectionCount++;
     }
