@@ -85,7 +85,7 @@ class VitosTheme: NSObject, Theme {
             NSAttributedString.Key.foregroundColor: self.baseTextPrimaryColor
         ]
         navigationBar.barTintColor = self.baseColor
-        navigationBar.barStyle = .black
+        navigationBar.barStyle = .default
         
         // The navigation bar needs to be opaque so that its background color is the expected one
         navigationBar.isTranslucent = false

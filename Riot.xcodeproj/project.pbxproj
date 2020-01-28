@@ -76,6 +76,8 @@
 		97B885F122831B1C00E16C88 /* WidgetViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 97B885EA22831B1C00E16C88 /* WidgetViewController.m */; };
 		97B885FE22831C1D00E16C88 /* Widget.m in Sources */ = {isa = PBXBuildFile; fileRef = 97B885FC22831C1D00E16C88 /* Widget.m */; };
 		97B885FF22831C1D00E16C88 /* WidgetManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 97B885FD22831C1D00E16C88 /* WidgetManager.m */; };
+		97BA859323DF11D600DDA319 /* RegistrationRequestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BA859123DF11D600DDA319 /* RegistrationRequestViewController.swift */; };
+		97BA859423DF11D600DDA319 /* RegistrationRequestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 97BA859223DF11D600DDA319 /* RegistrationRequestViewController.xib */; };
 		97BDA7F52252360C0055EBCE /* TermsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 32B1FEDA21A46F2C00637127 /* TermsView.xib */; };
 		97C9EABD22B036E100918B38 /* AudioRecorderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97C9EABC22B036E100918B38 /* AudioRecorderDelegate.swift */; };
 		97C9EABF22B0512300918B38 /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97C9EABE22B0512300918B38 /* AudioRecorder.swift */; };
@@ -544,6 +546,8 @@
 		97B885FB22831C1D00E16C88 /* WidgetManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WidgetManager.h; sourceTree = "<group>"; };
 		97B885FC22831C1D00E16C88 /* Widget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Widget.m; sourceTree = "<group>"; };
 		97B885FD22831C1D00E16C88 /* WidgetManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WidgetManager.m; sourceTree = "<group>"; };
+		97BA859123DF11D600DDA319 /* RegistrationRequestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationRequestViewController.swift; sourceTree = "<group>"; };
+		97BA859223DF11D600DDA319 /* RegistrationRequestViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RegistrationRequestViewController.xib; sourceTree = "<group>"; };
 		97C9EABC22B036E100918B38 /* AudioRecorderDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorderDelegate.swift; sourceTree = "<group>"; };
 		97C9EABE22B0512300918B38 /* AudioRecorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioRecorder.swift; sourceTree = "<group>"; };
 		97DCB39122B4863D000ED2DE /* MXKRoomDataSource+Audio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MXKRoomDataSource+Audio.h"; sourceTree = "<group>"; };
@@ -1288,6 +1292,15 @@
 				97B885FD22831C1D00E16C88 /* WidgetManager.m */,
 			);
 			path = Widgets;
+			sourceTree = "<group>";
+		};
+		97BA858A23DEED7800DDA319 /* Registration Request */ = {
+			isa = PBXGroup;
+			children = (
+				97BA859123DF11D600DDA319 /* RegistrationRequestViewController.swift */,
+				97BA859223DF11D600DDA319 /* RegistrationRequestViewController.xib */,
+			);
+			path = "Registration Request";
 			sourceTree = "<group>";
 		};
 		97DCB38B22B4831F000ED2DE /* AudioRecorder */ = {
@@ -2128,6 +2141,7 @@
 		B1B5579220EF575A00210D55 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				97BA858A23DEED7800DDA319 /* Registration Request */,
 				97906E50229EF981006B6DCD /* QR Reader Login */,
 				B1B5579520EF575A00210D55 /* AuthInputsView.h */,
 				B1B5579320EF575A00210D55 /* AuthInputsView.m */,
@@ -3051,6 +3065,7 @@
 				B1B5590B20EF768F00210D55 /* RoomMembershipExpandedBubbleCell.xib in Resources */,
 				B1B558E720EF768F00210D55 /* RoomIncomingTextMsgWithoutSenderInfoBubbleCell.xib in Resources */,
 				B1B558DC20EF768F00210D55 /* RoomIncomingEncryptedTextMsgWithPaginationTitleBubbleCell.xib in Resources */,
+				97BA859423DF11D600DDA319 /* RegistrationRequestViewController.xib in Resources */,
 				B1B5572E20EE6C4D00210D55 /* ReadReceiptsViewController.xib in Resources */,
 				97206ABB2289930900ED6EF0 /* SharedImages.xcassets in Resources */,
 				B1B5574220EE6C4D00210D55 /* RecentsViewController.xib in Resources */,
@@ -3369,6 +3384,7 @@
 				B1B5572F20EE6C4D00210D55 /* ReadReceiptsViewController.m in Sources */,
 				B1B558CB20EF768F00210D55 /* RoomIncomingEncryptedTextMsgWithoutSenderInfoBubbleCell.m in Sources */,
 				B169330B20F3CA3A00746532 /* Contact.m in Sources */,
+				97BA859323DF11D600DDA319 /* RegistrationRequestViewController.swift in Sources */,
 				B1D4752A21EE52B10067973F /* KeyBackupSetupIntroViewController.swift in Sources */,
 				B1B5599220EFC5E400210D55 /* Analytics.m in Sources */,
 				B14F143422144F6500FA0595 /* KeyBackupRecoverFromRecoveryKeyViewAction.swift in Sources */,

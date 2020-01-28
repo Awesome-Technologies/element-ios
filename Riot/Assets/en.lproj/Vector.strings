@@ -130,6 +130,16 @@
 "auth_alternative_login" = "Alternative Login";
 "auth_qr_authorize" = "Open Settings";
 "auth_demo_notice" = "Notice: This registration creates a\ntest user for you.";
+"auth_registration_request_title" = "Send Request";
+"auth_registration_request_explanation" = "With this form you can send us a request for registration.";
+"auth_registration_request_explanation2" = "By submitting your request for registration data will be transmitted to us.\n\nWe collect your first and last name, your email address, date and time of your request, as well as the used app and iOS version.";
+"auth_registration_request_first_name_placeholder" = "Enter first name…";
+"auth_registration_request_last_name_placeholder" = "Enter last name…";
+"auth_registration_request_send" = "Send Request";
+"auth_registration_request_error_missing_input" = "Please fill out all text fields.";
+"auth_registration_request_error_invalid_email" = "Please enter a valid email address.";
+"auth_registration_request_error_generic" = "There was an error. Please try again.";
+"auth_registration_request_success" = "Your request was sent successfully!";
 
 // Chat creation
 "room_creation_title" = "New Chat";

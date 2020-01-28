@@ -306,6 +306,16 @@
 "auth_reset_password_error_not_found" = "Diese E-Mail-Adresse ist nicht mit einer Matrix-ID auf diesem Home-Server verknüpft.";
 "auth_reset_password_success_message" = "Dein Passwort wurde zurückgesetzt.\n\nDu wurdest von allen Geräten abgemeldet, diese bekommen jetzt keine Push-Benachrichtigungen mehr. Um diese wiedereinzuschalten, melde dich auf den Geräten erneut an.";
 "auth_add_email_and_phone_warning" = "Registrierung mit E-Mail und Telefonnummer zugleich ist noch nicht unterstützt. Nur die Telefonnummer wird berücksichtigt. Du kannst deine E-Mail-Adresse in deinem Profil ergänzen.";
+"auth_registration_request_title" = "Anfrage Senden";
+"auth_registration_request_explanation" = "Mit diesem Formular können Sie eine Anfrage zur Registrierung senden.";
+"auth_registration_request_explanation2" = "Mit dem Absenden der Anfrage werden Daten an uns übermittelt.\n\nWir erfassen dabei Ihren Vor- und Nachnamen, Ihre Email-Adresse, die verwendete Version der App als auch von iOS, sowie Uhrzeit und Datum der Anfrage.";
+"auth_registration_request_first_name_placeholder" = "Vorname eingeben…";
+"auth_registration_request_last_name_placeholder" = "Nachname eingeben…";
+"auth_registration_request_send" = "Anfrage Senden";
+"auth_registration_request_error_missing_input" = "Bitte füllen Sie alle Textfelder aus.";
+"auth_registration_request_error_invalid_email" = "Bitte geben Sie eine gültige Email-Adresse ein.";
+"auth_registration_request_error_generic" = "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.";
+"auth_registration_request_success" = "Ihre Anfrage wurde erfolgreich gesendet!";
 "room_creation_make_public_prompt_msg" = "Sicher, dass du diesen Raum öffentlich machen willst? Jeder kann deine Nachrichten lesen und dem Raum beitreten.";
 "room_creation_invite_another_user" = "Name";
 "room_recents_join_room_prompt" = "Gib eine Raum-ID oder einem Raum-Alias an";

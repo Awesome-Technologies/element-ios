@@ -202,6 +202,46 @@ internal enum VectorL10n {
   internal static var authRegister: String { 
     return VectorL10n.tr("Vector", "auth_register") 
   }
+  /// There was an error. Please try again.
+  internal static var authRegistrationRequestErrorGeneric: String { 
+    return VectorL10n.tr("Vector", "auth_registration_request_error_generic") 
+  }
+  /// Please enter a valid email address.
+  internal static var authRegistrationRequestErrorInvalidEmail: String { 
+    return VectorL10n.tr("Vector", "auth_registration_request_error_invalid_email") 
+  }
+  /// Please fill out all text fields.
+  internal static var authRegistrationRequestErrorMissingInput: String { 
+    return VectorL10n.tr("Vector", "auth_registration_request_error_missing_input") 
+  }
+  /// With this form you can send us a request for registration.
+  internal static var authRegistrationRequestExplanation: String { 
+    return VectorL10n.tr("Vector", "auth_registration_request_explanation") 
+  }
+  /// By submitting your request for registration data will be transmitted to us.\n\nWe collect your first and last name, your email address, date and time of your request, as well as the used app and iOS version.
+  internal static var authRegistrationRequestExplanation2: String { 
+    return VectorL10n.tr("Vector", "auth_registration_request_explanation2") 
+  }
+  /// Enter first name…
+  internal static var authRegistrationRequestFirstNamePlaceholder: String { 
+    return VectorL10n.tr("Vector", "auth_registration_request_first_name_placeholder") 
+  }
+  /// Enter last name…
+  internal static var authRegistrationRequestLastNamePlaceholder: String { 
+    return VectorL10n.tr("Vector", "auth_registration_request_last_name_placeholder") 
+  }
+  /// Send Request
+  internal static var authRegistrationRequestSend: String { 
+    return VectorL10n.tr("Vector", "auth_registration_request_send") 
+  }
+  /// Your request was sent successfully!
+  internal static var authRegistrationRequestSuccess: String { 
+    return VectorL10n.tr("Vector", "auth_registration_request_success") 
+  }
+  /// Send Request
+  internal static var authRegistrationRequestTitle: String { 
+    return VectorL10n.tr("Vector", "auth_registration_request_title") 
+  }
   /// Confirm your new password
   internal static var authRepeatNewPasswordPlaceholder: String { 
     return VectorL10n.tr("Vector", "auth_repeat_new_password_placeholder") 
