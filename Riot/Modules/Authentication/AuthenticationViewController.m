@@ -387,6 +387,14 @@
     self.submitButton.hidden = authInputsview.isSingleSignOnRequired || [self.authInputsView isKindOfClass:QRReaderView.class];
 }
 
+- (void)showRegistrationRequestAuthInput
+{
+    RegistrationRequestViewController *requestView = [[RegistrationRequestViewController alloc] init];
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:requestView];
+    [[ThemeService shared].theme applyStyleOnNavigationBar:navController.navigationBar];
+    [self presentViewController:navController animated:YES completion:nil];
+}
+
 - (void)showQRAuthInput
 {
     QRReaderView *qrView = [QRReaderView fromNib];
@@ -458,12 +466,19 @@
         }
         else if (self.authType == MXKAuthenticationTypeLogin && [defaults boolForKey:@"enableRegistration"])
         {
-            lastUsedAuthInputClass = self.authInputsView.class;
-            [self showRegularAuthInput];
-            
-            self.authType = MXKAuthenticationTypeRegister;
-            self.rightBarButtonItem.title = NSLocalizedStringFromTable(@"auth_login", @"Vector", nil);
-            self.homeServerContainer.hidden = YES;
+            if ([defaults boolForKey:@"registrationAsRequest"])
+            {
+                [self showRegistrationRequestAuthInput];
+            }
+            else
+            {
+                lastUsedAuthInputClass = self.authInputsView.class;
+                [self showRegularAuthInput];
+                
+                self.authType = MXKAuthenticationTypeRegister;
+                self.rightBarButtonItem.title = NSLocalizedStringFromTable(@"auth_login", @"Vector", nil);
+                self.homeServerContainer.hidden = YES;
+            }
         }
         else if ([defaults boolForKey:@"enableRegistration"])
         {
