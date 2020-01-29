@@ -348,7 +348,13 @@ class QRReaderView: MXKAuthInputsView, AVCaptureVideoDataOutputSampleBufferDeleg
             }
             
             if let hashIndex = loginURL.firstIndex(of: "#") {
-                let homeServerUrl = String(loginURL.prefix(upTo: hashIndex))
+                var homeServerString = String(loginURL.prefix(upTo: hashIndex))
+                while homeServerString.last == "/" {
+                    homeServerString.removeLast()
+                }
+                guard let homeServerUrl = URL(string: homeServerString), NSURLConnection.canHandle(URLRequest(url: homeServerUrl)) else {
+                    return
+                }
                 
                 if !self.foundLoginParameters {
                     let base64String = String(loginURL.suffix(from: loginURL.index(after: hashIndex)))
@@ -364,7 +370,7 @@ class QRReaderView: MXKAuthInputsView, AVCaptureVideoDataOutputSampleBufferDeleg
                             // Perform XOR with cipher
                             if let params = self.performXOR(cipherText: [UInt8](decodedString.utf8)) {
                                 
-                                self.checkParameters(params, homeServer: homeServerUrl)
+                                self.checkParameters(params, homeServer: homeServerString)
                             }
                         }
                     }
