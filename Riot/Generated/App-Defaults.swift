@@ -88,6 +88,7 @@ internal enum AppDefaults {
     private static let _document = PlistDocument(path: "VitosMessenger-Defaults.plist")
     internal static let bugReportApp: String = _document["bugReportApp"]
     internal static let bugReportEndpointUrl: String = _document["bugReportEndpointUrl"]
+    internal static let consentFilePath: String = _document["consentFilePath"]
     internal static let createConferenceCallsWithJitsi: Bool = _document["createConferenceCallsWithJitsi"]
     internal static let enableCustomHomeserver: Bool = _document["enableCustomHomeserver"]
     internal static let enableDirectChat: Bool = _document["enableDirectChat"]

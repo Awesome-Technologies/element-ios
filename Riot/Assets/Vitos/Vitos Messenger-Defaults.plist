@@ -80,5 +80,7 @@
 	<false/>
 	<key>registrationAsRequest</key>
 	<true/>
+	<key>consentFilePath</key>
+	<string>vitos_consent</string>
 </dict>
 </plist>

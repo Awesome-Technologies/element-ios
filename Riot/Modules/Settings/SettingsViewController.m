@@ -80,6 +80,7 @@ enum
     OTHER_TERM_CONDITIONS_INDEX,
     OTHER_PRIVACY_INDEX,
     OTHER_THIRD_PARTY_INDEX,
+    OTHER_CONSENT,
     OTHER_CRASH_REPORT_INDEX,
     OTHER_ENABLE_RAGESHAKE_INDEX,
     OTHER_MARK_ALL_AS_READ_INDEX,
@@ -553,7 +554,8 @@ SignOutAlertPresenterDelegate>
     }
     else if (section == SETTINGS_SECTION_OTHER_INDEX)
     {
-        count = OTHER_COUNT;
+        BOOL showConsent = [[NSUserDefaults standardUserDefaults] stringForKey:@"consentFilePath"] != nil;
+        count = OTHER_COUNT - (showConsent ? 0 : 1);
     }
     else if (section == SETTINGS_SECTION_KEYBACKUP_INDEX)
     {
@@ -926,6 +928,11 @@ SignOutAlertPresenterDelegate>
     }
     else if (section == SETTINGS_SECTION_OTHER_INDEX)
     {
+        // Correct row in OTHER section if no consent is shown
+        BOOL showConsent = [[NSUserDefaults standardUserDefaults] stringForKey:@"consentFilePath"] != nil;
+        if (row >= OTHER_CONSENT && !showConsent) {
+            row++;
+        }
         if (row == OTHER_VERSION_INDEX)
         {
             MXKTableViewCell *versionCell = [self getDefaultTableViewCell:tableView];
@@ -988,6 +995,16 @@ SignOutAlertPresenterDelegate>
             thirdPartyCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             
             cell = thirdPartyCell;
+        }
+        else if (row == OTHER_CONSENT)
+        {
+            MXKTableViewCell *consentCell = [self getDefaultTableViewCell:tableView];
+            
+            consentCell.textLabel.text = NSLocalizedStringFromTable(@"settings_consent", @"Vector", nil);
+            
+            consentCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            
+            cell = consentCell;
         }
         else if (row == OTHER_CRASH_REPORT_INDEX)
         {
@@ -1367,6 +1384,17 @@ SignOutAlertPresenterDelegate>
                 WebViewViewController *webViewViewController = [[WebViewViewController alloc] initWithLocalHTMLFile:htmlFile];
                 
                 webViewViewController.title = NSLocalizedStringFromTable(@"settings_third_party_notices", @"Vector", nil);
+                
+                [self pushViewController:webViewViewController];
+            }
+            else if (row == OTHER_CONSENT)
+            {
+                NSString *consentFilePath = [[NSUserDefaults standardUserDefaults] stringForKey:@"consentFilePath"];
+                NSString *htmlFile = [[NSBundle mainBundle] pathForResource:consentFilePath ofType:@"html" inDirectory:nil];
+                
+                WebViewViewController *webViewViewController = [[WebViewViewController alloc] initWithLocalHTMLFile:htmlFile];
+                
+                webViewViewController.title = NSLocalizedStringFromTable(@"settings_consent", @"Vector", nil);
                 
                 [self pushViewController:webViewViewController];
             }

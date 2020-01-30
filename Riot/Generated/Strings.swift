@@ -2006,6 +2006,10 @@ internal enum VectorL10n {
   internal static var settingsConfirmPassword: String { 
     return VectorL10n.tr("Vector", "settings_confirm_password") 
   }
+  /// Consent
+  internal static var settingsConsent: String { 
+    return VectorL10n.tr("Vector", "settings_consent") 
+  }
   /// LOCAL CONTACTS
   internal static var settingsContacts: String { 
     return VectorL10n.tr("Vector", "settings_contacts") 

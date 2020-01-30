@@ -351,6 +351,7 @@
 "settings_contacts_discover_matrix_users" = "Entdecke andere Benutzer mittels E-Mail-Adressen oder Telefonnummern";
 "settings_labs_e2e_encryption_prompt_message" = "Zum Fertigstellen der Verschlüsselung bitte neu anmelden.";
 "settings_third_party_notices" = "Anmerkungen von Dritten";
+"settings_consent" = "Einwilligung";
 "settings_clear_cache" = "Cache löschen";
 "settings_fail_to_update_password" = "Passwortänderung fehlgeschlagen";
 "settings_crypto_device_id" = "\nGeräte ID: ";
