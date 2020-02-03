@@ -33,6 +33,8 @@
 #import "WidgetManager.h"
 #import "IntegrationManagerViewController.h"
 
+#import "ImagePaintViewController.h"
+
 @interface RoomInputToolbarView()
 {
     // Image picker
@@ -560,9 +562,37 @@
         UIImage *selectedImage = [info objectForKey:UIImagePickerControllerOriginalImage];
         if (selectedImage)
         {
-            // Suggest compression before sending image
-            NSData *imageData = UIImageJPEGRepresentation(selectedImage, 1.0);
-            [self sendSelectedImage:imageData withMimeType:nil andCompressionMode:MXKRoomInputToolbarCompressionModeNone isPhotoLibraryAsset:NO];
+            NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+            BOOL enableImagePaintView = [defaults boolForKey:@"enableImagePaint"];
+            if (!enableImagePaintView)
+            {
+                NSData *imageData = UIImageJPEGRepresentation(selectedImage, 1.0);
+                [self sendSelectedImage:imageData withMimeType:nil andCompressionMode:MXKRoomInputToolbarCompressionModeNone isPhotoLibraryAsset:NO];
+            }
+            else
+            {
+                //show imagePaint screen
+                ImagePaintViewController * vc = [[ImagePaintViewController alloc] init];
+                vc.image = selectedImage;
+                vc.modalPresentationStyle = UIModalPresentationFullScreen;
+                UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:vc];
+                [[ThemeService shared].theme applyStyleOnNavigationBar:navController.navigationBar];
+                [self.delegate roomInputToolbarView:self presentViewController:vc];
+                [vc setCallback:^(UIImage *image) {
+                    if (image != nil)
+                    {
+                        NSLog(@"[RoomInputToolbarView] Bild senden!");
+                        // Suggest compression before sending image
+                        NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
+                        [self sendSelectedImage:imageData withMimeType:nil andCompressionMode:MXKRoomInputToolbarCompressionModeNone isPhotoLibraryAsset:NO];
+                    }
+                    else
+                    {
+                        NSLog(@"[RoomInputToolbarView] abbruch!");
+                    }
+                }];
+                
+            }
         }
     }
     else if ([mediaType isEqualToString:(NSString *)kUTTypeMovie])
