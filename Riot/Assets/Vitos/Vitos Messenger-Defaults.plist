@@ -82,7 +82,5 @@
 	<true/>
 	<key>consentFilePath</key>
 	<string>vitos_consent</string>
-	<key>enableImagePaint</key>
-	<true/>
 </dict>
 </plist>

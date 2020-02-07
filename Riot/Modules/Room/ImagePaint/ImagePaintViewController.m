@@ -55,7 +55,6 @@
     
     //save the stroke color
     strokeColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:1.0];
-    const CGFloat* colorComponents = CGColorGetComponents(strokeColor.CGColor);
     
     self.view.backgroundColor = [UIColor blackColor];
     
@@ -79,7 +78,7 @@
     //Clear Button to erase the painted lines
     UIButton *clearButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [clearButton addTarget:self action:@selector(clearDraw:) forControlEvents:UIControlEventTouchUpInside];
-    NSString *clearTitle = NSLocalizedStringFromTable(@"room_event_action_delete", @"Vector", nil);
+    NSString *clearTitle = NSLocalizedStringFromTable(@"paint_image_clear", @"Vector", nil);
     [clearButton setTitle:clearTitle forState:UIControlStateNormal];
     [self.view addSubview:clearButton];
     [self setUpButton:clearButton backgroundColor:[UIColor blackColor] cornerRadius:10.0 buttonTag:-1];
@@ -190,7 +189,7 @@
     //Save Button
     UIButton *saveButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [saveButton addTarget:self action:@selector(saveDraw:) forControlEvents:UIControlEventTouchUpInside];
-    NSString *saveTitle = NSLocalizedStringFromTable(@"save", @"Vector", nil);
+    NSString *saveTitle = NSLocalizedStringFromTable(@"paint_image_send", @"Vector", nil);
     [saveButton setTitle:saveTitle forState:UIControlStateNormal];
     [self setUpButton:saveButton backgroundColor:[UIColor blackColor] cornerRadius:10.0 buttonTag: -1];
     [self.view addSubview:saveButton];
@@ -201,7 +200,7 @@
     //Cancel Button
     UIButton *cancelButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [cancelButton addTarget:self action:@selector(cancelDraw:) forControlEvents:UIControlEventTouchUpInside];
-    NSString *cancelTitle = NSLocalizedStringFromTable(@"cancel", @"Vector", nil);
+    NSString *cancelTitle = NSLocalizedStringFromTable(@"paint_image_cancel", @"Vector", nil);
     [cancelButton setTitle:cancelTitle forState:UIControlStateNormal];
     [self setUpButton:cancelButton backgroundColor:[UIColor blackColor] cornerRadius:10.0 buttonTag: -1];
     [self.view addSubview:cancelButton];
@@ -263,6 +262,17 @@
 - (IBAction)saveDraw:(id)sender
 {
     NSLog(@"[ImagePaintViewController] SaveDrawings");
+    
+    // Return the original image when the user didn't draw anything
+    if (drawImageView.image == nil)
+    {
+        [self dismissViewControllerAnimated:YES completion:nil];
+        if (self.callback != nil)
+        {
+            self.callback(photoImageView.image);
+        }
+    }
+    
     UIImage *image1 = photoImageView.image;
     UIImage *image2 = [self imageWithImage:drawImageView.image scaledToSize:CGSizeMake(image1.size.width, image1.size.height)];
     
@@ -315,10 +325,10 @@
         [UIView animateWithDuration:0.3f animations:^{
             [self.view setNeedsLayout];
             [self.view layoutIfNeeded];
-            [blackColorButton removeFromSuperview];
-            [blueColorButton removeFromSuperview];
-            [greenColorButton removeFromSuperview];
-            [redColorButton removeFromSuperview];
+            [self.blackColorButton removeFromSuperview];
+            [self.blueColorButton removeFromSuperview];
+            [self.greenColorButton removeFromSuperview];
+            [self.redColorButton removeFromSuperview];
         }];
         
         
@@ -419,9 +429,6 @@
     [self.view addSubview:button];
     button.clipsToBounds = YES;
     [button setBackgroundColor:color];
-    [button.layer setBorderWidth:1.5];
-    [button.layer setBorderColor:[[UIColor whiteColor] CGColor]];
-    button.layer.cornerRadius = corner;
     button.translatesAutoresizingMaskIntoConstraints = false;
     if(tag >= 0)
     {

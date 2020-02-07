@@ -684,3 +684,8 @@
 "e2e_key_backup_wrong_version_button_wasme" = "Das war ich";
 "key_backup_setup_intro_manual_export_info" = "(Erweitert)";
 "key_backup_setup_intro_manual_export_action" = "Manueller Schlüssel Export";
+
+// Paint on images
+"paint_image_cancel" = "Abbrechen";
+"paint_image_clear" = "Entfernen";
+"paint_image_send" = "Senden";

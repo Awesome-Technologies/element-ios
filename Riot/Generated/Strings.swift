@@ -1046,6 +1046,18 @@ internal enum VectorL10n {
   internal static var or: String { 
     return VectorL10n.tr("Vector", "or") 
   }
+  /// Cancel
+  internal static var paintImageCancel: String { 
+    return VectorL10n.tr("Vector", "paint_image_cancel") 
+  }
+  /// Remove
+  internal static var paintImageClear: String { 
+    return VectorL10n.tr("Vector", "paint_image_clear") 
+  }
+  /// Send
+  internal static var paintImageSend: String { 
+    return VectorL10n.tr("Vector", "paint_image_send") 
+  }
   /// Paused
   internal static var paused: String { 
     return VectorL10n.tr("Vector", "paused") 

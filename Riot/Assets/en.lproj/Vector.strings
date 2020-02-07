@@ -824,3 +824,8 @@
 "sign_out_key_backup_in_progress_alert_title" = "Key backup in progress. If you sign out now you’ll lose access to your encrypted messages.";
 "sign_out_key_backup_in_progress_alert_discard_key_backup_action" = "I don't want my encrypted messages";
 "sign_out_key_backup_in_progress_alert_cancel_action" = "I'll wait";
+
+// Paint on images
+"paint_image_cancel" = "Cancel";
+"paint_image_clear" = "Remove";
+"paint_image_send" = "Send";

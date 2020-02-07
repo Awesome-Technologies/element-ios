@@ -80,7 +80,5 @@
 	<true/>
 	<key>registrationAsRequest</key>
 	<false/>
-	<key>enableImagePaint</key>
-	<false/>
 </dict>
 </plist>
