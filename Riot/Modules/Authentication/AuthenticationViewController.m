@@ -507,6 +507,18 @@
     }
     else if (sender == self.submitButton)
     {
+        // Check if the provided username for login contains the homeserver and use that instead of the default one
+        if (self.authType == MXKAuthenticationTypeLogin)
+        {
+            AuthInputsView *authInputsview = (AuthInputsView*)self.authInputsView;
+            if ([MXTools isMatrixUserIdentifier:authInputsview.userId])
+            {
+                NSString *homeserver = [[authInputsview.userId componentsSeparatedByString:@":"] objectAtIndex:1];
+                NSString *homeserverWithProtocol = [NSString stringWithFormat:@"https://%@", homeserver];
+                [self setHomeServerTextFieldText:homeserverWithProtocol];
+            }
+        }
+        
         // Handle here the second screen used to manage the 3rd party ids during the registration.
         // Except if there is an external set of parameters defined to perform a registration.
         if (self.authType == MXKAuthenticationTypeRegister && !self.externalRegistrationParameters)
