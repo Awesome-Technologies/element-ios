@@ -58,21 +58,18 @@
     
     self.view.backgroundColor = [UIColor blackColor];
     
-    photoImageView =[[UIImageView alloc] initWithFrame:self.view.frame];
+    CGRect aspectRect = AVMakeRectWithAspectRatioInsideRect(self.image.size, self.view.frame);
+    
+    photoImageView =[[UIImageView alloc] initWithFrame:aspectRect];
     photoImageView.contentMode = UIViewContentModeScaleAspectFit;
     photoImageView.image = self.image;
     photoImageView.userInteractionEnabled = NO;
     [self.view addSubview:photoImageView];
     
-    //Compute the new hight of the overlay drawImageView according to the aspect ratio of the image and the size of the photoImageView.frame
-    CGRect aspectRect = AVMakeRectWithAspectRatioInsideRect(self.image.size, photoImageView.frame);
-    drawImageView =[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, photoImageView.frame.size.width, aspectRect.size.height)];
-    drawImageView.center =CGPointMake(self.view.center.x, self.view.center.y);
+    drawImageView =[[UIImageView alloc] initWithFrame:photoImageView.bounds];
     
-    
-    photoImageView.contentMode = UIViewContentModeScaleAspectFit;
     drawImageView.userInteractionEnabled = NO;
-    [self.view addSubview:drawImageView];
+    [photoImageView addSubview:drawImageView];
     isMoving = NO;
     
     //Clear Button to erase the painted lines
@@ -405,14 +402,13 @@
 
 - (void)drawLine:(CGPoint*)touchLocation
 {
-    UIGraphicsBeginImageContext(drawImageView.frame.size);
+    UIGraphicsBeginImageContext(drawImageView.bounds.size);
     
     CGContextRef currentContext = UIGraphicsGetCurrentContext();
-    [drawImageView.image drawInRect:CGRectMake(0, 0, drawImageView.frame.size.width, drawImageView.frame.size.height)];
+    [drawImageView.image drawAtPoint:CGPointZero];
     CGContextSetLineCap(currentContext, kCGLineCapRound);
     CGContextSetLineWidth(currentContext, strokeWidth);
-    const CGFloat* colorComponents = CGColorGetComponents(strokeColor.CGColor);
-    CGContextSetRGBStrokeColor(currentContext, colorComponents[0], colorComponents[1], colorComponents[2], 1.0);
+    CGContextSetStrokeColorWithColor(currentContext, strokeColor.CGColor);
     CGContextBeginPath(currentContext);
     CGContextMoveToPoint(currentContext, lastTouchLocation.x, lastTouchLocation.y);
     CGContextAddLineToPoint(currentContext, touchLocation->x, touchLocation->y);
