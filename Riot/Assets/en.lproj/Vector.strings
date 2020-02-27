@@ -140,6 +140,12 @@
 "auth_registration_request_error_invalid_email" = "Please enter a valid email address.";
 "auth_registration_request_error_generic" = "There was an error. Please try again.";
 "auth_registration_request_success" = "Your request was sent successfully!";
+"local_authentication_title" = "Authentication";
+"local_authentication_retry" = "Retry";
+"local_authentication_explanation" = "Please authenticate to unlock the app.";
+"local_authentication_explanation_prompt" = "Please authenticate.\n\nConfirm to proceed.";
+"local_authentication_share_explanation" = "Please authenticate to share content.";
+"local_authentication_not_setup" = "To be able to use this app, please secure your device by using at least a pin code.\n\nYou can set that up in system settings.";
 
 // Chat creation
 "room_creation_title" = "New Chat";

@@ -79,6 +79,12 @@
 "auth_alternative_login" = "Alternativer Login";
 "auth_qr_authorize" = "Einstellungen öffnen";
 "auth_demo_notice" = "Hinweis: Diese Registrierung legt einen\nTest-Nutzer für Sie an.";
+"local_authentication_title" = "Authentifizierung";
+"local_authentication_retry" = "Erneut versuchen";
+"local_authentication_explanation" = "Authentifizieren Sie sich bitte,\num die App zu entsperren.";
+"local_authentication_explanation_prompt" = "Authentifizieren Sie sich bitte.\n\nBestätigen zum Fortsetzen.";
+"local_authentication_share_explanation" = "Authentifizieren Sie sich bitte, um Inhalte zu teilen.";
+"local_authentication_not_setup" = "Um diese App benutzen zu können, schützen Sie dieses Gerät bitte mindestens mit einem Pin-Code.\n\nDas können Sie in den Systemeinstellungen einrichten.";
 
 // Chat creation
 "room_creation_title" = "Neuer Chat";

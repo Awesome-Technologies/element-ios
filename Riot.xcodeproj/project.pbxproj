@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -60,7 +60,12 @@
 		97906E52229EF99F006B6DCD /* QRReaderViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97906E51229EF99F006B6DCD /* QRReaderViewDelegate.swift */; };
 		97906E5922A564EA006B6DCD /* QRReaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 97906E5822A564EA006B6DCD /* QRReaderView.xib */; };
 		979234BA2244762F0081082E /* AMPTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979234B92244762F0081082E /* AMPTheme.swift */; };
+		979B58602409A7BB00931AA8 /* LocalAuthenticationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A2ACC223FE014E00C8AFD5 /* LocalAuthenticationViewController.swift */; };
 		979CCC1A22B0DAC3004C67DD /* AudioAttachmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979CCC1922B0DAC3004C67DD /* AudioAttachmentView.swift */; };
+		97A2ACB923FD5E2E00C8AFD5 /* LocalAuthenticationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 97A2ACB723FD5E2E00C8AFD5 /* LocalAuthenticationViewController.xib */; };
+		97A2ACBE23FDBE5600C8AFD5 /* LocalAuthenticationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 97A2ACBC23FDBE5600C8AFD5 /* LocalAuthenticationViewController.xib */; };
+		97A2ACC123FE012D00C8AFD5 /* ThemedLocalAuthenticationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A2ACC023FE012D00C8AFD5 /* ThemedLocalAuthenticationViewController.swift */; };
+		97A2ACC323FE014E00C8AFD5 /* LocalAuthenticationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A2ACC223FE014E00C8AFD5 /* LocalAuthenticationViewController.swift */; };
 		97A684AC22448FD000EB1C51 /* AMPTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979234B92244762F0081082E /* AMPTheme.swift */; };
 		97AEE84722B8474700B789C1 /* AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97AEE84622B8474700B789C1 /* AudioManager.swift */; };
 		97B8859E228312ED00E16C88 /* CallViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 97B88597228312ED00E16C88 /* CallViewController.xib */; };
@@ -529,6 +534,10 @@
 		97906E5822A564EA006B6DCD /* QRReaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = QRReaderView.xib; sourceTree = "<group>"; };
 		979234B92244762F0081082E /* AMPTheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMPTheme.swift; sourceTree = "<group>"; };
 		979CCC1922B0DAC3004C67DD /* AudioAttachmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioAttachmentView.swift; sourceTree = "<group>"; };
+		97A2ACB723FD5E2E00C8AFD5 /* LocalAuthenticationViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LocalAuthenticationViewController.xib; sourceTree = "<group>"; };
+		97A2ACBC23FDBE5600C8AFD5 /* LocalAuthenticationViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LocalAuthenticationViewController.xib; sourceTree = "<group>"; };
+		97A2ACC023FE012D00C8AFD5 /* ThemedLocalAuthenticationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemedLocalAuthenticationViewController.swift; sourceTree = "<group>"; };
+		97A2ACC223FE014E00C8AFD5 /* LocalAuthenticationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalAuthenticationViewController.swift; sourceTree = "<group>"; };
 		97AEE84622B8474700B789C1 /* AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioManager.swift; sourceTree = "<group>"; };
 		97B88596228312ED00E16C88 /* CallViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallViewController.h; sourceTree = "<group>"; };
 		97B88597228312ED00E16C88 /* CallViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CallViewController.xib; sourceTree = "<group>"; };
@@ -1237,6 +1246,24 @@
 			path = "Audio Attachment";
 			sourceTree = "<group>";
 		};
+		97A2ACB523FD5DEC00C8AFD5 /* Local Authentication */ = {
+			isa = PBXGroup;
+			children = (
+				97A2ACB723FD5E2E00C8AFD5 /* LocalAuthenticationViewController.xib */,
+				97A2ACC023FE012D00C8AFD5 /* ThemedLocalAuthenticationViewController.swift */,
+			);
+			path = "Local Authentication";
+			sourceTree = "<group>";
+		};
+		97A2ACBA23FDBE3E00C8AFD5 /* Local Authentication */ = {
+			isa = PBXGroup;
+			children = (
+				97A2ACC223FE014E00C8AFD5 /* LocalAuthenticationViewController.swift */,
+				97A2ACBC23FDBE5600C8AFD5 /* LocalAuthenticationViewController.xib */,
+			);
+			path = "Local Authentication";
+			sourceTree = "<group>";
+		};
 		97AEE84522B8472700B789C1 /* Audio */ = {
 			isa = PBXGroup;
 			children = (
@@ -1513,6 +1540,7 @@
 		B1664BAB20F4E67500808783 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				97A2ACBA23FDBE3E00C8AFD5 /* Local Authentication */,
 				B1664BB020F4E67500808783 /* Main */,
 				B1664BAC20F4E67500808783 /* Fallback */,
 				B1664BB320F4E67500808783 /* Share */,
@@ -2067,6 +2095,7 @@
 		B1B556F920EE6C4C00210D55 /* Authentication */ = {
 			isa = PBXGroup;
 			children = (
+				97A2ACB523FD5DEC00C8AFD5 /* Local Authentication */,
 				B1B556FA20EE6C4C00210D55 /* AuthenticationViewController.h */,
 				B1B556FC20EE6C4C00210D55 /* AuthenticationViewController.m */,
 				B1B556FB20EE6C4C00210D55 /* AuthenticationViewController.xib */,
@@ -2997,6 +3026,7 @@
 				B169328520F38BE800746532 /* SegmentedViewController.xib in Resources */,
 				B1664DA420F4F96300808783 /* Vector.strings in Resources */,
 				B1664BC920F4E67600808783 /* ShareViewController.xib in Resources */,
+				97A2ACBE23FDBE5600C8AFD5 /* LocalAuthenticationViewController.xib in Resources */,
 				B1664BC520F4E67600808783 /* FallbackViewController.xib in Resources */,
 				97206AC12289AB5600ED6EF0 /* Caritas Messenger-SharedImages.xcassets in Resources */,
 				B1664BCE20F4E67600808783 /* RecentRoomTableViewCell.xib in Resources */,
@@ -3139,6 +3169,7 @@
 				B1B558DB20EF768F00210D55 /* RoomIncomingEncryptedTextMsgWithoutSenderNameBubbleCell.xib in Resources */,
 				B1B5572B20EE6C4D00210D55 /* RoomMemberDetailsViewController.xib in Resources */,
 				B1D4752C21EE52C30067973F /* KeyBackupSetupIntroViewController.storyboard in Resources */,
+				97A2ACB923FD5E2E00C8AFD5 /* LocalAuthenticationViewController.xib in Resources */,
 				B1B558C620EF768F00210D55 /* RoomIncomingEncryptedAttachmentBubbleCell.xib in Resources */,
 				97F70CC42412941A001F8464 /* vitos_privacy_policy.html in Resources */,
 				97F70CC52412941C001F8464 /* caritas_privacy_policy.html in Resources */,
@@ -3353,6 +3384,7 @@
 				32242F1921E8FBFB00725742 /* DarkTheme.swift in Sources */,
 				B1664BC820F4E67600808783 /* ShareDataSource.m in Sources */,
 				B1664BCD20F4E67600808783 /* RecentRoomTableViewCell.m in Sources */,
+				97A2ACC323FE014E00C8AFD5 /* LocalAuthenticationViewController.swift in Sources */,
 				B1DB4F0C2231494F0065DBFA /* String.swift in Sources */,
 				B169331720F3CBE000746532 /* RecentCellData.m in Sources */,
 				B1664BCC20F4E67600808783 /* RoomsListViewController.m in Sources */,
@@ -3551,6 +3583,7 @@
 				B1B5574720EE6C4D00210D55 /* UsersDevicesViewController.m in Sources */,
 				8F681D4823E06C10005C103A /* ImagePaintViewController.m in Sources */,
 				B1098BFF21ECFE65000DDA48 /* PasswordStrengthView.swift in Sources */,
+				979B58602409A7BB00931AA8 /* LocalAuthenticationViewController.swift in Sources */,
 				B1B558D220EF768F00210D55 /* RoomEncryptedDataBubbleCell.m in Sources */,
 				B1B558FA20EF768F00210D55 /* RoomMembershipBubbleCell.m in Sources */,
 				B1B557BF20EF5B4500210D55 /* DisabledRoomInputToolbarView.m in Sources */,
@@ -3571,6 +3604,7 @@
 				B1B558D320EF768F00210D55 /* RoomOutgoingEncryptedTextMsgBubbleCell.m in Sources */,
 				B1B557AC20EF5A6D00210D55 /* DeviceView.m in Sources */,
 				3281BCF72201FA4200F4A383 /* UIControl.swift in Sources */,
+				97A2ACC123FE012D00C8AFD5 /* ThemedLocalAuthenticationViewController.swift in Sources */,
 				B16932EE20F3C3C900746532 /* FilesSearchCellData.m in Sources */,
 				B1B558E520EF768F00210D55 /* RoomMembershipExpandedBubbleCell.m in Sources */,
 				97DCB39322B4863D000ED2DE /* MXKRoomDataSource+Audio.m in Sources */,

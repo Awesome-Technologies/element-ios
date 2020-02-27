@@ -1002,6 +1002,30 @@ internal enum VectorL10n {
   internal static var leave: String { 
     return VectorL10n.tr("Vector", "leave") 
   }
+  /// Please authenticate to unlock the app.
+  internal static var localAuthenticationExplanation: String { 
+    return VectorL10n.tr("Vector", "local_authentication_explanation") 
+  }
+  /// Please authenticate.\n\nConfirm to proceed.
+  internal static var localAuthenticationExplanationPrompt: String { 
+    return VectorL10n.tr("Vector", "local_authentication_explanation_prompt") 
+  }
+  /// To be able to use this app, please secure it by using at least a pin code.\n\nYou can set that up in system settings.
+  internal static var localAuthenticationNotSetup: String { 
+    return VectorL10n.tr("Vector", "local_authentication_not_setup") 
+  }
+  /// Retry
+  internal static var localAuthenticationRetry: String { 
+    return VectorL10n.tr("Vector", "local_authentication_retry") 
+  }
+  /// Please authenticate to share content.
+  internal static var localAuthenticationShareExplanation: String { 
+    return VectorL10n.tr("Vector", "local_authentication_share_explanation") 
+  }
+  /// Authentication
+  internal static var localAuthenticationTitle: String { 
+    return VectorL10n.tr("Vector", "local_authentication_title") 
+  }
   /// Library
   internal static var mediaPickerLibrary: String { 
     return VectorL10n.tr("Vector", "media_picker_library") 

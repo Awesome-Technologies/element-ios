@@ -215,6 +215,18 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
      */
     UIView *launchAnimationContainerView;
     NSDate *launchAnimationStart;
+    
+    /**
+     Local authentication view controller instance
+     */
+    ThemedLocalAuthenticationViewController *localAuth;
+    
+    /**
+     Value that gets incremented at each applicationDidBecomeActive call
+     so that the authenticate function gets called only the first time.
+     Resetting when app becomes inactive.
+     */
+    int becomeActiveCallCount;
 }
 
 @property (strong, nonatomic) UIAlertController *mxInAppNotification;
@@ -572,6 +584,11 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     // Analytics: Force to send the pending actions
     [[DecryptionFailureTracker sharedInstance] dispatch];
     [[Analytics sharedInstance] dispatch];
+    
+    if (!localAuth) {
+        [self showLocalAuthentication];
+    }
+    becomeActiveCallCount = 0;
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
@@ -600,6 +617,30 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
     NSLog(@"[AppDelegate] applicationDidBecomeActive");
+    
+    // Check if the user is authenticated locally
+    if (!LocalAuthenticationViewController.isAuthenticated) {
+        if (!localAuth) {
+            [self showLocalAuthentication];
+        }
+        __weak typeof(self) weakSelf = self;
+        [localAuth setSuccessCallback:^{
+            if (weakSelf)
+            {
+                typeof(self) self = weakSelf;
+                [self->localAuth dismissViewControllerAnimated:YES completion:^{
+                    self->localAuth = nil;
+                    [self applicationDidBecomeActive:application];
+                }];
+            }
+        }];
+        if (becomeActiveCallCount == 0) {
+            [localAuth authenticate];
+        }
+        becomeActiveCallCount++;
+        
+        return;
+    }
     
     // Check if there is crash log to send
     if (RiotSettings.shared.enableCrashReport)
@@ -762,6 +803,26 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     }
     
     return continueUserActivity;
+}
+
+#pragma mark - Local Authentication
+
+- (void)showLocalAuthentication
+{
+    [ThemedLocalAuthenticationViewController invalidate];
+    localAuth = [[ThemedLocalAuthenticationViewController alloc] initWithNibName:@"LocalAuthenticationViewController" bundle:[NSBundle mainBundle]];
+    [localAuth setExplanation:NSLocalizedStringFromTable(@"local_authentication_explanation", @"Vector", nil)];
+    [localAuth setExplanationInPrompt:NSLocalizedStringFromTable(@"local_authentication_explanation_prompt", @"Vector", nil)];
+    
+    UIViewController *root = self.window.rootViewController;
+    if (root.presentedViewController)
+    {
+        [root.presentedViewController presentViewController:localAuth animated:NO completion:nil];
+    }
+    else
+    {
+        [root presentViewController:localAuth animated:NO completion:nil];
+    }
 }
 
 #pragma mark - Application layout handling

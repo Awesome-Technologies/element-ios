@@ -20,6 +20,8 @@
 #import "FallbackViewController.h"
 #import "ShareDataSource.h"
 #import "ShareExtensionManager.h"
+#import <LocalAuthentication/LocalAuthentication.h>
+#import "RiotShareExtension-Swift.h"
 
 
 @interface ShareViewController ()
@@ -94,7 +96,12 @@
     
     [self resetContentView];
     
-    if ([ShareExtensionManager sharedManager].userAccount)
+    if (!LocalAuthenticationViewController.isAuthenticated)
+    {
+        self.tittleLabel.text = NSLocalizedStringFromTable(@"local_authentication_title", @"Vector", nil);
+        [self configureLocalAuthenticationViewController];
+    }
+    else if ([ShareExtensionManager sharedManager].userAccount)
     {
         self.tittleLabel.text = [NSString stringWithFormat:NSLocalizedStringFromTable(@"send_to", @"Vector", nil), @""];
         [self configureSegmentedViewController];
@@ -106,6 +113,23 @@
         self.tittleLabel.text = bundleDisplayName;
         [self configureFallbackViewController];
     }
+}
+
+- (void)configureLocalAuthenticationViewController
+{
+    LocalAuthenticationViewController *localAuth = [[LocalAuthenticationViewController alloc] initWithNibName:@"LocalAuthenticationViewController" bundle:[NSBundle mainBundle]];
+    [localAuth setExplanation:NSLocalizedStringFromTable(@"local_authentication_share_explanation", @"Vector", nil)];
+    [localAuth setExplanationInPrompt:NSLocalizedStringFromTable(@"local_authentication_explanation_prompt", @"Vector", nil)];
+    [localAuth setSuccessCallback:^{
+        [self configureViews];
+    }];
+    [self addChildViewController:localAuth];
+    [self.contentView addSubview:localAuth.view];
+    [localAuth didMoveToParentViewController:self];
+    
+    [self autoPinSubviewEdges:localAuth.view toSuperviewEdges:self.contentView];
+    
+    [localAuth authenticate];
 }
 
 - (void)configureSegmentedViewController
