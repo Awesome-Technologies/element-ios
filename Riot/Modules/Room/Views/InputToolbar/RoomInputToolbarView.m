@@ -566,8 +566,6 @@
             ImagePaintViewController * vc = [[ImagePaintViewController alloc] init];
             vc.image = selectedImage;
             vc.modalPresentationStyle = UIModalPresentationFullScreen;
-            UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:vc];
-            [[ThemeService shared].theme applyStyleOnNavigationBar:navController.navigationBar];
             [self.delegate roomInputToolbarView:self presentViewController:vc];
             [vc setCallback:^(UIImage *image) {
                 if (image != nil)
