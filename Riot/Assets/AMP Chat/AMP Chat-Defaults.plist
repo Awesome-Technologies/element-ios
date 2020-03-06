@@ -80,5 +80,7 @@
 	<true/>
 	<key>registrationAsRequest</key>
 	<false/>
+	<key>editableProfileInfo</key>
+	<true/>
 </dict>
 </plist>

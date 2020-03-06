@@ -523,8 +523,17 @@ SignOutAlertPresenterDelegate>
     else if (section == SETTINGS_SECTION_USER_SETTINGS_INDEX)
     {
         userSettingsProfilePictureIndex = count++;
-        userSettingsDisplayNameIndex = count++;
-        userSettingsChangePasswordIndex = count++;
+        
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"editableProfileInfo"])
+        {
+            userSettingsDisplayNameIndex = count++;
+            userSettingsChangePasswordIndex = count++;
+        }
+        else
+        {
+            userSettingsDisplayNameIndex = -1;
+            userSettingsChangePasswordIndex = -1;
+        }
 
         // Hide some unsupported account settings
         userSettingsFirstNameIndex = -1;

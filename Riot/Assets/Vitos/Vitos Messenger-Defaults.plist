@@ -82,5 +82,7 @@
 	<true/>
 	<key>consentFilePath</key>
 	<string>vitos_consent</string>
+	<key>editableProfileInfo</key>
+	<false/>
 </dict>
 </plist>
