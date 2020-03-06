@@ -84,5 +84,7 @@
 	<string>vitos_consent</string>
 	<key>editableProfileInfo</key>
 	<false/>
+	<key>privacyPolicyFilePath</key>
+	<string>vitos_privacy_policy</string>
 </dict>
 </plist>

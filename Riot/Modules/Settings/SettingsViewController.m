@@ -1386,7 +1386,10 @@ SignOutAlertPresenterDelegate>
             }
             else if (row == OTHER_PRIVACY_INDEX)
             {
-                WebViewViewController *webViewViewController = [[WebViewViewController alloc] initWithURL:NSLocalizedStringFromTable(@"settings_privacy_policy_url", @"Vector", nil)];
+                NSString *policyFilePath = [[NSUserDefaults standardUserDefaults] stringForKey:@"privacyPolicyFilePath"];
+                NSString *htmlFile = [[NSBundle mainBundle] pathForResource:policyFilePath ofType:@"html"];
+                
+                WebViewViewController *webViewViewController = [[WebViewViewController alloc] initWithLocalHTMLFile:htmlFile];
                 
                 webViewViewController.title = NSLocalizedStringFromTable(@"settings_privacy_policy", @"Vector", nil);
                 

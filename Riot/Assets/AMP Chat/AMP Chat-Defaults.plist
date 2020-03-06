@@ -82,5 +82,7 @@
 	<false/>
 	<key>editableProfileInfo</key>
 	<true/>
+	<key>privacyPolicyFilePath</key>
+	<string>amp_privacy_policy</string>
 </dict>
 </plist>
