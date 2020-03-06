@@ -933,6 +933,12 @@ SignOutAlertPresenterDelegate>
         if (row >= OTHER_CONSENT && !showConsent) {
             row++;
         }
+        // Skip analytics switch when analytics is not allowed
+        NSDictionary *piwikConfig = [[NSUserDefaults standardUserDefaults] objectForKey:@"piwik"];
+        if (row >= OTHER_CRASH_REPORT_INDEX && [piwikConfig[@"siteId"] integerValue] == -1)
+        {
+            row++;
+        }
         if (row == OTHER_VERSION_INDEX)
         {
             MXKTableViewCell *versionCell = [self getDefaultTableViewCell:tableView];

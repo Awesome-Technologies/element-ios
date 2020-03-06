@@ -176,7 +176,12 @@
     {
         // Check whether the user has been already prompted to send crash reports.
         // (Check whether 'enableCrashReport' flag has been set once)        
-        if (!RiotSettings.shared.isEnableCrashReportHasBeenSetOnce)
+        NSDictionary *piwikConfig = [[NSUserDefaults standardUserDefaults] objectForKey:@"piwik"];
+        if ([piwikConfig[@"siteId"] integerValue] == -1)
+        {
+            RiotSettings.shared.enableCrashReport = NO;
+        }
+        else if (!RiotSettings.shared.isEnableCrashReportHasBeenSetOnce)
         {
             [self promptUserBeforeUsingAnalytics];
         }

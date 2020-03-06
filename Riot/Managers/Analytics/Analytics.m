@@ -56,7 +56,8 @@ NSString *const kAnalyticsE2eDecryptionFailureAction = @"Decryption failure";
                                           userAgent:@"iOSPiwikTracker"];
 
     // Check whether the user has enabled the sending of crash reports.
-    if (RiotSettings.shared.enableCrashReport)
+    // Opt out in case the side id equals -1
+    if (RiotSettings.shared.enableCrashReport && [piwikConfig[@"siteId"] integerValue] != -1)
     {
         [PiwikTracker shared].isOptedOut = NO;
 
