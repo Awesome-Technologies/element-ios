@@ -61,6 +61,13 @@
     
     if (self.mxRoom)
     {
+        [self.mxRoom state:^(MXRoomState *roomState)
+        {
+            NSInteger minPowerLevelToInvite = [[roomState powerLevels] invite];
+            NSInteger userPowerLevel = [[roomState powerLevels] powerLevelOfUserWithUserID:self.mxRoom.mxSession.myUser.userId];
+            [self.addParticipantMask setHidden:userPowerLevel < minPowerLevelToInvite];
+        }];
+        
         [self.mxRoom.summary setRoomAvatarImageIn:self.roomAvatar];
         
         self.displayNameTextField.text = self.mxRoom.summary.displayname;

@@ -374,10 +374,15 @@
 
         if (self.mxRoom)
         {
-            if (!self.mxRoom.isDirect) {
-                // Add room creation button programmatically
-                [self addAddParticipantButton];
-            }
+            [self.mxRoom state:^(MXRoomState *roomState)
+            {
+                NSInteger minPowerLevelToInvite = [[roomState powerLevels] invite];
+                NSInteger userPowerLevel = [[roomState powerLevels] powerLevelOfUserWithUserID:self.mxRoom.mxSession.myUser.userId];
+                if (!self.mxRoom.isDirect && userPowerLevel >= minPowerLevelToInvite) {
+                    // Add room creation button programmatically
+                    [self addAddParticipantButton];
+                }
+            }];
             
             self.searchBarHeader.hidden = NO;
 
