@@ -586,6 +586,7 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     [[Analytics sharedInstance] dispatch];
     
     if (!localAuth) {
+        [LocalAuthenticationViewController invalidate];
         [self showLocalAuthentication];
     }
     becomeActiveCallCount = 0;
@@ -619,8 +620,10 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     NSLog(@"[AppDelegate] applicationDidBecomeActive");
     
     // Check if the user is authenticated locally
-    if (!LocalAuthenticationViewController.isAuthenticated) {
-        if (!localAuth) {
+    if (!LocalAuthenticationViewController.isAuthenticated)
+    {
+        if (!localAuth)
+        {
             [self showLocalAuthentication];
         }
         __weak typeof(self) weakSelf = self;
@@ -634,7 +637,8 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
                 }];
             }
         }];
-        if (becomeActiveCallCount == 0) {
+        if (becomeActiveCallCount == 0)
+        {
             [localAuth authenticate];
         }
         becomeActiveCallCount++;
@@ -809,7 +813,10 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
 
 - (void)showLocalAuthentication
 {
-    [ThemedLocalAuthenticationViewController invalidate];
+    if (LocalAuthenticationViewController.isAuthenticated)
+    {
+        return;
+    }
     localAuth = [[ThemedLocalAuthenticationViewController alloc] initWithNibName:@"LocalAuthenticationViewController" bundle:[NSBundle mainBundle]];
     [localAuth setExplanation:NSLocalizedStringFromTable(@"local_authentication_explanation", @"Vector", nil)];
     [localAuth setExplanationInPrompt:NSLocalizedStringFromTable(@"local_authentication_explanation_prompt", @"Vector", nil)];

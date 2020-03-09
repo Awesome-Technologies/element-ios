@@ -81,6 +81,8 @@
 	<true/>
 	<key>registrationAsRequest</key>
 	<true/>
+	<key>requireLocalAuthentication</key>
+	<false/>
 	<key>editableProfileInfo</key>
 	<true/>
 	<key>privacyPolicyFilePath</key>

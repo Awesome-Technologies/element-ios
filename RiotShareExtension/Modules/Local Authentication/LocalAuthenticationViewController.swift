@@ -10,7 +10,14 @@ import UIKit
 import LocalAuthentication
 
 class LocalAuthenticationViewController: UIViewController {
-    @objc private(set) static var isAuthenticated = false
+    private static var _isAuthenticated = false
+    @objc static var isAuthenticated: Bool {
+        get {
+            let requireLocalAuthentication = UserDefaults.standard.bool(forKey: "requireLocalAuthentication")
+            
+            return LocalAuthenticationViewController._isAuthenticated || !requireLocalAuthentication
+        }
+    }
     @objc var successCallback: (() -> Void)?
     
     @IBOutlet internal weak var explanationLabel: UILabel!
@@ -34,7 +41,7 @@ class LocalAuthenticationViewController: UIViewController {
     
     @objc static func invalidate() {
         print("[LocalAuthenticationViewController] invalidate: Invalidating previous authentication")
-        isAuthenticated = false
+        _isAuthenticated = false
     }
     
     private func showAuthenticateButton() {
@@ -57,7 +64,7 @@ class LocalAuthenticationViewController: UIViewController {
         var error: NSError?
         if context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error) {
             context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: explanationInPrompt) { success, error in
-                LocalAuthenticationViewController.isAuthenticated = success
+                LocalAuthenticationViewController._isAuthenticated = success
                 if success {
                     DispatchQueue.main.async {
                         callback()

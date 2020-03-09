@@ -84,5 +84,7 @@
 	<true/>
 	<key>privacyPolicyFilePath</key>
 	<string>amp_privacy_policy</string>
+	<key>requireLocalAuthentication</key>
+	<false/>
 </dict>
 </plist>

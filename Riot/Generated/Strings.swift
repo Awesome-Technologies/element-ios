@@ -1010,7 +1010,7 @@ internal enum VectorL10n {
   internal static var localAuthenticationExplanationPrompt: String { 
     return VectorL10n.tr("Vector", "local_authentication_explanation_prompt") 
   }
-  /// To be able to use this app, please secure it by using at least a pin code.\n\nYou can set that up in system settings.
+  /// To be able to use this app, please secure your device by using at least a pin code.\n\nYou can set that up in system settings.
   internal static var localAuthenticationNotSetup: String { 
     return VectorL10n.tr("Vector", "local_authentication_not_setup") 
   }

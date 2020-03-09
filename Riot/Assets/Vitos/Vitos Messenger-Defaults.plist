@@ -86,5 +86,7 @@
 	<false/>
 	<key>privacyPolicyFilePath</key>
 	<string>vitos_privacy_policy</string>
+	<key>requireLocalAuthentication</key>
+	<true/>
 </dict>
 </plist>
