@@ -440,6 +440,10 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     [NSBundle mxk_setLanguage:language];
     [NSBundle mxk_setFallbackLanguage:@"en"];
 
+    // Share data with app extensions
+    BOOL requireLocalAuthentication = [[NSUserDefaults standardUserDefaults] boolForKey:@"requireLocalAuthentication"];
+    [[[MXKAppSettings standardAppSettings] sharedUserDefaults] setBool:requireLocalAuthentication forKey:@"requireLocalAuthentication"];
+    LocalAuthenticationViewController.requireLocalAuthentication = requireLocalAuthentication;
     
     // Customize the localized string table
     [NSBundle mxk_customizeLocalizedStringTableName:@"Vector"];

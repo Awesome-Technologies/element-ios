@@ -46,6 +46,8 @@
 {
     [super viewDidLoad];
     
+    LocalAuthenticationViewController.requireLocalAuthentication = [[MXKAppSettings standardAppSettings].sharedUserDefaults boolForKey:@"requireLocalAuthentication"];
+    
     self.shareExtensionManagerDidUpdateAccountDataObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kShareExtensionManagerDidUpdateAccountDataNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notif) {
         
         [self configureViews];

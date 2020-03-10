@@ -10,11 +10,11 @@ import UIKit
 import LocalAuthentication
 
 class LocalAuthenticationViewController: UIViewController {
+    @objc static var requireLocalAuthentication = false
+    
     private static var _isAuthenticated = false
     @objc static var isAuthenticated: Bool {
         get {
-            let requireLocalAuthentication = UserDefaults.standard.bool(forKey: "requireLocalAuthentication")
-            
             return LocalAuthenticationViewController._isAuthenticated || !requireLocalAuthentication
         }
     }
