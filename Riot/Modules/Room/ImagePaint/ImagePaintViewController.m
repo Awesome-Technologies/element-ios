@@ -443,6 +443,7 @@
     CGContextStrokePath(currentContext);
     drawImageView.image = UIGraphicsGetImageFromCurrentImageContext();
     
+    UIGraphicsEndImageContext();
 }
 
 - (void)setUpButton:(UIButton*)button backgroundColor:(UIColor *)color cornerRadius:(CGFloat)corner buttonTag:(NSInteger)tag
