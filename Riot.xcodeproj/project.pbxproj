@@ -62,7 +62,7 @@
 		979234BA2244762F0081082E /* AMPTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979234B92244762F0081082E /* AMPTheme.swift */; };
 		979B58602409A7BB00931AA8 /* LocalAuthenticationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A2ACC223FE014E00C8AFD5 /* LocalAuthenticationViewController.swift */; };
 		979CCC1A22B0DAC3004C67DD /* AudioAttachmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979CCC1922B0DAC3004C67DD /* AudioAttachmentView.swift */; };
-		97A2ACB923FD5E2E00C8AFD5 /* LocalAuthenticationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 97A2ACB723FD5E2E00C8AFD5 /* LocalAuthenticationViewController.xib */; };
+		97A2ACB923FD5E2E00C8AFD5 /* LocalAuthenticationView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 97A2ACB723FD5E2E00C8AFD5 /* LocalAuthenticationView.xib */; };
 		97A2ACBE23FDBE5600C8AFD5 /* LocalAuthenticationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 97A2ACBC23FDBE5600C8AFD5 /* LocalAuthenticationViewController.xib */; };
 		97A2ACC123FE012D00C8AFD5 /* ThemedLocalAuthenticationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A2ACC023FE012D00C8AFD5 /* ThemedLocalAuthenticationViewController.swift */; };
 		97A2ACC323FE014E00C8AFD5 /* LocalAuthenticationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A2ACC223FE014E00C8AFD5 /* LocalAuthenticationViewController.swift */; };
@@ -534,7 +534,7 @@
 		97906E5822A564EA006B6DCD /* QRReaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = QRReaderView.xib; sourceTree = "<group>"; };
 		979234B92244762F0081082E /* AMPTheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMPTheme.swift; sourceTree = "<group>"; };
 		979CCC1922B0DAC3004C67DD /* AudioAttachmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioAttachmentView.swift; sourceTree = "<group>"; };
-		97A2ACB723FD5E2E00C8AFD5 /* LocalAuthenticationViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LocalAuthenticationViewController.xib; sourceTree = "<group>"; };
+		97A2ACB723FD5E2E00C8AFD5 /* LocalAuthenticationView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LocalAuthenticationView.xib; sourceTree = "<group>"; };
 		97A2ACBC23FDBE5600C8AFD5 /* LocalAuthenticationViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LocalAuthenticationViewController.xib; sourceTree = "<group>"; };
 		97A2ACC023FE012D00C8AFD5 /* ThemedLocalAuthenticationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemedLocalAuthenticationViewController.swift; sourceTree = "<group>"; };
 		97A2ACC223FE014E00C8AFD5 /* LocalAuthenticationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalAuthenticationViewController.swift; sourceTree = "<group>"; };
@@ -1249,7 +1249,7 @@
 		97A2ACB523FD5DEC00C8AFD5 /* Local Authentication */ = {
 			isa = PBXGroup;
 			children = (
-				97A2ACB723FD5E2E00C8AFD5 /* LocalAuthenticationViewController.xib */,
+				97A2ACB723FD5E2E00C8AFD5 /* LocalAuthenticationView.xib */,
 				97A2ACC023FE012D00C8AFD5 /* ThemedLocalAuthenticationViewController.swift */,
 			);
 			path = "Local Authentication";
@@ -3169,7 +3169,7 @@
 				B1B558DB20EF768F00210D55 /* RoomIncomingEncryptedTextMsgWithoutSenderNameBubbleCell.xib in Resources */,
 				B1B5572B20EE6C4D00210D55 /* RoomMemberDetailsViewController.xib in Resources */,
 				B1D4752C21EE52C30067973F /* KeyBackupSetupIntroViewController.storyboard in Resources */,
-				97A2ACB923FD5E2E00C8AFD5 /* LocalAuthenticationViewController.xib in Resources */,
+				97A2ACB923FD5E2E00C8AFD5 /* LocalAuthenticationView.xib in Resources */,
 				B1B558C620EF768F00210D55 /* RoomIncomingEncryptedAttachmentBubbleCell.xib in Resources */,
 				97F70CC42412941A001F8464 /* vitos_privacy_policy.html in Resources */,
 				97F70CC52412941C001F8464 /* caritas_privacy_policy.html in Resources */,

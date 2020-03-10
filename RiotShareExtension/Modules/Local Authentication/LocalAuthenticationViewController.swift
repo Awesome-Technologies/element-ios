@@ -19,6 +19,7 @@ class LocalAuthenticationViewController: UIViewController {
         }
     }
     @objc var successCallback: (() -> Void)?
+    @objc var dismissCallback: (() -> Void)?
     
     @IBOutlet internal weak var explanationLabel: UILabel!
     @IBOutlet internal weak var authenticateButton: UIButton!
@@ -55,8 +56,11 @@ class LocalAuthenticationViewController: UIViewController {
     }
     
     @objc func authenticate() {
-        guard let callback = successCallback else { return }
-        
+        guard !LocalAuthenticationViewController.isAuthenticated else {
+            self.successCallback?()
+            self.dismiss()
+            return
+        }
         let context = LAContext()
         
         context.touchIDAuthenticationAllowableReuseDuration = 10
@@ -67,7 +71,8 @@ class LocalAuthenticationViewController: UIViewController {
                 LocalAuthenticationViewController._isAuthenticated = success
                 if success {
                     DispatchQueue.main.async {
-                        callback()
+                        self.successCallback?()
+                        self.dismiss()
                     }
                 } else {
                     print(error?.localizedDescription ?? "[LocalAuthenticationViewController] authenticate: Failed to authenticate")
@@ -91,6 +96,16 @@ class LocalAuthenticationViewController: UIViewController {
             default:
                 showAuthenticateButton()
             }
+        }
+    }
+    
+    private func dismiss() {
+        UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseOut, animations: {
+            var frame = self.view.frame
+            frame.origin.y = frame.size.height
+            self.view.frame = frame
+        }) { finished in
+            self.dismissCallback?()
         }
     }
 }

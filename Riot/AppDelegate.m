@@ -585,10 +585,8 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     [[DecryptionFailureTracker sharedInstance] dispatch];
     [[Analytics sharedInstance] dispatch];
     
-    if (!localAuth) {
-        [LocalAuthenticationViewController invalidate];
-        [self showLocalAuthentication];
-    }
+    [LocalAuthenticationViewController invalidate];
+    [self showLocalAuthentication];
     becomeActiveCallCount = 0;
 }
 
@@ -622,19 +620,20 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
     // Check if the user is authenticated locally
     if (!LocalAuthenticationViewController.isAuthenticated)
     {
-        if (!localAuth)
-        {
-            [self showLocalAuthentication];
-        }
         __weak typeof(self) weakSelf = self;
         [localAuth setSuccessCallback:^{
             if (weakSelf)
             {
                 typeof(self) self = weakSelf;
-                [self->localAuth dismissViewControllerAnimated:YES completion:^{
-                    self->localAuth = nil;
-                    [self applicationDidBecomeActive:application];
-                }];
+                [self applicationDidBecomeActive:application];
+            }
+        }];
+        [localAuth setDismissCallback:^{
+            if (weakSelf)
+            {
+                typeof(self) self = weakSelf;
+                [self->localAuth.view removeFromSuperview];
+                self->localAuth = nil;
             }
         }];
         if (becomeActiveCallCount == 0)
@@ -813,23 +812,15 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
 
 - (void)showLocalAuthentication
 {
-    if (LocalAuthenticationViewController.isAuthenticated)
+    if (LocalAuthenticationViewController.isAuthenticated || localAuth)
     {
         return;
     }
-    localAuth = [[ThemedLocalAuthenticationViewController alloc] initWithNibName:@"LocalAuthenticationViewController" bundle:[NSBundle mainBundle]];
+    localAuth = [[ThemedLocalAuthenticationViewController alloc] initWithNibName:@"LocalAuthenticationView" bundle:[NSBundle mainBundle]];
     [localAuth setExplanation:NSLocalizedStringFromTable(@"local_authentication_explanation", @"Vector", nil)];
     [localAuth setExplanationInPrompt:NSLocalizedStringFromTable(@"local_authentication_explanation_prompt", @"Vector", nil)];
     
-    UIViewController *root = self.window.rootViewController;
-    if (root.presentedViewController)
-    {
-        [root.presentedViewController presentViewController:localAuth animated:NO completion:nil];
-    }
-    else
-    {
-        [root presentViewController:localAuth animated:NO completion:nil];
-    }
+    [self.window addSubview:localAuth.view];
 }
 
 #pragma mark - Application layout handling
