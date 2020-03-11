@@ -1378,7 +1378,9 @@ SignOutAlertPresenterDelegate>
             }
             else if (row == OTHER_TERM_CONDITIONS_INDEX)
             {
-                WebViewViewController *webViewViewController = [[WebViewViewController alloc] initWithURL:NSLocalizedStringFromTable(@"settings_term_conditions_url", @"Vector", nil)];
+                NSString *policyFilePath = [[NSUserDefaults standardUserDefaults] stringForKey:@"termsAndConditionsFilePath"];
+                NSString *htmlFile = [[NSBundle mainBundle] pathForResource:policyFilePath ofType:@"html"];
+                WebViewViewController *webViewViewController = [[WebViewViewController alloc] initWithLocalHTMLFile:htmlFile];
                 
                 webViewViewController.title = NSLocalizedStringFromTable(@"settings_term_conditions", @"Vector", nil);
                 

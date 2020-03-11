@@ -86,5 +86,7 @@
 	<string>amp_privacy_policy</string>
 	<key>requireLocalAuthentication</key>
 	<false/>
+	<key>termsAndConditionsFilePath</key>
+	<string>amp_terms_and_conditions</string>
 </dict>
 </plist>

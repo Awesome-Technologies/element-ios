@@ -87,5 +87,7 @@
 	<true/>
 	<key>privacyPolicyFilePath</key>
 	<string>caritas_privacy_policy</string>
+	<key>termsAndConditionsFilePath</key>
+	<string>caritas_terms_and_conditions</string>
 </dict>
 </plist>

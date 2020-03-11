@@ -88,5 +88,7 @@
 	<string>vitos_privacy_policy</string>
 	<key>requireLocalAuthentication</key>
 	<true/>
+	<key>termsAndConditionsFilePath</key>
+	<string>vitos_terms_and_conditions</string>
 </dict>
 </plist>
