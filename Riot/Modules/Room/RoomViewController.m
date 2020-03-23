@@ -1381,7 +1381,15 @@
         [[AudioRecorder shared] checkWithRoomId:self.roomDataSource.roomId];
         
         // Check whether the call option is supported
-        roomInputToolbarView.supportCallOption = self.roomDataSource.mxSession.callManager && self.roomDataSource.room.isDirect;
+        BOOL supportGroupCalls = [[NSUserDefaults standardUserDefaults] boolForKey:@"supportGroupCalls"];
+        if (supportGroupCalls)
+        {
+            roomInputToolbarView.supportCallOption = self.roomDataSource.mxSession.callManager && (self.roomDataSource.room.summary.membersCount.joined >= 2 || self.roomDataSource.room.isDirect);
+        }
+        else
+        {
+            roomInputToolbarView.supportCallOption = self.roomDataSource.mxSession.callManager && self.roomDataSource.room.isDirect;
+        }
         
         // Get user picture view in input toolbar
         userPictureView = roomInputToolbarView.pictureView;

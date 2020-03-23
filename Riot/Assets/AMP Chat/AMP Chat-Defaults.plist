@@ -88,5 +88,7 @@
 	<false/>
 	<key>termsAndConditionsFilePath</key>
 	<string>amp_terms_and_conditions</string>
+	<key>supportGroupCalls</key>
+	<false/>
 </dict>
 </plist>

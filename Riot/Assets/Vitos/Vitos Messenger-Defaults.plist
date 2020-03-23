@@ -90,5 +90,7 @@
 	<true/>
 	<key>termsAndConditionsFilePath</key>
 	<string>vitos_terms_and_conditions</string>
+	<key>supportGroupCalls</key>
+	<false/>
 </dict>
 </plist>

@@ -74,7 +74,7 @@
 	<key>enableRegistration</key>
 	<true/>
 	<key>enableVoiceVideoCall</key>
-	<false/>
+	<true/>
 	<key>enableQRCodeLogin</key>
 	<true/>
 	<key>enableCustomHomeserver</key>
@@ -91,5 +91,7 @@
 	<string>caritas_privacy_policy</string>
 	<key>termsAndConditionsFilePath</key>
 	<string>caritas_terms_and_conditions</string>
+	<key>supportGroupCalls</key>
+	<true/>
 </dict>
 </plist>
