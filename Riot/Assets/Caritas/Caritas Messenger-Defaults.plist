@@ -24,6 +24,8 @@
 	<string>https://scalar-staging.caritas.amp.care/scalar-web/</string>
 	<key>integrationsRestUrl</key>
 	<string>https://scalar-staging.caritas.amp.care/scalar/api</string>
+	<key>jitsiServerUrl</key>
+	<string>https://jitsi.caritas.amp.chat/</string>
 	<key>piwik</key>
 	<dict>
 		<key>url</key>

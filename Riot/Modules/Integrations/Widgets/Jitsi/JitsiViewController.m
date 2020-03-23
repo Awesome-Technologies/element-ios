@@ -16,8 +16,6 @@
 
 #import "JitsiViewController.h"
 
-static const NSString *kJitsiServerUrl = @"https://jitsi.riot.im/";
-
 @interface JitsiViewController ()
 {
     NSString *jitsiUrl;
@@ -73,7 +71,12 @@ static const NSString *kJitsiServerUrl = @"https://jitsi.riot.im/";
             // And build from it the url to use in jitsi-meet sdk
             if (confId)
             {
-                jitsiUrl = [NSString stringWithFormat:@"%@%@", kJitsiServerUrl, confId];
+                NSString *jitsiServerUrl = [[NSUserDefaults standardUserDefaults] stringForKey:@"jitsiServerUrl"];
+                if (!jitsiServerUrl)
+                {
+                    jitsiServerUrl = @"https://jitsi.riot.im/";
+                }
+                jitsiUrl = [NSString stringWithFormat:@"%@%@", jitsiServerUrl, confId];
             }
         }
 
