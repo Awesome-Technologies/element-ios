@@ -24,6 +24,8 @@
 	<string>https://scalar.amp.chat/scalar-web/</string>
 	<key>integrationsRestUrl</key>
 	<string>https://scalar.amp.chat/scalar/api</string>
+	<key>jitsiServerUrl</key>
+	<string>https://jitsi.amp.chat/</string>
 	<key>piwik</key>
 	<dict>
 		<key>url</key>
@@ -89,6 +91,6 @@
 	<key>termsAndConditionsFilePath</key>
 	<string>amp_terms_and_conditions</string>
 	<key>supportGroupCalls</key>
-	<false/>
+	<true/>
 </dict>
 </plist>
