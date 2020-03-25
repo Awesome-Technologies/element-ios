@@ -123,7 +123,7 @@
 
 #import "Riot-Swift.h"
 
-@interface RoomViewController () <UISearchBarDelegate, UIGestureRecognizerDelegate, RoomTitleViewTapGestureDelegate, RoomParticipantsViewControllerDelegate, MXKRoomMemberDetailsViewControllerDelegate, ContactsTableViewControllerDelegate, MXServerNoticesDelegate, RoomContextualMenuViewControllerDelegate,
+@interface RoomViewController () <UISearchBarDelegate, UIGestureRecognizerDelegate, UIScrollViewAccessibilityDelegate, RoomTitleViewTapGestureDelegate, RoomParticipantsViewControllerDelegate, MXKRoomMemberDetailsViewControllerDelegate, ContactsTableViewControllerDelegate, MXServerNoticesDelegate, RoomContextualMenuViewControllerDelegate,
     ReactionsMenuViewModelCoordinatorDelegate, EditHistoryCoordinatorBridgePresenterDelegate, MXKDocumentPickerPresenterDelegate, EmojiPickerCoordinatorBridgePresenterDelegate,
     ReactionHistoryCoordinatorBridgePresenterDelegate, CameraPresenterDelegate, MediaPickerCoordinatorBridgePresenterDelegate>
 {
@@ -228,6 +228,7 @@
 @property (nonatomic, strong) ReactionHistoryCoordinatorBridgePresenter *reactionHistoryCoordinatorBridgePresenter;
 @property (nonatomic, strong) CameraPresenter *cameraPresenter;
 @property (nonatomic, strong) MediaPickerCoordinatorBridgePresenter *mediaPickerPresenter;
+@property (nonatomic, strong) RoomMessageURLParser *roomMessageURLParser;
 
 @end
 
@@ -423,6 +424,7 @@
     
     self.roomContextualMenuPresenter = [RoomContextualMenuPresenter new];
     self.errorPresenter = [MXKErrorAlertPresentation new];
+    self.roomMessageURLParser = [RoomMessageURLParser new];
     
     // Observe user interface theme change.
     kThemeServiceDidChangeThemeNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kThemeServiceDidChangeThemeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notif) {
@@ -522,8 +524,7 @@
     // Observe kAppDelegateDidTapStatusBarNotification.
     kAppDelegateDidTapStatusBarNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kAppDelegateDidTapStatusBarNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notif) {
         
-        [self.bubblesTableView setContentOffset:CGPointMake(-self.bubblesTableView.mxk_adjustedContentInset.left, -self.bubblesTableView.mxk_adjustedContentInset.top) animated:YES];
-        
+        [self setBubbleTableViewContentOffset:CGPointMake(-self.bubblesTableView.mxk_adjustedContentInset.left, -self.bubblesTableView.mxk_adjustedContentInset.top) animated:YES];
     }];
 }
 
@@ -815,6 +816,92 @@
     
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
 }
+
+#pragma mark - Accessibility
+
+// Handle scrolling when VoiceOver is on because it does not work well if we let the system do:
+// VoiceOver loses the focus on the tableview
+- (BOOL)accessibilityScroll:(UIAccessibilityScrollDirection)direction
+{
+    BOOL canScroll = YES;
+
+    // Scroll by one page
+    CGFloat tableViewHeight = self.bubblesTableView.frame.size.height;
+
+    CGPoint offset = self.bubblesTableView.contentOffset;
+    switch (direction)
+    {
+        case UIAccessibilityScrollDirectionUp:
+            offset.y -= tableViewHeight;
+            break;
+
+        case UIAccessibilityScrollDirectionDown:
+            offset.y += tableViewHeight;
+            break;
+
+        default:
+            break;
+    }
+
+    if (offset.y < 0 && ![self.roomDataSource.timeline canPaginate:MXTimelineDirectionBackwards])
+    {
+        // Can't paginate more. Let's stick on the first item
+        UIView *focusedView = [self firstCellWithAccessibilityDataInCells:self.bubblesTableView.visibleCells.objectEnumerator];
+        UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, focusedView);
+        canScroll = NO;
+    }
+    else if (offset.y > self.bubblesTableView.contentSize.height - tableViewHeight
+             && ![self.roomDataSource.timeline canPaginate:MXTimelineDirectionForwards])
+    {
+        // Can't paginate more. Let's stick on the last item with accessibility
+        UIView *focusedView = [self firstCellWithAccessibilityDataInCells:self.bubblesTableView.visibleCells.reverseObjectEnumerator];
+        UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, focusedView);
+        canScroll = NO;
+    }
+    else
+    {
+        // Disable VoiceOver while scrolling
+        self.bubblesTableView.accessibilityElementsHidden = YES;
+
+        [self setBubbleTableViewContentOffset:offset animated:NO];
+
+        NSEnumerator<UITableViewCell*> *cells;
+        if (direction == UIAccessibilityScrollDirectionUp)
+        {
+            cells = self.bubblesTableView.visibleCells.objectEnumerator;
+        }
+        else
+        {
+            cells = self.bubblesTableView.visibleCells.reverseObjectEnumerator;
+        }
+        UIView *cell = [self firstCellWithAccessibilityDataInCells:cells];
+
+        self.bubblesTableView.accessibilityElementsHidden = NO;
+
+        // Force VoiceOver to focus on a visible item
+        UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, cell);
+    }
+
+    // If we cannot scroll, let VoiceOver indicates the border
+    return canScroll;
+}
+
+- (UIView*)firstCellWithAccessibilityDataInCells:(NSEnumerator<UITableViewCell*>*)cells
+{
+    UIView *view;
+
+    for (UITableViewCell *cell in cells)
+    {
+        if (![cell isKindOfClass:[RoomEmptyBubbleCell class]])
+        {
+            view = cell;
+            break;
+        }
+    }
+
+    return view;
+}
+
 
 #pragma mark - Override MXKRoomViewController
 
@@ -1375,12 +1462,16 @@
                     icon = [icon imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
 
                     self.navigationItem.rightBarButtonItems[1].image = icon;
+                    self.navigationItem.rightBarButtonItems[1].accessibilityLabel = NSLocalizedStringFromTable(@"room_accessibility_integrations", @"Vector", nil);
                 }
                 else
                 {
                     // Reset original icon
                     self.navigationItem.rightBarButtonItems[1].image = [UIImage imageNamed:@"apps-icon"];
+                    self.navigationItem.rightBarButtonItems[1].accessibilityLabel = NSLocalizedStringFromTable(@"room_accessibility_integrations", @"Vector", nil);
                 }
+                
+                self.navigationItem.rightBarButtonItems.firstObject.accessibilityLabel = NSLocalizedStringFromTable(@"room_accessibility_search", @"Vector", nil);
             }
 
             // Do not change title view class here if the expanded header is visible.
@@ -2083,8 +2174,17 @@
             if (((MXKRoomBubbleTableViewCell*)cell).bubbleData.attachment.eventSentState == MXEventSentStateFailed)
             {
                 // Shortcut: when clicking on an unsent media, show the action sheet to resend it
-                MXEvent *selectedEvent = [self.roomDataSource eventWithEventId:((MXKRoomBubbleTableViewCell*)cell).bubbleData.attachment.eventId];
-                [self dataSource:dataSource didRecognizeAction:kMXKRoomBubbleCellRiotEditButtonPressed inCell:cell userInfo:@{kMXKRoomBubbleCellEventKey:selectedEvent}];
+                NSString *eventId = ((MXKRoomBubbleTableViewCell*)cell).bubbleData.attachment.eventId;
+                MXEvent *selectedEvent = [self.roomDataSource eventWithEventId:eventId];
+                
+                if (selectedEvent)
+                {
+                    [self dataSource:dataSource didRecognizeAction:kMXKRoomBubbleCellRiotEditButtonPressed inCell:cell userInfo:@{kMXKRoomBubbleCellEventKey:selectedEvent}];
+                }
+                else
+                {
+                    NSLog(@"[RoomViewController] didRecognizeAction:inCell:userInfo tap on attachment with event state MXEventSentStateFailed. Selected event is nil for event id %@", eventId);
+                }
             }
             else if (((MXKRoomBubbleTableViewCell*)cell).bubbleData.attachment.type == MXKAttachmentTypeSticker)
             {
@@ -2501,8 +2601,14 @@
                                                                // Create a matrix.to permalink that is common to all matrix clients
                                                                NSString *permalink = [MXTools permalinkToEvent:selectedEvent.eventId inRoom:selectedEvent.roomId];
                                                                
-                                                               // Create a room matrix.to permalink
-                                                               [[UIPasteboard generalPasteboard] setString:permalink];
+                                                               if (permalink)
+                                                               {
+                                                                   [[UIPasteboard generalPasteboard] setString:permalink];
+                                                               }
+                                                               else
+                                                               {
+                                                                   NSLog(@"[RoomViewController] Contextual menu permalink action failed. Permalink is nil room id/event id: %@/%@", selectedEvent.roomId, selectedEvent.eventId);
+                                                               }
                                                            }
                                                            
                                                        }]];
@@ -2725,6 +2831,13 @@
         // Retrieve the type of interaction expected with the URL (See UITextItemInteraction)
         NSNumber *urlItemInteractionValue = userInfo[kMXKRoomBubbleCellUrlItemInteraction];
         
+        RoomMessageURLType roomMessageURLType = RoomMessageURLTypeUnknown;
+        
+        if (url)
+        {
+            roomMessageURLType = [self.roomMessageURLParser parseURL:url];
+        }
+        
         // When a link refers to a room alias/id, a user id or an event id, the non-ASCII characters (like '#' in room alias) has been escaped
         // to be able to convert it into a legal URL string.
         NSString *absoluteURLString = [url.absoluteString stringByRemovingPercentEncoding];
@@ -2788,19 +2901,40 @@
             // Fallback case for external links
             switch (urlItemInteractionValue.integerValue) {
                 case UITextItemInteractionInvokeDefaultAction:
-                {                    
-                    [[UIApplication sharedApplication] vc_open:url completionHandler:^(BOOL success) {
-                        if (!success)
-                        {
-                            [self showUnableToOpenLinkErrorAlert];
-                        }
-                    }];
-                    shouldDoAction = NO;
+                {
+                    switch (roomMessageURLType) {
+                        case RoomMessageURLTypeAppleDataDetector:
+                            // Keep the default OS behavior on single tap when UITextView data detector detect a known type.
+                            shouldDoAction = YES;
+                            break;
+                        case RoomMessageURLTypeDummy:
+                            // Do nothing for dummy links
+                            shouldDoAction = NO;
+                            break;
+                        default:
+                            // Try to open the link
+                            [[UIApplication sharedApplication] vc_open:url completionHandler:^(BOOL success) {
+                                if (!success)
+                                {
+                                    [self showUnableToOpenLinkErrorAlert];
+                                }
+                            }];
+                            shouldDoAction = NO;
+                            break;
+                    }                                        
                 }
                     break;
                 case UITextItemInteractionPresentActions:
                 {
-                    // Long press on link, present room contextual menu.
+                    // Retrieve the tapped event
+                    MXEvent *tappedEvent = userInfo[kMXKRoomBubbleCellEventKey];
+                    
+                    if (tappedEvent)
+                    {
+                        // Long press on link, present room contextual menu.
+                        [self showContextualMenuForEvent:tappedEvent fromSingleTapGesture:NO cell:cell animated:YES];
+                    }
+                    
                     shouldDoAction = NO;
                 }
                     break;
@@ -4815,8 +4949,16 @@
                                                                    
                                                                    NSLog(@"[RoomVC] Invite be email %@ failed", participantId);
                                                                    // Alert user
-                                                                   [[AppDelegate theDelegate] showErrorAsAlert:error];
-                                                                   
+                                                                   if ([error.domain isEqualToString:kMXRestClientErrorDomain]
+                                                                       && error.code == MXRestClientErrorMissingIdentityServer)
+                                                                   {
+                                                                       NSString *message = [NSBundle mxk_localizedStringForKey:@"error_invite_3pid_with_no_identity_server"];
+                                                                       [[AppDelegate theDelegate] showAlertWithTitle:message message:nil];
+                                                                   }
+                                                                   else
+                                                                   {
+                                                                       [[AppDelegate theDelegate] showErrorAsAlert:error];
+                                                                   }
                                                                }];
                                                            }
                                                            else //if ([MXTools isMatrixUserIdentifier:participantId])
@@ -4987,7 +5129,14 @@
             }
             NSString *textMessage = selectedComponent.textMessage;
             
-            [UIPasteboard generalPasteboard].string = textMessage;
+            if (textMessage)
+            {
+                [UIPasteboard generalPasteboard].string = textMessage;
+            }
+            else
+            {
+                NSLog(@"[RoomViewController] Contextual menu copy failed. Text is nil for room id/event id: %@/%@", selectedComponent.event.roomId, selectedComponent.event.eventId);
+            }
             
             [self hideContextualMenuAnimated:YES];
         }
@@ -5124,7 +5273,8 @@
                                                                        completion:^{
                                                                        }];
     
-    [self selectEventWithId:selectedEventId];
+    preventBubblesTableViewScroll = YES;
+    [self selectEventWithId:selectedEventId];    
 }
 
 - (void)hideContextualMenuAnimated:(BOOL)animated
@@ -5148,6 +5298,8 @@
     {
         [self cancelEventSelection];
     }
+    
+    preventBubblesTableViewScroll = NO;
     
     [self.roomContextualMenuPresenter hideContextualMenuWithAnimated:animated completion:^{
         [self enableOverlayContainerUserInteractions:NO];

@@ -54,11 +54,14 @@ enum
     SETTINGS_SECTION_CALLS_INDEX = -1,
     SETTINGS_SECTION_ADVANCED_INDEX = 1,
     SETTINGS_SECTION_CONTACTS_INDEX = -1,
+    SETTINGS_SECTION_DISCOVERY_INDEX = -1,
+    SETTINGS_SECTION_IDENTITY_SERVER_INDEX = -1,
+    SETTINGS_SECTION_INTEGRATIONS_INDEX = -1,
     SETTINGS_SECTION_SIGN_OUT_INDEX = 0,
     SETTINGS_SECTION_USER_SETTINGS_INDEX,
     SETTINGS_SECTION_NOTIFICATIONS_SETTINGS_INDEX,
-    SETTINGS_SECTION_USER_INTERFACE_INDEX,
     SETTINGS_SECTION_IGNORED_USERS_INDEX,
+    SETTINGS_SECTION_USER_INTERFACE_INDEX,
     SETTINGS_SECTION_OTHER_INDEX,
     SETTINGS_SECTION_CRYPTOGRAPHY_INDEX,
     SETTINGS_SECTION_KEYBACKUP_INDEX,
@@ -86,8 +89,17 @@ enum
 enum
 {
     CALLS_ENABLE_CALLKIT_INDEX = 0,
-    CALLS_DESCRIPTION_INDEX,
+    CALLS_CALLKIT_DESCRIPTION_INDEX,
+    CALLS_ENABLE_STUN_SERVER_FALLBACK_INDEX,
+    CALLS_STUN_SERVER_FALLBACK_DESCRIPTION_INDEX,
     CALLS_COUNT
+};
+
+enum
+{
+    INTEGRATIONS_INDEX,
+    INTEGRATIONS_DESCRIPTION_INDEX,
+    INTEGRATIONS_COUNT
 };
 
 enum
@@ -95,6 +107,13 @@ enum
     USER_INTERFACE_LANGUAGE_INDEX = 0,
     USER_INTERFACE_THEME_INDEX,
     USER_INTERFACE_COUNT
+};
+
+enum
+{
+    IDENTITY_SERVER_INDEX,
+    IDENTITY_SERVER_DESCRIPTION_INDEX,
+    IDENTITY_SERVER_COUNT
 };
 
 enum
@@ -118,7 +137,10 @@ enum
     LABS_USE_ROOM_MEMBERS_LAZY_LOADING_INDEX = 0,
     LABS_USE_JITSI_WIDGET_INDEX,
     LABS_CRYPTO_INDEX,
-    LABS_COUNT
+    LABS_COUNT,     // TODO: Remove it once features exist
+    LABS_DM_KEY_VERIFICATION_INDEX,
+    LABS_CROSS_SIGNING_INDEX,
+//    LABS_COUNT
 };
 
 enum {
@@ -126,6 +148,11 @@ enum {
     CRYPTOGRAPHY_BLACKLIST_UNVERIFIED_DEVICES_INDEX,
     CRYPTOGRAPHY_EXPORT_INDEX,
     CRYPTOGRAPHY_COUNT
+};
+
+enum
+{
+    DEVICES_DESCRIPTION_INDEX = 0
 };
 
 #define SECTION_TITLE_PADDING_WHEN_HIDDEN 0.01f
@@ -139,7 +166,9 @@ MXKEncryptionInfoViewDelegate,
 KeyBackupSetupCoordinatorBridgePresenterDelegate,
 KeyBackupRecoverCoordinatorBridgePresenterDelegate,
 SignOutAlertPresenterDelegate,
-SingleImagePickerPresenterDelegate>
+SingleImagePickerPresenterDelegate,
+SettingsDiscoveryTableViewSectionDelegate, SettingsDiscoveryViewModelCoordinatorDelegate,
+SettingsIdentityServerCoordinatorBridgePresenterDelegate>
 {
     // Current alert (if any).
     UIAlertController *currentAlert;
@@ -186,6 +215,7 @@ SingleImagePickerPresenterDelegate>
     NSInteger userSettingsPhoneStartIndex;  // The user can have several linked phone numbers. Hence, the dynamic section items count
     NSInteger userSettingsNewPhoneIndex;    // This index also marks the end of the phone numbers list
     NSInteger userSettingsChangePasswordIndex;
+    NSInteger userSettingsThreePidsInformation;
     NSInteger userSettingsNightModeSepIndex;
     NSInteger userSettingsNightModeIndex;
     
@@ -232,6 +262,8 @@ SingleImagePickerPresenterDelegate>
     SettingsKeyBackupTableViewSection *keyBackupSection;
     KeyBackupSetupCoordinatorBridgePresenter *keyBackupSetupCoordinatorBridgePresenter;
     KeyBackupRecoverCoordinatorBridgePresenter *keyBackupRecoverCoordinatorBridgePresenter;
+
+    SettingsIdentityServerCoordinatorBridgePresenter *identityServerSettingsCoordinatorBridgePresenter;
 }
 
 /**
@@ -248,6 +280,10 @@ SingleImagePickerPresenterDelegate>
 @property (nonatomic, strong) SignOutAlertPresenter *signOutAlertPresenter;
 @property (nonatomic, weak) UIButton *signOutButton;
 @property (nonatomic, strong) SingleImagePickerPresenter *imagePickerPresenter;
+
+@property (nonatomic, strong) SettingsDiscoveryViewModel *settingsDiscoveryViewModel;
+@property (nonatomic, strong) SettingsDiscoveryTableViewSection *settingsDiscoveryTableViewSection;
+@property (nonatomic, strong) SettingsDiscoveryThreePidDetailsCoordinatorBridgePresenter *discoveryThreePidDetailsPresenter;
 
 @end
 
@@ -315,6 +351,8 @@ SingleImagePickerPresenterDelegate>
         [self refreshSettings];
         
     }];
+
+    [self registerAccountDataDidChangeIdentityServerNotification];
     
     // Add each matrix session, to update the view controller appearance according to mx sessions state
     NSArray *sessions = [AppDelegate theDelegate].mxSessions;
@@ -334,6 +372,8 @@ SingleImagePickerPresenterDelegate>
             keyBackupSection.delegate = self;
         }
     }
+    
+    [self setupDiscoverySection];
 
     groupsDataSource = [[GroupsDataSource alloc] initWithMatrixSession:self.mainSession];
     [groupsDataSource finalizeInitialization];
@@ -431,6 +471,7 @@ SingleImagePickerPresenterDelegate>
 
     keyBackupSetupCoordinatorBridgePresenter = nil;
     keyBackupRecoverCoordinatorBridgePresenter = nil;
+    identityServerSettingsCoordinatorBridgePresenter = nil;
 }
 
 - (void)onMatrixSessionStateDidChange:(NSNotification *)notif
@@ -479,6 +520,13 @@ SingleImagePickerPresenterDelegate>
     }];
     
     newPhoneNumberCountryPicker = nil;
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    [self.settingsDiscoveryTableViewSection reload];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -658,293 +706,270 @@ SingleImagePickerPresenterDelegate>
     }
 }
 
-- (void)showValidationEmailDialogWithMessage:(NSString*)message for3PID:(MXK3PID*)threePID
+- (void)showValidationEmailDialogWithMessage:(NSString*)message for3PidAddSession:(MX3PidAddSession*)threePidAddSession threePidAddManager:(MX3PidAddManager*)threePidAddManager password:(NSString*)password
 {
-    __weak typeof(self) weakSelf = self;
-
+    MXWeakify(self);
     [currentAlert dismissViewControllerAnimated:NO completion:nil];
     currentAlert = [UIAlertController alertControllerWithTitle:[NSBundle mxk_localizedStringForKey:@"account_email_validation_title"] message:message preferredStyle:UIAlertControllerStyleAlert];
-    
-    [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"abort"]
-                                              style:UIAlertActionStyleDefault
-                                            handler:^(UIAlertAction * action) {
-                                                
-                                                if (weakSelf)
-                                                {
-                                                    typeof(self) self = weakSelf;
-                                                    self->currentAlert = nil;
-                                                    
-                                                    [self stopActivityIndicator];
-                                                    
-                                                    // Reset new email adding
-                                                    self.newEmailEditingEnabled = NO;
-                                                }
-                                                
-                                            }]];
 
-    __strong __typeof(threePID)strongThreePID = threePID;
-    
-    [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"continue"]
-                                                     style:UIAlertActionStyleDefault
-                                                   handler:^(UIAlertAction * action) {
-                                                       
-                                                       if (weakSelf)
-                                                       {
-                                                           typeof(self) self = weakSelf;
-                                                           self->is3PIDBindingInProgress = YES;
-                                                           
-                                                           // We always bind emails when registering, so let's do the same here
-                                                           [threePID add3PIDToUser:YES success:^{
-                                                               
-                                                               if (weakSelf)
-                                                               {
-                                                                   typeof(self) self = weakSelf;
-                                                                   self->is3PIDBindingInProgress = NO;
-                                                                   
-                                                                   // Check whether destroy has been called during email binding
-                                                                   if (self->onReadyToDestroyHandler)
-                                                                   {
-                                                                       // Ready to destroy
-                                                                       self->onReadyToDestroyHandler();
-                                                                       self->onReadyToDestroyHandler = nil;
-                                                                   }
-                                                                   else
-                                                                   {
-                                                                       self->currentAlert = nil;
-                                                                       
-                                                                       [self stopActivityIndicator];
-                                                                       
-                                                                       // Reset new email adding
-                                                                       self.newEmailEditingEnabled = NO;
-                                                                       
-                                                                       // Update linked emails
-                                                                       [self loadAccount3PIDs];
-                                                                   }
-                                                               }
-                                                               
-                                                           } failure:^(NSError *error) {
-                                                               
-                                                               NSLog(@"[SettingsViewController] Failed to bind email");
-                                                               
-                                                               if (weakSelf)
-                                                               {
-                                                                   typeof(self) self = weakSelf;
-                                                                   self->is3PIDBindingInProgress = NO;
-                                                                   
-                                                                   // Check whether destroy has been called during email binding
-                                                                   if (self->onReadyToDestroyHandler)
-                                                                   {
-                                                                       // Ready to destroy
-                                                                       self->onReadyToDestroyHandler();
-                                                                       self->onReadyToDestroyHandler = nil;
-                                                                   }
-                                                                   else
-                                                                   {
-                                                                       self->currentAlert = nil;
-                                                                       
-                                                                       // Display the same popup again if the error is M_THREEPID_AUTH_FAILED
-                                                                       MXError *mxError = [[MXError alloc] initWithNSError:error];
-                                                                       if (mxError && [mxError.errcode isEqualToString:kMXErrCodeStringThreePIDAuthFailed])
-                                                                       {
-                                                                           [self showValidationEmailDialogWithMessage:[NSBundle mxk_localizedStringForKey:@"account_email_validation_error"] for3PID:strongThreePID];
-                                                                       }
-                                                                       else
-                                                                       {
-                                                                           [self stopActivityIndicator];
-                                                                           
-                                                                           // Notify user
-                                                                           NSString *myUserId = self.mainSession.myUser.userId; // TODO: Hanlde multi-account
-                                                                           [[NSNotificationCenter defaultCenter] postNotificationName:kMXKErrorNotification object:error userInfo:myUserId ? @{kMXKErrorUserIdKey: myUserId} : nil];
-                                                                       }
-                                                                   }
-                                                               }
-                                                               
-                                                           }];
-                                                       }
-                                                       
-                                                   }]];
+    [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"cancel"] style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+        MXStrongifyAndReturnIfNil(self);
+        self->currentAlert = nil;
+        [self stopActivityIndicator];
+
+        // Reset new email adding
+        self.newEmailEditingEnabled = NO;
+    }]];
+
+    [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"continue"] style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+        MXStrongifyAndReturnIfNil(self);
+        [self tryFinaliseAddEmailSession:threePidAddSession withPassword:password threePidAddManager:threePidAddManager];
+    }]];
 
     [currentAlert mxk_setAccessibilityIdentifier:@"SettingsVCEmailValidationAlert"];
     [self presentViewController:currentAlert animated:YES completion:nil];
 }
 
-- (void)showValidationMsisdnDialogWithMessage:(NSString*)message for3PID:(MXK3PID*)threePID
+- (void)tryFinaliseAddEmailSession:(MX3PidAddSession*)threePidAddSession withPassword:(NSString*)password threePidAddManager:(MX3PidAddManager*)threePidAddManager
 {
-    __weak typeof(self) weakSelf = self;
+    self->is3PIDBindingInProgress = YES;
+
+    [threePidAddManager tryFinaliseAddEmailSession:threePidAddSession withPassword:password success:^{
+
+        self->is3PIDBindingInProgress = NO;
+
+        // Check whether destroy has been called during email binding
+        if (self->onReadyToDestroyHandler)
+        {
+            // Ready to destroy
+            self->onReadyToDestroyHandler();
+            self->onReadyToDestroyHandler = nil;
+        }
+        else
+        {
+            self->currentAlert = nil;
+
+            [self stopActivityIndicator];
+
+            // Reset new email adding
+            self.newEmailEditingEnabled = NO;
+
+            // Update linked emails
+            [self loadAccount3PIDs];
+        }
+
+    } failure:^(NSError * _Nonnull error) {
+        NSLog(@"[SettingsViewController] tryFinaliseAddEmailSession: Failed to bind email");
+
+        MXError *mxError = [[MXError alloc] initWithNSError:error];
+        if (mxError && [mxError.errcode isEqualToString:kMXErrCodeStringForbidden])
+        {
+            NSLog(@"[SettingsViewController] tryFinaliseAddEmailSession: Wrong password");
+
+            // Ask password again
+            self->currentAlert = [UIAlertController alertControllerWithTitle:nil
+                                                                     message:NSLocalizedStringFromTable(@"settings_add_3pid_invalid_password_message", @"Vector", nil)
+                                                              preferredStyle:UIAlertControllerStyleAlert];
+
+            [self->currentAlert addAction:[UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"retry", @"Vector", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                self->currentAlert = nil;
+
+                [self requestAccountPasswordWithTitle:NSLocalizedStringFromTable(@"settings_add_3pid_password_title_email", @"Vector", nil)
+                                              message:NSLocalizedStringFromTable(@"settings_add_3pid_password_message", @"Vector", nil)
+                                           onComplete:^(NSString *password) {
+                    [self tryFinaliseAddEmailSession:threePidAddSession withPassword:password threePidAddManager:threePidAddManager];
+                }];
+            }]];
+
+            [self presentViewController:self->currentAlert animated:YES completion:nil];
+
+            return;
+        }
+
+        self->is3PIDBindingInProgress = NO;
+
+        // Check whether destroy has been called during email binding
+        if (self->onReadyToDestroyHandler)
+        {
+            // Ready to destroy
+            self->onReadyToDestroyHandler();
+            self->onReadyToDestroyHandler = nil;
+        }
+        else
+        {
+            self->currentAlert = nil;
+
+            // Display the same popup again if the error is M_THREEPID_AUTH_FAILED
+            MXError *mxError = [[MXError alloc] initWithNSError:error];
+            if (mxError && [mxError.errcode isEqualToString:kMXErrCodeStringThreePIDAuthFailed])
+            {
+                [self showValidationEmailDialogWithMessage:[NSBundle mxk_localizedStringForKey:@"account_email_validation_error"]
+                                         for3PidAddSession:threePidAddSession
+                                        threePidAddManager:threePidAddManager
+                                                  password:password];
+            }
+            else
+            {
+                [self stopActivityIndicator];
+
+                // Notify user
+                NSString *myUserId = self.mainSession.myUser.userId; // TODO: Hanlde multi-account
+                [[NSNotificationCenter defaultCenter] postNotificationName:kMXKErrorNotification object:error userInfo:myUserId ? @{kMXKErrorUserIdKey: myUserId} : nil];
+            }
+        }
+    }];
+}
+
+- (void)showValidationMsisdnDialogWithMessage:(NSString*)message for3PidAddSession:(MX3PidAddSession*)threePidAddSession threePidAddManager:(MX3PidAddManager*)threePidAddManager password:(NSString*)password
+{
+    MXWeakify(self);
     
     [currentAlert dismissViewControllerAnimated:NO completion:nil];
     currentAlert = [UIAlertController alertControllerWithTitle:[NSBundle mxk_localizedStringForKey:@"account_msisdn_validation_title"] message:message preferredStyle:UIAlertControllerStyleAlert];
     
-    [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"abort"]
-                                                     style:UIAlertActionStyleDefault
-                                                   handler:^(UIAlertAction * action) {
-                                                       
-                                                       if (weakSelf)
-                                                       {
-                                                           typeof(self) self = weakSelf;
-                                                           self->currentAlert = nil;
-                                                           
-                                                           [self stopActivityIndicator];
-                                                           
-                                                           // Reset new phone adding
-                                                           self.newPhoneEditingEnabled = NO;
-                                                       }
-                                                       
-                                                   }]];
-    
+    [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"cancel"] style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+        MXStrongifyAndReturnIfNil(self);
+
+        self->currentAlert = nil;
+
+        [self stopActivityIndicator];
+
+        // Reset new phone adding
+        self.newPhoneEditingEnabled = NO;
+    }]];
+
     [currentAlert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
         textField.secureTextEntry = NO;
         textField.placeholder = nil;
         textField.keyboardType = UIKeyboardTypeDecimalPad;
     }];
     
-    [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"submit"]
-                                                     style:UIAlertActionStyleDefault
-                                                   handler:^(UIAlertAction * action) {
-                                                       
-                                                       if (weakSelf)
-                                                       {
-                                                           typeof(self) self = weakSelf;
-                                                           
-                                                           NSString *smsCode = [self->currentAlert textFields].firstObject.text;
-                                                           
-                                                           self->currentAlert = nil;
-                                                           
-                                                           if (smsCode.length)
-                                                           {
-                                                               self->is3PIDBindingInProgress = YES;
-                                                               
-                                                               [threePID submitValidationToken:smsCode success:^{
-                                                                   
-                                                                   // We always bind the phone numbers when registering, so let's do the same here
-                                                                   [threePID add3PIDToUser:YES success:^{
-                                                                       
-                                                                       if (weakSelf)
-                                                                       {
-                                                                           typeof(self) self = weakSelf;
-                                                                           self->is3PIDBindingInProgress = NO;
-                                                                           
-                                                                           // Check whether destroy has been called during the binding
-                                                                           if (self->onReadyToDestroyHandler)
-                                                                           {
-                                                                               // Ready to destroy
-                                                                               self->onReadyToDestroyHandler();
-                                                                               self->onReadyToDestroyHandler = nil;
-                                                                           }
-                                                                           else
-                                                                           {
-                                                                               [self stopActivityIndicator];
-                                                                               
-                                                                               // Reset new phone adding
-                                                                               self.newPhoneEditingEnabled = NO;
-                                                                               
-                                                                               // Update linked 3pids
-                                                                               [self loadAccount3PIDs];
-                                                                           }
-                                                                       }
-                                                                       
-                                                                   } failure:^(NSError *error) {
-                                                                       
-                                                                       NSLog(@"[SettingsViewController] Failed to bind phone number");
-                                                                       
-                                                                       if (weakSelf)
-                                                                       {
-                                                                           typeof(self) self = weakSelf;
-                                                                           self->is3PIDBindingInProgress = NO;
-                                                                           
-                                                                           // Check whether destroy has been called during phone binding
-                                                                           if (self->onReadyToDestroyHandler)
-                                                                           {
-                                                                               // Ready to destroy
-                                                                               self->onReadyToDestroyHandler();
-                                                                               self->onReadyToDestroyHandler = nil;
-                                                                           }
-                                                                           else
-                                                                           {
-                                                                               [self stopActivityIndicator];
-                                                                               
-                                                                               NSString *myUserId = self.mainSession.myUser.userId; // TODO: Hanlde multi-account
-                                                                               [[NSNotificationCenter defaultCenter] postNotificationName:kMXKErrorNotification object:error userInfo:myUserId ? @{kMXKErrorUserIdKey: myUserId} : nil];
-                                                                           }
-                                                                       }
-                                                                       
-                                                                   }];
-                                                                   
-                                                               } failure:^(NSError *error) {
-                                                                   
-                                                                   NSLog(@"[SettingsViewController] Failed to submit the sms token");
-                                                                   
-                                                                   if (weakSelf)
-                                                                   {
-                                                                       typeof(self) self = weakSelf;
-                                                                       self->is3PIDBindingInProgress = NO;
-                                                                       
-                                                                       // Check whether destroy has been called during phone binding
-                                                                       if (self->onReadyToDestroyHandler)
-                                                                       {
-                                                                           // Ready to destroy
-                                                                           self->onReadyToDestroyHandler();
-                                                                           self->onReadyToDestroyHandler = nil;
-                                                                       }
-                                                                       else
-                                                                       {
-                                                                           // Ignore connection cancellation error
-                                                                           if (([error.domain isEqualToString:NSURLErrorDomain] && error.code == NSURLErrorCancelled))
-                                                                           {
-                                                                               [self stopActivityIndicator];
-                                                                               return;
-                                                                           }
-                                                                           
-                                                                           // Alert user
-                                                                           NSString *title = [error.userInfo valueForKey:NSLocalizedFailureReasonErrorKey];
-                                                                           NSString *msg = [error.userInfo valueForKey:NSLocalizedDescriptionKey];
-                                                                           if (!title)
-                                                                           {
-                                                                               if (msg)
-                                                                               {
-                                                                                   title = msg;
-                                                                                   msg = nil;
-                                                                               }
-                                                                               else
-                                                                               {
-                                                                                   title = [NSBundle mxk_localizedStringForKey:@"error"];
-                                                                               }
-                                                                           }
-                                                                           
-                                                                           
-                                                                           self->currentAlert = [UIAlertController alertControllerWithTitle:title message:msg preferredStyle:UIAlertControllerStyleAlert];
-                                                                           
-                                                                           [self->currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"ok"] style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                                               
-                                                                               if (weakSelf)
-                                                                               {
-                                                                                   typeof(self) self = weakSelf;
-                                                                                   self->currentAlert = nil;
-                                                                                   
-                                                                                   // Ask again the sms token
-                                                                                   [self showValidationMsisdnDialogWithMessage:message for3PID:threePID];
-                                                                               }
-                                                                               
-                                                                           }]];
-                                                                           
-                                                                           [self->currentAlert mxk_setAccessibilityIdentifier: @"SettingsVCErrorAlert"];
-                                                                           [self presentViewController:self->currentAlert animated:YES completion:nil];
-                                                                       }
-                                                                   }
-                                                                   
-                                                               }];
-                                                           }
-                                                           else
-                                                           {
-                                                               // Ask again the sms token
-                                                               [self showValidationMsisdnDialogWithMessage:message for3PID:threePID];
-                                                           }
-                                                       }
-                                                       
-                                                   }]];
+    [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"submit"] style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+
+        MXStrongifyAndReturnIfNil(self);
+
+        NSString *smsCode = [self->currentAlert textFields].firstObject.text;
+
+        self->currentAlert = nil;
+
+        if (smsCode.length)
+        {
+            [self finaliseAddPhoneNumberSession:threePidAddSession withToken:smsCode andPassword:password message:message threePidAddManager:threePidAddManager];
+        }
+        else
+        {
+            // Ask again the sms token
+            [self showValidationMsisdnDialogWithMessage:message for3PidAddSession:threePidAddSession threePidAddManager:threePidAddManager password:password];
+        }
+    }]];
     
     [currentAlert mxk_setAccessibilityIdentifier: @"SettingsVCMsisdnValidationAlert"];
     [self presentViewController:currentAlert animated:YES completion:nil];
+}
+
+- (void)finaliseAddPhoneNumberSession:(MX3PidAddSession*)threePidAddSession withToken:(NSString*)token andPassword:(NSString*)password message:(NSString*)message threePidAddManager:(MX3PidAddManager*)threePidAddManager
+{
+    self->is3PIDBindingInProgress = YES;
+
+    [threePidAddManager finaliseAddPhoneNumberSession:threePidAddSession withToken:token password:password success:^{
+
+        self->is3PIDBindingInProgress = NO;
+
+        // Check whether destroy has been called during the binding
+        if (self->onReadyToDestroyHandler)
+        {
+            // Ready to destroy
+            self->onReadyToDestroyHandler();
+            self->onReadyToDestroyHandler = nil;
+        }
+        else
+        {
+            [self stopActivityIndicator];
+
+            // Reset new phone adding
+            self.newPhoneEditingEnabled = NO;
+
+            // Update linked 3pids
+            [self loadAccount3PIDs];
+        }
+
+    } failure:^(NSError * _Nonnull error) {
+
+        NSLog(@"[SettingsViewController] finaliseAddPhoneNumberSession: Failed to submit the sms token");
+   
+        MXError *mxError = [[MXError alloc] initWithNSError:error];
+        if (mxError && [mxError.errcode isEqualToString:kMXErrCodeStringForbidden])
+        {
+            NSLog(@"[SettingsViewController] finaliseAddPhoneNumberSession: Wrong password");
+
+            // Ask password again
+            self->currentAlert = [UIAlertController alertControllerWithTitle:nil
+                                                                     message:NSLocalizedStringFromTable(@"settings_add_3pid_invalid_password_message", @"Vector", nil)
+                                                              preferredStyle:UIAlertControllerStyleAlert];
+
+            [self->currentAlert addAction:[UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"retry", @"Vector", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                self->currentAlert = nil;
+
+                [self requestAccountPasswordWithTitle:NSLocalizedStringFromTable(@"settings_add_3pid_password_title_msidsn", @"Vector", nil)
+                                              message:NSLocalizedStringFromTable(@"settings_add_3pid_password_message", @"Vector", nil)
+                                           onComplete:^(NSString *password) {
+                                               [self finaliseAddPhoneNumberSession:threePidAddSession withToken:token andPassword:password message:message threePidAddManager:threePidAddManager];
+                }];
+            }]];
+
+            [self presentViewController:self->currentAlert animated:YES completion:nil];
+
+            return;
+        }
+
+        self->is3PIDBindingInProgress = NO;
+
+        // Check whether destroy has been called during phone binding
+        if (self->onReadyToDestroyHandler)
+        {
+            // Ready to destroy
+            self->onReadyToDestroyHandler();
+            self->onReadyToDestroyHandler = nil;
+        }
+        else
+        {
+            // Ignore connection cancellation error
+            if (([error.domain isEqualToString:NSURLErrorDomain] && error.code == NSURLErrorCancelled))
+            {
+                [self stopActivityIndicator];
+                return;
+            }
+
+            // Alert user
+            NSString *title = [error.userInfo valueForKey:NSLocalizedFailureReasonErrorKey];
+            NSString *msg = [error.userInfo valueForKey:NSLocalizedDescriptionKey];
+            if (!title)
+            {
+                if (msg)
+                {
+                    title = msg;
+                    msg = nil;
+                }
+                else
+                {
+                    title = [NSBundle mxk_localizedStringForKey:@"error"];
+                }
+            }
+
+
+            self->currentAlert = [UIAlertController alertControllerWithTitle:title message:msg preferredStyle:UIAlertControllerStyleAlert];
+
+            [self->currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"ok"] style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                self->currentAlert = nil;
+
+                // Ask again the sms token
+                [self showValidationMsisdnDialogWithMessage:message for3PidAddSession:threePidAddSession threePidAddManager:threePidAddManager password:password];
+            }]];
+
+            [self->currentAlert mxk_setAccessibilityIdentifier: @"SettingsVCErrorAlert"];
+            [self presentViewController:self->currentAlert animated:YES completion:nil];
+        }
+    }];
 }
 
 - (void)loadAccount3PIDs
@@ -953,6 +978,9 @@ SingleImagePickerPresenterDelegate>
     MXKAccount* account = [MXKAccountManager sharedManager].activeAccounts.firstObject;
     [account load3PIDs:^{
 
+        NSArray<MXThirdPartyIdentifier*> *thirdPartyIdentifiers = account.threePIDs ?: @[];
+        [self.settingsDiscoveryViewModel updateWithThirdPartyIdentifiers:thirdPartyIdentifiers];
+        
         // Refresh all the table (A slide down animation is observed when we limit the refresh to the concerned section).
         // Note: The use of 'reloadData' handles the case where the account has been logged out.
         [self refreshSettings];
@@ -1008,6 +1036,10 @@ SingleImagePickerPresenterDelegate>
                                                      attributes:@{NSForegroundColorAttributeName : ThemeService.shared.theme.textPrimaryColor,
                                                                   NSFontAttributeName: [UIFont systemFontOfSize:17]}]];
     NSString *fingerprint = account.mxSession.crypto.deviceEd25519Key;
+    if (fingerprint)
+    {
+        fingerprint = [MXTools addWhiteSpacesToString:fingerprint every:4];
+    }
     [cryptoInformationString appendAttributedString:[[NSMutableAttributedString alloc]
                                                      initWithString:fingerprint ? fingerprint : @""
                                                      attributes:@{NSForegroundColorAttributeName : ThemeService.shared.theme.textPrimaryColor,
@@ -1189,6 +1221,115 @@ SingleImagePickerPresenterDelegate>
     }
 }
 
+- (void)setupDiscoverySection
+{
+    MXKAccount* account = [MXKAccountManager sharedManager].activeAccounts.firstObject;
+    
+    NSArray<MXThirdPartyIdentifier*> *thirdPartyIdentifiers = account.threePIDs ?: @[];
+    
+    SettingsDiscoveryViewModel *viewModel = [[SettingsDiscoveryViewModel alloc] initWithSession:self.mainSession thirdPartyIdentifiers:thirdPartyIdentifiers];
+    viewModel.coordinatorDelegate = self;
+    
+    SettingsDiscoveryTableViewSection *discoverySection = [[SettingsDiscoveryTableViewSection alloc] initWithViewModel:viewModel];
+    discoverySection.delegate = self;
+    
+    self.settingsDiscoveryViewModel = viewModel;
+    self.settingsDiscoveryTableViewSection = discoverySection;
+}
+
+#pragma mark - 3Pid Add
+
+-(void)checkAuthenticationFlowForAdding:(MX3PIDMedium)medium withSession:(MXSession*)session onComplete:(void (^)(NSString *password))onComplete
+{
+    [self startActivityIndicator];
+
+    [session.threePidAddManager authenticationFlowForAdd3PidWithSuccess:^(NSArray<MXLoginFlow *> * _Nullable flows) {
+        [self stopActivityIndicator];
+
+        if (flows)
+        {
+            // We support only "m.login.password"
+            BOOL hasPasswordFlow = NO;
+            for (MXLoginFlow *flow in flows)
+            {
+                if ([flow.stages containsObject:kMXLoginFlowTypePassword])
+                {
+                    hasPasswordFlow = YES;
+                    break;
+                }
+            }
+
+            if (hasPasswordFlow)
+            {
+                // Ask password to the user while we are here
+                NSString *title = NSLocalizedStringFromTable(@"settings_add_3pid_password_title_email", @"Vector", nil);
+                if ([medium isEqualToString:kMX3PIDMediumMSISDN])
+                {
+                    title = NSLocalizedStringFromTable(@"settings_add_3pid_password_title_msidsn", @"Vector", nil);
+                }
+
+                [self requestAccountPasswordWithTitle:title
+                                              message:NSLocalizedStringFromTable(@"settings_add_3pid_password_message", @"Vector", nil)
+                                           onComplete:onComplete];
+            }
+            else
+            {
+                // The user needs to use Riot-web
+                NSString *appName = [[NSBundle mainBundle] infoDictionary][@"CFBundleDisplayName"];
+                NSString *message = [NSString stringWithFormat:NSLocalizedStringFromTable(@"error_not_supported_on_mobile", @"Vector", nil), appName];
+                [[AppDelegate theDelegate] showAlertWithTitle:nil message:message];
+            }
+        }
+        else
+        {
+            // No auth
+            onComplete(nil);
+        }
+
+    } failure:^(NSError * _Nonnull error) {
+        [self stopActivityIndicator];
+        [[AppDelegate theDelegate] showErrorAsAlert:error];
+    }];
+}
+
+- (void)requestAccountPasswordWithTitle:(NSString*)title message:(NSString*)message onComplete:(void (^)(NSString *password))onComplete
+{
+    [currentAlert dismissViewControllerAnimated:NO completion:nil];
+
+    // Prompt the user before deleting the device.
+    currentAlert = [UIAlertController alertControllerWithTitle:title
+                                                       message:message
+                                                preferredStyle:UIAlertControllerStyleAlert];
+
+    [currentAlert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+        textField.secureTextEntry = YES;
+        textField.placeholder = nil;
+        textField.keyboardType = UIKeyboardTypeDefault;
+    }];
+
+    MXWeakify(self);
+    [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"cancel"]
+                                                     style:UIAlertActionStyleDefault
+                                                   handler:^(UIAlertAction * action)
+                             {
+                                 MXStrongifyAndReturnIfNil(self);
+                                 self->currentAlert = nil;
+                             }]];
+
+    [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"continue"]
+                                                     style:UIAlertActionStyleDefault
+                                                   handler:^(UIAlertAction * action) {
+                                                       MXStrongifyAndReturnIfNil(self);
+
+                                                       UITextField *textField = [self->currentAlert textFields].firstObject;
+                                                       self->currentAlert = nil;
+
+                                                       onComplete(textField.text);
+                                                   }]];
+
+    [self presentViewController:currentAlert animated:YES completion:nil];
+}
+
 #pragma mark - Segues
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
@@ -1220,7 +1361,7 @@ SingleImagePickerPresenterDelegate>
     else if (section == SETTINGS_SECTION_USER_SETTINGS_INDEX)
     {
         MXKAccount* account = [MXKAccountManager sharedManager].activeAccounts.firstObject;
-
+        
         userSettingsProfilePictureIndex = -1;
         userSettingsDisplayNameIndex = 0;
         userSettingsChangePasswordIndex = 1;
@@ -1228,7 +1369,8 @@ SingleImagePickerPresenterDelegate>
         userSettingsNewEmailIndex = -1;
         userSettingsPhoneStartIndex = -1;
         userSettingsNewPhoneIndex = -1;
-
+        userSettingsThreePidsInformation = -1;
+        
         // Hide some unsupported account settings
         userSettingsFirstNameIndex = -1;
         userSettingsSurnameIndex = -1;
@@ -1243,10 +1385,24 @@ SingleImagePickerPresenterDelegate>
     }
     else if (section == SETTINGS_SECTION_CALLS_INDEX)
     {
-        if ([MXCallKitAdapter callKitAvailable])
+        count = CALLS_COUNT;
+
+        if (!RiotSettings.shared.stunServerFallback)
         {
-            count = CALLS_COUNT;
+            count -= 2;
         }
+    }
+    else if (section == SETTINGS_SECTION_DISCOVERY_INDEX)
+    {
+        count = self.settingsDiscoveryTableViewSection.numberOfRows;
+    }
+    else if (section == SETTINGS_SECTION_IDENTITY_SERVER_INDEX)
+    {
+        count = IDENTITY_SERVER_COUNT;
+    }
+    else if (section == SETTINGS_SECTION_INTEGRATIONS_INDEX)
+    {
+        count = INTEGRATIONS_COUNT;
     }
     else if (section == SETTINGS_SECTION_USER_INTERFACE_INDEX)
     {
@@ -1303,6 +1459,11 @@ SingleImagePickerPresenterDelegate>
     else if (section == SETTINGS_SECTION_DEVICES_INDEX)
     {
         count = devicesArray.count;
+        if (count)
+        {
+            // For some description (DEVICES_DESCRIPTION_INDEX)
+            count++;
+        }
     }
     else if (section == SETTINGS_SECTION_CRYPTOGRAPHY_INDEX)
     {
@@ -1389,6 +1550,7 @@ SingleImagePickerPresenterDelegate>
     cell.textLabel.accessibilityIdentifier = nil;
     cell.textLabel.font = [UIFont systemFontOfSize:17];
     cell.textLabel.textColor = ThemeService.shared.theme.textPrimaryColor;
+    cell.contentView.backgroundColor = UIColor.clearColor;
     
     return cell;
 }
@@ -1610,9 +1772,7 @@ SingleImagePickerPresenterDelegate>
             
             phoneCell.mxkLabel.text = NSLocalizedStringFromTable(@"settings_phone_number", @"Vector", nil);
             
-            NSString *e164 = [NSString stringWithFormat:@"+%@", account.linkedPhoneNumbers[row - userSettingsPhoneStartIndex]];
-            NBPhoneNumber *phoneNb = [[NBPhoneNumberUtil sharedInstance] parse:e164 defaultRegion:nil error:nil];
-            phoneCell.mxkTextField.text = [[NBPhoneNumberUtil sharedInstance] format:phoneNb numberFormat:NBEPhoneNumberFormatINTERNATIONAL error:nil];
+            phoneCell.mxkTextField.text = [MXKTools readableMSISDN:account.linkedPhoneNumbers[row - userSettingsPhoneStartIndex]];
             phoneCell.mxkTextField.userInteractionEnabled = NO;
             
             cell = phoneCell;
@@ -1694,6 +1854,21 @@ SingleImagePickerPresenterDelegate>
                 
                 cell = newPhoneCell;
             }
+        }
+        else if (row == userSettingsThreePidsInformation)
+        {
+            MXKTableViewCell *threePidsInformationCell = [self getDefaultTableViewCell:self.tableView];
+            
+            NSMutableAttributedString *attributedString =  [[NSMutableAttributedString alloc] initWithString:NSLocalizedStringFromTable(@"settings_three_pids_management_information_part1", @"Vector", nil) attributes:@{NSForegroundColorAttributeName: ThemeService.shared.theme.textPrimaryColor}];
+            [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:NSLocalizedStringFromTable(@"settings_three_pids_management_information_part2", @"Vector", nil) attributes:@{NSForegroundColorAttributeName: ThemeService.shared.theme.tintColor}]];
+            [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:NSLocalizedStringFromTable(@"settings_three_pids_management_information_part3", @"Vector", nil) attributes:@{NSForegroundColorAttributeName: ThemeService.shared.theme.textPrimaryColor}]];
+            
+            threePidsInformationCell.textLabel.attributedText = attributedString;
+            threePidsInformationCell.textLabel.numberOfLines = 0;
+            
+            threePidsInformationCell.selectionStyle = UITableViewCellSelectionStyleNone;
+            
+            cell = threePidsInformationCell;
         }
         else if (row == userSettingsChangePasswordIndex)
         {
@@ -1799,17 +1974,139 @@ SingleImagePickerPresenterDelegate>
             labelAndSwitchCell.mxkSwitch.onTintColor = ThemeService.shared.theme.tintColor;
             labelAndSwitchCell.mxkSwitch.enabled = YES;
             [labelAndSwitchCell.mxkSwitch addTarget:self action:@selector(toggleCallKit:) forControlEvents:UIControlEventTouchUpInside];
-            
+
+            if (![MXCallKitAdapter callKitAvailable])
+            {
+                labelAndSwitchCell.mxkSwitch.on = NO;
+                labelAndSwitchCell.mxkSwitch.enabled = NO;
+                labelAndSwitchCell.mxkLabel.enabled = NO;
+            }
+
             cell = labelAndSwitchCell;
         }
-        else if (row == CALLS_DESCRIPTION_INDEX)
+        else if (row == CALLS_CALLKIT_DESCRIPTION_INDEX)
         {
             MXKTableViewCell *globalInfoCell = [self getDefaultTableViewCell:tableView];
             globalInfoCell.textLabel.text = NSLocalizedStringFromTable(@"settings_callkit_info", @"Vector", nil);
             globalInfoCell.textLabel.numberOfLines = 0;
             globalInfoCell.selectionStyle = UITableViewCellSelectionStyleNone;
-            
+
+            if (![MXCallKitAdapter callKitAvailable])
+            {
+                globalInfoCell.textLabel.enabled = NO;
+            }
+
             cell = globalInfoCell;
+        }
+        else if (row == CALLS_ENABLE_STUN_SERVER_FALLBACK_INDEX)
+        {
+            MXKTableViewCellWithLabelAndSwitch* labelAndSwitchCell = [self getLabelAndSwitchCell:tableView forIndexPath:indexPath];
+            labelAndSwitchCell.mxkLabel.text = NSLocalizedStringFromTable(@"settings_calls_stun_server_fallback_button", @"Vector", nil);
+            labelAndSwitchCell.mxkSwitch.on = RiotSettings.shared.allowStunServerFallback;
+            labelAndSwitchCell.mxkSwitch.onTintColor = ThemeService.shared.theme.tintColor;
+            labelAndSwitchCell.mxkSwitch.enabled = YES;
+            [labelAndSwitchCell.mxkSwitch addTarget:self action:@selector(toggleStunServerFallback:) forControlEvents:UIControlEventTouchUpInside];
+
+            cell = labelAndSwitchCell;
+        }
+        else if (row == CALLS_STUN_SERVER_FALLBACK_DESCRIPTION_INDEX)
+        {
+            NSString *stunFallbackHost = RiotSettings.shared.stunServerFallback;
+            // Remove "stun:"
+            stunFallbackHost = [stunFallbackHost componentsSeparatedByString:@":"].lastObject;
+
+            MXKTableViewCell *globalInfoCell = [self getDefaultTableViewCell:tableView];
+            globalInfoCell.textLabel.text = [NSString stringWithFormat:NSLocalizedStringFromTable(@"settings_calls_stun_server_fallback_description", @"Vector", nil), stunFallbackHost];
+            globalInfoCell.textLabel.numberOfLines = 0;
+            globalInfoCell.selectionStyle = UITableViewCellSelectionStyleNone;
+
+            cell = globalInfoCell;
+        }
+    }
+    else if (section == SETTINGS_SECTION_DISCOVERY_INDEX)
+    {
+        cell = [self.settingsDiscoveryTableViewSection cellForRowAtRow:row];
+    }
+    else if (section == SETTINGS_SECTION_IDENTITY_SERVER_INDEX)
+    {
+        switch (row)
+        {
+            case IDENTITY_SERVER_INDEX:
+            {
+                MXKTableViewCell *isCell = [self getDefaultTableViewCell:tableView];
+
+                if (account.mxSession.identityService.identityServer)
+                {
+                    isCell.textLabel.text = account.mxSession.identityService.identityServer;
+                }
+                else
+                {
+                    isCell.textLabel.text = NSLocalizedStringFromTable(@"settings_identity_server_no_is", @"Vector", nil);
+                }
+                isCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                cell = isCell;
+                break;
+            }
+
+            case IDENTITY_SERVER_DESCRIPTION_INDEX:
+            {
+                MXKTableViewCell *descriptionCell = [self getDefaultTableViewCell:tableView];
+
+                if (account.mxSession.identityService.identityServer)
+                {
+                    descriptionCell.textLabel.text = NSLocalizedStringFromTable(@"settings_identity_server_description", @"Vector", nil);
+                }
+                else
+                {
+                    descriptionCell.textLabel.text = NSLocalizedStringFromTable(@"settings_identity_server_no_is_description", @"Vector", nil);
+                }
+                descriptionCell.textLabel.numberOfLines = 0;
+                descriptionCell.selectionStyle = UITableViewCellSelectionStyleNone;
+
+                cell = descriptionCell;
+                break;
+            }
+
+            default:
+                break;
+        }
+    }
+    else if (section == SETTINGS_SECTION_INTEGRATIONS_INDEX)
+    {
+        switch (row) {
+            case INTEGRATIONS_INDEX:
+            {
+                RiotSharedSettings *sharedSettings = [[RiotSharedSettings alloc] initWithSession:session];
+
+                MXKTableViewCellWithLabelAndSwitch* labelAndSwitchCell = [self getLabelAndSwitchCell:tableView forIndexPath:indexPath];
+                labelAndSwitchCell.mxkLabel.text = NSLocalizedStringFromTable(@"settings_integrations_allow_button", @"Vector", nil);
+                labelAndSwitchCell.mxkSwitch.on = sharedSettings.hasIntegrationProvisioningEnabled;
+                labelAndSwitchCell.mxkSwitch.onTintColor = ThemeService.shared.theme.tintColor;
+                labelAndSwitchCell.mxkSwitch.enabled = YES;
+                [labelAndSwitchCell.mxkSwitch addTarget:self action:@selector(toggleAllowIntegrations:) forControlEvents:UIControlEventTouchUpInside];
+
+                cell = labelAndSwitchCell;
+                break;
+            }
+
+            case INTEGRATIONS_DESCRIPTION_INDEX:
+            {
+                MXKTableViewCell *descriptionCell = [self getDefaultTableViewCell:tableView];
+
+                NSString *integrationManager = [WidgetManager.sharedManager configForUser:session.myUser.userId].apiUrl;
+                NSString *integrationManagerDomain = [NSURL URLWithString:integrationManager].host;
+
+                NSString *description = [NSString stringWithFormat:NSLocalizedStringFromTable(@"settings_integrations_allow_description", @"Vector", nil), integrationManagerDomain];
+                descriptionCell.textLabel.text = description;
+                descriptionCell.textLabel.numberOfLines = 0;
+                descriptionCell.selectionStyle = UITableViewCellSelectionStyleNone;
+
+                cell = descriptionCell;
+                break;
+            }
+
+            default:
+                break;
         }
     }
     else if (section == SETTINGS_SECTION_USER_INTERFACE_INDEX)
@@ -2152,6 +2449,30 @@ SingleImagePickerPresenterDelegate>
 
             cell = labelAndSwitchCell;
         }
+        else if (row == LABS_DM_KEY_VERIFICATION_INDEX)
+        {
+            MXKTableViewCellWithLabelAndSwitch* labelAndSwitchCell = [self getLabelAndSwitchCell:tableView forIndexPath:indexPath];
+            
+            labelAndSwitchCell.mxkLabel.text = NSLocalizedStringFromTable(@"settings_labs_dm_key_verification", @"Vector", nil);
+            labelAndSwitchCell.mxkSwitch.on = RiotSettings.shared.enableDMKeyVerification;
+            labelAndSwitchCell.mxkSwitch.onTintColor = ThemeService.shared.theme.tintColor;
+            
+            [labelAndSwitchCell.mxkSwitch addTarget:self action:@selector(toggleLabsDMKeyVerification:) forControlEvents:UIControlEventTouchUpInside];
+            
+            cell = labelAndSwitchCell;
+        }
+        else if (row == LABS_CROSS_SIGNING_INDEX)
+        {
+            MXKTableViewCellWithLabelAndSwitch* labelAndSwitchCell = [self getLabelAndSwitchCell:tableView forIndexPath:indexPath];
+            
+            labelAndSwitchCell.mxkLabel.text = NSLocalizedStringFromTable(@"settings_labs_cross_signing", @"Vector", nil);
+            labelAndSwitchCell.mxkSwitch.on = RiotSettings.shared.enableCrossSigning;
+            labelAndSwitchCell.mxkSwitch.onTintColor = ThemeService.shared.theme.tintColor;
+            
+            [labelAndSwitchCell.mxkSwitch addTarget:self action:@selector(toggleLabsCrossSigning:) forControlEvents:UIControlEventTouchUpInside];
+            
+            cell = labelAndSwitchCell;
+        }
     }
     else if (section == SETTINGS_SECTION_FLAIR_INDEX)
     {
@@ -2181,22 +2502,39 @@ SingleImagePickerPresenterDelegate>
     }
     else if (section == SETTINGS_SECTION_DEVICES_INDEX)
     {
-        MXKTableViewCell *deviceCell = [self getDefaultTableViewCell:tableView];
-        
-        if (row < devicesArray.count)
+        if (row == DEVICES_DESCRIPTION_INDEX)
         {
-            NSString *name = devicesArray[row].displayName;
-            NSString *deviceId = devicesArray[row].deviceId;
-            deviceCell.textLabel.text = (name.length ? [NSString stringWithFormat:@"%@ (%@)", name, deviceId] : [NSString stringWithFormat:@"(%@)", deviceId]);
-            deviceCell.textLabel.numberOfLines = 0;
-            
-            if ([deviceId isEqualToString:self.mainSession.matrixRestClient.credentials.deviceId])
-            {
-                deviceCell.textLabel.font = [UIFont boldSystemFontOfSize:17];
-            }
+            MXKTableViewCell *descriptionCell = [self getDefaultTableViewCell:tableView];
+            descriptionCell.textLabel.text = NSLocalizedStringFromTable(@"settings_devices_description", @"Vector", nil);
+            descriptionCell.textLabel.textColor = ThemeService.shared.theme.textPrimaryColor;
+            descriptionCell.textLabel.font = [UIFont systemFontOfSize:15];
+            descriptionCell.textLabel.numberOfLines = 0;
+            descriptionCell.contentView.backgroundColor = ThemeService.shared.theme.headerBackgroundColor;
+            descriptionCell.selectionStyle = UITableViewCellSelectionStyleNone;
+
+            cell = descriptionCell;
         }
-        
-        cell = deviceCell;
+        else
+        {
+            NSUInteger deviceIndex = row - 1;
+
+            MXKTableViewCell *deviceCell = [self getDefaultTableViewCell:tableView];
+            if (deviceIndex < devicesArray.count)
+            {
+                NSString *name = devicesArray[deviceIndex].displayName;
+                NSString *deviceId = devicesArray[deviceIndex].deviceId;
+                deviceCell.textLabel.text = (name.length ? [NSString stringWithFormat:@"%@ (%@)", name, deviceId] : [NSString stringWithFormat:@"(%@)", deviceId]);
+                deviceCell.textLabel.numberOfLines = 0;
+
+                if ([deviceId isEqualToString:self.mainSession.matrixRestClient.credentials.deviceId])
+                {
+                    deviceCell.textLabel.font = [UIFont boldSystemFontOfSize:17];
+                }
+            }
+
+            cell = deviceCell;
+        }
+
     }
     else if (section == SETTINGS_SECTION_CRYPTOGRAPHY_INDEX)
     {
@@ -2292,10 +2630,19 @@ SingleImagePickerPresenterDelegate>
     }
     else if (section == SETTINGS_SECTION_CALLS_INDEX)
     {
-        if ([MXCallKitAdapter callKitAvailable])
-        {
-            return NSLocalizedStringFromTable(@"settings_calls_settings", @"Vector", nil);
-        }
+        return NSLocalizedStringFromTable(@"settings_calls_settings", @"Vector", nil);
+    }
+    else if (section == SETTINGS_SECTION_DISCOVERY_INDEX)
+    {
+        return NSLocalizedStringFromTable(@"settings_discovery_settings", @"Vector", nil);
+    }
+    else if (section == SETTINGS_SECTION_IDENTITY_SERVER_INDEX)
+    {
+        return NSLocalizedStringFromTable(@"settings_identity_server_settings", @"Vector", nil);
+    }
+    else if (section == SETTINGS_SECTION_INTEGRATIONS_INDEX)
+    {
+        return NSLocalizedStringFromTable(@"settings_integrations", @"Vector", nil);
     }
     else if (section == SETTINGS_SECTION_USER_INTERFACE_INDEX)
     {
@@ -2441,13 +2788,6 @@ SingleImagePickerPresenterDelegate>
             }
         }
     }
-    else if (section == SETTINGS_SECTION_CALLS_INDEX)
-    {
-        if (![MXCallKitAdapter callKitAvailable])
-        {
-            return SECTION_TITLE_PADDING_WHEN_HIDDEN;
-        }
-    }
     else if (section == SETTINGS_SECTION_FLAIR_INDEX)
     {
         if (groupsDataSource.joinedGroupsSection == -1)
@@ -2471,13 +2811,6 @@ SingleImagePickerPresenterDelegate>
                 // Hide this section
                 return SECTION_TITLE_PADDING_WHEN_HIDDEN;
             }
-        }
-    }
-    else if (section == SETTINGS_SECTION_CALLS_INDEX)
-    {
-        if (![MXCallKitAdapter callKitAvailable])
-        {
-            return SECTION_TITLE_PADDING_WHEN_HIDDEN;
         }
     }
     else if (section == SETTINGS_SECTION_FLAIR_INDEX)
@@ -2542,6 +2875,24 @@ SingleImagePickerPresenterDelegate>
             else if (row == USER_INTERFACE_THEME_INDEX)
             {
                 [self showThemePicker];
+            }
+        }
+        else if (section == SETTINGS_SECTION_USER_SETTINGS_INDEX && row == userSettingsThreePidsInformation)
+        {
+            NSIndexPath *discoveryIndexPath = [NSIndexPath indexPathForRow:0 inSection:SETTINGS_SECTION_DISCOVERY_INDEX];
+            [tableView scrollToRowAtIndexPath:discoveryIndexPath atScrollPosition:UITableViewScrollPositionTop animated:YES];
+        }
+        else if (section == SETTINGS_SECTION_DISCOVERY_INDEX)
+        {
+            [self.settingsDiscoveryTableViewSection selectRow:indexPath.row];
+        }
+        else if (section == SETTINGS_SECTION_IDENTITY_SERVER_INDEX)
+        {
+            switch (row)
+            {
+                case IDENTITY_SERVER_INDEX:
+                    [self showIdentityServerSettingsScreen];
+                    break;
             }
         }
         else if (section == SETTINGS_SECTION_IGNORED_USERS_INDEX)
@@ -2683,9 +3034,13 @@ SingleImagePickerPresenterDelegate>
         }
         else if (section == SETTINGS_SECTION_DEVICES_INDEX)
         {
-            if (row < devicesArray.count)
+            if (row > DEVICES_DESCRIPTION_INDEX)
             {
-                [self showDeviceDetails:devicesArray[row]];
+                NSUInteger deviceIndex = row - 1;
+                if (deviceIndex < devicesArray.count)
+                {
+                    [self showDeviceDetails:devicesArray[deviceIndex]];
+                }
             }
         }
         else if (section == SETTINGS_SECTION_CONTACTS_INDEX)
@@ -2902,6 +3257,32 @@ SingleImagePickerPresenterDelegate>
 {
     UISwitch *switchButton = (UISwitch*)sender;
     [MXKAppSettings standardAppSettings].enableCallKit = switchButton.isOn;
+}
+
+- (void)toggleStunServerFallback:(id)sender
+{
+    UISwitch *switchButton = (UISwitch*)sender;
+    RiotSettings.shared.allowStunServerFallback = switchButton.isOn;
+
+    self.mainSession.callManager.fallbackSTUNServer = RiotSettings.shared.allowStunServerFallback ? RiotSettings.shared.stunServerFallback : nil;
+}
+
+- (void)toggleAllowIntegrations:(id)sender
+{
+    UISwitch *switchButton = (UISwitch*)sender;
+
+    MXSession *session = self.mainSession;
+    [self startActivityIndicator];
+
+    __block RiotSharedSettings *sharedSettings = [[RiotSharedSettings alloc] initWithSession:session];
+    [sharedSettings setIntegrationProvisioningWithEnabled:switchButton.on success:^{
+        sharedSettings = nil;
+        [self stopActivityIndicator];
+    } failure:^(NSError * _Nullable error) {
+        sharedSettings = nil;
+        [switchButton setOn:!switchButton.on animated:YES];
+        [self stopActivityIndicator];
+    }];
 }
 
 - (void)toggleShowDecodedContent:(id)sender
@@ -3141,6 +3522,20 @@ SingleImagePickerPresenterDelegate>
             }];
         }
     }
+}
+    
+- (void)toggleLabsDMKeyVerification:(id)sender
+{
+    UISwitch *switchButton = (UISwitch*)sender;
+    
+    RiotSettings.shared.enableDMKeyVerification = switchButton.isOn;
+}
+    
+- (void)toggleLabsCrossSigning:(id)sender
+{
+    UISwitch *switchButton = (UISwitch*)sender;
+    
+    RiotSettings.shared.enableCrossSigning = switchButton.isOn;
 }
 
 - (void)toggleBlacklistUnverifiedDevices:(id)sender
@@ -3444,7 +3839,7 @@ SingleImagePickerPresenterDelegate>
         
         currentAlert = [UIAlertController alertControllerWithTitle:title message:msg preferredStyle:UIAlertControllerStyleAlert];
         
-        [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"abort"]
+        [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"cancel"]
                                                          style:UIAlertActionStyleDefault
                                                        handler:^(UIAlertAction * action) {
                                                            
@@ -3526,58 +3921,75 @@ SingleImagePickerPresenterDelegate>
         return;
     }
 
-    [self startActivityIndicator];
-
     // Dismiss the keyboard
     [newEmailTextField resignFirstResponder];
 
     MXSession* session = [AppDelegate theDelegate].mxSessions[0];
 
-    MXK3PID *new3PID = [[MXK3PID alloc] initWithMedium:kMX3PIDMediumEmail andAddress:newEmailTextField.text];
-    [new3PID requestValidationTokenWithMatrixRestClient:session.matrixRestClient isDuringRegistration:NO nextLink:nil success:^{
+    [self checkAuthenticationFlowForAdding:kMX3PIDMediumEmail withSession:session onComplete:^(NSString *password) {
 
-        [self showValidationEmailDialogWithMessage:[NSBundle mxk_localizedStringForKey:@"account_email_validation_message"] for3PID:new3PID];
+        [self startActivityIndicator];
 
-    } failure:^(NSError *error) {
+        __block MX3PidAddSession *thirdPidAddSession;
+        thirdPidAddSession = [session.threePidAddManager startAddEmailSessionWithEmail:self->newEmailTextField.text nextLink:nil success:^{
 
-        [self stopActivityIndicator];
+            [self showValidationEmailDialogWithMessage:[NSBundle mxk_localizedStringForKey:@"account_email_validation_message"]
+                                     for3PidAddSession:thirdPidAddSession
+                                    threePidAddManager:session.threePidAddManager
+                                              password:password];
 
-        NSLog(@"[SettingsViewController] Failed to request email token");
-        
-        // Translate the potential MX error.
-        MXError *mxError = [[MXError alloc] initWithNSError:error];
-        if (mxError && ([mxError.errcode isEqualToString:kMXErrCodeStringThreePIDInUse] || [mxError.errcode isEqualToString:kMXErrCodeStringServerNotTrusted]))
-        {
-            NSMutableDictionary *userInfo;
-            if (error.userInfo)
+        } failure:^(NSError * _Nonnull error) {
+
+            [self stopActivityIndicator];
+
+            NSLog(@"[SettingsViewController] Failed to request email token");
+
+            // Translate the potential MX error.
+            MXError *mxError = [[MXError alloc] initWithNSError:error];
+            if (mxError
+                && ([mxError.errcode isEqualToString:kMXErrCodeStringThreePIDInUse]
+                    || [mxError.errcode isEqualToString:kMXErrCodeStringServerNotTrusted]))
             {
-                userInfo = [NSMutableDictionary dictionaryWithDictionary:error.userInfo];
-            }
-            else
-            {
-                userInfo = [NSMutableDictionary dictionary];
-            }
-            
-            userInfo[NSLocalizedFailureReasonErrorKey] = nil;
-            
-            if ([mxError.errcode isEqualToString:kMXErrCodeStringThreePIDInUse])
-            {
-                userInfo[NSLocalizedDescriptionKey] = NSLocalizedStringFromTable(@"auth_email_in_use", @"Vector", nil);
-                userInfo[@"error"] = NSLocalizedStringFromTable(@"auth_email_in_use", @"Vector", nil);
-            }
-            else
-            {
-                userInfo[NSLocalizedDescriptionKey] = NSLocalizedStringFromTable(@"auth_untrusted_id_server", @"Vector", nil);
-                userInfo[@"error"] = NSLocalizedStringFromTable(@"auth_untrusted_id_server", @"Vector", nil);
-            }
-            
-            error = [NSError errorWithDomain:error.domain code:error.code userInfo:userInfo];
-        }
+                NSMutableDictionary *userInfo;
+                if (error.userInfo)
+                {
+                    userInfo = [NSMutableDictionary dictionaryWithDictionary:error.userInfo];
+                }
+                else
+                {
+                    userInfo = [NSMutableDictionary dictionary];
+                }
 
-        // Notify user
-        NSString *myUserId = session.myUser.userId; // TODO: Hanlde multi-account
-        [[NSNotificationCenter defaultCenter] postNotificationName:kMXKErrorNotification object:error userInfo:myUserId ? @{kMXKErrorUserIdKey: myUserId} : nil];
+                userInfo[NSLocalizedFailureReasonErrorKey] = nil;
 
+                if ([mxError.errcode isEqualToString:kMXErrCodeStringThreePIDInUse])
+                {
+                    userInfo[NSLocalizedDescriptionKey] = NSLocalizedStringFromTable(@"auth_email_in_use", @"Vector", nil);
+                    userInfo[@"error"] = NSLocalizedStringFromTable(@"auth_email_in_use", @"Vector", nil);
+                }
+                else
+                {
+                    userInfo[NSLocalizedDescriptionKey] = NSLocalizedStringFromTable(@"auth_untrusted_id_server", @"Vector", nil);
+                    userInfo[@"error"] = NSLocalizedStringFromTable(@"auth_untrusted_id_server", @"Vector", nil);
+                }
+
+                error = [NSError errorWithDomain:error.domain code:error.code userInfo:userInfo];
+            }
+            else if ([error.domain isEqualToString:MX3PidAddManagerErrorDomain]
+                     && error.code == MX3PidAddManagerErrorDomainIdentityServerRequired)
+            {
+                error = [NSError errorWithDomain:error.domain
+                                            code:error.code
+                                        userInfo:@{
+                                                   NSLocalizedDescriptionKey: [NSBundle mxk_localizedStringForKey:@"auth_email_is_required"]
+                                                   }];
+            }
+
+            // Notify user
+            NSString *myUserId = session.myUser.userId; // TODO: Hanlde multi-account
+            [[NSNotificationCenter defaultCenter] postNotificationName:kMXKErrorNotification object:error userInfo:myUserId ? @{kMXKErrorUserIdKey: myUserId} : nil];
+
+        }];
     }];
 }
 
@@ -3590,97 +4002,108 @@ SingleImagePickerPresenterDelegate>
         self.newPhoneEditingEnabled = NO;
         return;
     }
-    
+
     // Phone check
     if (![[NBPhoneNumberUtil sharedInstance] isValidNumber:newPhoneNumber])
     {
         [currentAlert dismissViewControllerAnimated:NO completion:nil];
         __weak typeof(self) weakSelf = self;
-        
+
         currentAlert = [UIAlertController alertControllerWithTitle:[NSBundle mxk_localizedStringForKey:@"account_error_msisdn_wrong_title"] message:[NSBundle mxk_localizedStringForKey:@"account_error_msisdn_wrong_description"] preferredStyle:UIAlertControllerStyleAlert];
-        
+
         [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"ok"]
                                                          style:UIAlertActionStyleDefault
                                                        handler:^(UIAlertAction * action) {
-                                                           
+
                                                            if (weakSelf)
                                                            {
                                                                typeof(self) self = weakSelf;
                                                                self->currentAlert = nil;
                                                            }
-                                                           
+
                                                        }]];
-        
+
         [currentAlert mxk_setAccessibilityIdentifier: @"SettingsVCAddMsisdnAlert"];
         [self presentViewController:currentAlert animated:YES completion:nil];
-        
+
         return;
     }
-    
-    [self startActivityIndicator];
-    
+
     // Dismiss the keyboard
     [newPhoneNumberCell.mxkTextField resignFirstResponder];
-    
+
     MXSession* session = [AppDelegate theDelegate].mxSessions[0];
-    
+
     NSString *e164 = [[NBPhoneNumberUtil sharedInstance] format:newPhoneNumber numberFormat:NBEPhoneNumberFormatE164 error:nil];
     NSString *msisdn;
     if ([e164 hasPrefix:@"+"])
     {
-        msisdn = [e164 substringFromIndex:1];
+        msisdn = e164;
     }
     else if ([e164 hasPrefix:@"00"])
     {
-        msisdn = [e164 substringFromIndex:2];
+        msisdn = [NSString stringWithFormat:@"+%@", [e164 substringFromIndex:2]];
     }
-    
-    MXK3PID *new3PID = [[MXK3PID alloc] initWithMedium:kMX3PIDMediumMSISDN andAddress:msisdn];
-    
-    [new3PID requestValidationTokenWithMatrixRestClient:session.matrixRestClient isDuringRegistration:NO nextLink:nil success:^{
-        
-        [self showValidationMsisdnDialogWithMessage:[NSBundle mxk_localizedStringForKey:@"account_msisdn_validation_message"] for3PID:new3PID];
-        
-    } failure:^(NSError *error) {
-        
-        [self stopActivityIndicator];
-        
-        NSLog(@"[SettingsViewController] Failed to request msisdn token");
-        
-        // Translate the potential MX error.
-        MXError *mxError = [[MXError alloc] initWithNSError:error];
-        if (mxError && ([mxError.errcode isEqualToString:kMXErrCodeStringThreePIDInUse] || [mxError.errcode isEqualToString:kMXErrCodeStringServerNotTrusted]))
-        {
-            NSMutableDictionary *userInfo;
-            if (error.userInfo)
+
+    [self checkAuthenticationFlowForAdding:kMX3PIDMediumMSISDN withSession:session onComplete:^(NSString *password) {
+        [self startActivityIndicator];
+
+        __block MX3PidAddSession *new3Pid;
+        new3Pid = [session.threePidAddManager startAddPhoneNumberSessionWithPhoneNumber:msisdn countryCode:nil success:^{
+
+            [self showValidationMsisdnDialogWithMessage:[NSBundle mxk_localizedStringForKey:@"account_msisdn_validation_message"] for3PidAddSession:new3Pid threePidAddManager:session.threePidAddManager password:password];
+
+        } failure:^(NSError *error) {
+
+            [self stopActivityIndicator];
+
+            NSLog(@"[SettingsViewController] Failed to request msisdn token");
+
+            // Translate the potential MX error.
+            MXError *mxError = [[MXError alloc] initWithNSError:error];
+            if (mxError
+                && ([mxError.errcode isEqualToString:kMXErrCodeStringThreePIDInUse]
+                    || [mxError.errcode isEqualToString:kMXErrCodeStringServerNotTrusted]))
             {
-                userInfo = [NSMutableDictionary dictionaryWithDictionary:error.userInfo];
+                NSMutableDictionary *userInfo;
+                if (error.userInfo)
+                {
+                    userInfo = [NSMutableDictionary dictionaryWithDictionary:error.userInfo];
+                }
+                else
+                {
+                    userInfo = [NSMutableDictionary dictionary];
+                }
+
+                userInfo[NSLocalizedFailureReasonErrorKey] = nil;
+
+                if ([mxError.errcode isEqualToString:kMXErrCodeStringThreePIDInUse])
+                {
+                    userInfo[NSLocalizedDescriptionKey] = NSLocalizedStringFromTable(@"auth_phone_in_use", @"Vector", nil);
+                    userInfo[@"error"] = NSLocalizedStringFromTable(@"auth_phone_in_use", @"Vector", nil);
+                }
+                else
+                {
+                    userInfo[NSLocalizedDescriptionKey] = NSLocalizedStringFromTable(@"auth_untrusted_id_server", @"Vector", nil);
+                    userInfo[@"error"] = NSLocalizedStringFromTable(@"auth_untrusted_id_server", @"Vector", nil);
+                }
+
+                error = [NSError errorWithDomain:error.domain code:error.code userInfo:userInfo];
             }
-            else
+            else if ([error.domain isEqualToString:MX3PidAddManagerErrorDomain]
+                     && error.code == MX3PidAddManagerErrorDomainIdentityServerRequired)
             {
-                userInfo = [NSMutableDictionary dictionary];
+                error = [NSError errorWithDomain:error.domain
+                                            code:error.code
+                                        userInfo:@{
+                                                   NSLocalizedDescriptionKey: [NSBundle mxk_localizedStringForKey:@"auth_phone_is_required"]
+                                                   }];
             }
-            
-            userInfo[NSLocalizedFailureReasonErrorKey] = nil;
-            
-            if ([mxError.errcode isEqualToString:kMXErrCodeStringThreePIDInUse])
-            {
-                userInfo[NSLocalizedDescriptionKey] = NSLocalizedStringFromTable(@"auth_phone_in_use", @"Vector", nil);
-                userInfo[@"error"] = NSLocalizedStringFromTable(@"auth_phone_in_use", @"Vector", nil);
-            }
-            else
-            {
-                userInfo[NSLocalizedDescriptionKey] = NSLocalizedStringFromTable(@"auth_untrusted_id_server", @"Vector", nil);
-                userInfo[@"error"] = NSLocalizedStringFromTable(@"auth_untrusted_id_server", @"Vector", nil);
-            }
-            
-            error = [NSError errorWithDomain:error.domain code:error.code userInfo:userInfo];
-        }
-        
-        // Notify user
-        NSString *myUserId = session.myUser.userId;
-        [[NSNotificationCenter defaultCenter] postNotificationName:kMXKErrorNotification object:error userInfo:myUserId ? @{kMXKErrorUserIdKey: myUserId} : nil];
-        
+
+            // Notify user
+            NSString *myUserId = session.myUser.userId;
+            [[NSNotificationCenter defaultCenter] postNotificationName:kMXKErrorNotification object:error userInfo:myUserId ? @{kMXKErrorUserIdKey: myUserId} : nil];
+        }];
     }];
 }
 
@@ -4418,6 +4841,107 @@ SingleImagePickerPresenterDelegate>
     newAvatarImage = [UIImage imageWithData:imageData];
     
     [self.tableView reloadData];
+}
+
+
+#pragma mark - Identity Server updates
+
+- (void)registerAccountDataDidChangeIdentityServerNotification
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleAccountDataDidChangeIdentityServerNotification:) name:kMXSessionAccountDataDidChangeIdentityServerNotification object:nil];
+}
+
+- (void)handleAccountDataDidChangeIdentityServerNotification:(NSNotification*)notification
+{
+    [self refreshSettings];
+}
+
+#pragma mark - SettingsDiscoveryTableViewSectionDelegate
+
+- (void)settingsDiscoveryTableViewSectionDidUpdate:(SettingsDiscoveryTableViewSection *)settingsDiscoveryTableViewSection
+{
+    [self.tableView reloadData];
+}
+
+- (MXKTableViewCell *)settingsDiscoveryTableViewSection:(SettingsDiscoveryTableViewSection *)settingsDiscoveryTableViewSection tableViewCellClass:(Class)tableViewCellClass forRow:(NSInteger)forRow
+{
+    MXKTableViewCell *tableViewCell;
+    
+    if ([tableViewCellClass isEqual:[MXKTableViewCell class]])
+    {
+        tableViewCell = [self getDefaultTableViewCell:self.tableView];
+    }
+    else if ([tableViewCellClass isEqual:[MXKTableViewCellWithTextView class]])
+    {
+        tableViewCell = [self textViewCellForTableView:self.tableView atIndexPath:[NSIndexPath indexPathForRow:forRow inSection:SETTINGS_SECTION_DISCOVERY_INDEX]];
+    }
+    else if ([tableViewCellClass isEqual:[MXKTableViewCellWithButton class]])
+    {
+        MXKTableViewCellWithButton *cell = [self.tableView dequeueReusableCellWithIdentifier:[MXKTableViewCellWithButton defaultReuseIdentifier]];
+        
+        if (!cell)
+        {
+            cell = [[MXKTableViewCellWithButton alloc] init];
+        }
+        else
+        {
+            // Fix https://github.com/vector-im/riot-ios/issues/1354
+            cell.mxkButton.titleLabel.text = nil;
+        }
+        
+        cell.mxkButton.titleLabel.font = [UIFont systemFontOfSize:17];
+        [cell.mxkButton setTintColor:ThemeService.shared.theme.tintColor];
+        
+        tableViewCell = cell;
+    }
+    else if ([tableViewCellClass isEqual:[MXKTableViewCellWithLabelAndSwitch class]])
+    {
+        tableViewCell = [self getLabelAndSwitchCell:self.tableView forIndexPath:[NSIndexPath indexPathForRow:forRow inSection:SETTINGS_SECTION_DISCOVERY_INDEX]];
+    }
+    
+    return tableViewCell;
+}
+
+#pragma mark - SettingsDiscoveryViewModelCoordinatorDelegate
+
+- (void)settingsDiscoveryViewModel:(SettingsDiscoveryViewModel *)viewModel didSelectThreePidWith:(NSString *)medium and:(NSString *)address
+{
+    SettingsDiscoveryThreePidDetailsCoordinatorBridgePresenter *discoveryThreePidDetailsPresenter = [[SettingsDiscoveryThreePidDetailsCoordinatorBridgePresenter alloc] initWithSession:self.mainSession medium:medium adress:address];
+    
+    MXWeakify(self);
+    
+    [discoveryThreePidDetailsPresenter pushFrom:self.navigationController animated:YES popCompletion:^{
+        MXStrongifyAndReturnIfNil(self);
+        
+        self.discoveryThreePidDetailsPresenter = nil;
+    }];
+    
+    self.discoveryThreePidDetailsPresenter = discoveryThreePidDetailsPresenter;
+}
+
+- (void)settingsDiscoveryViewModelDidTapUserSettingsLink:(SettingsDiscoveryViewModel *)viewModel
+{
+    NSIndexPath *discoveryIndexPath = [NSIndexPath indexPathForRow:userSettingsNewEmailIndex inSection:SETTINGS_SECTION_USER_SETTINGS_INDEX];
+    [self.tableView scrollToRowAtIndexPath:discoveryIndexPath atScrollPosition:UITableViewScrollPositionTop animated:YES];
+}
+
+
+#pragma mark - Identity Server
+
+- (void)showIdentityServerSettingsScreen
+{
+    identityServerSettingsCoordinatorBridgePresenter = [[SettingsIdentityServerCoordinatorBridgePresenter alloc] initWithSession:self.mainSession];
+
+    [identityServerSettingsCoordinatorBridgePresenter pushFrom:self.navigationController animated:YES popCompletion:nil];
+    identityServerSettingsCoordinatorBridgePresenter.delegate = self;
+}
+
+#pragma mark - SettingsIdentityServerCoordinatorBridgePresenterDelegate
+
+- (void)settingsIdentityServerCoordinatorBridgePresenterDelegateDidComplete:(SettingsIdentityServerCoordinatorBridgePresenter *)coordinatorBridgePresenter
+{
+    identityServerSettingsCoordinatorBridgePresenter = nil;
+    [self refreshSettings];
 }
 
 @end

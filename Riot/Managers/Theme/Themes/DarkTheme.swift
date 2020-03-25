@@ -110,5 +110,6 @@ class DarkTheme: NSObject, Theme {
     func applyStyle(onButton button: UIButton) {
         // NOTE: Tint color does nothing by default on button type `UIButtonType.custom`
         button.tintColor = self.tintColor
+        button.setTitleColor(self.tintColor, for: .normal)
     }
 }

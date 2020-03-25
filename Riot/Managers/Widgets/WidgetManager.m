@@ -50,6 +50,9 @@ NSString *const WidgetManagerErrorDomain = @"WidgetManagerErrorDomain";
 
     // User id -> scalar token
     NSMutableDictionary<NSString*, WidgetManagerConfig*> *configs;
+
+    // User id -> MXSession
+    NSMutableDictionary<NSString*, MXSession*> *matrixSessions;
 }
 
 @end
@@ -73,6 +76,7 @@ NSString *const WidgetManagerErrorDomain = @"WidgetManagerErrorDomain";
     self = [super init];
     if (self)
     {
+        matrixSessions = [NSMutableDictionary dictionary];
         widgetEventListener = [NSMutableDictionary dictionary];
         successBlockForWidgetCreation = [NSMutableDictionary dictionary];
         failureBlockForWidgetCreation = [NSMutableDictionary dictionary];
@@ -237,11 +241,8 @@ NSString *const WidgetManagerErrorDomain = @"WidgetManagerErrorDomain";
                                                          content:widgetContent
                                                         stateKey:widgetId
                                                          success:nil failure:failure];
-
-        if (operation2)
-        {
-            [operation mutateTo:operation2];
-        }
+        
+        [operation mutateTo:operation2];
 
     } failure:^(NSError *error) {
         if (failure)
@@ -265,6 +266,14 @@ NSString *const WidgetManagerErrorDomain = @"WidgetManagerErrorDomain";
     {
         NSLog(@"[WidgetManager] createJitsiWidgetInRoom: Error: no Integrations Manager API URL for user %@", userId);
         failure(self.errorForNonConfiguredIntegrationManager);
+        return nil;
+    }
+
+    RiotSharedSettings *sharedSettings = [[RiotSharedSettings alloc] initWithSession:room.mxSession];
+    if (!sharedSettings.hasIntegrationProvisioningEnabled)
+    {
+        NSLog(@"[WidgetManager] createJitsiWidgetInRoom: Error: Disabled integration manager for user %@", userId);
+        failure(self.errorForDisabledIntegrationManager);
         return nil;
     }
 
@@ -316,11 +325,8 @@ NSString *const WidgetManagerErrorDomain = @"WidgetManagerErrorDomain";
                         success();
                     }
                 } failure:failure];
-
-        if (operation2)
-        {
-            [operation mutateTo:operation2];
-        }
+        
+        [operation mutateTo:operation2];
 
     } failure:^(NSError *error) {
         if (failure)
@@ -372,6 +378,8 @@ NSString *const WidgetManagerErrorDomain = @"WidgetManagerErrorDomain";
 - (void)addMatrixSession:(MXSession *)mxSession
 {
      __weak __typeof__(self) weakSelf = self;
+
+    matrixSessions[mxSession.matrixRestClient.credentials.userId] = mxSession;
 
     NSString *hash = [NSString stringWithFormat:@"%p", mxSession];
 
@@ -427,6 +435,12 @@ NSString *const WidgetManagerErrorDomain = @"WidgetManagerErrorDomain";
 
 - (void)removeMatrixSession:(MXSession *)mxSession
 {
+    // Remove by value in a dict
+    for (NSString *key in [matrixSessions allKeysForObject:mxSession])
+    {
+        [matrixSessions removeObjectForKey:key];
+    }
+
     // mxSession.myUser.userId and mxSession.matrixRestClient.credentials.userId may be nil here
     // So, use a kind of hash value instead
     NSString *hash = [NSString stringWithFormat:@"%p", mxSession];
@@ -439,10 +453,51 @@ NSString *const WidgetManagerErrorDomain = @"WidgetManagerErrorDomain";
     [failureBlockForWidgetCreation removeObjectForKey:hash];
 }
 
+- (MXSession*)matrixSessionForUser:(NSString*)userId
+{
+    return matrixSessions[userId];
+}
+
 - (void)deleteDataForUser:(NSString *)userId
 {
     [configs removeObjectForKey:userId];
     [self saveConfigs];
+}
+
+#pragma mark - User integrations configuration
+
+- (WidgetManagerConfig*)createWidgetManagerConfigForUser:(NSString*)userId
+{
+    WidgetManagerConfig *config;
+
+    MXSession *session = [self matrixSessionForUser:userId];
+
+    // Find the integrations settings for the user
+
+    // First, look at matrix account
+    // TODO in another user story
+    
+    // Then, try to the homeserver configuration
+    MXWellknownIntegrationsManager *integrationsManager = session.homeserverWellknown.integrations.managers.firstObject;
+    if (integrationsManager)
+    {
+        config = [[WidgetManagerConfig alloc] initWithApiUrl:integrationsManager.apiUrl uiUrl:integrationsManager.uiUrl];
+    }
+    else
+    {
+        // Fallback on app settings
+        config = [self createWidgetManagerConfigWithAppSettings];
+    }
+
+    return config;
+}
+
+- (WidgetManagerConfig*)createWidgetManagerConfigWithAppSettings
+{
+    NSString *apiUrl = [[NSUserDefaults standardUserDefaults] objectForKey:@"integrationsRestUrl"];
+    NSString *uiUrl = [[NSUserDefaults standardUserDefaults] objectForKey:@"integrationsUiUrl"];
+
+    return [[WidgetManagerConfig alloc] initWithApiUrl:apiUrl uiUrl:uiUrl];
 }
 
 #pragma mark - Modular interface
@@ -450,7 +505,7 @@ NSString *const WidgetManagerErrorDomain = @"WidgetManagerErrorDomain";
 - (WidgetManagerConfig*)configForUser:(NSString*)userId
 {
     // Return a default config by default
-    return configs[userId] ? configs[userId] : [WidgetManagerConfig new];
+    return configs[userId] ? configs[userId] : [self createWidgetManagerConfigForUser:userId];
 }
 
 - (BOOL)hasIntegrationManagerForUser:(NSString*)userId
@@ -513,6 +568,8 @@ NSString *const WidgetManagerErrorDomain = @"WidgetManagerErrorDomain";
     MXHTTPOperation *operation;
     NSString *userId = mxSession.myUser.userId;
 
+    NSLog(@"[WidgetManager] registerForScalarToken");
+
     WidgetManagerConfig *config = [self configForUser:userId];
     if (!config.hasUrls)
     {
@@ -526,7 +583,7 @@ NSString *const WidgetManagerErrorDomain = @"WidgetManagerErrorDomain";
         MXStrongifyAndReturnIfNil(self);
 
         // Exchange the token for a scalar token
-        MXHTTPClient *httpClient = [[MXHTTPClient alloc] initWithBaseURL:config.apiUrl andOnUnrecognizedCertificateBlock:nil];
+        __block MXHTTPClient *httpClient = [[MXHTTPClient alloc] initWithBaseURL:config.apiUrl andOnUnrecognizedCertificateBlock:nil];
 
         MXHTTPOperation *operation2 =
         [httpClient requestWithMethod:@"POST"
@@ -534,20 +591,30 @@ NSString *const WidgetManagerErrorDomain = @"WidgetManagerErrorDomain";
                            parameters:tokenObject.JSONDictionary
                               success:^(NSDictionary *JSONResponse)
          {
+             httpClient = nil;
 
              NSString *scalarToken;
              MXJSONModelSetString(scalarToken, JSONResponse[@"scalar_token"])
-             config.scalarToken = scalarToken;
 
+             config.scalarToken = scalarToken;
              self->configs[userId] = config;
              [self saveConfigs];
+             
+             // Validate it (this mostly checks to see if the IM needs us to agree to some terms)
+             MXHTTPOperation *operation3 = [self validateScalarToken:scalarToken forMXSession:mxSession complete:^(BOOL valid) {
 
-             if (success)
-             {
-                 success(scalarToken);
-             }
+                 if (success)
+                 {
+                     success(scalarToken);
+                 }
+
+             } failure:failure];
+
+             [operation mutateTo:operation3];
 
          } failure:^(NSError *error) {
+             httpClient = nil;
+
              NSLog(@"[WidgetManager] registerForScalarToken: Failed to register. Error: %@", error);
 
              if (failure)
@@ -591,12 +658,13 @@ NSString *const WidgetManagerErrorDomain = @"WidgetManagerErrorDomain";
         return nil;
     }
 
-    MXHTTPClient *httpClient = [[MXHTTPClient alloc] initWithBaseURL:config.apiUrl andOnUnrecognizedCertificateBlock:nil];
+    __block MXHTTPClient *httpClient = [[MXHTTPClient alloc] initWithBaseURL:config.apiUrl andOnUnrecognizedCertificateBlock:nil];
 
     return [httpClient requestWithMethod:@"GET"
                                     path:[NSString stringWithFormat:@"account?v=1.1&scalar_token=%@", scalarToken]
                               parameters:nil
                                  success:^(NSDictionary *JSONResponse) {
+                                     httpClient = nil;
 
                                      NSString *userId;
                                      MXJSONModelSetString(userId, JSONResponse[@"user_id"])
@@ -612,11 +680,25 @@ NSString *const WidgetManagerErrorDomain = @"WidgetManagerErrorDomain";
                                      }
 
                                  } failure:^(NSError *error) {
+                                     httpClient = nil;
+
                                      NSHTTPURLResponse *urlResponse = [MXHTTPOperation urlResponseFromError:error];
 
                                      NSLog(@"[WidgetManager] validateScalarToken. Error in modular/account request. statusCode: %@", @(urlResponse.statusCode));
 
-                                     if (urlResponse &&  urlResponse.statusCode / 100 != 2)
+                                     MXError *mxError = [[MXError alloc] initWithNSError:error];
+                                     if ([mxError.errcode isEqualToString:kMXErrCodeStringTermsNotSigned])
+                                     {
+                                         NSLog(@"[WidgetManager] validateScalarToke. Error: Need to accept terms");
+                                         NSError *termsNotSignedError = [NSError errorWithDomain:WidgetManagerErrorDomain
+                                                                                            code:WidgetManagerErrorCodeTermsNotSigned
+                                                                                        userInfo:@{
+                                                                                                NSLocalizedDescriptionKey:error.userInfo[NSLocalizedDescriptionKey]
+                                                                                                   }];
+
+                                         failure(termsNotSignedError);
+                                     }
+                                     else if (urlResponse &&  urlResponse.statusCode / 100 != 2)
                                      {
                                          complete(NO);
                                      }
@@ -676,7 +758,7 @@ NSString *const WidgetManagerErrorDomain = @"WidgetManagerErrorDomain";
 
             NSLog(@"[WidgetManager] migrate scalarTokens to integrationManagerConfigs for %@", userId);
 
-            WidgetManagerConfig *config = [WidgetManagerConfig new];
+            WidgetManagerConfig *config = [self createWidgetManagerConfigWithAppSettings];
             config.scalarToken = scalarToken;
 
             configs[userId] = config;
@@ -715,6 +797,13 @@ NSString *const WidgetManagerErrorDomain = @"WidgetManagerErrorDomain";
     return [NSError errorWithDomain:WidgetManagerErrorDomain
                                code:WidgetManagerErrorCodeNoIntegrationsServerConfigured
                            userInfo:@{NSLocalizedDescriptionKey: NSLocalizedStringFromTable(@"widget_no_integrations_server_configured", @"Vector", nil)}];
+}
+
+- (NSError*)errorForDisabledIntegrationManager
+{
+    return [NSError errorWithDomain:WidgetManagerErrorDomain
+                               code:WidgetManagerErrorCodeDisabledIntegrationsServer
+                           userInfo:@{NSLocalizedDescriptionKey: NSLocalizedStringFromTable(@"widget_integration_manager_disabled", @"Vector", nil)}];
 }
 
 @end

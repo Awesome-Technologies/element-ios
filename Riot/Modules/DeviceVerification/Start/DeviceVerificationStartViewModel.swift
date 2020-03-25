@@ -81,8 +81,8 @@ final class DeviceVerificationStartViewModel: DeviceVerificationStartViewModelTy
 
             sself.transaction = sasTransaction
 
-            sself.registerTransactionDidStateChangeNotification(transaction: sasTransaction)
             sself.update(viewState: .loaded)
+            sself.registerTransactionDidStateChangeNotification(transaction: sasTransaction)
         }, failure: {[weak self]  error in
             self?.update(viewState: .error(error))
         })
@@ -106,6 +106,10 @@ final class DeviceVerificationStartViewModel: DeviceVerificationStartViewModelTy
     private func registerTransactionDidStateChangeNotification(transaction: MXOutgoingSASTransaction) {
         NotificationCenter.default.addObserver(self, selector: #selector(transactionDidStateChange(notification:)), name: NSNotification.Name.MXDeviceVerificationTransactionDidChange, object: transaction)
     }
+    
+    private func unregisterTransactionDidStateChangeNotification() {
+        NotificationCenter.default.removeObserver(self, name: .MXDeviceVerificationTransactionDidChange, object: nil)
+    }
 
     @objc private func transactionDidStateChange(notification: Notification) {
         guard let transaction = notification.object as? MXOutgoingSASTransaction else {
@@ -114,16 +118,19 @@ final class DeviceVerificationStartViewModel: DeviceVerificationStartViewModelTy
 
         switch transaction.state {
         case MXSASTransactionStateShowSAS:
+            self.unregisterTransactionDidStateChangeNotification()
             self.coordinatorDelegate?.deviceVerificationStartViewModel(self, didCompleteWithOutgoingTransaction: transaction)
         case MXSASTransactionStateCancelled:
             guard let reason = transaction.reasonCancelCode else {
                 return
             }
+            self.unregisterTransactionDidStateChangeNotification()
             self.update(viewState: .cancelled(reason))
         case MXSASTransactionStateCancelledByMe:
             guard let reason = transaction.reasonCancelCode else {
                 return
             }
+            self.unregisterTransactionDidStateChangeNotification()
             self.update(viewState: .cancelledByMe(reason))
         default:
             break

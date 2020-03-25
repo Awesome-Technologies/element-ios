@@ -16,28 +16,32 @@ PODS:
     - AFNetworking/NSURLSession
   - cmark (0.24.1)
   - DGCollectionViewLeftAlignFlowLayout (1.0.4)
-  - DTCoreText (1.6.21):
-    - DTCoreText/Core (= 1.6.21)
+  - DTCoreText (1.6.23):
+    - DTCoreText/Core (= 1.6.23)
     - DTFoundation/Core (~> 1.7.5)
     - DTFoundation/DTAnimatedGIF (~> 1.7.5)
     - DTFoundation/DTHTMLParser (~> 1.7.5)
     - DTFoundation/UIKit (~> 1.7.5)
-  - DTCoreText/Core (1.6.21):
+  - DTCoreText/Core (1.6.23):
     - DTFoundation/Core (~> 1.7.5)
     - DTFoundation/DTAnimatedGIF (~> 1.7.5)
     - DTFoundation/DTHTMLParser (~> 1.7.5)
     - DTFoundation/UIKit (~> 1.7.5)
-  - DTCoreText/Extension (1.6.21):
+  - DTCoreText/Extension (1.6.23):
     - DTFoundation/Core (~> 1.7.5)
     - DTFoundation/DTAnimatedGIF (~> 1.7.5)
     - DTFoundation/DTHTMLParser (~> 1.7.5)
     - DTFoundation/UIKit (~> 1.7.5)
-  - DTFoundation/Core (1.7.13)
-  - DTFoundation/DTAnimatedGIF (1.7.13)
-  - DTFoundation/DTHTMLParser (1.7.13):
+  - DTFoundation/Core (1.7.14)
+  - DTFoundation/DTAnimatedGIF (1.7.14)
+  - DTFoundation/DTHTMLParser (1.7.14):
     - DTFoundation/Core
-  - DTFoundation/UIKit (1.7.13):
+  - DTFoundation/UIKit (1.7.14):
     - DTFoundation/Core
+  - GBDeviceInfo (6.3.0):
+    - GBDeviceInfo/Core (= 6.3.0)
+  - GBDeviceInfo/Core (6.3.0)
+  - GZIP (1.2.3)
   - Firebase/CoreOnly (6.0.0):
     - FirebaseCore (= 6.0.0)
   - Firebase/MLVision (6.0.0):
@@ -66,9 +70,6 @@ PODS:
     - GoogleMobileVision/Detector (~> 1.4)
   - FirebaseMLVisionBarcodeModel (0.16.0):
     - GoogleMobileVision/BarcodeDetector (~> 1.4)
-  - GBDeviceInfo (5.2.0):
-    - GBDeviceInfo/Core (= 5.2.0)
-  - GBDeviceInfo/Core (5.2.0)
   - GoogleAPIClientForREST/Core (1.3.8):
     - GTMSessionFetcher (>= 1.1.7)
   - GoogleAPIClientForREST/Vision (1.3.8):
@@ -96,49 +97,48 @@ PODS:
   - GTMSessionFetcher/Core (1.2.1)
   - GTMSessionFetcher/Full (1.2.1):
     - GTMSessionFetcher/Core (= 1.2.1)
-  - GZIP (1.2.2)
   - HPGrowingTextView (1.1)
-  - JitsiMeetSDK (2.1.0)
+  - JitsiMeetSDK (2.3.1)
   - libbase58 (0.1.4)
   - libPhoneNumber-iOS (0.9.15)
-  - MatomoTracker (6.0.1):
-    - MatomoTracker/Core (= 6.0.1)
-  - MatomoTracker/Core (6.0.1)
-  - MatrixKit (0.10.2):
+  - MatomoTracker (7.2.0):
+    - MatomoTracker/Core (= 7.2.0)
+  - MatomoTracker/Core (7.2.0)
+  - MatrixKit (0.11.3):
     - cmark (~> 0.24.1)
     - DTCoreText (~> 1.6.21)
     - HPGrowingTextView (~> 1.1)
     - libPhoneNumber-iOS (~> 0.9.13)
-    - MatrixKit/Core (= 0.10.2)
-    - MatrixSDK (= 0.13.1)
+    - MatrixKit/Core (= 0.11.3)
+    - MatrixSDK (= 0.15.2)
     - SwiftUTI (~> 1.0.6)
-  - MatrixKit/AppExtension (0.10.2):
+  - MatrixKit/AppExtension (0.11.3):
     - cmark (~> 0.24.1)
     - DTCoreText (~> 1.6.21)
     - DTCoreText/Extension
     - HPGrowingTextView (~> 1.1)
     - libPhoneNumber-iOS (~> 0.9.13)
-    - MatrixSDK (= 0.13.1)
+    - MatrixSDK (= 0.15.2)
     - SwiftUTI (~> 1.0.6)
-  - MatrixKit/Core (0.10.2):
+  - MatrixKit/Core (0.11.3):
     - cmark (~> 0.24.1)
     - DTCoreText (~> 1.6.21)
     - HPGrowingTextView (~> 1.1)
     - libPhoneNumber-iOS (~> 0.9.13)
-    - MatrixSDK (= 0.13.1)
+    - MatrixSDK (= 0.15.2)
     - SwiftUTI (~> 1.0.6)
-  - MatrixSDK (0.13.1):
-    - MatrixSDK/Core (= 0.13.1)
-  - MatrixSDK/Core (0.13.1):
+  - MatrixSDK (0.15.2):
+    - MatrixSDK/Core (= 0.15.2)
+  - MatrixSDK/Core (0.15.2):
     - AFNetworking (~> 3.2.0)
     - GZIP (~> 1.2.2)
     - libbase58 (~> 0.1.4)
     - OLMKit (~> 3.1.0)
-    - Realm (~> 3.13.1)
-  - MatrixSDK/JingleCallStack (0.13.1):
-    - JitsiMeetSDK (~> 2.1.0)
+    - Realm (~> 3.17.3)
+  - MatrixSDK/JingleCallStack (0.15.2):
+    - JitsiMeetSDK (~> 2.3.1)
     - MatrixSDK/Core
-  - MatrixSDK/SwiftSupport (0.13.1):
+  - MatrixSDK/SwiftSupport (0.15.2):
     - MatrixSDK/Core
   - OLMKit (3.1.0):
     - OLMKit/olmc (= 3.1.0)
@@ -146,41 +146,40 @@ PODS:
   - OLMKit/olmc (3.1.0)
   - OLMKit/olmcpp (3.1.0)
   - Protobuf (3.9.0)
-  - Realm (3.13.1):
-    - Realm/Headers (= 3.13.1)
-  - Realm/Headers (3.13.1)
+  - Realm (3.17.3):
+    - Realm/Headers (= 3.17.3)
+  - Realm/Headers (3.17.3)
   - Reusable (4.1.0):
     - Reusable/Storyboard (= 4.1.0)
     - Reusable/View (= 4.1.0)
   - Reusable/Storyboard (4.1.0)
   - Reusable/View (4.1.0)
   - SwiftGen (6.1.0)
-  - SwiftLint (0.33.0)
+  - SwiftLint (0.36.0)
   - SwiftUTI (1.0.7)
   - zxcvbn-ios (1.0.4)
 
 DEPENDENCIES:
   - cmark
   - DGCollectionViewLeftAlignFlowLayout (~> 1.0.4)
-  - DTCoreText
+  - GBDeviceInfo (~> 6.3.0)
   - Firebase/MLVision
   - Firebase/MLVisionBarcodeModel
-  - GBDeviceInfo (~> 5.2.0)
-  - MatomoTracker (~> 6.0.1)
-  - MatrixKit (= 0.10.2)
-  - MatrixKit/AppExtension (= 0.10.2)
+  - MatomoTracker (~> 7.2.0)
+  - MatrixKit (= 0.11.3)
+  - MatrixKit/AppExtension (= 0.11.3)
   - MatrixSDK (from `https://github.com/Awesome-Technologies/matrix-ios-sdk.git`, branch `AMP.care`)
   - MatrixSDK/JingleCallStack (from `https://github.com/Awesome-Technologies/matrix-ios-sdk.git`, branch `AMP.care`)
   - MatrixSDK/SwiftSupport (from `https://github.com/Awesome-Technologies/matrix-ios-sdk.git`, branch `AMP.care`)
   - OLMKit
   - Reusable (~> 4.1)
   - SwiftGen (~> 6.1)
-  - SwiftLint (~> 0.33.0)
+  - SwiftLint (~> 0.36.0)
   - SwiftUTI (from `https://github.com/speramusinc/SwiftUTI.git`, branch `master`)
   - zxcvbn-ios
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  trunk:
     - AFNetworking
     - cmark
     - DGCollectionViewLeftAlignFlowLayout
@@ -226,44 +225,44 @@ CHECKOUT OPTIONS:
     :commit: 8c6da7c7cc867165888bcc7391ac230bff168e67
     :git: https://github.com/Awesome-Technologies/matrix-ios-sdk.git
   SwiftUTI:
-    :commit: c21237f13e9fb31a07f3fcd5243c5cf79d75901c
+    :commit: b6b46942fb3aad819610851f62a70e17a528444e
     :git: https://github.com/speramusinc/SwiftUTI.git
 
 SPEC CHECKSUMS:
   AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
   cmark: 1d9ad0375e3b9fa281732e992467903606015520
   DGCollectionViewLeftAlignFlowLayout: a0fa58797373ded039cafba8133e79373d048399
-  DTCoreText: e5d688cffc9f6a61eddd1a4f94e2046851230de3
-  DTFoundation: f03be9fd786f11e505bb8fc44e2a3732bf0917df
+  DTCoreText: 67023bb51b26711d5f640c851f4845aea14c24c9
+  DTFoundation: 25aa19bb7c6e225b1dfae195604fb8cf1da0ab4c
+  GBDeviceInfo: a3f39dba1a04dcb630abff65d6f7e8fbf319eadd
+  GZIP: af5c90ef903776a7e9afe6ebebd794a84a2929d4
   Firebase: fa80b9d987ca014a1ba9357496ef2a0178b28b12
   FirebaseCore: e38f025287b413255a53acc1945d048a112047f7
   FirebaseInstanceID: 0e0348a3c00a734fa376a070f5ad4533ad975cb5
   FirebaseMLCommon: d430756ba2a16bac8fefc81ea416e7f822f052fd
   FirebaseMLVision: 35d0a720334b141d70a55e7e817c1cac23f32285
   FirebaseMLVisionBarcodeModel: 2abf9867e2c9914726c4d0a6936aaf8b75eb7d46
-  GBDeviceInfo: 2c65ceb9404f9079264d4c238f5b81916fdfc5e2
   GoogleAPIClientForREST: 5447a194eae517986cafe6421a5330b80b820591
   GoogleMobileVision: 31cfb4319fd0c03d80105680abd9eae9da5e3b47
   GoogleToolboxForMac: ff31605b7d66400dcec09bed5861689aebadda4d
   GoogleUtilities: f1faafc033ea203adf1783ce00af455bb99d0e5b
   GTMSessionFetcher: 32aeca0aa144acea523e1c8e053089dec2cb98ca
-  GZIP: 12374d285e3b5d46cfcd480700fcfc7e16caf4f1
   HPGrowingTextView: 88a716d97fb853bcb08a4a08e4727da17efc9b19
-  JitsiMeetSDK: 3e66564af7f38a19142338955dd7f581801852b3
+  JitsiMeetSDK: 69e4978fbab21f9a535d1bec3b8d43721a4c72b2
   libbase58: 7c040313537b8c44b6e2d15586af8e21f7354efd
   libPhoneNumber-iOS: 0a32a9525cf8744fe02c5206eb30d571e38f7d75
-  MatomoTracker: 3ae4f65a1f5ace8043bda7244888fee28a734de5
-  MatrixKit: 208801ba995442a6daa913eb6d639bb918c91c24
-  MatrixSDK: 16c8c4b530a7f9fb264baced52b6b0948b1d0a98
+  MatomoTracker: 6f89e2561083685a360e223fb663e9ccd57c1d1a
+  MatrixKit: 5a20025b05490a70694b701e607ec75e0988af21
+  MatrixSDK: f83bd3c5519c1cb9ac3998f6423574cf528f0250
   OLMKit: 4ee0159d63feeb86d836fdcfefe418e163511639
   Protobuf: 1097ca58584c8d9be81bfbf2c5ff5975648dd87a
-  Realm: 50071da38fe079e0735e47c9f2eae738c68c5996
+  Realm: 5a1d9d47bfc101dd597668b1a8af4288a2557f6d
   Reusable: 82be188f29d96dc5eff0db7b2393bcc08d2cdd5b
   SwiftGen: f872ca75cbd17bf7103c17f13dcfa0d9a15667b0
-  SwiftLint: fed9c66336e41fc74dc48a73678380718f0c8b0e
+  SwiftLint: fc9859e4e1752340664851f667bb1898b9c90114
   SwiftUTI: 917993c124f8eac25e88ced0202fc58d7eb50fa8
   zxcvbn-ios: fef98b7c80f1512ff0eec47ac1fa399fc00f7e3c
 
-PODFILE CHECKSUM: 8bffca61e3b62b376234b77014f151d7409d704b
+PODFILE CHECKSUM: 881048fb17d68dd834b18e23929482600daca7f3
 
-COCOAPODS: 1.7.2
+COCOAPODS: 1.8.4

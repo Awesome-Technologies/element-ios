@@ -56,10 +56,13 @@ typedef enum : NSUInteger
     WidgetManagerErrorCodeNotEnoughPower,
     WidgetManagerErrorCodeCreationFailed,
     WidgetManagerErrorCodeNoIntegrationsServerConfigured,
-    WidgetManagerErrorCodeFailedToConnectToIntegrationsServer
+    WidgetManagerErrorCodeDisabledIntegrationsServer,
+    WidgetManagerErrorCodeFailedToConnectToIntegrationsServer,
+    WidgetManagerErrorCodeTermsNotSigned
 }
 WidgetManagerErrorCode;
 
+FOUNDATION_EXPORT NSString *const WidgetManagerErrorOpenIdTokenKey;
 
 /**
  The `WidgetManager` helps to handle modular widgets.

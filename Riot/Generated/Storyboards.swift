@@ -92,6 +92,21 @@ internal enum StoryboardScene {
 
     internal static let initialScene = InitialSceneType<Riot.RoomContextualMenuViewController>(storyboard: RoomContextualMenuViewController.self)
   }
+  internal enum ServiceTermsModalScreenViewController: StoryboardType {
+    internal static let storyboardName = "ServiceTermsModalScreenViewController"
+
+    internal static let initialScene = InitialSceneType<Riot.ServiceTermsModalScreenViewController>(storyboard: ServiceTermsModalScreenViewController.self)
+  }
+  internal enum SettingsDiscoveryThreePidDetailsViewController: StoryboardType {
+    internal static let storyboardName = "SettingsDiscoveryThreePidDetailsViewController"
+
+    internal static let initialScene = InitialSceneType<Riot.SettingsDiscoveryThreePidDetailsViewController>(storyboard: SettingsDiscoveryThreePidDetailsViewController.self)
+  }
+  internal enum SettingsIdentityServerViewController: StoryboardType {
+    internal static let storyboardName = "SettingsIdentityServerViewController"
+
+    internal static let initialScene = InitialSceneType<Riot.SettingsIdentityServerViewController>(storyboard: SettingsIdentityServerViewController.self)
+  }
   internal enum SimpleScreenTemplateViewController: StoryboardType {
     internal static let storyboardName = "SimpleScreenTemplateViewController"
 
@@ -101,6 +116,11 @@ internal enum StoryboardScene {
     internal static let storyboardName = "TemplateScreenViewController"
 
     internal static let initialScene = InitialSceneType<Riot.TemplateScreenViewController>(storyboard: TemplateScreenViewController.self)
+  }
+  internal enum WidgetPermissionViewController: StoryboardType {
+    internal static let storyboardName = "WidgetPermissionViewController"
+
+    internal static let initialScene = InitialSceneType<Riot.WidgetPermissionViewController>(storyboard: WidgetPermissionViewController.self)
   }
 }
 // swiftlint:enable explicit_type_interface identifier_name line_length type_body_length type_name
