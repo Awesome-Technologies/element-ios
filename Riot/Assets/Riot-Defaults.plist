@@ -9,15 +9,15 @@
 	<key>pushGatewayURL</key>
 	<string>https://mobile.amp.care/_matrix/push/v1/notify</string>
 	<key>pushKitAppIdProd</key>
-	<string>care.amp.mobile.ios</string>
+	<string>care.amp.corona.ios</string>
 	<key>identityserverurl</key>
-	<string>https://test.amp.care</string>
+	<string>https://corona.amp.care</string>
 	<key>homeserverurl</key>
-	<string>https://test.amp.care</string>
+	<string>https://corona.amp.care</string>
 	<key>homeserver</key>
-	<string>test.amp.care</string>
+	<string>corona.amp.care</string>
 	<key>webAppUrl</key>
-	<string>https://test.amp.care</string>
+	<string>https://corona.amp.care</string>
 	<key>matrixApps</key>
 	<false/>
 	<key>integrationsUiUrl</key>
@@ -35,7 +35,7 @@
 		<key>url</key>
 		<string>https://matomo.awesome-technologies.de/piwik.php</string>
 		<key>siteId</key>
-		<string>4</string>
+		<string>9</string>
 	</dict>
 	<key>showAllEventsInRoomHistory</key>
 	<false/>
@@ -60,9 +60,9 @@
 	<key>presenceColorForOfflineUser</key>
 	<integer>15020851</integer>
 	<key>bugReportEndpointUrl</key>
-	<string>https://test.amp.care/bugreports</string>
+	<string>https://corona.amp.care/bugreports</string>
 	<key>bugReportApp</key>
-	<string>amp_care-ios</string>
+	<string>corona_care-ios</string>
 	<key>roomDirectoryServers</key>
 	<dict>
 		<key>matrix.org</key>

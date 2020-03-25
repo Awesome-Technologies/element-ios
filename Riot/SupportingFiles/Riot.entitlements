@@ -30,7 +30,7 @@
 	<string>$(TeamIdentifierPrefix)$(CFBundleIdentifier)</string>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.care.amp</string>
+		<string>group.care.amp.corona</string>
 	</array>
 </dict>
 </plist>

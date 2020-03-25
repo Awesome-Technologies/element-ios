@@ -258,7 +258,7 @@ NSString *const kAppDelegateNetworkStatusDidChangeNotification = @"kAppDelegateN
 
     // Set the App Group identifier.
     MXSDKOptions *sdkOptions = [MXSDKOptions sharedInstance];
-    sdkOptions.applicationGroupIdentifier = @"group.care.amp";
+    sdkOptions.applicationGroupIdentifier = @"group.care.amp.corona";
 
     // Redirect NSLogs to files only if we are not debugging
     if (!isatty(STDERR_FILENO))
