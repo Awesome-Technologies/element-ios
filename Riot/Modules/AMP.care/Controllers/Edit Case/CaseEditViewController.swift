@@ -477,10 +477,9 @@ class CaseEditViewController: CaseDetailViewController, RowEditingDelegate, Pict
         case .recipient:
             let viewController = ContactsTableViewController()
             viewController.contactsTableViewControllerDelegate = self
+            viewController.showSearch(false)
             
             let dataSource = ContactsDataSource(matrixSession: session)
-            let url = URL(string: session.matrixRestClient.homeserver)
-            dataSource?.search(withPattern: url?.host, forceReset: true)
             viewController.displayList(dataSource)
             
             vc = viewController

@@ -477,17 +477,6 @@
         // Keep visible the header for the both contact sections, even if their are empty.
         filteredMatrixContactsSection = count++;
     }
-    else
-    {
-        // Display by default the full address book ordered alphabetically, mixing Matrix enabled and non-Matrix enabled users.
-        if (!filteredLocalContacts)
-        {
-            filteredLocalContacts = [self unfilteredLocalContactsArray];
-        }
-        
-        // Keep visible the local contact header, even if the section is empty.
-        filteredLocalContactsSection = count++;
-    }
     
     
     
