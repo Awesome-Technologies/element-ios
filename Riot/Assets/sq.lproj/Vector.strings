@@ -48,7 +48,7 @@
 "auth_repeat_password_placeholder" = "Rijepeni fjalëkalimin";
 "auth_repeat_new_password_placeholder" = "Ripohoni fjalëkalimin tuaj të ri";
 "auth_home_server_placeholder" = "URL (p.sh., https://matrix.org)";
-"auth_identity_server_placeholder" = "URL (p.sh., https://matrix.org)";
+"auth_identity_server_placeholder" = "URL (p.sh., https://vector.im)";
 "auth_invalid_login_param" = "Emër përdoruesi dhe/ose fjalëkalim i pasaktë";
 "auth_invalid_password" = "Fjalëkalim shumë i shkurtër (min 6)";
 "auth_invalid_email" = "Kjo s’duket si adresë email e vlefshme";
@@ -266,9 +266,9 @@
 "settings_new_password" = "fjalëkalim i ri";
 "settings_confirm_password" = "ripohoni fjalëkalimin";
 "settings_password_updated" = "Fjalëkalimi juaj u përditësua";
-"settings_crypto_device_name" = "Emër pajisjeje: ";
+"settings_crypto_device_name" = "Emër Publik Pajisjeje: ";
 "settings_crypto_device_id" = "\nID pajisjeje: ";
-"settings_crypto_device_key" = "\nKyç pajisjeje: ";
+"settings_crypto_device_key" = "\nKyç pajisjeje:\n";
 "settings_crypto_export" = "Eksporto kyçe";
 "settings_crypto_blacklist_unverified_devices" = "Fshehtëzoje vetëm për pajisje të verifikuara";
 // Room Details
@@ -746,7 +746,7 @@
 "device_verification_emoji_santa" = "Babagjyshi i Vitit të Ri";
 "device_verification_emoji_umbrella" = "Ombrellë";
 "device_verification_emoji_hourglass" = "Klepsidër";
-"device_verification_emoji_clock" = "Klasë";
+"device_verification_emoji_clock" = "Orë";
 "device_verification_emoji_gift" = "Dhuratë";
 "device_verification_emoji_light bulb" = "Llambë";
 "device_verification_emoji_book" = "Libër";
@@ -770,7 +770,7 @@
 "device_verification_emoji_anchor" = "Spirancë";
 "device_verification_emoji_headphones" = "Kufje";
 "device_verification_emoji_folder" = "Dosje";
-"event_formatter_message_edited_mention" = "(U përpunua)";
+"event_formatter_message_edited_mention" = "(u përpunua)";
 // Widget
 "widget_no_integrations_server_configured" = "S’ka të formësuar shërbyes integrimesh";
 "widget_integrations_server_failed_to_connect" = "S’u arrit të lidhej me shërbyes integrimesh";
@@ -778,3 +778,158 @@
 "room_event_action_reaction_show_all" = "Shfaqi krejt";
 "room_event_action_reaction_show_less" = "Shfaq më pak";
 "room_message_edits_history_title" = "Përpunime mesazhi";
+"auth_softlogout_signed_out" = "Keni bërë dalje";
+"auth_softlogout_sign_in" = "Hyni";
+"auth_softlogout_reason" = "Përgjegjësi i shërbyesit tuaj Home (%1$@) ka bërë daljen tuaj nga llogaria juaj %2$@ (%3$@).";
+"auth_softlogout_recover_encryption_keys" = "Bëni hyrjen, që të rimerrni kyçe fshehtëzimi të depozituar përjashtimisht në këtë pajisje. Do t’ju duhen për të lexuar krejt mesazhet tuaj të siguruar në çfarëdo pajisje.";
+"auth_softlogout_clear_data" = "Spastro të dhëna personale";
+"auth_softlogout_clear_data_message_1" = "Kujdes: Të dhënat tuaja personale (përfshi kyçe fshehtëzimi) janë ende të depozituara në këtë pajisje.";
+"auth_softlogout_clear_data_message_2" = "Spastrojini, nëse keni përfunduar së përdoruri këtë pajisje, ose dëshironi të hyni në një llogari tjetër.";
+"auth_softlogout_clear_data_button" = "Spastro krejt të dhënat";
+"auth_softlogout_clear_data_sign_out_title" = "Jeni i sigurt?";
+"auth_softlogout_clear_data_sign_out_msg" = "Jeni i sigurt se doni të spastrohen krejt të dhënat e depozituara në këtë pajisje? Që të mund të hyni te të dhëna të llogarisë tuaj dhe te mesazhe, bëni sërish hyrjen.";
+"auth_softlogout_clear_data_sign_out" = "Dilni";
+"room_event_action_reaction_history" = "Historik reagimesh";
+"room_action_camera" = "Bëni foto ose video";
+"room_action_send_file" = "Dërgoni kartelë";
+// Media picker
+"media_picker_title" = "Mediatekë";
+// Image picker
+"image_picker_action_camera" = "Bëni një foto";
+"image_picker_action_library" = "Zgjidhni prej biblioteke";
+"camera_unavailable" = "Kamera në pajisjen tuaj s’është e përdorshme";
+"photo_library_access_not_granted" = "%@ s’ka leje të hyjë në fototekë, ju lutemi, ndryshoni rregullimet e privatësisë";
+"device_verification_emoji_spanner" = "Çelës";
+"device_verification_emoji_lock" = "Dry";
+"device_verification_emoji_pin" = "Fiksoje";
+// MARK: File upload
+"file_upload_error_title" = "Ngarkim kartele";
+"file_upload_error_unsupported_file_type_message" = "Lloj i pambuluar kartele.";
+// MARK: Emoji picker
+"emoji_picker_title" = "Reagime";
+"emoji_picker_people_category" = "Emotikone & Njerëz";
+"emoji_picker_nature_category" = "Kafshë & Natyrë";
+"emoji_picker_foods_category" = "Ushqim & Pije";
+"emoji_picker_activity_category" = "Veprimtari";
+"emoji_picker_places_category" = "Udhëtim & Vende";
+"emoji_picker_objects_category" = "Objekte";
+"emoji_picker_symbols_category" = "Simbole";
+"emoji_picker_flags_category" = "Flamuj";
+// MARK: Reaction history
+"reaction_history_title" = "Reagime";
+"auth_forgot_password_error_no_configured_identity_server" = "S’ka shërbyes identitetesh të formësuar: shtoni një të tillë që të ricaktoni fjalëkalimin tuaj.";
+"room_creation_error_invite_user_by_email_without_identity_server" = "S’ka shërbyes identitetesh të formësua, ndaj s’mund të shtoni një pjesëmarrës me një email.";
+"room_participants_start_new_chat_error_using_user_email_without_identity_server" = "S’ka shërbyes identitetesh të formësuar, ndaj s’mund të nisni një fjalosje me një kontakt duke përdorur një email.";
+// Service terms
+"service_terms_modal_title" = "Kushte Shërbimi";
+"service_terms_modal_message" = "Që të vazhdohet, lypset të pranoni kushtet e këtij shërbimi (%@).";
+"service_terms_modal_accept_button" = "Pranoji";
+"service_terms_modal_description_for_identity_server" = "Jini i zbulueshëm nga të tjerët";
+"service_terms_modal_description_for_integration_manager" = "Përdorni Robotë, ura, widget-e dhe paketa ngjitësish";
+"room_participants_remove_third_party_invite_prompt_msg" = "Jeni i sigurt se doni të shfuqizohet kjo ftesë?";
+// Errors
+"error_user_already_logged_in" = "Duket se po rrekeni të lidheni me një tjetër shërbyes Home. Doni të dilet nga llogaria?";
+"room_accessiblity_scroll_to_bottom" = "Rrëshqitni drejt fundit";
+"room_accessibility_search" = "Kërko";
+"room_accessibility_integrations" = "Integrime";
+"room_accessibility_upload" = "Ngarkoni";
+"room_accessibility_call" = "Thirrje";
+"room_accessibility_hangup" = "Mbylle";
+"media_type_accessibility_image" = "Figurë";
+"media_type_accessibility_audio" = "Audio";
+"media_type_accessibility_video" = "Video";
+"media_type_accessibility_location" = "Vendndodhje";
+"media_type_accessibility_file" = "Kartelë";
+"media_type_accessibility_sticker" = "Ngjitës";
+"auth_add_email_message_2" = "Caktoni një email për rimarrje llogarie, dhe që më vonë të jeni (opsionale) i zbulueshëm nga persona që ju njohin.";
+"auth_add_phone_message_2" = "Caktoni një telefon, dhe jini më vonë i zbulueshëm nga persona që ju njohin.";
+"auth_add_email_phone_message_2" = "Caktoni një email për rimarrje llogarie. Përdorni më vonë email ose telefon që të jeni (opsionale) i zbulueshëm nga persona që ju njohin.";
+"auth_email_is_required" = "S’ka të formësuar shërbyes identitetesh, ndaj s’mund të shtoni adresë email që të mund të ricaktoni fjalëkalimin tuaj në të ardhmen.";
+"auth_phone_is_required" = "S’ka të formësuar shërbyes identitetesh, ndaj s’mund të shtoni numër telefoni që të mund të ricaktoni fjalëkalimin tuaj në të ardhmen.";
+"auth_reset_password_error_is_required" = "S’ka të formësuar shërbyes identitetesh: shtoni një të tillë që nga mundësitë rreth shërbyesit, që të ricaktoni fjalëkalimin tuaj.";
+"contacts_address_book_no_identity_server" = "S’ka të formësuar shërbyes identitetesh";
+"settings_discovery_settings" = "ZBULIM";
+"settings_identity_server_settings" = "SHËRBYES IDENTITETESH";
+"settings_three_pids_management_information_part1" = "Administroni cilat adresa email apo numra telefonash mund të përdorni për të bërë hyrjen ose për të rimarrë llogarinë tuaj këtu. Kontrolloni cilët mund t’ju gjejnë ";
+"settings_three_pids_management_information_part2" = "Zbulim";
+"settings_three_pids_management_information_part3" = ".";
+"settings_add_3pid_password_title_email" = "Shtoni adresë email";
+"settings_add_3pid_password_title_msidsn" = "Shtoni numër telefoni";
+"settings_add_3pid_password_message" = "Që të vazhdohet, ju lutemi, jepni fjalëkalimin tuaj";
+"settings_add_3pid_invalid_password_message" = "Fjalëkalim i pavlefshëm";
+"settings_devices_description" = "Emri publik i një pajisjeje është i dukshëm për persona me të cilët komunikoni";
+"settings_discovery_no_identity_server" = "S’po përdorni ndonjë shërbyes identitetesh. Që të jeni i zbulueshëm nga kontakte ekzistuese që njihni, shtoni një të tillë.";
+"settings_discovery_terms_not_signed" = "Pajtohuni me Kushtet e Shërbimit të Shërbyesit të Identiteteve që t’i lejoni vetes të jeni i zbulueshëm përmes adrese email ose numri telefoni.";
+"settings_discovery_three_pids_management_information_part1" = "Administroni cilat adresa email ose numra telefonash mund të përdorin përdoruesit e tjerë për t’ju zbuluar dhe ftuar në dhoma. Shtoni ose hiqni prej kësaj liste adresa email ose numra telefonash ";
+"settings_discovery_three_pids_management_information_part2" = "Rregullime Përdoruesi";
+"settings_discovery_three_pids_management_information_part3" = ".";
+"settings_discovery_error_message" = "Ndodhi një gabim. Ju lutemi, riprovoni.";
+"settings_discovery_three_pid_details_title_email" = "Administroni email";
+"settings_discovery_three_pid_details_information_email" = "Administroni parapëlqime për këtë adresë email, të cilët përdorues të tjerë mund ta përdorin për t’ju zbuluar dhe ftuar në dhoma. Shtoni ose hiqni adresa email te Llogaritë.";
+"settings_discovery_three_pid_details_title_phone_number" = "Administroni numër telefoni";
+"settings_discovery_three_pid_details_information_phone_number" = "Administroni parapëlqime për këtë numër telefoni, të cilin mund ta përdorin përdorues të tjerë për t’ju zbuluar dhe ftuar në dhoma. Shtoni ose hiqni numra telefonash te Llogaritë.";
+"settings_discovery_three_pid_details_share_action" = "Ndajeni me të tjerë";
+"settings_discovery_three_pid_details_revoke_action" = "Shfuqizoje";
+"settings_discovery_three_pid_details_cancel_email_validation_action" = "Anuloni vlerësim email-i";
+"settings_discovery_three_pid_details_enter_sms_code_action" = "Jepni kod SMS aktivizimi";
+"settings_identity_server_description" = "Duke përdorur shërbyesin e identiteteve më sipër mund të zbuloni dhe të jeni i zbulueshëm nga kontakte ekzistuese që njihni.";
+"settings_identity_server_no_is" = "S’ka të formësuar shërbyes identitetesh";
+"settings_identity_server_no_is_description" = "S’po përdorni ndonjë shërbyes identitetesh. Që të zbuloni dhe të jeni i zbulueshëm nga kontakte ekzistuese që njihni, shtoni një më sipër.";
+// Identity server settings
+"identity_server_settings_title" = "Shërbyes Identitetesh";
+"identity_server_settings_description" = "Po përdorni %@ që të zbuloni dhe të jeni i zbulueshëm nga kontakte ekzistuese që dini.";
+"identity_server_settings_no_is_description" = "S’po përdorni ndonjë shërbyes identitetesh. Që të zbuloni dhe të jeni i zbulueshëm nga kontakte ekzistuese, shtoni një më sipër.";
+"identity_server_settings_place_holder" = "Jepni një shërbyes identitetesh";
+"identity_server_settings_add" = "Shtoje";
+"identity_server_settings_change" = "Ndryshojeni";
+"identity_server_settings_disconnect_info" = "Shkëputja nga shërbyesi juaj i identiteteve do të thotë se s’do të jeni të zbulueshëm nga përdorues të tjerë dhe as të jeni në gjendje të ftoni të tjerë përmes email-i ose telefoni.";
+"identity_server_settings_disconnect" = "Shkëputu";
+"identity_server_settings_alert_no_terms_title" = "Shërbyesi i identiteteve s’ka kushte shërbimi";
+"identity_server_settings_alert_no_terms" = "Shërbyesi i identiteteve që keni zgjedhur nuk ka ndonjë kusht shërbimesh. Vazhdoni vetëm nëse i zini besë të zotit të shërbyesit.";
+"identity_server_settings_alert_change_title" = "Ndryshoni shërbyes identitetesh";
+"identity_server_settings_alert_change" = "Të bëhet shkëputja nga shërbyesi i identiteteve %1$@ dhe të lidhet me %2$@?";
+"identity_server_settings_alert_disconnect_title" = "Shkëpute shërbyesin e identiteteve";
+"identity_server_settings_alert_disconnect" = "Të bëhet shkëputja nga shërbyesi i identiteteve %@?";
+"identity_server_settings_alert_disconnect_button" = "Shkëpute";
+"identity_server_settings_alert_disconnect_still_sharing_3pid" = "Ende ndani me të tjerët të dhëna tuajat personale në shërbyesin e identiteteve %@.\n\nKëshillojmë që të hiqni prej shërbyesit të identiteteve adresat tuaj email dhe numrat tuaj të telefonave përpara se të bëni shkëputjen.";
+"identity_server_settings_alert_disconnect_still_sharing_3pid_button" = "Shkëputu, sido qoftë";
+"identity_server_settings_alert_error_terms_not_accepted" = "Duhet të pranoni termat e %@ që ta caktoni si shërbyes identitetesh.";
+"identity_server_settings_alert_error_invalid_identity_server" = "%@ s’është shërbyes i vlershëm identitetesh.";
+"call_no_stun_server_error_title" = "Thirrja dështoi për shkak shërbyesi të keqformësuar";
+"call_no_stun_server_error_message_1" = "Që thirrjet të funksionojnë pa probleme, ju lutemi, kërkojini përgjegjësit të shërbyesit tuaj Home %@ të formësojë një shërbyes TURN.";
+"call_no_stun_server_error_message_2" = "Ndryshe, mund të provoni të përdorni shërbyesin publik te %@, por kjo s’do të jetë edhe aq e qëndrueshme, dhe adresa juaj IP do t’i bëhet e njohur atij shërbyesi. Këtë mund ta bëni edhe që nga Rregullimet";
+"call_no_stun_server_error_use_fallback_button" = "Provoni të përdorni %@";
+// Widget Picker
+"widget_picker_title" = "Integrime";
+"service_terms_modal_decline_button" = "Hidhe poshtë";
+"service_terms_modal_description_for_identity_server_1" = "Gjeni të tjerë përmes telefoni ose email-i";
+"service_terms_modal_description_for_identity_server_2" = "Bëhuni i gjetshëm përmes telefoni  ose email-i";
+// Service terms - Variant for identity server when displayed out of a context
+"service_terms_modal_title_identity_server" = "Zbulim kontaktesh";
+"service_terms_modal_message_identity_server" = "Që të zbuloni kontakte, pranoni kushtet e shërbyesit të identiteteve (%@).";
+// Generic errors
+"error_invite_3pid_with_no_identity_server" = "Që të ftoni me email, shtoni një shërbyes identitetesh, që nga rregullimet tuaja.";
+"error_not_supported_on_mobile" = "Këtë s’mund ta bëni nga %@ për celular.";
+// Accessibility
+"accessibility_checkbox_label" = "kutizë";
+"settings_integrations" = "INTEGRIME";
+"settings_integrations_allow_button" = "Administroni integrime";
+"settings_integrations_allow_description" = "Përdorni një Përgjegjës Integrimesh (%@) që të administroni robotë, ura, widget-e dhe paketa ngjitësish.\n\nPërgjegjësit e Integrimeve marrin të dhëna formësimi dhe mund të ndryshojnë widget-e, të dërgojnë ftesa për në dhoma dhe të caktojnë shkallë pushteti në emrin tuaj.";
+"widget_menu_refresh" = "Rifreskoje";
+"widget_menu_open_outside" = "Hape në shfletues";
+"widget_menu_revoke_permission" = "Shfuqizo hyrje për mua";
+"widget_menu_remove" = "Hiqe për këdo";
+"widget_integration_manager_disabled" = "Lypset të aktivizoni Përgjegjës Integrimesh te rregullimet";
+"widget_picker_manage_integrations" = "Administroni integrime…";
+// Room widget permissions
+"room_widget_permission_title" = "Ngarko Widget";
+"room_widget_permission_creator_info_title" = "Ky <em>widget</em> qe shtuar nga:";
+"room_widget_permission_webview_information_title" = "Përdorimi i tij mund të sjellë depozitim <em>cookies</em> dhe ndarje të dhënash me %@:\n";
+"room_widget_permission_information_title" = "Përdorimi i tij mund të sjellë ndarje të dhënash me %@:\n";
+"room_widget_permission_display_name_permission" = "Emri juaj në ekran";
+"room_widget_permission_avatar_url_permission" = "URL-ja e avatarit tuaj";
+"room_widget_permission_user_id_permission" = "ID-ja juaj e përdoruesit";
+"room_widget_permission_theme_permission" = "Tema juaj";
+"room_widget_permission_widget_id_permission" = "ID Widget-i";
+"room_widget_permission_room_id_permission" = "ID Dhome";
+"service_terms_modal_policy_checkbox_accessibility_hint" = "I vini shenjë që të pranohet %@";

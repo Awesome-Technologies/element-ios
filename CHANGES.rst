@@ -1,3 +1,111 @@
+Changes in 0.10.4 (2019-12-11)
+===============================================
+
+Improvements:
+ * ON/OFF Cross-signing development in a Lab setting (#2855).
+
+Bug fix:
+ * Device Verification: Stay in infinite waiting (#2878).
+
+Changes in 0.10.3 (2019-12-05)
+===============================================
+
+Improvements:
+ * Upgrade MatrixKit version ([v0.11.3](https://github.com/matrix-org/matrix-ios-kit/releases/tag/v0.11.3)).
+ * Integrations: Use the integrations manager provided by the homeserver admin via .well-known (#2815).
+ * i18n: Add Welsh (cy).
+ * i18n: Add Italian (it).
+ * SerializationService: Add deserialisation of Any.
+ * RiotSharedSettings: New class to handle user settings shared accross Riot apps.
+ * Widgets: Check user permission before opening a widget (#2833).
+ * Widgets: Check user permission before opening jitsi (#2842).
+ * Widgets: Add a contextual menu to refresh, open outside, remove and revoke the permission (#2834).
+ * Settings: Add an option for disabling use of the integration manager (#2843).
+ * Jitsi: Display room name, user name and user avatar in the conference screen.
+ * Improve UNNotificationSound compatibility with MA4 (IMA/ADPCM) file, thanks to @pixlwave (PR #2847).
+
+Bug fix:
+ * Accessibility: Make checkboxes accessible in terms of service screen.
+ * RoomVC: Tapping on location links gives 'unable to open link' (#2803).
+ * RoomVC: Reply to links fail with 'unable to open link' (#2804).
+
+Changes in 0.10.2 (2019-11-15)
+===============================================
+
+Bug fix:
+ * Integrations: Fix terms consent display when they are required.
+
+Changes in 0.10.1 (2019-11-06)
+===============================================
+
+Improvements:
+ * Upgrade MatrixKit version ([v0.11.2](https://github.com/matrix-org/matrix-ios-kit/releases/tag/v0.11.2)).
+ * Settings: Add User-Interactive Auth for adding email and msidsn to user's account (vector-im/riot-ios#2744).
+ * Improve UIApplication background task management.
+
+Bug fix:
+ * Room cell: The states of direct chat and favorite buttons are reversed in the menu (#2788).
+ * Pasteboard: Fix a crash when passing a nil object to UIPasteboard.
+ * RoomVC: Fix crash occurring when tap on an unsent media with retrieved event equal to nil.
+ * Emoji Picker: Background color is not white (#2630).
+ * Device Verification: Selecting 'start verification' from a keyshare request wedges you in an entirely blank verification screen (#2504).
+ * Tab bar icons are not centered vertically on iOS 13 (#2802).
+
+Changes in 0.10.0 (2019-10-11)
+===============================================
+
+Improvements:
+ * Upgrade MatrixKit version ([v0.11.1](https://github.com/matrix-org/matrix-ios-kit/releases/tag/v0.11.1)).
+ * Upgrade MatrixKit version ([v0.11.0](https://github.com/matrix-org/matrix-ios-kit/releases/tag/v0.11.0)).
+ * Widgets: Whitelist [MSC1961](https://github.com/matrix-org/matrix-doc/pull/1961) widget urls.
+ * Settings: CALLS section: Always display the CallKit option but grey it out when not available (only on China).
+ * VoIP: Fallback to matrix.org STUN server with a confirmation dialog (#2646).
+ * Widgets: Whitelist [MSC1961](https://github.com/matrix-org/matrix-doc/pull/1961) widget urls
+ * i18n: Enable Polish (pl).
+ * Room members: third-party invites can now be revoked
+ * Privacy: Prompt to accept integration manager policies on use (#2600).
+ * Privacy: Make clear that device names are publicly readable (#2662).
+ * Privacy: Remove the ability to set an IS at login/registration (#2661).
+ * Privacy: Remove the bind true flag from 3PID calls on registration (#2648).
+ * Privacy: Remove the bind true flag from 3PID adds in settings (#2650).
+ * Privacy: Email help text on registration should be updated without binding (#2675).
+ * Privacy: Use MXIdentityService to perform identity server requests (#2647).
+ * Privacy: Support identity server v2 API authentication (#2603).
+ * Privacy: Use the hashed v2 lookup API for 3PIDs (#2652).
+ * Privacy: Prompt to accept identity server policies on firt use (#2602).
+ * Privacy: Settings: Allow adding 3pids when no IS (#2659).
+ * Privacy: Allow password reset when no IS (#2658).
+ * Privacy: Allow email registration when no IS (#2657).
+ * Privacy: Settings: Add a Discovery section (#2606).
+ * Privacy: Make NSContactsUsageDescription more generic and mention that 3pids are now uploaded hashed (#2521).
+ * Privacy: Settings: Add IDENTITY SERVER section (#2604).
+ * Privacy: Make IS terms wording clearer when we fallback to vector.im (#2760).
+
+Bug fix:
+ * Theme: Make button theming work (#2734).
+
+Changes in 0.9.5 (2019-09-20)
+===============================================
+
+Bug fix:
+ * VoiceOver: RoomVC: Fix some missing accessibility labels for buttons (#2722).
+ * VoiceOver: RoomVC: Make VoiceOver focus on the contextual menu when selecting an event (#2721).
+ * VoiceOver: RoomVC: Do not lose the focus on the timeline when paginating (with 3 fingers) (#2720).
+ * VoiceOver: RoomVC: No VoiceOver on media (#2726).
+
+Changes in 0.9.4 (2019-09-13)
+===============================================
+
+Improvements:
+ * Authentication: Improve the webview used for SSO (#2715).
+
+Changes in 0.9.3 (2019-09-10)
+===============================================
+
+Improvements:
+ * Support Riot configuration link to customise HS and IS (#2703).
+ * Authentication: Create a way to filter and prioritise flows (with handleSupportedFlowsInAuthenticationSession).
+
 Changes in 0.9.2 (2019-08-08)
 ===============================================
 
@@ -7,7 +115,8 @@ Improvements:
  * Reactions: Emoji picker (#2370).
  * Widgets: Whitelist https://scalar-staging.vector.im/api (#2612).
  * Reactions: Show who reacted (#2591).
- * Media picking: Use native camera and use separate actions for camera and media picker (#638). 
+ * Media picking: Use native camera and use separate actions for camera and media picker (#638).
+ * Ability to disable all identity server functionality via the config file (#2643).
 
 Bug fix:
  * Crash when leaving settings due to backup section refresh animation.

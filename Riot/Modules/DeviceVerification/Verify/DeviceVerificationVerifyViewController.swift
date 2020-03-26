@@ -70,6 +70,7 @@ final class DeviceVerificationVerifyViewController: UIViewController {
         self.update(theme: self.theme)
         
         self.viewModel.viewDelegate = self
+        self.viewModel.process(viewAction: .loadData)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -180,6 +181,8 @@ final class DeviceVerificationVerifyViewController: UIViewController {
             self.errorPresenter.presentError(from: self, title: "", message: VectorL10n.deviceVerificationCancelledByMe(reason.humanReadable), animated: true) {
                 self.viewModel.process(viewAction: .cancel)
             }
+        } else {
+            self.activityPresenter.removeCurrentActivityIndicator(animated: true)
         }
     }
 

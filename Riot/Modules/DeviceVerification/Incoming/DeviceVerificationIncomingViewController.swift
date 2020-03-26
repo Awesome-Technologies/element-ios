@@ -74,6 +74,13 @@ final class DeviceVerificationIncomingViewController: UIViewController {
         self.update(theme: self.theme)
         
         self.viewModel.viewDelegate = self
+        self.viewModel.process(viewAction: .loadData)
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        self.avatarImageView.layer.cornerRadius = avatarImageView.frame.size.width / 2
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -129,7 +136,6 @@ final class DeviceVerificationIncomingViewController: UIViewController {
             avatarImageView.enableInMemoryCache = true
             avatarImageView.setImageURI(self.viewModel.avatarUrl, withType: nil, andImageOrientation: .up, previewImage: defaultavatarImage, mediaManager: self.viewModel.mediaManager)
 
-            avatarImageView.layer.cornerRadius = avatarImageView.frame.size.width / 2
             avatarImageView.clipsToBounds = true
         }
 
@@ -175,6 +181,8 @@ final class DeviceVerificationIncomingViewController: UIViewController {
             self.errorPresenter.presentError(from: self, title: "", message: VectorL10n.deviceVerificationCancelledByMe(reason.humanReadable), animated: true) {
                 self.viewModel.process(viewAction: .cancel)
             }
+        } else {
+            self.activityPresenter.removeCurrentActivityIndicator(animated: true)
         }
     }
     

@@ -134,6 +134,10 @@ internal enum AMPcareL10n {
   internal static var editCaseLastDefecationTitle: String { 
     return AMPcareL10n.tr("AMPcare", "edit_case_last-defecation_title") 
   }
+  /// Time of measurement
+  internal static var editCaseMeasurementDateLabel: String { 
+    return AMPcareL10n.tr("AMPcare", "edit_case_measurement_date_label") 
+  }
   /// Misc…
   internal static var editCaseMiscPlaceholder: String { 
     return AMPcareL10n.tr("AMPcare", "edit_case_misc_placeholder") 
@@ -149,6 +153,10 @@ internal enum AMPcareL10n {
   /// Note
   internal static var editCaseNoteTitle: String { 
     return AMPcareL10n.tr("AMPcare", "edit_case_note_title") 
+  }
+  /// Oxygen Saturation
+  internal static var editCaseOxygenTitle: String { 
+    return AMPcareL10n.tr("AMPcare", "edit_case_oxygen_title") 
   }
   /// Pain…
   internal static var editCasePainPlaceholder: String { 
@@ -173,6 +181,10 @@ internal enum AMPcareL10n {
   /// Recipient
   internal static var editCaseRecipientTitle: String { 
     return AMPcareL10n.tr("AMPcare", "edit_case_recipient_title") 
+  }
+  /// Remove date
+  internal static var editCaseRemoveDate: String { 
+    return AMPcareL10n.tr("AMPcare", "edit_case_remove_date") 
   }
   /// Requester
   internal static var editCaseRequesterTitle: String { 
@@ -233,6 +245,10 @@ internal enum AMPcareL10n {
   /// Note
   internal static var note: String { 
     return AMPcareL10n.tr("AMPcare", "note") 
+  }
+  /// Oxygen Saturation
+  internal static var oxygen: String { 
+    return AMPcareL10n.tr("AMPcare", "oxygen") 
   }
   /// Pain
   internal static var pain: String { 
