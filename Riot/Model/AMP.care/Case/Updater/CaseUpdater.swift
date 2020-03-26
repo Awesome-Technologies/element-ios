@@ -50,6 +50,8 @@ public class CaseUpdater: NSObject {
                     }
                 }
                 
+                dataSource.timeline.resetPagination()
+                
             }, failure: { error in
                 print("\(#function) Error paginating")
                 if let error = error {
