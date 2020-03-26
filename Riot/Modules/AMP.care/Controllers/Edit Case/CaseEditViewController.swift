@@ -480,6 +480,7 @@ class CaseEditViewController: CaseDetailViewController, RowEditingDelegate, Pict
             viewController.showSearch(false)
             
             let dataSource = ContactsDataSource(matrixSession: session)
+            dataSource?.forceRefresh()
             viewController.displayList(dataSource)
             
             vc = viewController
