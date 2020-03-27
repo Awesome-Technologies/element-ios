@@ -21,9 +21,9 @@
 	<key>matrixApps</key>
 	<false/>
 	<key>integrationsUiUrl</key>
-	<string>https://scalar.amp.chat/scalar-web/</string>
+	<string>https://dimension.test.amp.chat/riot</string>
 	<key>integrationsRestUrl</key>
-	<string>https://scalar.amp.chat/scalar/api</string>
+	<string>https://dimension.test.amp.chat/api/v1/scalar</string>
 	<key>jitsiServerUrl</key>
 	<string>https://jitsi.amp.chat/</string>
 	<key>piwik</key>
@@ -91,6 +91,6 @@
 	<key>termsAndConditionsFilePath</key>
 	<string>amp_terms_and_conditions</string>
 	<key>supportGroupCalls</key>
-	<true/>
+	<false/>
 </dict>
 </plist>

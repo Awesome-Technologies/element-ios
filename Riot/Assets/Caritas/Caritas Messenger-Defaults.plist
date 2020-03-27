@@ -21,9 +21,9 @@
 	<key>matrixApps</key>
 	<false/>
 	<key>integrationsUiUrl</key>
-	<string>https://scalar-staging.caritas.amp.care/scalar-web/</string>
+	<string>https://dimension.caritas.amp.care/riot</string>
 	<key>integrationsRestUrl</key>
-	<string>https://scalar-staging.caritas.amp.care/scalar/api</string>
+	<string>https://dimension.caritas.amp.care/api/v1/scalar</string>
 	<key>jitsiServerUrl</key>
 	<string>https://jitsi.caritas.amp.chat/</string>
 	<key>piwik</key>
@@ -92,6 +92,6 @@
 	<key>termsAndConditionsFilePath</key>
 	<string>caritas_terms_and_conditions</string>
 	<key>supportGroupCalls</key>
-	<true/>
+	<false/>
 </dict>
 </plist>
