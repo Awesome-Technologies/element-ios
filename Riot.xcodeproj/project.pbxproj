@@ -174,6 +174,7 @@
 		9705068722F3296B006CAF27 /* AnamnesisViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9705065F22F3296B006CAF27 /* AnamnesisViewController.swift */; };
 		9705068822F3296B006CAF27 /* CaseEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9705066022F3296B006CAF27 /* CaseEditViewController.swift */; };
 		9729203A242E7ACC009BCD14 /* copyright.html in Resources */ = {isa = PBXBuildFile; fileRef = 97292039242E7ACC009BCD14 /* copyright.html */; };
+		97292035242E61CC009BCD14 /* CasesDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97292034242E61CC009BCD14 /* CasesDataSource.swift */; };
 		97467B6B2304BF88004DE5AB /* AppIntentVocabulary.plist in Resources */ = {isa = PBXBuildFile; fileRef = 97467B692304BF88004DE5AB /* AppIntentVocabulary.plist */; };
 		97A031F422F48472002511B7 /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A031F322F48472002511B7 /* Observable.swift */; };
 		97A031F622F48511002511B7 /* WeakReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A031F522F48511002511B7 /* WeakReference.swift */; };
@@ -893,6 +894,7 @@
 		9705066022F3296B006CAF27 /* CaseEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CaseEditViewController.swift; sourceTree = "<group>"; };
 		97151D7F0F892081250D50A3 /* Pods_RiotPods_RiotShareExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RiotPods_RiotShareExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		97292039242E7ACC009BCD14 /* copyright.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = copyright.html; sourceTree = "<group>"; };
+		97292034242E61CC009BCD14 /* CasesDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CasesDataSource.swift; sourceTree = "<group>"; };
 		97467B6A2304BF88004DE5AB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = en; path = en.lproj/AppIntentVocabulary.plist; sourceTree = "<group>"; };
 		97467B6C2304BF96004DE5AB /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = de; path = de.lproj/AppIntentVocabulary.plist; sourceTree = "<group>"; };
 		97A031F322F48472002511B7 /* Observable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Observable.swift; sourceTree = "<group>"; };
@@ -2041,6 +2043,7 @@
 				97A031EF22F47C33002511B7 /* TableViewCell */,
 				9705063222F3296B006CAF27 /* CasesViewController.swift */,
 				9705063122F3296B006CAF27 /* CasesViewController.xib */,
+				97292034242E61CC009BCD14 /* CasesDataSource.swift */,
 			);
 			path = "Cases List";
 			sourceTree = "<group>";
@@ -4825,6 +4828,7 @@
 				B10CFBC32268D99D00A5842E /* JitsiService.swift in Sources */,
 				B1A6C10B23882B6C002882FD /* SlidingModalPresentationAnimator.swift in Sources */,
 				B1B558C120EF768F00210D55 /* RoomIncomingEncryptedAttachmentWithPaginationTitleBubbleCell.m in Sources */,
+				97292035242E61CC009BCD14 /* CasesDataSource.swift in Sources */,
 				97A031F822F48564002511B7 /* WeakSet.swift in Sources */,
 				B1B5573E20EE6C4D00210D55 /* RiotNavigationController.m in Sources */,
 				B1B5593B20EF7BAC00210D55 /* TableViewCellWithCheckBoxAndLabel.m in Sources */,

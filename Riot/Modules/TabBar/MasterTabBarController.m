@@ -280,7 +280,7 @@
         [_favouritesViewController displayList:recentsDataSource];
         [_peopleViewController displayList:recentsDataSource];
         [_roomsViewController displayList:recentsDataSource];
-        MXKRecentsDataSource *source = [[MXKRecentsDataSource alloc] initWithMatrixSession:mainSession];
+        CasesDataSource *source = [[CasesDataSource alloc] initWithMatrixSession:mainSession];
         [(CasesViewController *)self.viewControllers[TABBAR_CASES_INDEX] displayList:source];
         
         // Restore the right delegate of the shared recent data source.
