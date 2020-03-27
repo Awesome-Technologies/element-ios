@@ -4431,6 +4431,8 @@
         
         NSMutableArray *leftBarButtonItems = [NSMutableArray arrayWithArray: self.navigationItem.leftBarButtonItems];
         
+        self.navigationItem.leftItemsSupplementBackButton = YES;
+        
         if (missedCount)
         {
             // Refresh missed discussions count label
