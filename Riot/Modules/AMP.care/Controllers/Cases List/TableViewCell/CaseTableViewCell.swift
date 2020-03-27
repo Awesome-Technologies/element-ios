@@ -12,6 +12,7 @@ class CaseTableViewCell: MXKRecentTableViewCell, CaseListener {
     
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var patientNameLabel: UILabel!
+    @IBOutlet weak var otherSideNameLabel: UILabel!
     @IBOutlet weak var creationDateLabel: UILabel!
     @IBOutlet weak var severityView: UIView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
@@ -33,9 +34,26 @@ class CaseTableViewCell: MXKRecentTableViewCell, CaseListener {
     
     func updatePatientUserInterface() {
         if let patient = CaseManager.shared.getCase(for: room.roomId)?.patient, let name = patient.name, !name.isEmpty {
-            self.patientNameLabel.text = name
+            self.patientNameLabel.text = AMPcareL10n.caseListPatient(name)
         } else {
             self.patientNameLabel.text = "-"
+        }
+    }
+    
+    func updateOtherSideLabel(withCreationEvent event: MXEvent? = nil) {
+        guard let event = event, let createContent = MXRoomCreateContent(fromJSON: event.content),
+            let creator = room.mxSession.user(withUserId: createContent.creatorUserId) else {
+            self.otherSideNameLabel.isHidden = true
+            return
+        }
+        if creator.userId == room.mxSession.myUser.userId {
+            if let otherSide = room.mxSession.user(withUserId: room.directUserId) {
+                self.otherSideNameLabel.text = AMPcareL10n.caseListToOtherSide(otherSide.displayname)
+            } else {
+                self.otherSideNameLabel.text = AMPcareL10n.caseListToOtherSide(room.directUserId)
+            }
+        } else {
+            self.otherSideNameLabel.text = AMPcareL10n.caseListFromOtherSide(creator.displayname)
         }
     }
     
@@ -79,8 +97,11 @@ class CaseTableViewCell: MXKRecentTableViewCell, CaseListener {
                     
                     self.creationDateLabel.text = dateString
                     self.creationDateLabel.isHidden = false
+                    self.updateOtherSideLabel(withCreationEvent: event)
                 } else {
                     self.creationDateLabel.isHidden = true
+                    
+                    self.updateOtherSideLabel()
                 }
             }
         }
