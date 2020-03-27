@@ -173,6 +173,7 @@
 		9705068622F3296B006CAF27 /* AnamnesisViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9705065E22F3296B006CAF27 /* AnamnesisViewController.xib */; };
 		9705068722F3296B006CAF27 /* AnamnesisViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9705065F22F3296B006CAF27 /* AnamnesisViewController.swift */; };
 		9705068822F3296B006CAF27 /* CaseEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9705066022F3296B006CAF27 /* CaseEditViewController.swift */; };
+		9729203A242E7ACC009BCD14 /* copyright.html in Resources */ = {isa = PBXBuildFile; fileRef = 97292039242E7ACC009BCD14 /* copyright.html */; };
 		97467B6B2304BF88004DE5AB /* AppIntentVocabulary.plist in Resources */ = {isa = PBXBuildFile; fileRef = 97467B692304BF88004DE5AB /* AppIntentVocabulary.plist */; };
 		97A031F422F48472002511B7 /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A031F322F48472002511B7 /* Observable.swift */; };
 		97A031F622F48511002511B7 /* WeakReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A031F522F48511002511B7 /* WeakReference.swift */; };
@@ -891,6 +892,7 @@
 		9705065F22F3296B006CAF27 /* AnamnesisViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnamnesisViewController.swift; sourceTree = "<group>"; };
 		9705066022F3296B006CAF27 /* CaseEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CaseEditViewController.swift; sourceTree = "<group>"; };
 		97151D7F0F892081250D50A3 /* Pods_RiotPods_RiotShareExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RiotPods_RiotShareExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		97292039242E7ACC009BCD14 /* copyright.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = copyright.html; sourceTree = "<group>"; };
 		97467B6A2304BF88004DE5AB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = en; path = en.lproj/AppIntentVocabulary.plist; sourceTree = "<group>"; };
 		97467B6C2304BF96004DE5AB /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = de; path = de.lproj/AppIntentVocabulary.plist; sourceTree = "<group>"; };
 		97A031F322F48472002511B7 /* Observable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Observable.swift; sourceTree = "<group>"; };
@@ -4017,6 +4019,7 @@
 				97C8C33C242CDC9400BFC94A /* privacy_policy.html */,
 				97C8C33B242CDC9400BFC94A /* terms_and_conditions.html */,
 				F083BC0E1E7009EC00A9B29C /* third_party_licenses.html */,
+				97292039242E7ACC009BCD14 /* copyright.html */,
 				F083BC181E7009EC00A9B29C /* Riot-Defaults.plist */,
 				976D4B02233CC3FC00E9F8A7 /* GoogleService-Info.plist */,
 			);
@@ -4429,6 +4432,7 @@
 				B1D1BDA822BBAFC900831367 /* ReactionsMenuView.xib in Resources */,
 				97C8C33D242CDC9400BFC94A /* terms_and_conditions.html in Resources */,
 				32B1FEDB21A46F2C00637127 /* TermsView.xib in Resources */,
+				9729203A242E7ACC009BCD14 /* copyright.html in Resources */,
 				B1BD71BF238EA56700BA92E2 /* WidgetPermissionViewController.storyboard in Resources */,
 				B1DCC63222E7026F00625807 /* EmojiPickerHeaderView.xib in Resources */,
 				B1B5578E20EF568D00210D55 /* GroupInviteTableViewCell.xib in Resources */,

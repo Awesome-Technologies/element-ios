@@ -2964,7 +2964,9 @@ SettingsIdentityServerCoordinatorBridgePresenterDelegate>
         {
             if (row == OTHER_COPYRIGHT_INDEX)
             {
-                WebViewViewController *webViewViewController = [[WebViewViewController alloc] initWithURL:NSLocalizedStringFromTable(@"settings_copyright_url", @"Vector", nil)];
+                NSString *htmlFile = [[NSBundle mainBundle] pathForResource:@"copyright" ofType:@"html" inDirectory:nil];
+                
+                WebViewViewController *webViewViewController = [[WebViewViewController alloc] initWithLocalHTMLFile:htmlFile];
                 
                 webViewViewController.title = NSLocalizedStringFromTable(@"settings_copyright", @"Vector", nil);
                 
