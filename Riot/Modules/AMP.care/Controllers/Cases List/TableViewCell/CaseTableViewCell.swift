@@ -47,14 +47,29 @@ class CaseTableViewCell: MXKRecentTableViewCell, CaseListener {
             return
         }
         if creator.userId == room.mxSession.myUser.userId {
-            if let otherSide = room.mxSession.user(withUserId: room.directUserId) {
-                self.otherSideNameLabel.text = AMPcareL10n.caseListToOtherSide(otherSide.displayname)
+            if let otherSide = room.mxSession.user(withUserId: room.directUserId), let name = displayName(forUser: otherSide) {
+                self.otherSideNameLabel.text = AMPcareL10n.caseListToOtherSide(name)
+            } else if let directUserId = room.directUserId {
+                self.otherSideNameLabel.text = AMPcareL10n.caseListToOtherSide(directUserId)
             } else {
-                self.otherSideNameLabel.text = AMPcareL10n.caseListToOtherSide(room.directUserId)
+                self.otherSideNameLabel.text = ""
             }
+        } else if let name = displayName(forUser: creator) {
+            self.otherSideNameLabel.text = AMPcareL10n.caseListFromOtherSide(name)
         } else {
-            self.otherSideNameLabel.text = AMPcareL10n.caseListFromOtherSide(creator.displayname)
+            self.otherSideNameLabel.text = "-"
         }
+    }
+    
+    private func displayName(forUser user: MXUser!) -> String? {
+        guard user.displayname == nil else {
+            return user.displayname
+        }
+        if let userId = user.userId, let colonIndex = userId.lastIndex(of: ":"), let atIndex = userId.firstIndex(of: "@") {
+            let startIndex = userId.index(after: atIndex)
+            return String(userId[startIndex..<colonIndex])
+        }
+        return nil
     }
     
     fileprivate func unregisterListeners() {
