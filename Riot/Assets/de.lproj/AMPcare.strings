@@ -8,6 +8,9 @@
 
 // Cases
 "case_list_title" = "Fälle";
+"case_list_patient" = "Patient: %@";
+"case_list_from_other_side" = "Von: %@";
+"case_list_to_other_side" = "An: %@";
 
 "patient" = "Patient";
 "recipient" = "Empfänger";

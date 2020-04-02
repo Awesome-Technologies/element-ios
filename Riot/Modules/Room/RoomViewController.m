@@ -3293,7 +3293,16 @@
 
                if (granted)
                {
-                   [self roomInputToolbarView:toolbarView placeCallWithVideo2:video];
+                   // Make unknown devices known before placing the call
+                   MXRoom *room = self.roomDataSource.room;
+                   MXCrypto *crypto = room.mxSession.crypto;
+                   [crypto downloadKeys:@[room.directUserId, room.mxSession.myUser.userId] forceDownload:YES success:^(MXUsersDevicesMap<MXDeviceInfo *> *usersDevicesInfoMap) {
+                       [crypto setDevicesKnown:usersDevicesInfoMap complete:^{
+                           [self roomInputToolbarView:toolbarView placeCallWithVideo2:video];
+                       }];
+                   } failure:^(NSError *error) {
+                       NSLog(@"RoomViewController: Error: Couldn't make all devices known %@", error.localizedDescription);
+                   }];
                }
                else
                {
@@ -4421,6 +4430,8 @@
         missedHighlightCount = highlightCount;
         
         NSMutableArray *leftBarButtonItems = [NSMutableArray arrayWithArray: self.navigationItem.leftBarButtonItems];
+        
+        self.navigationItem.leftItemsSupplementBackButton = YES;
         
         if (missedCount)
         {

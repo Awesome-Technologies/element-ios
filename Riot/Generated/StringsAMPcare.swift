@@ -66,9 +66,21 @@ internal enum AMPcareL10n {
   internal static var caseDetailTitle: String { 
     return AMPcareL10n.tr("AMPcare", "case_detail_title") 
   }
+  /// From: %@
+  internal static func caseListFromOtherSide(_ p1: String) -> String {
+    return AMPcareL10n.tr("AMPcare", "case_list_from_other_side", p1)
+  }
+  /// Patient: %@
+  internal static func caseListPatient(_ p1: String) -> String {
+    return AMPcareL10n.tr("AMPcare", "case_list_patient", p1)
+  }
   /// Cases
   internal static var caseListTitle: String { 
     return AMPcareL10n.tr("AMPcare", "case_list_title") 
+  }
+  /// To: %@
+  internal static func caseListToOtherSide(_ p1: String) -> String {
+    return AMPcareL10n.tr("AMPcare", "case_list_to_other_side", p1)
   }
   /// Preview
   internal static var casePreviewTitle: String { 

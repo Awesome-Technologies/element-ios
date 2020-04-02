@@ -173,6 +173,8 @@
 		9705068622F3296B006CAF27 /* AnamnesisViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9705065E22F3296B006CAF27 /* AnamnesisViewController.xib */; };
 		9705068722F3296B006CAF27 /* AnamnesisViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9705065F22F3296B006CAF27 /* AnamnesisViewController.swift */; };
 		9705068822F3296B006CAF27 /* CaseEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9705066022F3296B006CAF27 /* CaseEditViewController.swift */; };
+		9729203A242E7ACC009BCD14 /* copyright.html in Resources */ = {isa = PBXBuildFile; fileRef = 97292039242E7ACC009BCD14 /* copyright.html */; };
+		97292035242E61CC009BCD14 /* CasesDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97292034242E61CC009BCD14 /* CasesDataSource.swift */; };
 		97467B6B2304BF88004DE5AB /* AppIntentVocabulary.plist in Resources */ = {isa = PBXBuildFile; fileRef = 97467B692304BF88004DE5AB /* AppIntentVocabulary.plist */; };
 		97A031F422F48472002511B7 /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A031F322F48472002511B7 /* Observable.swift */; };
 		97A031F622F48511002511B7 /* WeakReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A031F522F48511002511B7 /* WeakReference.swift */; };
@@ -182,6 +184,8 @@
 		97A031FE22F49236002511B7 /* CaseUpdaterDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A031FD22F49236002511B7 /* CaseUpdaterDelegate.swift */; };
 		97A9F210233CCF4900A2CD5E /* StringsAMPcare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A9F20F233CCF4800A2CD5E /* StringsAMPcare.swift */; };
 		976D4B03233CC3FC00E9F8A7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 976D4B02233CC3FC00E9F8A7 /* GoogleService-Info.plist */; };
+		97C8C33D242CDC9400BFC94A /* terms_and_conditions.html in Resources */ = {isa = PBXBuildFile; fileRef = 97C8C33B242CDC9400BFC94A /* terms_and_conditions.html */; };
+		97C8C33E242CDC9400BFC94A /* privacy_policy.html in Resources */ = {isa = PBXBuildFile; fileRef = 97C8C33C242CDC9400BFC94A /* privacy_policy.html */; };
 		97EB1F2322F84EEA00C569F2 /* AMPcare.strings in Resources */ = {isa = PBXBuildFile; fileRef = 97EB1F2122F84EE900C569F2 /* AMPcare.strings */; };
 		97EB1F2522F84F0900C569F2 /* AMPcare.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 97EB1F2722F84F0900C569F2 /* AMPcare.stringsdict */; };
 		97906E4E229EF354006B6DCD /* QRReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97906E4C229EF354006B6DCD /* QRReaderView.swift */; };
@@ -889,6 +893,8 @@
 		9705065F22F3296B006CAF27 /* AnamnesisViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnamnesisViewController.swift; sourceTree = "<group>"; };
 		9705066022F3296B006CAF27 /* CaseEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CaseEditViewController.swift; sourceTree = "<group>"; };
 		97151D7F0F892081250D50A3 /* Pods_RiotPods_RiotShareExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RiotPods_RiotShareExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		97292039242E7ACC009BCD14 /* copyright.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = copyright.html; sourceTree = "<group>"; };
+		97292034242E61CC009BCD14 /* CasesDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CasesDataSource.swift; sourceTree = "<group>"; };
 		97467B6A2304BF88004DE5AB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = en; path = en.lproj/AppIntentVocabulary.plist; sourceTree = "<group>"; };
 		97467B6C2304BF96004DE5AB /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = de; path = de.lproj/AppIntentVocabulary.plist; sourceTree = "<group>"; };
 		97A031F322F48472002511B7 /* Observable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Observable.swift; sourceTree = "<group>"; };
@@ -899,6 +905,8 @@
 		97A031FD22F49236002511B7 /* CaseUpdaterDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaseUpdaterDelegate.swift; sourceTree = "<group>"; };
 		97A9F20F233CCF4800A2CD5E /* StringsAMPcare.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringsAMPcare.swift; sourceTree = "<group>"; };
 		976D4B02233CC3FC00E9F8A7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		97C8C33B242CDC9400BFC94A /* terms_and_conditions.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = terms_and_conditions.html; sourceTree = "<group>"; };
+		97C8C33C242CDC9400BFC94A /* privacy_policy.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = privacy_policy.html; sourceTree = "<group>"; };
 		97EB1F2222F84EE900C569F2 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/AMPcare.strings; sourceTree = "<group>"; };
 		97EB1F2422F84EF000C569F2 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/AMPcare.strings; sourceTree = "<group>"; };
 		97EB1F2622F84F0900C569F2 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = de; path = de.lproj/AMPcare.stringsdict; sourceTree = "<group>"; };
@@ -2035,6 +2043,7 @@
 				97A031EF22F47C33002511B7 /* TableViewCell */,
 				9705063222F3296B006CAF27 /* CasesViewController.swift */,
 				9705063122F3296B006CAF27 /* CasesViewController.xib */,
+				97292034242E61CC009BCD14 /* CasesDataSource.swift */,
 			);
 			path = "Cases List";
 			sourceTree = "<group>";
@@ -4010,7 +4019,10 @@
 				B152C73422DF599B0041315A /* apple_emojis_data.json */,
 				B169329320F39E6200746532 /* LaunchScreen.storyboard */,
 				B169329520F39E6300746532 /* Main.storyboard */,
+				97C8C33C242CDC9400BFC94A /* privacy_policy.html */,
+				97C8C33B242CDC9400BFC94A /* terms_and_conditions.html */,
 				F083BC0E1E7009EC00A9B29C /* third_party_licenses.html */,
+				97292039242E7ACC009BCD14 /* copyright.html */,
 				F083BC181E7009EC00A9B29C /* Riot-Defaults.plist */,
 				976D4B02233CC3FC00E9F8A7 /* GoogleService-Info.plist */,
 			);
@@ -4421,7 +4433,9 @@
 				324A204F225FC571004FE8B0 /* DeviceVerificationIncomingViewController.storyboard in Resources */,
 				3232AB4B2256558300AD6A5C /* TemplateScreenViewController.storyboard in Resources */,
 				B1D1BDA822BBAFC900831367 /* ReactionsMenuView.xib in Resources */,
+				97C8C33D242CDC9400BFC94A /* terms_and_conditions.html in Resources */,
 				32B1FEDB21A46F2C00637127 /* TermsView.xib in Resources */,
+				9729203A242E7ACC009BCD14 /* copyright.html in Resources */,
 				B1BD71BF238EA56700BA92E2 /* WidgetPermissionViewController.storyboard in Resources */,
 				B1DCC63222E7026F00625807 /* EmojiPickerHeaderView.xib in Resources */,
 				B1B5578E20EF568D00210D55 /* GroupInviteTableViewCell.xib in Resources */,
@@ -4445,6 +4459,7 @@
 				9705067322F3296B006CAF27 /* CaseEditViewController.xib in Resources */,
 				B1B5577220EE702800210D55 /* JitsiViewController.xib in Resources */,
 				B1B557D720EF5EA900210D55 /* RoomActivitiesView.xib in Resources */,
+				97C8C33E242CDC9400BFC94A /* privacy_policy.html in Resources */,
 				B1098BF821ECFE65000DDA48 /* KeyBackupSetupPassphraseViewController.storyboard in Resources */,
 				F083BDF31E7009ED00A9B29C /* Images.xcassets in Resources */,
 				B1C562E4228C7C8D0037F12A /* RoomContextualMenuToolbarView.xib in Resources */,
@@ -4813,6 +4828,7 @@
 				B10CFBC32268D99D00A5842E /* JitsiService.swift in Sources */,
 				B1A6C10B23882B6C002882FD /* SlidingModalPresentationAnimator.swift in Sources */,
 				B1B558C120EF768F00210D55 /* RoomIncomingEncryptedAttachmentWithPaginationTitleBubbleCell.m in Sources */,
+				97292035242E61CC009BCD14 /* CasesDataSource.swift in Sources */,
 				97A031F822F48564002511B7 /* WeakSet.swift in Sources */,
 				B1B5573E20EE6C4D00210D55 /* RiotNavigationController.m in Sources */,
 				B1B5593B20EF7BAC00210D55 /* TableViewCellWithCheckBoxAndLabel.m in Sources */,

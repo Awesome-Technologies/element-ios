@@ -161,6 +161,11 @@
     NSMutableArray<MXKContact*> *unfilteredLocalContacts;
     NSMutableArray<MXKContact*> *unfilteredMatrixContacts;
     
+    NSString *host = [NSURL URLWithString:self.mxSession.matrixRestClient.homeserver].host;
+    if (host && !searchText.length) {
+        searchText = [[host componentsSeparatedByString:@"."] objectAtIndex:0];
+    }
+    
     searchProcessingCount++;
 
     if (!searchText.length)

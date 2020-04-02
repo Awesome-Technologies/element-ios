@@ -222,8 +222,7 @@ class CaseEditViewController: CaseDetailViewController, RowEditingDelegate, Pict
         self.navigationItem.rightBarButtonItem?.isEnabled = false
         print("\(#function) Creating new case.")
         
-        let parameters: [String: Any] = ["visibility": MXRoomDirectoryVisibility.public.identifier,
-                                         "preset": MXRoomPreset.publicChat.identifier,
+        let parameters: [String: Any] = ["preset": MXRoomPreset.trustedPrivateChat.identifier,
                                          "is_direct": true,
                                          "invite": [userId]]
         
@@ -480,6 +479,7 @@ class CaseEditViewController: CaseDetailViewController, RowEditingDelegate, Pict
             viewController.showSearch(false)
             
             let dataSource = ContactsDataSource(matrixSession: session)
+            dataSource?.forceRefresh()
             viewController.displayList(dataSource)
             
             vc = viewController
