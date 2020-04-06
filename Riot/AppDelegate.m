@@ -2692,6 +2692,18 @@ NSString *const AppDelegateDidValidateEmailNotificationClientSecretKey = @"AppDe
 {
     NSLog(@"[AppDelegate] initMatrixSessions");
     
+    // Add .dev suffix in debug mode
+    NSString *pushKitAppIdProd = [[NSUserDefaults standardUserDefaults] stringForKey:@"pushKitAppIdProd"];
+#ifdef DEBUG
+    if (![pushKitAppIdProd hasSuffix:@".dev"]) {
+        [[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat:@"%@%@", pushKitAppIdProd, @".dev"] forKey:@"pushKitAppIdProd"];
+    }
+#else
+    if ([pushKitAppIdProd hasSuffix:@".dev"]) {
+        [[NSUserDefaults standardUserDefaults] setObject:[pushKitAppIdProd substringToIndex:pushKitAppIdProd.length - 4] forKey:@"pushKitAppIdProd"];
+    }
+#endif
+    
     MXSDKOptions *sdkOptions = [MXSDKOptions sharedInstance];
     
     // Define the media cache version
