@@ -1671,6 +1671,9 @@ NSString *const AppDelegateDidValidateEmailNotificationClientSecretKey = @"AppDe
             }
 
             NSString *roomDisplayName = room.summary.displayname;
+            
+            Case *c = [CaseManager.shared getCaseFor:room.roomId];
+            NSString *caseTitle = [[c caseCore] title];
 
             // Display the room name only if it is different than the sender name
             if (roomDisplayName.length && ![roomDisplayName isEqualToString:eventSenderName])
@@ -1725,6 +1728,19 @@ NSString *const AppDelegateDidValidateEmailNotificationClientSecretKey = @"AppDe
                 notificationBody = [NSString stringWithFormat:NSLocalizedString(@"MSG_FROM_USER_IN_ROOM", nil), eventSenderName, roomDisplayName];
             else
                 notificationBody = [NSString stringWithFormat:NSLocalizedString(@"MSG_FROM_USER", nil), eventSenderName];
+        }
+        else if ([event.type isEqualToString: @"care.amp.observation"] || [event.type isEqualToString: @"care.amp.patient"])
+        {
+            Case *c = [CaseManager.shared getCaseFor:room.roomId];
+            NSString *caseTitle = [[c caseCore] title];
+            if (caseTitle.length)
+            {
+                notificationBody = [NSString stringWithFormat:NSLocalizedStringFromTable(@"UPDATED_CASE_DATA_IN_CASE", @"AMPcare", nil), caseTitle];
+            }
+            else
+            {
+                notificationBody = [NSString stringWithFormat:NSLocalizedStringFromTable(@"UPDATED_CASE_DATA_FROM_USER", @"AMPcare", nil), eventSenderName];
+            }
         }
 
         onComplete(notificationBody);
@@ -1892,6 +1908,21 @@ NSString *const AppDelegateDidValidateEmailNotificationClientSecretKey = @"AppDe
             }
             
             notificationBody = [NSString localizedUserNotificationStringForKey:@"STICKER_FROM_USER" arguments:@[eventSenderName]];
+        }
+        else if ([event.type isEqualToString: @"care.amp.observation"] || [event.type isEqualToString: @"care.amp.patient"])
+        {
+            Case *c = [CaseManager.shared getCaseFor:room.roomId];
+            NSString *caseTitle = [[c caseCore] title];
+            if (caseTitle.length)
+            {
+                notificationTitle = caseTitle;
+            }
+            else
+            {
+                notificationTitle = eventSenderName;
+            }
+            
+            notificationBody = NSLocalizedStringFromTable(@"UPDATED_CASE_DATA", @"AMPcare", nil);
         }
         
         UNMutableNotificationContent *notificationContent = [[UNMutableNotificationContent alloc] init];

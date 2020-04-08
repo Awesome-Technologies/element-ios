@@ -111,3 +111,8 @@
 "auth_qr_no_permission" = "Erlauben Sie den Zugriff auf die Kamera in den Systemeinstellungen, um QR Codes zu scannen.";
 "auth_alternative_login" = "Alternativer Login";
 "auth_qr_authorize" = "Einstellungen öffnen";
+
+// Notifications
+"UPDATED_CASE_DATA" = "Falldaten wurden aktualisiert";
+"UPDATED_CASE_DATA_IN_CASE" = "Daten für den Fall '%@' aktualisiert";
+"UPDATED_CASE_DATA_FROM_USER" = "Falldaten von %@ aktualisiert";
