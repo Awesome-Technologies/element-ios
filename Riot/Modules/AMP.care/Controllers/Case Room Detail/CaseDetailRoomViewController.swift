@@ -242,6 +242,8 @@ class CaseDetailRoomViewController: CaseDetailViewController, CaseListener {
             if cell == nil {
                 cell = UITableViewCell(style: .value1, reuseIdentifier: "Default")
             }
+            cell.textLabel?.textColor = .black
+            cell.detailTextLabel?.textColor = .black
             cell.textLabel?.text = NSLocalizedString(row.rawValue, tableName: "AMPcare", comment: "")
             room.state({ state in
                 if let event = state?.stateEvents(with: MXEventType.roomCreate)?.last, event.originServerTs != kMXUndefinedTimestamp {
