@@ -779,3 +779,13 @@ public class Observation: NSObject {
         return Observation(content: content)
     }
 }
+
+// MARK: - Equatable
+
+extension Observation {
+    static func == (lhs: Observation, rhs: Observation) -> Bool {
+        return lhs.id == rhs.id
+            && lhs.humanReadableValue == rhs.humanReadableValue
+            && lhs.effectiveDateTime == rhs.effectiveDateTime
+    }
+}
