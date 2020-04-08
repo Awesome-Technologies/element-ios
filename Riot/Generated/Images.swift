@@ -25,6 +25,7 @@ internal enum Asset {
     internal static let animatedDots2 = ImageAsset(name: "animatedDots-2")
     internal static let animatedDots3 = ImageAsset(name: "animatedDots-3")
     internal static let animatedDots4 = ImageAsset(name: "animatedDots-4")
+    internal static let ampIconCallkit = ImageAsset(name: "amp_icon_callkit")
     internal static let callAudioMuteOffIcon = ImageAsset(name: "call_audio_mute_off_icon")
     internal static let callAudioMuteOnIcon = ImageAsset(name: "call_audio_mute_on_icon")
     internal static let callChatIcon = ImageAsset(name: "call_chat_icon")

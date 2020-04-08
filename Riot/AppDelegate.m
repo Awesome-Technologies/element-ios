@@ -3559,7 +3559,7 @@ NSString *const AppDelegateDidValidateEmailNotificationClientSecretKey = @"AppDe
     {
         // Create adapter for Riot
         MXCallKitConfiguration *callKitConfiguration = [[MXCallKitConfiguration alloc] init];
-        callKitConfiguration.iconName = @"riot_icon_callkit";
+        callKitConfiguration.iconName = @"amp_icon_callkit";
         
         NSData *riotCallKitIconData = UIImagePNGRepresentation([UIImage imageNamed:callKitConfiguration.iconName]);
         
