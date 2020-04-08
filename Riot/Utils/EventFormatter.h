@@ -59,4 +59,6 @@ FOUNDATION_EXPORT NSString *const EventFormatterEditedEventLinkAction;
  */
 - (NSDictionary*)stringAttributesForEventTimestamp;
 
+- (instancetype)initWithMatrixSession:(MXSession*)mxSession;
+
 @end

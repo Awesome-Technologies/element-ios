@@ -39,6 +39,11 @@ static NSString *const kEventFormatterTimeFormat = @"HH:mm";
      The calendar used to retrieve the today date.
      */
     NSCalendar *calendar;
+    
+    /**
+     The default room summary updater from the MXSession.
+     */
+    MXRoomSummaryUpdater *defaultRoomSummaryUpdater;
 }
 @end
 
@@ -266,6 +271,12 @@ static NSString *const kEventFormatterTimeFormat = @"HH:mm";
         self.encryptedMessagesTextFont = [UIFont italicSystemFontOfSize:15];
         self.emojiOnlyTextFont = [UIFont systemFontOfSize:48];
         self.editionMentionTextFont = [UIFont systemFontOfSize:12];
+        
+        // Setup default summary updater
+        defaultRoomSummaryUpdater = [MXRoomSummaryUpdater roomSummaryUpdaterForSession:mxSession];
+        defaultRoomSummaryUpdater.ignoreMemberProfileChanges = YES;
+        defaultRoomSummaryUpdater.ignoreRedactedEvent = !self.settings.showRedactionsInRoomHistory;
+        defaultRoomSummaryUpdater.roomNameStringLocalizations = [MXKRoomNameStringLocalizations new];
     }
     return self;
 }
@@ -400,6 +411,22 @@ static NSString *const kEventFormatterTimeFormat = @"HH:mm";
     [roomPredecessorAttributedString addAttribute:NSForegroundColorAttributeName value:self.defaultTextColor range:wholeStringRange];
     
     return roomPredecessorAttributedString;
+}
+
+#pragma mark - Room Summary Updater
+
+- (BOOL)session:(MXSession *)session updateRoomSummary:(MXRoomSummary *)summary withLastEvent:(MXEvent *)event eventState:(MXRoomState *)eventState roomState:(MXRoomState *)roomState
+{
+    // Use the default updater as first pass
+    BOOL updated = [defaultRoomSummaryUpdater session:session updateRoomSummary:summary withLastEvent:event eventState:eventState roomState:roomState];
+    
+    // Use normal behavior for non-care events
+    if (![event.type hasPrefix:@"care.amp."])
+    {
+        updated = [super session:session updateRoomSummary:summary withLastEvent:event eventState:eventState roomState:roomState];
+    }
+    
+    return updated;
 }
 
 @end
