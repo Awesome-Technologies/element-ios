@@ -604,6 +604,7 @@
                 
                 navigationController.viewControllers = @[self.currentRoomViewController];
                 
+                [self.currentRoomViewController setDataSource:roomDataSource];
                 [self.currentRoomViewController setSession:self.selectedRoomSession];
                 [self.currentRoomViewController setRoom:[self.selectedRoomSession roomWithRoomId:self.selectedRoomId]];
                 
