@@ -149,11 +149,11 @@ class CaseDetailRoomViewController: CaseDetailViewController, CaseListener {
         self.show(roomViewController, sender: self)
     }
     
-    func updatedCaseCore(_ core: CaseCore?) {
+    func updatedCaseCore() {
         tableView?.reloadData()
     }
     
-    func updatedPatient(_ patient: Patient?) {
+    func updatedPatient() {
         if let indexPath = self.indexPath(forRow: .patient) {
             self.tableView?.reloadRows(at: [indexPath], with: .automatic)
         } else {
@@ -161,7 +161,7 @@ class CaseDetailRoomViewController: CaseDetailViewController, CaseListener {
         }
     }
     
-    func updatedObservations(_ observations: [Observation.Identifier: Observation]?) {
+    func updatedObservations() {
         tableView?.reloadData()
     }
     
