@@ -103,7 +103,7 @@
 // Patient
 "patient_gender_male" = "Männlich";
 "patient_gender_female" = "Weiblich";
-"patient_gender_other" = "Divers";
+"patient_gender_other" = "Unbestimmt";
 "patient_gender_unknown" = "Unbekannt";
 
 // Authentication
