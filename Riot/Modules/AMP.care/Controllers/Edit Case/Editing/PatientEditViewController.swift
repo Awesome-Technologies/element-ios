@@ -20,6 +20,8 @@ class PatientEditViewController: UIViewController, EditingView {
     @IBOutlet weak var birthDateLabel: UILabel!
     @IBOutlet weak var birthDatePicker: UIDatePicker!
     
+    private var initialBirthDate: Date?
+    
     let genders: [Patient.Gender] = [.male, .female, .other, .unknown]
     
     @objc class func fromNib() -> PatientEditViewController {
@@ -41,6 +43,8 @@ class PatientEditViewController: UIViewController, EditingView {
         }
         genderSegmentControl.selectedSegmentIndex = -1
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(saveChanges))
+        
+        birthDatePicker.maximumDate = Date()
     }
     
     func setInitialData(_ data: (value: Any?, date: Date?)) {
@@ -50,6 +54,7 @@ class PatientEditViewController: UIViewController, EditingView {
                 genderSegmentControl.selectedSegmentIndex = index
             }
             if let birthDate = patient.birthDate {
+                initialBirthDate = birthDate
                 birthDatePicker.date = birthDate
             }
         }
@@ -70,8 +75,22 @@ class PatientEditViewController: UIViewController, EditingView {
         } else {
             patient.gender = .unknown
         }
-        patient.birthDate = birthDatePicker.date
         
+        let calendar = Calendar.current
+        let newBirthDate = birthDatePicker.date
+        let newBirthDateComponents = calendar.dateComponents([.day, .month, .year], from: newBirthDate)
+        let currentComponents = calendar.dateComponents([.day, .month, .year], from: Date())
+        
+        if let patientBirthDate = initialBirthDate {
+            
+            let patientComponents = calendar.dateComponents([.day, .month, .year], from: patientBirthDate)
+            
+            if patientComponents != newBirthDateComponents {
+                patient.birthDate = birthDatePicker.date
+            }
+        } else if newBirthDateComponents != currentComponents {
+            patient.birthDate = birthDatePicker.date
+        }
         delegate.finishedEditing(ofRow: currentRow, result: patient)
         
         navigationController?.popViewController(animated: true)
