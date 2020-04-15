@@ -33,7 +33,7 @@
     self = [super init];
     if (self)
     {
-        [MXSDKOptions sharedInstance].applicationGroupIdentifier = @"group.care.amp.tih";
+        [MXSDKOptions sharedInstance].applicationGroupIdentifier = @"group.care.amp.covid-19";
 
         // NSLog -> console.log file when not debugging the app
         if (!isatty(STDERR_FILENO))
