@@ -98,7 +98,7 @@
     
     self.defaultIdentityServerUrl = [[NSUserDefaults standardUserDefaults] objectForKey:@"identityserverurl"];
     
-    self.welcomeImageView.image = [UIImage imageNamed:@"AMPcare"];
+    self.welcomeImageView.image = [UIImage imageNamed:@"TIH_logoWithText"];
     
     [self.submitButton.layer setCornerRadius:5];
     self.submitButton.clipsToBounds = YES;

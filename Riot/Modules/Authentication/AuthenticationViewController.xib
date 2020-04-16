@@ -89,11 +89,11 @@
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rhx-dD-4EJ" userLabel="Content View">
                             <rect key="frame" x="0.0" y="0.0" width="375" height="485"/>
                             <subviews>
-                                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="AMPcare" translatesAutoresizingMaskIntoConstraints="NO" id="d8r-TX-pwX" userLabel="Welcome Image View">
-                                    <rect key="frame" x="127.66666666666669" y="25" width="120" height="101"/>
+                                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="TIH_logoWithText" translatesAutoresizingMaskIntoConstraints="NO" id="d8r-TX-pwX" userLabel="Welcome Image View">
+                                    <rect key="frame" x="107.66666666666669" y="25" width="160" height="101"/>
                                     <accessibility key="accessibilityConfiguration" identifier="AuthenticationVCWelcomeImageView"/>
                                     <constraints>
-                                        <constraint firstAttribute="width" constant="120" id="ZFx-Mn-Kzq"/>
+                                        <constraint firstAttribute="width" constant="160" id="ZFx-Mn-Kzq"/>
                                         <constraint firstAttribute="height" constant="101" id="zA1-WN-LdU"/>
                                     </constraints>
                                 </imageView>
@@ -518,7 +518,7 @@ Clear it if you're finished using this device, or want to sign in to another acc
         </view>
     </objects>
     <resources>
-        <image name="AMPcare" width="232" height="400"/>
+        <image name="TIH_logoWithText" width="400" height="123"/>
         <image name="selection_untick" width="22" height="22"/>
     </resources>
 </document>

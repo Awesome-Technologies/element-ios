@@ -3477,7 +3477,7 @@ NSString *const AppDelegateDidValidateEmailNotificationClientSecretKey = @"AppDe
                 [NSLayoutConstraint activateConstraints:@[widthConstraint, heightConstraint, centerXConstraint, centerYConstraint]];
                 
                 UIImageView *logoImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 255, 331)];
-                [logoImageView setImage:[UIImage imageNamed:@"AMPcare"]];
+                [logoImageView setImage:[UIImage imageNamed:@"TIH_logoWithText"]];
                 logoImageView.contentMode = UIViewContentModeScaleAspectFit;
                 logoImageView.translatesAutoresizingMaskIntoConstraints = NO;
                 [launchAnimationContainerView addSubview:logoImageView];
@@ -3547,7 +3547,7 @@ NSString *const AppDelegateDidValidateEmailNotificationClientSecretKey = @"AppDe
     {
         // Create adapter for Riot
         MXCallKitConfiguration *callKitConfiguration = [[MXCallKitConfiguration alloc] init];
-        callKitConfiguration.iconName = @"riot_icon_callkit";
+        callKitConfiguration.iconName = @"tih_icon_callkit";
         
         NSData *riotCallKitIconData = UIImagePNGRepresentation([UIImage imageNamed:callKitConfiguration.iconName]);
         
