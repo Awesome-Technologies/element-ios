@@ -9,7 +9,7 @@
 import UIKit
 
 /// Holder class to combine information about a single case.
-public class Case: NSObject, Observable, CaseUpdaterDelegate, NSCopying {
+@objcMembers public class Case: NSObject, Observable, CaseUpdaterDelegate, NSCopying {
     
     public typealias Observer = CaseListener
     public var updater: CaseUpdater?

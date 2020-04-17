@@ -9,7 +9,7 @@
 import Foundation
 
 /// The core of a case holding general information.
-public class CaseCore: NSObject {
+@objcMembers public class CaseCore: NSObject {
     /// The title of the case.
     var title: String!
     /// The severity of the case.

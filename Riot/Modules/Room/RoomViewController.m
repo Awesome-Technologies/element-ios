@@ -1513,6 +1513,20 @@
     {
         RoomInputToolbarView *roomInputToolbarView = (RoomInputToolbarView*)self.inputToolbarView;
         
+        // Workaround fix to keep the members count of the room state updated
+        MXRoomState *roomState = self.roomDataSource.roomState;
+        MXRoom *room = self.roomDataSource.room;
+        MXRoomMembers *members = roomState.members;
+        MXRoomMembersCount *membersCount = roomState.membersCount;
+        if ([members handleStateEvents:roomState.stateEvents])
+        {
+            // Update counters for currently known room members
+            membersCount.members = members.members.count;
+            membersCount.joined = members.joinedMembers.count;
+            membersCount.invited =  [members membersWithMembership:MXMembershipInvite].count;
+        }
+        [self.mainSession.roomSummaryUpdateDelegate session:self.mainSession updateRoomSummary:room.summary withStateEvents:roomState.stateEvents roomState:roomState];
+        
         // Check whether the call option is supported
         roomInputToolbarView.supportCallOption = self.roomDataSource.mxSession.callManager && self.roomDataSource.room.summary.membersCount.joined >= 2;
         

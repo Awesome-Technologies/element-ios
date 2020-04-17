@@ -322,6 +322,18 @@ internal enum AMPcareL10n {
   internal static var title: String { 
     return AMPcareL10n.tr("AMPcare", "title") 
   }
+  /// Case data was updated
+  internal static var updatedCaseData: String { 
+    return AMPcareL10n.tr("AMPcare", "UPDATED_CASE_DATA") 
+  }
+  /// Case data updated by %@
+  internal static func updatedCaseDataFromUser(_ p1: String) -> String {
+    return AMPcareL10n.tr("AMPcare", "UPDATED_CASE_DATA_FROM_USER", p1)
+  }
+  /// Data for case '%@' was updated
+  internal static func updatedCaseDataInCase(_ p1: String) -> String {
+    return AMPcareL10n.tr("AMPcare", "UPDATED_CASE_DATA_IN_CASE", p1)
+  }
   /// Vitals
   internal static var vitals: String { 
     return AMPcareL10n.tr("AMPcare", "vitals") 

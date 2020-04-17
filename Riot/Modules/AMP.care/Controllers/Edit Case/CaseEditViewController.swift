@@ -157,16 +157,7 @@ class CaseEditViewController: CaseDetailViewController, RowEditingDelegate, Pict
             for observation in caseData.observations.values {
                 if originalObservations.keys.contains(observation.id), let origObservation = originalObservations[observation.id] {
                     // Type already exists -> Check everything
-                    do {
-                        let data = try JSONSerialization.data(withJSONObject: observation.jsonRepresentation(), options: .prettyPrinted)
-                        let origData = try JSONSerialization.data(withJSONObject: origObservation.jsonRepresentation(), options: .prettyPrinted)
-                        
-                        if let observationJson = String(data: data, encoding: .utf8),
-                        let origJson = String(data: origData, encoding: .utf8), observationJson == origJson {
-                            continue
-                        }
-                    } catch {
-                        // An error occured. Continuing
+                    if observation == origObservation {
                         continue
                     }
                 }

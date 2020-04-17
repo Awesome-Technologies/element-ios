@@ -49,9 +49,6 @@ public class CaseUpdater: NSObject {
                         self.handleEvent(event, withContent: event.content)
                     }
                 }
-                
-                dataSource.timeline.resetPagination()
-                
             }, failure: { error in
                 print("\(#function) Error paginating")
                 if let error = error {

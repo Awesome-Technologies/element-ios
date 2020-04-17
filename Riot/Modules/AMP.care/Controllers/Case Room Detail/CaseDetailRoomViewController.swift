@@ -14,6 +14,7 @@ class CaseDetailRoomViewController: CaseDetailViewController, CaseListener {
     
     private var caseListener: ObserverToken!
     private var messageListener: Any!
+    @objc var dataSource: MXKRoomDataSource!
     @objc var room: MXRoom! {
         willSet {
             unregisterListeners()
@@ -141,22 +142,18 @@ class CaseDetailRoomViewController: CaseDetailViewController, CaseListener {
     }
     
     @objc func showChat() {
+        let roomViewController = RoomViewController(nibName: String(describing: RoomViewController.self), bundle: nil)
         
-        let manager = MXKRoomDataSourceManager.sharedManager(forMatrixSession: session)
-        manager?.roomDataSource(forRoom: room.roomId, create: true, onComplete: { dataSource in
-            guard let dataSource = dataSource else { return }
-            let roomViewController = RoomViewController(nibName: String(describing: RoomViewController.self), bundle: nil)
-            roomViewController.displayRoom(dataSource)
-            
-            self.show(roomViewController, sender: self)
-        })
+        roomViewController.displayRoom(dataSource)
+        
+        self.show(roomViewController, sender: self)
     }
     
-    func updatedCaseCore(_ core: CaseCore?) {
+    func updatedCaseCore() {
         tableView?.reloadData()
     }
     
-    func updatedPatient(_ patient: Patient?) {
+    func updatedPatient() {
         if let indexPath = self.indexPath(forRow: .patient) {
             self.tableView?.reloadRows(at: [indexPath], with: .automatic)
         } else {
@@ -164,7 +161,7 @@ class CaseDetailRoomViewController: CaseDetailViewController, CaseListener {
         }
     }
     
-    func updatedObservations(_ observations: [Observation.Identifier: Observation]?) {
+    func updatedObservations() {
         tableView?.reloadData()
     }
     
@@ -187,26 +184,21 @@ class CaseDetailRoomViewController: CaseDetailViewController, CaseListener {
     @objc func refreshData() {
         tableView?.reloadData()
         
-        let manager = MXKRoomDataSourceManager.sharedManager(forMatrixSession: session)
-        manager?.roomDataSource(forRoom: room.roomId, create: true, onComplete: { dataSource in
-            guard let dataSource = dataSource else { return }
-            
-            dataSource.paginate(50, direction: MXTimelineDirection.backwards.identifier, onlyFromStore: false, success: { _ in
-                if let attachments = dataSource.attachmentsWithThumbnail as? [MXKAttachment] {
-                    self.attachments = self.attachments.filter {
-                        attachments.contains($0)
-                    }
-                    self.attachments.append(contentsOf: attachments.filter({
-                        !self.attachments.contains($0)
-                    }))
-                    
+        dataSource.paginate(50, direction: MXTimelineDirection.backwards.identifier, onlyFromStore: false, success: { _ in
+            if let attachments = self.dataSource.attachmentsWithThumbnail as? [MXKAttachment] {
+                self.attachments = self.attachments.filter {
+                    attachments.contains($0)
                 }
-            }, failure: { error in
-                print("\(#function) Error paginating attachments")
-                if let error = error {
-                    print(error.localizedDescription)
-                }
-            })
+                self.attachments.append(contentsOf: attachments.filter({
+                    !self.attachments.contains($0)
+                }))
+                
+            }
+        }, failure: { error in
+            print("\(#function) Error paginating attachments")
+            if let error = error {
+                print(error.localizedDescription)
+            }
         })
     }
     
@@ -250,6 +242,8 @@ class CaseDetailRoomViewController: CaseDetailViewController, CaseListener {
             if cell == nil {
                 cell = UITableViewCell(style: .value1, reuseIdentifier: "Default")
             }
+            cell.textLabel?.textColor = .black
+            cell.detailTextLabel?.textColor = .black
             cell.textLabel?.text = NSLocalizedString(row.rawValue, tableName: "AMPcare", comment: "")
             room.state({ state in
                 if let event = state?.stateEvents(with: MXEventType.roomCreate)?.last, event.originServerTs != kMXUndefinedTimestamp {

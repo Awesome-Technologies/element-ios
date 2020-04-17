@@ -133,15 +133,7 @@ class CaseTableViewCell: MXKRecentTableViewCell, CaseListener {
             unregisterListeners()
             self.room = room
             
-            if room.summary.membership == .invite {
-                room.join { response in
-                    if response.isSuccess {
-                        self.pullDataForUI(room)
-                    }
-                }
-            } else {
-                pullDataForUI(room)
-            }
+            pullDataForUI(room)
         }
     }
     

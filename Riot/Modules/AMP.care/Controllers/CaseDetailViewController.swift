@@ -93,6 +93,8 @@ class CaseDetailViewController: MXKViewController, UITableViewDataSource, UITabl
             if cell == nil {
                 cell = UITableViewCell(style: .value1, reuseIdentifier: "Default")
             }
+            cell.textLabel?.textColor = .black
+            cell.detailTextLabel?.textColor = .black
             cell.textLabel?.text = NSLocalizedString(row.rawValue, tableName: "AMPcare", comment: "")
             
             if row.isObservation(), let identifier = row.observationIdentifier(), let observation = caseData?.observations[identifier] {
@@ -195,6 +197,7 @@ class CaseDetailViewController: MXKViewController, UITableViewDataSource, UITabl
         if cell == nil {
             cell = UITableViewCell(style: .default, reuseIdentifier: "Default")
             cell.textLabel?.text = NSLocalizedString(row.rawValue, tableName: "AMPcare", comment: "")
+            cell.textLabel?.textColor = .black
         }
         return cell
     }

@@ -9,7 +9,7 @@
 import UIKit
 
 /// Singleton class to manage all cases. Provides convenience methods.
-public class CaseManager: NSObject {
+@objcMembers public class CaseManager: NSObject {
     
     static let shared = CaseManager()
     
