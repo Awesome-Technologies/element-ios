@@ -46,7 +46,6 @@
 		9728D5FE21B1DF9800971E57 /* AppIntentVocabulary.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9708406F21B1B6B900746099 /* AppIntentVocabulary.plist */; };
 		97392EC924192B0600B99FD0 /* amp_terms_and_conditions.html in Resources */ = {isa = PBXBuildFile; fileRef = 97392EC824192B0500B99FD0 /* amp_terms_and_conditions.html */; };
 		97392ECB24192B1200B99FD0 /* caritas_terms_and_conditions.html in Resources */ = {isa = PBXBuildFile; fileRef = 97392ECA24192B1200B99FD0 /* caritas_terms_and_conditions.html */; };
-		97392ECD24192B2100B99FD0 /* vitos_terms_and_conditions.html in Resources */ = {isa = PBXBuildFile; fileRef = 97392ECC24192B2100B99FD0 /* vitos_terms_and_conditions.html */; };
 		9760E43623E2FA5100DF0F54 /* vitos_consent.html in Resources */ = {isa = PBXBuildFile; fileRef = 9760E43523E2FA5100DF0F54 /* vitos_consent.html */; };
 		9768F48A2266289F00926AFB /* AMP Chat-Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9768F4892266289F00926AFB /* AMP Chat-Defaults.plist */; };
 		9768F4922266385A00926AFB /* AMP Chat-LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9768F4902266385A00926AFB /* AMP Chat-LaunchScreen.storyboard */; };
@@ -521,7 +520,6 @@
 		97206ABA2289930800ED6EF0 /* SharedImages.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = SharedImages.xcassets; sourceTree = "<group>"; };
 		97392EC824192B0500B99FD0 /* amp_terms_and_conditions.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = amp_terms_and_conditions.html; sourceTree = "<group>"; };
 		97392ECA24192B1200B99FD0 /* caritas_terms_and_conditions.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = caritas_terms_and_conditions.html; sourceTree = "<group>"; };
-		97392ECC24192B2100B99FD0 /* vitos_terms_and_conditions.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = vitos_terms_and_conditions.html; sourceTree = "<group>"; };
 		9760E43523E2FA5100DF0F54 /* vitos_consent.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = vitos_consent.html; sourceTree = "<group>"; };
 		9768F4892266289F00926AFB /* AMP Chat-Defaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "AMP Chat-Defaults.plist"; sourceTree = "<group>"; };
 		9768F4912266385A00926AFB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = "Base.lproj/AMP Chat-LaunchScreen.storyboard"; sourceTree = "<group>"; };
@@ -1226,7 +1224,6 @@
 			isa = PBXGroup;
 			children = (
 				97F70CC2241291DC001F8464 /* vitos_privacy_policy.html */,
-				97392ECC24192B2100B99FD0 /* vitos_terms_and_conditions.html */,
 				9760E43523E2FA5100DF0F54 /* vitos_consent.html */,
 				9772002D23A12A110011CBAE /* GoogleService-Info.plist */,
 				9772002E23A12A110011CBAE /* Vitos Messenger-LaunchScreen.storyboard */,
@@ -3143,7 +3140,6 @@
 				97392ECB24192B1200B99FD0 /* caritas_terms_and_conditions.html in Resources */,
 				B1B557D720EF5EA900210D55 /* RoomActivitiesView.xib in Resources */,
 				B1098BF821ECFE65000DDA48 /* KeyBackupSetupPassphraseViewController.storyboard in Resources */,
-				97392ECD24192B2100B99FD0 /* vitos_terms_and_conditions.html in Resources */,
 				F083BDF31E7009ED00A9B29C /* Images.xcassets in Resources */,
 				B1B5590720EF768F00210D55 /* RoomOutgoingTextMsgWithPaginationTitleWithoutSenderNameBubbleCell.xib in Resources */,
 				9772003223A12A110011CBAE /* GoogleService-Info.plist in Resources */,

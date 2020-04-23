@@ -89,7 +89,7 @@
 	<key>requireLocalAuthentication</key>
 	<true/>
 	<key>termsAndConditionsFilePath</key>
-	<string>vitos_terms_and_conditions</string>
+	<string></string>
 	<key>supportGroupCalls</key>
 	<false/>
 </dict>

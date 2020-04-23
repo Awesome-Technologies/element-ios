@@ -948,6 +948,11 @@ SignOutAlertPresenterDelegate>
         {
             row++;
         }
+        // Skip Terms and Conditions if none are provided
+        BOOL hideTerms = [[[NSUserDefaults standardUserDefaults] stringForKey:@"termsAndConditionsFilePath"] isEqualToString:@""];
+        if (row >= OTHER_TERM_CONDITIONS_INDEX && hideTerms) {
+            row++;
+        }
         if (row == OTHER_VERSION_INDEX)
         {
             MXKTableViewCell *versionCell = [self getDefaultTableViewCell:tableView];
