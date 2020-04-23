@@ -9,7 +9,7 @@
 	<key>pushGatewayURL</key>
 	<string>https://mobile.amp.care/_matrix/push/v1/notify</string>
 	<key>pushKitAppIdProd</key>
-	<string>care.amp.corona.ios</string>
+	<string>care.amp.covid-19.ios</string>
 	<key>identityserverurl</key>
 	<string>https://corona.amp.care</string>
 	<key>homeserverurl</key>
