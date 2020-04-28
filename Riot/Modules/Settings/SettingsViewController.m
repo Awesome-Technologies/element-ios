@@ -1387,6 +1387,22 @@ SignOutAlertPresenterDelegate>
         }
         else if (section == SETTINGS_SECTION_OTHER_INDEX)
         {
+            // Correct row in OTHER section if no consent is shown
+            BOOL showConsent = [[NSUserDefaults standardUserDefaults] stringForKey:@"consentFilePath"] != nil;
+            if (row >= OTHER_CONSENT && !showConsent) {
+                row++;
+            }
+            // Skip Terms and Conditions if none are provided
+            BOOL hideTerms = [[[NSUserDefaults standardUserDefaults] stringForKey:@"termsAndConditionsFilePath"] isEqualToString:@""];
+            if (row >= OTHER_TERM_CONDITIONS_INDEX && hideTerms) {
+                row++;
+            }
+            // Skip RageShake option
+            BOOL showRageShakeOption = [[NSUserDefaults standardUserDefaults] boolForKey:@"showRageShakeOption"];
+            if (row >= OTHER_ENABLE_RAGESHAKE_INDEX && !showRageShakeOption)
+            {
+                row++;
+            }
             if (row == OTHER_COPYRIGHT_INDEX)
             {
                 WebViewViewController *webViewViewController = [[WebViewViewController alloc] initWithURL:NSLocalizedStringFromTable(@"settings_copyright_url", @"Vector", nil)];
