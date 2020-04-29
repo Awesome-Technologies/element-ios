@@ -44,7 +44,9 @@
 	<key>createConferenceCallsWithJitsi</key>
 	<true/>
 	<key>enableRageShake</key>
-	<true/>
+	<false/>
+	<key>showRageShakeOption</key>
+	<false/>
 	<key>maxAllowedMediaCacheSize</key>
 	<integer>1073741824</integer>
 	<key>presenceColorForOnlineUser</key>

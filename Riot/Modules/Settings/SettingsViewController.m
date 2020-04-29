@@ -563,8 +563,16 @@ SignOutAlertPresenterDelegate>
     }
     else if (section == SETTINGS_SECTION_OTHER_INDEX)
     {
-        BOOL showConsent = [[NSUserDefaults standardUserDefaults] stringForKey:@"consentFilePath"] != nil;
-        count = OTHER_COUNT - (showConsent ? 0 : 1);
+        // Reduce number of rows
+        NSDictionary *piwikConfig = [[NSUserDefaults standardUserDefaults] objectForKey:@"piwik"];
+        NSInteger decrement = 0;
+        
+        decrement += [[NSUserDefaults standardUserDefaults] boolForKey:@"showRageShakeOption"] ? 0 : 1;
+        decrement += [[NSUserDefaults standardUserDefaults] stringForKey:@"consentFilePath"] != nil ? 0 : 1;
+        decrement += [[piwikConfig objectForKey:@"siteId"] integerValue] != -1 ? 0 : 1;
+        decrement += [[[NSUserDefaults standardUserDefaults] stringForKey:@"termsAndConditionsFilePath"] isEqualToString:@""] ? 1 : 0;
+        
+        count = OTHER_COUNT - decrement;
     }
     else if (section == SETTINGS_SECTION_KEYBACKUP_INDEX)
     {
@@ -937,6 +945,11 @@ SignOutAlertPresenterDelegate>
     }
     else if (section == SETTINGS_SECTION_OTHER_INDEX)
     {
+        // Skip Terms and Conditions if none are provided
+        BOOL hideTerms = [[[NSUserDefaults standardUserDefaults] stringForKey:@"termsAndConditionsFilePath"] isEqualToString:@""];
+        if (row >= OTHER_TERM_CONDITIONS_INDEX && hideTerms) {
+            row++;
+        }
         // Correct row in OTHER section if no consent is shown
         BOOL showConsent = [[NSUserDefaults standardUserDefaults] stringForKey:@"consentFilePath"] != nil;
         if (row >= OTHER_CONSENT && !showConsent) {
@@ -948,9 +961,10 @@ SignOutAlertPresenterDelegate>
         {
             row++;
         }
-        // Skip Terms and Conditions if none are provided
-        BOOL hideTerms = [[[NSUserDefaults standardUserDefaults] stringForKey:@"termsAndConditionsFilePath"] isEqualToString:@""];
-        if (row >= OTHER_TERM_CONDITIONS_INDEX && hideTerms) {
+        // Skip RageShake option
+        BOOL showRageShakeOption = [[NSUserDefaults standardUserDefaults] boolForKey:@"showRageShakeOption"];
+        if (row >= OTHER_ENABLE_RAGESHAKE_INDEX && !showRageShakeOption)
+        {
             row++;
         }
         if (row == OTHER_VERSION_INDEX)

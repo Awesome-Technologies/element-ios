@@ -47,6 +47,8 @@
 	<true/>
 	<key>enableRageShake</key>
 	<true/>
+	<key>showRageShakeOption</key>
+	<true/>
 	<key>maxAllowedMediaCacheSize</key>
 	<integer>1073741824</integer>
 	<key>presenceColorForOnlineUser</key>
