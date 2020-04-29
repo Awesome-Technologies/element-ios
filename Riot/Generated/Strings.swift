@@ -330,7 +330,7 @@ internal enum VectorL10n {
   internal static var bugCrashReportTitle: String { 
     return VectorL10n.tr("Vector", "bug_crash_report_title") 
   }
-  /// Please describe the bug. What did you do? What did you expect to happen? What actually happened?
+  /// Please describe the error what it was you actually wanted to do. All data will be sent to Awesome Technologies Innovationslabor GmbH to investigate the error.
   internal static var bugReportDescription: String { 
     return VectorL10n.tr("Vector", "bug_report_description") 
   }

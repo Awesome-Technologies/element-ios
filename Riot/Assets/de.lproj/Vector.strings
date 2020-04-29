@@ -428,15 +428,15 @@
 "e2e_need_log_in_again" = "Du musst dich erneut anmelden um Ende-zu-Ende Schlüssel für dieses Gerät zu erstellen und zum Server zu senden.\nDies ist nur einmal notwendig.";
 // Bug report
 "bug_report_title" = "Bug Report";
-"bug_report_description" = "Beschreibe den Fehler. Was hast du gemacht? Was hast du erwartet? Was ist tatsächlich passiert?";
+"bug_report_description" = "Bitte beschreiben Sie den Fehler und was Sie eigentlich machen wollten. Alle Daten werden an Awesome Technologies Innovationslabor GmbH gesendet, um den Fehler zu analysieren.";
 "bug_crash_report_title" = "Crash Report";
 "bug_crash_report_description" = "Bitte beschreibe was du vor dem Absturz gemacht hast:";
-"bug_report_logs_description" = "Um Probleme analysieren zu können werden Log-Daten dieses Clients mit dem Bug Report gesendet. Wenn du nur den Text oben senden willst, bitte abwählen:";
-"bug_report_send_logs" = "Sende Log-Daten";
+"bug_report_logs_description" = "Um Probleme analysieren zu können werden Log-Daten dieses Clients mit dem Bug Report gesendet. Wenn Sie nur den Text oben senden möchten, bitte abwählen:";
+"bug_report_send_logs" = "Log-Daten senden";
 "bug_report_send_screenshot" = "Sende Bildschirmfoto";
 "bug_report_progress_zipping" = "Sammele Log-Daten";
 "bug_report_progress_uploading" = "Report hochladen";
-"bug_report_send" = "Gesendet";
+"bug_report_send" = "Senden";
 "collapse" = "zusammenklappen";
 "auth_email_in_use" = "Diese E-Mail-Adresse wird bereits verwendet";
 "auth_phone_in_use" = "Diese Telefonnummer wird bereits verwendet";
