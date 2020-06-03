@@ -42,8 +42,6 @@ final class KeyBackupSetupPassphraseViewController: UIViewController {
     @IBOutlet private weak var passphraseStrengthView: PasswordStrengthView!
     @IBOutlet private weak var passphraseAdditionalLabel: UILabel!
     
-    @IBOutlet private weak var passphraseVisibilityButton: UIButton!
-    
     @IBOutlet private weak var formSeparatorView: UIView!
     
     @IBOutlet private weak var confirmPassphraseTitleLabel: UILabel!
@@ -159,13 +157,12 @@ final class KeyBackupSetupPassphraseViewController: UIViewController {
         
         self.confirmPassphraseTitleLabel.textColor = theme.textPrimaryColor
         theme.applyStyle(onTextField: self.confirmPassphraseTextField)
-        self.confirmPassphraseTextField.attributedPlaceholder = NSAttributedString(string: VectorL10n.keyBackupSetupPassphraseConfirmPassphrasePlaceholder,
+        self.confirmPassphraseTextField.attributedPlaceholder = NSAttributedString(string: VectorL10n.keyBackupSetupPassphraseConfirmPassphraseTitle,
                                                                                    attributes: [.foregroundColor: theme.placeholderTextColor])
         self.updateConfirmPassphraseAdditionalLabel()
         
+        self.setPassphraseButton.backgroundColor = theme.backgroundColor
         theme.applyStyle(onButton: self.setPassphraseButton)
-        
-        theme.applyStyle(onButton: self.passphraseVisibilityButton)
         
         self.setUpRecoveryKeyInfoLabel.textColor = theme.textPrimaryColor
         theme.applyStyle(onButton: self.setUpRecoveryKeyButton)
@@ -202,12 +199,6 @@ final class KeyBackupSetupPassphraseViewController: UIViewController {
         
         self.setPassphraseButton.vc_enableMultiLinesTitle()
         self.setPassphraseButton.setTitle(VectorL10n.keyBackupSetupPassphraseSetPassphraseAction, for: .normal)
-        
-        let visibilityImage = Asset.Images.revealPasswordButton.image.withRenderingMode(.alwaysTemplate)
-        self.passphraseVisibilityButton.setImage(visibilityImage, for: .normal)
-        
-        self.setUpRecoveryKeyInfoLabel.text = VectorL10n.keyBackupSetupPassphraseSetupRecoveryKeyInfo
-        self.setUpRecoveryKeyButton.setTitle(VectorL10n.keyBackupSetupPassphraseSetupRecoveryKeyAction, for: .normal)
         
         self.updateSetPassphraseButton()
     }
@@ -253,7 +244,7 @@ final class KeyBackupSetupPassphraseViewController: UIViewController {
         
         if self.viewModel.isPassphraseValid {
             text = VectorL10n.keyBackupSetupPassphrasePassphraseValid
-            textColor = self.theme.textPrimaryColor
+            textColor = self.theme.tintColor
         } else {
             text = VectorL10n.keyBackupSetupPassphrasePassphraseInvalid
             textColor = self.theme.noticeColor
@@ -270,7 +261,7 @@ final class KeyBackupSetupPassphraseViewController: UIViewController {
         
         if self.viewModel.isConfirmPassphraseValid {
             text = VectorL10n.keyBackupSetupPassphraseConfirmPassphraseValid
-            textColor = self.theme.textPrimaryColor
+            textColor = self.theme.tintColor
         } else {
             text = VectorL10n.keyBackupSetupPassphraseConfirmPassphraseInvalid
             textColor = self.theme.noticeColor

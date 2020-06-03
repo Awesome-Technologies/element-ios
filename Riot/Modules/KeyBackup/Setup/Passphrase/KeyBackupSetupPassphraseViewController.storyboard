@@ -330,7 +330,6 @@ For maximum security, this should be different from your account password.</stri
                         <outlet property="passphraseStrengthView" destination="G2S-Kn-gi7" id="hg5-Dw-RBB"/>
                         <outlet property="passphraseTextField" destination="WeI-qi-2Hw" id="Nz4-K5-lf3"/>
                         <outlet property="passphraseTitleLabel" destination="w95-PK-mJ8" id="m9O-Z5-qsA"/>
-                        <outlet property="passphraseVisibilityButton" destination="iZ1-z0-bNp" id="Shl-W7-rbL"/>
                         <outlet property="scrollView" destination="9U2-KL-ZVA" id="ojG-2y-X7b"/>
                         <outlet property="setPassphraseButton" destination="xXL-d6-V7f" id="k8E-Ul-m9g"/>
                         <outlet property="setPassphraseButtonBackgroundView" destination="oxZ-I4-CTh" id="8If-if-aMp"/>

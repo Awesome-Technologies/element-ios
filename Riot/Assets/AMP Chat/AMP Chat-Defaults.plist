@@ -24,7 +24,7 @@
 	<string>https://dimension.test.amp.chat/riot</string>
 	<key>integrationsRestUrl</key>
 	<string>https://dimension.test.amp.chat/api/v1/scalar</string>
-	<key>jitsiServerUrl</key>
+	<key>jitsiServerURL</key>
 	<string>https://jitsi.amp.chat/</string>
 	<key>piwik</key>
 	<dict>
@@ -45,6 +45,8 @@
 	<false/>
 	<key>createConferenceCallsWithJitsi</key>
 	<true/>
+	<key>stunServerFallback</key>
+	<string>stun:turn.matrix.org</string>
 	<key>enableRageShake</key>
 	<true/>
 	<key>showRageShakeOption</key>

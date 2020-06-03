@@ -20,8 +20,9 @@
 #import "AppDelegate.h"
 #import "RoomInputToolbarView.h"
 #import "Riot-Swift.h"
+#import "MXSession+Riot.h"
 
-@interface StartChatViewController ()
+@interface StartChatViewController () <UITableViewDataSource, UISearchBarDelegate, ContactsTableViewControllerDelegate>
 {
     // The contact used to describe the current user.
     MXKContact *userContact;
@@ -42,6 +43,10 @@
     // This dictionary tells for each display name whether it appears several times in participants list
     NSMutableDictionary <NSString*, NSNumber*> *isMultiUseNameByDisplayName;
 }
+
+@property (weak, nonatomic) IBOutlet UIView *searchBarHeader;
+@property (weak, nonatomic) IBOutlet UISearchBar *searchBarView;
+@property (weak, nonatomic) IBOutlet UIView *searchBarHeaderBorder;
 
 @end
 
@@ -82,28 +87,7 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-    
-    // Adjust Top and Bottom constraints to take into account potential navBar and tabBar.
-    [NSLayoutConstraint deactivateConstraints:@[_searchBarTopConstraint, _tableViewBottomConstraint]];
-    
-    _searchBarTopConstraint = [NSLayoutConstraint constraintWithItem:self.topLayoutGuide
-                                                                  attribute:NSLayoutAttributeBottom
-                                                                  relatedBy:NSLayoutRelationEqual
-                                                                     toItem:self.searchBarHeader
-                                                                  attribute:NSLayoutAttributeTop
-                                                                 multiplier:1.0f
-                                                                   constant:0.0f];
-    
-    _tableViewBottomConstraint = [NSLayoutConstraint constraintWithItem:self.bottomLayoutGuide
-                                                                     attribute:NSLayoutAttributeTop
-                                                                     relatedBy:NSLayoutRelationEqual
-                                                                        toItem:self.contactsTableView
-                                                                     attribute:NSLayoutAttributeBottom
-                                                                    multiplier:1.0f
-                                                                      constant:0.0f];
-    
-    [NSLayoutConstraint activateConstraints:@[_searchBarTopConstraint, _tableViewBottomConstraint]];
-    
+
     self.navigationItem.title = NSLocalizedStringFromTable(@"room_creation_title", @"Vector", nil);
     
     // Add each matrix session by default.
@@ -527,11 +511,7 @@
                     // The identity server must be defined
                     if (!self.mainSession.matrixRestClient.identityServer)
                     {
-                        MXError *error = [[MXError alloc] initWithErrorCode:kMXSDKErrCodeStringMissingParameters error:@"No supplied identity server URL"];
                         NSLog(@"[StartChatViewController] Invite %@ failed", participantId);
-                        // Alert user
-                        [[AppDelegate theDelegate] showErrorAsAlert:[error createNSError]];
-                        
                         continue;
                     }
                     
@@ -573,52 +553,51 @@
         {
             // Ensure direct chat are created with equal ops on both sides (the trusted_private_chat preset)
             MXRoomPreset preset = (isDirect ? kMXRoomPresetTrustedPrivateChat : nil);
-            
-            // Create new room
-            roomCreationRequest = [self.mainSession createRoom:nil
-                                                    visibility:kMXRoomDirectoryVisibilityPrivate
-                                                     roomAlias:nil
-                                                         topic:nil
-                                                        invite:(inviteArray.count ? inviteArray : nil)
-                                                    invite3PID:(invite3PIDArray.count ? invite3PIDArray : nil)
-                                                      isDirect:isDirect
-                                                        preset:preset
-                                                       success:^(MXRoom *room) {
-                                                           [room enableEncryptionWithAlgorithm:kMXCryptoMegolmAlgorithm success:^{
-                                                               
-                                                               NSLog(@"[StartChatViewController] Encrypting new chat succeeded");
-                                                               
-                                                               RoomViewController *currentRoomViewController = [[AppDelegate theDelegate].masterTabBarController currentRoomViewController];
-                                                               if (currentRoomViewController) {
-                                                                   RoomInputToolbarView *inputToolbarView = (RoomInputToolbarView *)[currentRoomViewController inputToolbarView];
-                                                                   [inputToolbarView setIsEncryptionEnabled:YES];
-                                                               }
-                                                               
-                                                           } failure:^(NSError *error) {                                                                       NSLog(@"[StartChatViewController] Encrypting new room failed");
-                                                               
-                                                               // Alert user
-                                                               [[AppDelegate theDelegate] showErrorAsAlert:error];
-                                                           }];
-                                                           
-                                                           roomCreationRequest = nil;
-                                                           
-                                                           [self stopActivityIndicator];
-                                                           
-                                                           [[AppDelegate theDelegate] showRoom:room.roomId andEventId:nil withMatrixSession:self.mainSession];
-                                                           
-                                                       } failure:^(NSError *error) {
-                                                           
-                                                           createBarButtonItem.enabled = YES;
-                                                           
-                                                           roomCreationRequest = nil;
-                                                           [self stopActivityIndicator];
-                                                           
-                                                           NSLog(@"[StartChatViewController] Create room failed");
-                                                           
-                                                           // Alert user
-                                                           [[AppDelegate theDelegate] showErrorAsAlert:error];
-                                                           
-                                                       }];
+
+            MXWeakify(self);
+            void (^onFailure)(NSError *) = ^(NSError *error){
+                MXStrongifyAndReturnIfNil(self);
+                
+                self->createBarButtonItem.enabled = YES;
+
+                self->roomCreationRequest = nil;
+                [self stopActivityIndicator];
+
+                NSLog(@"[StartChatViewController] Create room failed");
+
+                // Alert user
+                [[AppDelegate theDelegate] showErrorAsAlert:error];
+            };
+
+            [self.mainSession canEnableE2EByDefaultInNewRoomWithUsers:inviteArray success:^(BOOL canEnableE2E) {
+                MXStrongifyAndReturnIfNil(self);
+
+                // Create new room
+                MXRoomCreationParameters *roomCreationParameters = [MXRoomCreationParameters new];
+                roomCreationParameters.visibility = kMXRoomDirectoryVisibilityPrivate;
+                roomCreationParameters.inviteArray = inviteArray.count ? inviteArray : nil;
+                roomCreationParameters.invite3PIDArray = invite3PIDArray.count ? invite3PIDArray : nil;
+                roomCreationParameters.isDirect = isDirect;
+                roomCreationParameters.preset = preset;
+
+                if (canEnableE2E && roomCreationParameters.invite3PIDArray == nil)
+                {
+                    roomCreationParameters.initialStateEvents = @[
+                                                                  [MXRoomCreationParameters initialStateEventForEncryptionWithAlgorithm:kMXCryptoMegolmAlgorithm
+                                                                   ]];
+                }
+
+                self->roomCreationRequest = [self.mainSession createRoomWithParameters:roomCreationParameters success:^(MXRoom *room) {
+
+                    self->roomCreationRequest = nil;
+
+                    [self stopActivityIndicator];
+
+                    [[AppDelegate theDelegate] showRoom:room.roomId andEventId:nil withMatrixSession:self.mainSession];
+
+                } failure:onFailure];
+
+            } failure:onFailure];
         }
     }
     else if (sender == self.navigationItem.leftBarButtonItem)

@@ -94,6 +94,7 @@
 {
     [super viewWillAppear:animated];
 
+
     [AppDelegate theDelegate].masterTabBarController.navigationItem.title = NSLocalizedStringFromTable(@"title_people", @"Vector", nil);
     
     if (recentsDataSource)

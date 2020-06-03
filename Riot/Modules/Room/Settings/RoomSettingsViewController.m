@@ -91,7 +91,7 @@ NSString *const kRoomSettingsCanonicalAliasKey = @"kRoomSettingsCanonicalAliasKe
 NSString *const kRoomSettingsNameCellViewIdentifier = @"kRoomSettingsNameCellViewIdentifier";
 NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellViewIdentifier";
 
-@interface RoomSettingsViewController ()
+@interface RoomSettingsViewController () <SingleImagePickerPresenterDelegate>
 {
     // The updated user data
     NSMutableDictionary<NSString*, id> *updatedItemsDict;
@@ -125,15 +125,15 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
     // listen to more events than the mother class
     id extraEventsListener;
     
-    // picker
-    MediaPickerViewController* mediaPicker;
-    
     // Observe kAppDelegateDidTapStatusBarNotification to handle tap on clock status bar.
     id appDelegateDidTapStatusBarNotificationObserver;
     
     // Observe kThemeServiceDidChangeThemeNotification to handle user interface theme change.
     id kThemeServiceDidChangeThemeNotificationObserver;
 }
+
+@property (nonatomic, strong) SingleImagePickerPresenter *imagePickerPresenter;
+
 @end
 
 @implementation RoomSettingsViewController
@@ -1300,7 +1300,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
         {
             MXKTableViewCellWithLabelAndMXKImageView *roomPhotoCell = [tableView dequeueReusableCellWithIdentifier:[MXKTableViewCellWithLabelAndMXKImageView defaultReuseIdentifier] forIndexPath:indexPath];
             
-            roomPhotoCell.mxkLabelLeadingConstraint.constant = roomPhotoCell.separatorInset.left;
+            roomPhotoCell.mxkLabelLeadingConstraint.constant = roomPhotoCell.vc_separatorInset.left;
             roomPhotoCell.mxkImageViewTrailingConstraint.constant = 10;
             
             roomPhotoCell.mxkImageViewWidthConstraint.constant = roomPhotoCell.mxkImageViewHeightConstraint.constant = 30;
@@ -1337,7 +1337,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
         {
             TableViewCellWithLabelAndLargeTextView *roomTopicCell = [tableView dequeueReusableCellWithIdentifier:kRoomSettingsTopicCellViewIdentifier forIndexPath:indexPath];
             
-            roomTopicCell.labelLeadingConstraint.constant = roomTopicCell.separatorInset.left;
+            roomTopicCell.labelLeadingConstraint.constant = roomTopicCell.vc_separatorInset.left;
             
             roomTopicCell.label.text = NSLocalizedStringFromTable(@"room_details_topic", @"Vector", nil);
             
@@ -1369,7 +1369,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
         {
             MXKTableViewCellWithLabelAndTextField *roomNameCell = [tableView dequeueReusableCellWithIdentifier:kRoomSettingsNameCellViewIdentifier forIndexPath:indexPath];
             
-            roomNameCell.mxkLabelLeadingConstraint.constant = roomNameCell.separatorInset.left;
+            roomNameCell.mxkLabelLeadingConstraint.constant = roomNameCell.vc_separatorInset.left;
             roomNameCell.mxkTextFieldLeadingConstraint.constant = 16;
             roomNameCell.mxkTextFieldTrailingConstraint.constant = 15;
             
@@ -1477,7 +1477,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
     {
         TableViewCellWithCheckBoxAndLabel *historyVisibilityCell = [tableView dequeueReusableCellWithIdentifier:[TableViewCellWithCheckBoxAndLabel defaultReuseIdentifier] forIndexPath:indexPath];
         
-        historyVisibilityCell.checkBoxLeadingConstraint.constant = historyVisibilityCell.separatorInset.left;
+        historyVisibilityCell.checkBoxLeadingConstraint.constant = historyVisibilityCell.vc_separatorInset.left;
         
         // Retrieve first the potential updated value for history visibility
         NSString *visibility = updatedItemsDict[kRoomSettingsHistoryVisibilityKey];
@@ -1546,7 +1546,7 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
 {
     MXKTableViewCellWithLabelAndSwitch *cell = [tableview dequeueReusableCellWithIdentifier:[MXKTableViewCellWithLabelAndSwitch defaultReuseIdentifier] forIndexPath:indexPath];
     
-    cell.mxkLabelLeadingConstraint.constant = cell.separatorInset.left;
+    cell.mxkLabelLeadingConstraint.constant = cell.vc_separatorInset.left;
     cell.mxkSwitchTrailingConstraint.constant = 15;
     
     [cell.mxkSwitch removeTarget:self action:nil forControlEvents:UIControlEventValueChanged];
@@ -1741,41 +1741,6 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
     }
 }
 
-#pragma mark - MediaPickerViewController Delegate
-
-- (void)dismissMediaPicker
-{
-    if (mediaPicker)
-    {
-        [mediaPicker withdrawViewControllerAnimated:YES completion:nil];
-        mediaPicker = nil;
-    }
-}
-
-- (void)mediaPickerController:(MediaPickerViewController *)mediaPickerController didSelectImage:(NSData*)imageData withMimeType:(NSString *)mimetype isPhotoLibraryAsset:(BOOL)isPhotoLibraryAsset
-{
-    [self dismissMediaPicker];
-    
-    if (imageData)
-    {
-        UIImage *image = [UIImage imageWithData:imageData];
-        if (image)
-        {
-            [self getNavigationItem].rightBarButtonItem.enabled = YES;
-            
-            [updatedItemsDict setObject:image forKey:kRoomSettingsAvatarKey];
-            
-            [self refreshRoomSettings];
-        }
-    }
-}
-
-- (void)mediaPickerController:(MediaPickerViewController *)mediaPickerController didSelectVideo:(NSURL*)videoURL
-{
-    // this method should not be called
-    [self dismissMediaPicker];
-}
-
 #pragma mark - MXKRoomMemberDetailsViewControllerDelegate
 
 - (void)roomMemberDetailsViewController:(MXKRoomMemberDetailsViewController *)roomMemberDetailsViewController startChatWithMemberId:(NSString *)matrixId completion:(void (^)(void))completion
@@ -1842,13 +1807,17 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
 
 - (void)onRoomAvatarTap:(UITapGestureRecognizer *)recognizer
 {
-    mediaPicker = [MediaPickerViewController mediaPickerViewController];
-    mediaPicker.mediaTypes = @[(NSString *)kUTTypeImage];
-    mediaPicker.delegate = self;
-    UINavigationController *navigationController = [UINavigationController new];
-    [navigationController pushViewController:mediaPicker animated:NO];
+    SingleImagePickerPresenter *singleImagePickerPresenter = [[SingleImagePickerPresenter alloc] initWithSession:self.mainSession];
+    singleImagePickerPresenter.delegate = self;
     
-    [self presentViewController:navigationController animated:YES completion:nil];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:ROOM_SETTINGS_MAIN_SECTION_INDEX inSection:ROOM_SETTINGS_MAIN_SECTION_ROW_PHOTO];
+    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+    
+    UIView *sourceView = cell;
+    
+    [singleImagePickerPresenter presentFrom:self sourceView:sourceView sourceRect:sourceView.bounds animated:YES];
+    
+    self.imagePickerPresenter = singleImagePickerPresenter;
 }
 
 - (void)toggleRoomNotification:(UISwitch*)theSwitch
@@ -1863,6 +1832,30 @@ NSString *const kRoomSettingsTopicCellViewIdentifier = @"kRoomSettingsTopicCellV
     }
     
     [self getNavigationItem].rightBarButtonItem.enabled = (updatedItemsDict.count != 0);
+}
+
+#pragma mark - SingleImagePickerPresenterDelegate
+
+- (void)singleImagePickerPresenterDidCancel:(SingleImagePickerPresenter *)presenter
+{
+    [presenter dismissWithAnimated:YES completion:nil];
+    self.imagePickerPresenter = nil;
+}
+
+- (void)singleImagePickerPresenter:(SingleImagePickerPresenter *)presenter didSelectImageData:(NSData *)imageData withUTI:(MXKUTI *)uti
+{
+    [presenter dismissWithAnimated:YES completion:nil];
+    self.imagePickerPresenter = nil;
+    
+    UIImage *image = [UIImage imageWithData:imageData];
+    if (image)
+    {
+        [self getNavigationItem].rightBarButtonItem.enabled = YES;
+        
+        updatedItemsDict[kRoomSettingsAvatarKey] = image;
+        
+        [self refreshRoomSettings];
+    }
 }
 
 @end

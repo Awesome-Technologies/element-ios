@@ -106,8 +106,10 @@ final class KeyBackupSetupSuccessFromPassphraseViewController: UIViewController 
         self.titleLabel.textColor = theme.textPrimaryColor
         self.informationLabel.textColor = theme.textPrimaryColor
         
+        self.saveRecoveryKeyButtonBackgroundView.backgroundColor = theme.backgroundColor
         theme.applyStyle(onButton: self.saveRecoveryKeyButton)
         
+        self.doneButtonBackgroundView.backgroundColor = theme.backgroundColor
         theme.applyStyle(onButton: self.doneButton)
     }
     

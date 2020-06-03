@@ -26,6 +26,11 @@
     NSString *editedRoomId;
     
     /**
+     The image view of the (+) button.
+     */
+    UIImageView* plusButtonImageView;
+    
+    /**
      Current alert (if any).
      */
     UIAlertController *currentAlert;
@@ -124,6 +129,17 @@
 - (void)cancelEditionMode:(BOOL)forceRefresh;
 
 #pragma mark - Room handling
+/**
+ Add the (+) button at the right bottom corner of the view.
+ */
+- (void)addPlusButton;
+
+/**
+ Action triggered when the user taps on the (+) button.
+ Create an empty room by default.
+ */
+- (void)onPlusButtonPressed;
+
 /**
  Set newChatButton block
  */

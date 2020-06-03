@@ -24,12 +24,6 @@
 
 #import "UINavigationController+Riot.h"
 
-#import <MediaPlayer/MediaPlayer.h>
-
-#import <Photos/Photos.h>
-
-#import <MobileCoreServices/MobileCoreServices.h>
-
 #import "WidgetManager.h"
 #import "IntegrationManagerViewController.h"
 
@@ -75,6 +69,7 @@
     [super awakeFromNib];
     
     _supportCallOption = YES;
+    _sendMode = RoomInputToolbarViewSendModeSend;
     
     self.rightInputToolbarButton.hidden = YES;
     
@@ -117,6 +112,10 @@
     growingTextView.tintColor = ThemeService.shared.theme.textTintColor;
     
     growingTextView.internalTextView.keyboardAppearance = ThemeService.shared.theme.keyboardAppearance;
+
+    self.attachMediaButton.accessibilityLabel = NSLocalizedStringFromTable(@"room_accessibility_upload", @"Vector", nil);
+    self.voiceCallButton.accessibilityLabel = NSLocalizedStringFromTable(@"room_accessibility_call", @"Vector", nil);
+    self.hangupCallButton.accessibilityLabel = NSLocalizedStringFromTable(@"room_accessibility_hangup", @"Vector", nil);
 }
 
 #pragma mark -
@@ -140,8 +139,6 @@
     
     if (_isEncryptionEnabled)
     {
-        self.encryptedRoomIcon.image = [UIImage imageNamed:@"e2e_verified"];
-        
         // Check the device screen size before using large placeholder
         if ([GBDeviceInfo deviceInfo].family == GBDeviceFamilyiPad || [GBDeviceInfo deviceInfo].displayInfo.display >= GBDeviceDisplay4p7Inch)
         {
@@ -150,8 +147,6 @@
     }
     else
     {
-        self.encryptedRoomIcon.image = [UIImage imageNamed:@"e2e_unencrypted"];
-        
         // Check the device screen size before using large placeholder
         if ([GBDeviceInfo deviceInfo].family == GBDeviceFamilyiPad || [GBDeviceInfo deviceInfo].displayInfo.display >= GBDeviceDisplay4p7Inch)
         {
@@ -169,11 +164,33 @@
     }
 }
 
-- (void)setReplyToEnabled:(BOOL)isReplyToEnabled
+- (void)setSendMode:(RoomInputToolbarViewSendMode)sendMode
 {
-    _replyToEnabled = isReplyToEnabled;
-    
+    _sendMode = sendMode;
+
     [self updatePlaceholder];
+    [self updateToolbarButtonLabel];
+}
+
+- (void)updateToolbarButtonLabel
+{
+    NSString *title;
+
+    switch (_sendMode)
+    {
+        case RoomInputToolbarViewSendModeReply:
+            title = NSLocalizedStringFromTable(@"room_action_reply", @"Vector", nil);
+            break;
+        case RoomInputToolbarViewSendModeEdit:
+            title = NSLocalizedStringFromTable(@"save", @"Vector", nil);
+            break;
+        default:
+            title = [NSBundle mxk_localizedStringForKey:@"send"];
+            break;
+    }
+
+    [self.rightInputToolbarButton setTitle:title forState:UIControlStateNormal];
+    [self.rightInputToolbarButton setTitle:title forState:UIControlStateHighlighted];
 }
 
 - (void)updatePlaceholder
@@ -187,17 +204,44 @@
     
     if (!shouldDisplayLargePlaceholder)
     {
-        placeholder = _replyToEnabled ? NSLocalizedStringFromTable(@"room_message_reply_to_short_placeholder", @"Vector", nil) : NSLocalizedStringFromTable(@"room_message_short_placeholder", @"Vector", nil);
+        switch (_sendMode)
+        {
+            case RoomInputToolbarViewSendModeReply:
+                placeholder = NSLocalizedStringFromTable(@"room_message_reply_to_short_placeholder", @"Vector", nil);
+                break;
+
+            default:
+                placeholder = NSLocalizedStringFromTable(@"room_message_short_placeholder", @"Vector", nil);
+                break;
+        }
     }
     else
     {
         if (_isEncryptionEnabled)
         {
-            placeholder = _replyToEnabled ? NSLocalizedStringFromTable(@"encrypted_room_message_reply_to_placeholder", @"Vector", nil) : NSLocalizedStringFromTable(@"encrypted_room_message_placeholder", @"Vector", nil);
+            switch (_sendMode)
+            {
+                case RoomInputToolbarViewSendModeReply:
+                    placeholder = NSLocalizedStringFromTable(@"encrypted_room_message_reply_to_placeholder", @"Vector", nil);
+                    break;
+
+                default:
+                    placeholder = NSLocalizedStringFromTable(@"encrypted_room_message_placeholder", @"Vector", nil);
+                    break;
+            }
         }
         else
         {
-            placeholder = _replyToEnabled ? NSLocalizedStringFromTable(@"room_message_reply_to_placeholder", @"Vector", nil) : NSLocalizedStringFromTable(@"room_message_placeholder", @"Vector", nil);
+            switch (_sendMode)
+            {
+                case RoomInputToolbarViewSendModeReply:
+                    placeholder = NSLocalizedStringFromTable(@"room_message_reply_to_placeholder", @"Vector", nil);
+                    break;
+
+                default:
+                    placeholder = NSLocalizedStringFromTable(@"room_message_placeholder", @"Vector", nil);
+                    break;
+            }
         }
     }
     
@@ -332,8 +376,6 @@
     [self.pauseAudioButton setHidden:NO];
     [self.pauseAudioButton setImage:[UIImage imageNamed:@"pause-audio"] forState:UIControlStateNormal];
     
-    [self setReplyToEnabled:NO];
-    
     [self setNeedsUpdateConstraints];
 }
 
@@ -369,8 +411,6 @@
     [self.pauseAudioButton setHidden:YES];
     [self.cancelAudioButton setHidden:YES];
     [self updateVoiceCallInterfaceElements];
-    
-    [self setReplyToEnabled:YES];
 }
 
 - (void)reconstructAudioRecorderState {
@@ -412,7 +452,7 @@
             [actionSheet addAction:[UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"voice_message", @"Vector", nil)
                                                             style:UIAlertActionStyleDefault
                                                           handler:^(UIAlertAction * action) {
-                                                              
+
                                                               if (weakSelf)
                                                               {
                                                                   typeof(self) self = weakSelf;
@@ -421,34 +461,38 @@
                                                                   
                                                                   [[AudioRecorder shared] initRecorder];
                                                               }
-                                                              
+
                                                           }]];
             
             [actionSheet addAction:[UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"camera", @"Vector", nil)
                                                             style:UIAlertActionStyleDefault
                                                           handler:^(UIAlertAction * action) {
-                                                              
+
                                                               if (weakSelf)
                                                               {
                                                                   typeof(self) self = weakSelf;
                                                                   
-                                                                  [self showMediaPicker];
+                                                                // Check whether media attachment is supported
+                                                                  if ([self.delegate respondsToSelector:@selector(roomInputToolbarViewDidTapCamera:)])
+                                                                  {
+                                                                      [self.delegate roomInputToolbarViewDidTapCamera:self];
+                                                                  }
                                                               }
-                                                              
+
                                                           }]];
             
             [actionSheet addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"cancel"]
                                                             style:UIAlertActionStyleCancel
                                                           handler:^(UIAlertAction * action) {
-                                                              
+
                                                               if (weakSelf)
                                                               {
                                                                   typeof(self) self = weakSelf;
                                                                   self->actionSheet = nil;
                                                               }
-                                                              
+
                                                           }]];
-            
+
             [actionSheet popoverPresentationController].sourceView = self.voiceCallButton;
             [actionSheet popoverPresentationController].sourceRect = self.voiceCallButton.bounds;
             [self.window.rootViewController presentViewController:actionSheet animated:YES completion:nil];
@@ -464,47 +508,47 @@
         {
             // Ask the user the kind of the call: voice or video?
             actionSheet = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-            
+
             __weak typeof(self) weakSelf = self;
             [actionSheet addAction:[UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"voice", @"Vector", nil)
-                                                            style:UIAlertActionStyleDefault
-                                                          handler:^(UIAlertAction * action) {
-                                                              
-                                                              if (weakSelf)
-                                                              {
-                                                                  typeof(self) self = weakSelf;
-                                                                  self->actionSheet = nil;
-                                                                  
-                                                                  [self.delegate roomInputToolbarView:self placeCallWithVideo:NO];
-                                                              }
-                                                              
-                                                          }]];
+                                                             style:UIAlertActionStyleDefault
+                                                           handler:^(UIAlertAction * action) {
+                                                               
+                                                               if (weakSelf)
+                                                               {
+                                                                   typeof(self) self = weakSelf;
+                                                                   self->actionSheet = nil;
+                                                                   
+                                                                   [self.delegate roomInputToolbarView:self placeCallWithVideo:NO];
+                                                               }
+                                                               
+                                                           }]];
             
             [actionSheet addAction:[UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"video", @"Vector", nil)
-                                                            style:UIAlertActionStyleDefault
-                                                          handler:^(UIAlertAction * action) {
-                                                              
-                                                              if (weakSelf)
-                                                              {
-                                                                  typeof(self) self = weakSelf;
-                                                                  self->actionSheet = nil;
+                                                                style:UIAlertActionStyleDefault
+                                                              handler:^(UIAlertAction * action) {
                                                                   
-                                                                  [self.delegate roomInputToolbarView:self placeCallWithVideo:YES];
-                                                              }
-                                                              
-                                                          }]];
+                                                                  if (weakSelf)
+                                                                  {
+                                                                      typeof(self) self = weakSelf;
+                                                                      self->actionSheet = nil;
+                                                                      
+                                                                      [self.delegate roomInputToolbarView:self placeCallWithVideo:YES];
+                                                                  }
+                                                                  
+                                                              }]];
             
             [actionSheet addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"cancel"]
-                                                            style:UIAlertActionStyleCancel
-                                                          handler:^(UIAlertAction * action) {
-                                                              
-                                                              if (weakSelf)
-                                                              {
-                                                                  typeof(self) self = weakSelf;
-                                                                  self->actionSheet = nil;
-                                                              }
-                                                              
-                                                          }]];
+                                                                style:UIAlertActionStyleCancel
+                                                              handler:^(UIAlertAction * action) {
+                                                                  
+                                                                  if (weakSelf)
+                                                                  {
+                                                                      typeof(self) self = weakSelf;
+                                                                      self->actionSheet = nil;
+                                                                  }
+                                                                  
+                                                              }]];
             
             [actionSheet popoverPresentationController].sourceView = self.voiceCallButton;
             [actionSheet popoverPresentationController].sourceRect = self.voiceCallButton.bounds;
@@ -522,25 +566,34 @@
     [super onTouchUpInside:button];
 }
 
-- (void)showMediaPicker
+- (void)sendSelectedImage:(NSData *)imageData withMimeType:(NSString *)mimetype andCompressionMode:(MXKRoomInputToolbarCompressionMode)compressionMode isPhotoLibraryAsset:(BOOL)isPhotoLibraryAsset
 {
-    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
-        // Open Camera
-        mediaPicker = [[UIImagePickerController alloc] init];
-        mediaPicker.delegate = self;
-        mediaPicker.sourceType = UIImagePickerControllerSourceTypeCamera;
-        mediaPicker.allowsEditing = NO;
-        mediaPicker.mediaTypes = [NSArray arrayWithObjects:(NSString *)kUTTypeImage, (NSString *)kUTTypeMovie, nil];
-        [self.delegate roomInputToolbarView:self presentViewController:mediaPicker];
-    } else {
-        NSLog(@"[RoomInputToolbarView] Camera not available");
+    UIImage *selectedImage = [UIImage imageWithData:imageData];
+    if (selectedImage)
+    {
+            //show imagePaint screen
+        ImagePaintViewController * vc = [[ImagePaintViewController alloc] init];
+        vc.image = selectedImage;
+        vc.modalPresentationStyle = UIModalPresentationFullScreen;
+        [self.delegate roomInputToolbarView:self presentViewController:vc];
+        [vc setCallback:^(UIImage *image) {
+            if (image != nil)
+            {
+                NSLog(@"[RoomInputToolbarView] Send picture!");
+                    // Suggest compression before sending image
+                NSData *modifiedImageData = UIImageJPEGRepresentation(image, 1.0);
+                [super sendSelectedImage:modifiedImageData withMimeType:mimetype andCompressionMode:compressionMode isPhotoLibraryAsset:isPhotoLibraryAsset];
+            }
+            else
+            {
+                NSLog(@"[RoomInputToolbarView] Canceled!");
+            }
+        }];
     }
 }
 
 - (void)destroy
 {
-    [self dismissMediaPicker];
-    
     if (actionSheet)
     {
         [actionSheet dismissViewControllerAnimated:NO completion:nil];
@@ -548,63 +601,6 @@
     }
     
     [super destroy];
-}
-
-#pragma mark - UIImagePickerControllerDelegate
-
-- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
-{
-    [self dismissMediaPicker];
-    
-    NSString *mediaType = [info objectForKey:UIImagePickerControllerMediaType];
-    if ([mediaType isEqualToString:(NSString *)kUTTypeImage])
-    {
-        UIImage *selectedImage = [info objectForKey:UIImagePickerControllerOriginalImage];
-        if (selectedImage)
-        {
-            //show imagePaint screen
-            ImagePaintViewController * vc = [[ImagePaintViewController alloc] init];
-            vc.image = selectedImage;
-            vc.modalPresentationStyle = UIModalPresentationFullScreen;
-            [self.delegate roomInputToolbarView:self presentViewController:vc];
-            [vc setCallback:^(UIImage *image) {
-                if (image != nil)
-                {
-                    NSLog(@"[RoomInputToolbarView] Send picture!");
-                    // Suggest compression before sending image
-                    NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
-                    [self sendSelectedImage:imageData withMimeType:nil andCompressionMode:MXKRoomInputToolbarCompressionModeNone isPhotoLibraryAsset:NO];
-                }
-                else
-                {
-                    NSLog(@"[RoomInputToolbarView] Canceled!");
-                }
-            }];
-        }
-    }
-    else if ([mediaType isEqualToString:(NSString *)kUTTypeMovie])
-    {
-        NSURL* selectedVideo = [info objectForKey:UIImagePickerControllerMediaURL];
-        
-        [self sendSelectedVideo:selectedVideo isPhotoLibraryAsset:NO];
-    }
-}
-
-#pragma mark - Media picker handling
-
-- (void)dismissMediaPicker
-{
-    if (mediaPicker)
-    {
-        mediaPicker.delegate = nil;
-        
-        if ([self.delegate respondsToSelector:@selector(roomInputToolbarView:dismissViewControllerAnimated:completion:)])
-        {
-            [self.delegate roomInputToolbarView:self dismissViewControllerAnimated:NO completion:^{
-                mediaPicker = nil;
-            }];
-        }
-    }
 }
 
 #pragma mark - Clipboard - Handle image/data paste from general pasteboard

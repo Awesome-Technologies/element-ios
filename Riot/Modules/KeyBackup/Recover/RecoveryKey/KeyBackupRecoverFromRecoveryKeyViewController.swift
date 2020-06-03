@@ -139,7 +139,7 @@ final class KeyBackupRecoverFromRecoveryKeyViewController: UIViewController {
         
         theme.applyStyle(onButton: self.importFileButton)        
         
-        self.recoverButtonBackgroundView.backgroundColor = theme.headerBackgroundColor
+        self.recoverButtonBackgroundView.backgroundColor = theme.backgroundColor
         theme.applyStyle(onButton: self.recoverButton)
         
         self.unknownRecoveryKeyButton.setTitleColor(theme.textPrimaryColor, for: .normal)

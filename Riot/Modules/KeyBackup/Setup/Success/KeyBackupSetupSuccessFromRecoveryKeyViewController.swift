@@ -108,7 +108,7 @@ final class KeyBackupSetupSuccessFromRecoveryKeyViewController: UIViewController
     private func update(theme: Theme) {
         self.theme = theme
         
-        self.view.backgroundColor = theme.headerBackgroundColor
+        self.view.backgroundColor = theme.backgroundColor
         
         if let navigationBar = self.navigationController?.navigationBar {
             theme.applyStyle(onNavigationBar: navigationBar)

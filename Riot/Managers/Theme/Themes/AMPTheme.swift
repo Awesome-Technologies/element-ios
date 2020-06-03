@@ -39,6 +39,7 @@ class AMPTheme: NSObject, Theme {
     var textSecondaryColor: UIColor = UIColor(rgb: 0x9E9E9E)
     
     var tintColor: UIColor = UIColor(rgb: 0x2f3640)
+    var tintBackgroundColor: UIColor = UIColor(rgb: 0x2f3640)
     var textTintColor: UIColor = UIColor(rgb: 0x00c5d5)
     var unreadRoomIndentColor: UIColor = UIColor(rgb: 0x2E3648)
     var lineBreakColor: UIColor = UIColor.black.withAlphaComponent(0.15)

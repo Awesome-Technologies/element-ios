@@ -20,6 +20,7 @@
 
 #import "AppDelegate.h"
 #import "Riot-Swift.h"
+#import "MXSession+Riot.h"
 
 #import "RoomInputToolbarView.h"
 
@@ -997,10 +998,13 @@
                         // The identity server must be defined
                         if (!self.mainSession.matrixRestClient.identityServer)
                         {
-                            MXError *error = [[MXError alloc] initWithErrorCode:kMXSDKErrCodeStringMissingParameters error:@"No supplied identity server URL"];
-                            NSLog(@"[ContactDetailsViewController] Invite %@ failed", participantId);
-                            // Alert user
-                            [[AppDelegate theDelegate] showErrorAsAlert:[error createNSError]];
+                            [self removePendingActionMask];
+                            
+                            UIAlertController *alert = [UIAlertController alertControllerWithTitle:[NSBundle mxk_localizedStringForKey:@"error"]
+                                                                                           message:NSLocalizedStringFromTable(@"room_participants_start_new_chat_error_using_user_email_without_identity_server", @"Vector", nil)
+                                                                                    preferredStyle:UIAlertControllerStyleAlert];
+                            [alert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"ok"] style:UIAlertActionStyleDefault handler:nil]];
+                            [self presentViewController:alert animated:YES completion:nil];
                             
                             return;
                         }
@@ -1023,54 +1027,52 @@
                     {
                         inviteArray = @[participantId];
                     }
-                    
+
+                    MXWeakify(self);
+                    void (^onFailure)(NSError *) = ^(NSError *error){
+                        MXStrongifyAndReturnIfNil(self);
+
+                        NSLog(@"[ContactDetailsViewController] Create room failed");
+
+                        self->roomCreationRequest = nil;
+
+                        [self removePendingActionMask];
+
+                        // Notify user
+                        [[AppDelegate theDelegate] showErrorAsAlert:error];
+                    };
+
+
                     // Create a new room
-                    roomCreationRequest = [self.mainSession createRoom:nil
-                                                            visibility:kMXRoomDirectoryVisibilityPrivate
-                                                             roomAlias:nil
-                                                                 topic:nil
-                                                                invite:inviteArray
-                                                            invite3PID:invite3PIDArray
-                                                              isDirect:YES
-                                                                preset:kMXRoomPresetTrustedPrivateChat
-                                                               success:^(MXRoom *room) {
-                                                                   
-                                                                   [room enableEncryptionWithAlgorithm:kMXCryptoMegolmAlgorithm success:^{
-                                                                       
-                                                                       NSLog(@"[ContactDetailsViewController] Encrypting new room succeeded");
-                                                                       RoomViewController *currentRoomViewController = [[AppDelegate theDelegate].masterTabBarController currentRoomViewController];
-                                                                       if (currentRoomViewController) {
-                                                                           RoomInputToolbarView *inputToolbarView = (RoomInputToolbarView *)[currentRoomViewController inputToolbarView];
-                                                                           [inputToolbarView setIsEncryptionEnabled:YES];
-                                                                       }
-                                                                       
-                                                                   } failure:^(NSError *error) {
-                                                                       
-                                                                       NSLog(@"[ContactDetailsViewController] Encrypting new room failed");
-                                                                       
-                                                                       // Alert user
-                                                                       [[AppDelegate theDelegate] showErrorAsAlert:error];
-                                                                   }];
-                                                                   
-                                                                   roomCreationRequest = nil;
-                                                                   
-                                                                   [self removePendingActionMask];
-                                                                   
-                                                                   [[AppDelegate theDelegate] showRoom:room.roomId andEventId:nil withMatrixSession:self.mainSession];
-                                                                   
-                                                               }
-                                                               failure:^(NSError *error) {
-                                                                   
-                                                                   NSLog(@"[ContactDetailsViewController] Create room failed");
-                                                                   
-                                                                   roomCreationRequest = nil;
-                                                                   
-                                                                   [self removePendingActionMask];
-                                                                   
-                                                                   // Notify user
-                                                                   [[AppDelegate theDelegate] showErrorAsAlert:error];
-                                                                   
-                                                               }];
+                    [self.mainSession canEnableE2EByDefaultInNewRoomWithUsers:inviteArray success:^(BOOL canEnableE2E) {
+                        MXStrongifyAndReturnIfNil(self);
+
+                        MXRoomCreationParameters *roomCreationParameters = [MXRoomCreationParameters new];
+                        roomCreationParameters.visibility = kMXRoomDirectoryVisibilityPrivate;
+                        roomCreationParameters.inviteArray = inviteArray;
+                        roomCreationParameters.invite3PIDArray = invite3PIDArray;
+                        roomCreationParameters.isDirect = YES;
+                        roomCreationParameters.preset = kMXRoomPresetTrustedPrivateChat;
+
+                        if (canEnableE2E && roomCreationParameters.invite3PIDArray == nil)
+                        {
+                            roomCreationParameters.initialStateEvents = @[
+                                                                          [MXRoomCreationParameters initialStateEventForEncryptionWithAlgorithm:kMXCryptoMegolmAlgorithm
+                                                                           ]];
+                        }
+
+
+                        self->roomCreationRequest = [self.mainSession createRoomWithParameters:roomCreationParameters success:^(MXRoom *room) {
+
+                            self->roomCreationRequest = nil;
+
+                            [self removePendingActionMask];
+
+                            [[AppDelegate theDelegate] showRoom:room.roomId andEventId:nil withMatrixSession:self.mainSession];
+
+                        } failure:onFailure];
+
+                    } failure:onFailure];
                 }
                 break;
             }
@@ -1093,36 +1095,28 @@
                 else
                 {
                     // Create a new room
-                    roomCreationRequest = [self.mainSession createRoom:nil
-                                                            visibility:kMXRoomDirectoryVisibilityPrivate
-                                                             roomAlias:nil
-                                                                 topic:nil
-                                                                invite:@[matrixId]
-                                                            invite3PID:nil
-                                                              isDirect:YES
-                                                                preset:kMXRoomPresetTrustedPrivateChat
-                                                               success:^(MXRoom *room) {
-                                                                   
-                                                                   roomCreationRequest = nil;
-                                                                   
-                                                                   // Delay the call in order to be sure that the room is ready
-                                                                   dispatch_async(dispatch_get_main_queue(), ^{
-                                                                       [room placeCallWithVideo:isVideoCall success:nil failure:nil];
-                                                                       [self removePendingActionMask];
-                                                                   });
-                                                                   
-                                                               } failure:^(NSError *error) {
-                                                                   
-                                                                   NSLog(@"[ContactDetailsViewController] Create room failed");
-                                                                   
-                                                                   roomCreationRequest = nil;
-                                                                   
-                                                                   [self removePendingActionMask];
-                                                                   
-                                                                   // Notify user
-                                                                   [[AppDelegate theDelegate] showErrorAsAlert:error];
-                                                                   
-                                                               }];
+                    MXRoomCreationParameters *roomCreationParameters = [MXRoomCreationParameters parametersForDirectRoomWithUser:matrixId];
+                    roomCreationRequest = [self.mainSession createRoomWithParameters:roomCreationParameters success:^(MXRoom *room) {
+
+                        roomCreationRequest = nil;
+
+                        // Delay the call in order to be sure that the room is ready
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            [room placeCallWithVideo:isVideoCall success:nil failure:nil];
+                            [self removePendingActionMask];
+                        });
+
+                    } failure:^(NSError *error) {
+
+                        NSLog(@"[ContactDetailsViewController] Create room failed");
+
+                        roomCreationRequest = nil;
+
+                        [self removePendingActionMask];
+
+                        // Notify user
+                        [[AppDelegate theDelegate] showErrorAsAlert:error];
+                    }];
                 }
                 break;
             }

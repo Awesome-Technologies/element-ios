@@ -17,6 +17,8 @@
 #import <Contacts/Contacts.h>
 #import "ContactsDataSource.h"
 #import "ContactTableViewCell.h"
+#import "SectionHeaderView.h"
+#import "LocalContactsSectionHeaderContainerView.h"
 
 #import "ThemeService.h"
 #import "Riot-Swift.h"
@@ -580,22 +582,19 @@
 
 - (UIView *)viewForHeaderInSection:(NSInteger)section withFrame:(CGRect)frame
 {
-    UIView* sectionHeader;
-    
     NSInteger sectionBitwise = 0;
     
-    sectionHeader = [[UIView alloc] initWithFrame:frame];
+    SectionHeaderView *sectionHeader = [[SectionHeaderView alloc] initWithFrame:frame];
     sectionHeader.backgroundColor = ThemeService.shared.theme.headerBackgroundColor;
-    
-    frame.origin.x = 20;
-    frame.origin.y = 5;
-    frame.size.width = sectionHeader.frame.size.width - 10;
-    frame.size.height = CONTACTSDATASOURCE_DEFAULT_SECTION_HEADER_HEIGHT -10;
+    sectionHeader.topViewHeight = CONTACTSDATASOURCE_DEFAULT_SECTION_HEADER_HEIGHT;
+
+    frame.size.height = CONTACTSDATASOURCE_DEFAULT_SECTION_HEADER_HEIGHT - 10;
     UILabel *headerLabel = [[UILabel alloc] initWithFrame:frame];
     headerLabel.attributedText = [self attributedStringForHeaderTitleInSection:section];
     headerLabel.backgroundColor = [UIColor clearColor];
     [sectionHeader addSubview:headerLabel];
-    
+    sectionHeader.headerLabel = headerLabel;
+
     if (_areSectionsShrinkable)
     {
         if (section == filteredMatrixContactsSection)
@@ -615,14 +614,11 @@
     {
         // Add shrink button
         UIButton *shrinkButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        frame = sectionHeader.frame;
-        frame.origin.x = frame.origin.y = 0;
-        frame.size.height = CONTACTSDATASOURCE_DEFAULT_SECTION_HEADER_HEIGHT;
-        shrinkButton.frame = frame;
         shrinkButton.backgroundColor = [UIColor clearColor];
         [shrinkButton addTarget:self action:@selector(onButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         shrinkButton.tag = sectionBitwise;
         [sectionHeader addSubview:shrinkButton];
+        sectionHeader.topSpanningView = shrinkButton;
         sectionHeader.userInteractionEnabled = YES;
         
         // Add shrink icon
@@ -637,12 +633,8 @@
         }
         UIImageView *chevronView = [[UIImageView alloc] initWithImage:chevron];
         chevronView.contentMode = UIViewContentModeCenter;
-        frame = chevronView.frame;
-        frame.origin.x = shrinkButton.frame.size.width - frame.size.width - 16;
-        frame.origin.y = (shrinkButton.frame.size.height - frame.size.height) / 2;
-        chevronView.frame = frame;
         [sectionHeader addSubview:chevronView];
-        chevronView.autoresizingMask = (UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin);
+        sectionHeader.accessoryView = chevronView;
     }
     
     return sectionHeader;

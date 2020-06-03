@@ -15,11 +15,13 @@
  limitations under the License.
  */
 
-#import "Riot-Swift.h"
 #import <MatrixKit/MatrixKit.h>
+
+@protocol QRReaderViewDelegate;
 
 @interface AuthenticationViewController : MXKAuthenticationViewController <MXKAuthenticationViewControllerDelegate, QRReaderViewDelegate>
 
+@property (weak, nonatomic) IBOutlet UIView *navigationBackView;
 @property (weak, nonatomic) IBOutlet UINavigationBar *navigationBar;
 @property (weak, nonatomic) IBOutlet UIView *navigationBarSeparatorView;
 
@@ -27,13 +29,27 @@
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *rightBarButtonItem;
 
 @property (weak, nonatomic) IBOutlet UIView *optionsContainer;
-@property (weak, nonatomic) IBOutlet UIView *homeServerContainer;
 
 @property (weak, nonatomic) IBOutlet UIButton *skipButton;
+@property (weak, nonatomic) IBOutlet UIButton *forgotPasswordButton;
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *submitButtonMinLeadingConstraint;
 
 @property (weak, nonatomic) IBOutlet UIButton *alternativeLoginButton;
 
-@end
+@property (weak, nonatomic) IBOutlet UIView *serverOptionsContainer;
+@property (weak, nonatomic) IBOutlet UIButton *customServersTickButton;
+@property (weak, nonatomic) IBOutlet UIView *customServersContainer;
+@property (weak, nonatomic) IBOutlet UIView *homeServerContainer;
+@property (weak, nonatomic) IBOutlet UIView *identityServerContainer;
 
+@property (weak, nonatomic) IBOutlet UIView *homeServerSeparator;
+@property (weak, nonatomic) IBOutlet UIView *identityServerSeparator;
+
+@property (weak, nonatomic) IBOutlet UIView *softLogoutClearDataContainer;
+@property (weak, nonatomic) IBOutlet UILabel *softLogoutClearDataLabel;
+@property (weak, nonatomic) IBOutlet UIButton *softLogoutClearDataButton;
+
+- (void)showCustomHomeserver:(NSString*)homeserver andIdentityServer:(NSString*)identityServer;
+
+@end

@@ -19,6 +19,8 @@
 
 #import "ThemeService.h"
 #import "Riot-Swift.h"
+#import "RoomBubbleCellData.h"
+#import "MXKRoomBubbleTableViewCell+Riot.h"
 
 @implementation RoomOutgoingAttachmentWithoutSenderInfoBubbleCell
 
@@ -48,6 +50,18 @@
             [self.attachmentView setHidden:NO];
         }
     }
+}
+
++ (CGFloat)heightForCellData:(MXKCellData*)cellData withMaximumWidth:(CGFloat)maxWidth
+{
+    CGFloat rowHeight = [self attachmentBubbleCellHeightForCellData:cellData withMaximumWidth:maxWidth];
+    
+    if (rowHeight <= 0)
+    {
+        rowHeight = [super heightForCellData:cellData withMaximumWidth:maxWidth];
+    }
+    
+    return rowHeight;
 }
 
 @end

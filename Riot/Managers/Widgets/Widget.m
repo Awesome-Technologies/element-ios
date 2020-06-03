@@ -1,5 +1,6 @@
 /*
  Copyright 2017 Vector Creations Ltd
+ Copyright 2019 New Vector Ltd
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -100,9 +101,9 @@
                                                     _widgetId]];
 
     // Check if their scalar token must added
-    if ([WidgetManager isScalarUrl:widgetUrl])
+    if ([[WidgetManager sharedManager] isScalarUrl:widgetUrl forUser:userId])
     {
-        return [[WidgetManager sharedManager] getScalarTokenForMXSession:_mxSession validate:NO success:^(NSString *scalarToken) {
+        return [[WidgetManager sharedManager] getScalarTokenForMXSession:_mxSession validate:YES success:^(NSString *scalarToken) {
             // Add the user scalar token
             widgetUrl = [widgetUrl stringByAppendingString:[NSString stringWithFormat:@"&scalar_token=%@",
                                                             scalarToken]];

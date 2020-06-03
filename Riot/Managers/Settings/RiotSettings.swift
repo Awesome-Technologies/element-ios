@@ -27,22 +27,34 @@ final class RiotSettings: NSObject {
         static let enableRageShake = "enableRageShake"
         static let createConferenceCallsWithJitsi = "createConferenceCallsWithJitsi"
         static let userInterfaceTheme = "userInterfaceTheme"
+        static let notificationsShowDecryptedContent = "showDecryptedContent"
         static let pinRoomsWithMissedNotifications = "pinRoomsWithMissedNotif"
         static let pinRoomsWithUnreadMessages = "pinRoomsWithUnread"
+        static let allowStunServerFallback = "allowStunServerFallback"
+        static let stunServerFallback = "stunServerFallback"
+        static let hideVerifyThisSessionAlert = "hideVerifyThisSessionAlert"
+        static let hideReviewSessionsAlert = "hideReviewSessionsAlert"
     }
-
-    /// Riot Standard Room Member Power Level
-    @objc
-    public enum RoomPowerLevel: Int {
-        case moderator = 50
-        case admin = 100
-    }
-
+    
     static let shared = RiotSettings()
     
     // MARK: - Public
     
     // MARK: Notifications
+    
+    /// Indicate if `showDecryptedContentInNotifications` settings has been set once.
+    var isShowDecryptedContentInNotificationsHasBeenSetOnce: Bool {
+        return UserDefaults.standard.object(forKey: UserDefaultsKeys.notificationsShowDecryptedContent) != nil
+    }
+    
+    /// Indicate if encrypted messages content should be displayed in notifications.
+    var showDecryptedContentInNotifications: Bool {
+        get {
+            return UserDefaults.standard.bool(forKey: UserDefaultsKeys.notificationsShowDecryptedContent)
+        } set {
+            UserDefaults.standard.set(newValue, forKey: UserDefaultsKeys.notificationsShowDecryptedContent)
+        }
+    }
     
     /// Indicate if rooms with missed notifications should be displayed first on home screen.
     var pinRoomsWithMissedNotificationsOnHome: Bool {
@@ -102,6 +114,43 @@ final class RiotSettings: NSObject {
             return UserDefaults.standard.bool(forKey: UserDefaultsKeys.createConferenceCallsWithJitsi)
         } set {
             UserDefaults.standard.set(newValue, forKey: UserDefaultsKeys.createConferenceCallsWithJitsi)
+        }
+    }
+
+    // MARK: Calls
+
+    /// Indicate if `allowStunServerFallback` settings has been set once.
+    var isAllowStunServerFallbackHasBeenSetOnce: Bool {
+        return UserDefaults.standard.object(forKey: UserDefaultsKeys.allowStunServerFallback) != nil
+    }
+
+    var allowStunServerFallback: Bool {
+        get {
+            return UserDefaults.standard.bool(forKey: UserDefaultsKeys.allowStunServerFallback)
+        } set {
+            UserDefaults.standard.set(newValue, forKey: UserDefaultsKeys.allowStunServerFallback)
+        }
+    }
+
+    var stunServerFallback: String? {
+        return UserDefaults.standard.string(forKey: UserDefaultsKeys.stunServerFallback)
+    }
+    
+    // MARK: Key verification
+    
+    var hideVerifyThisSessionAlert: Bool {
+        get {
+            return UserDefaults.standard.bool(forKey: UserDefaultsKeys.hideVerifyThisSessionAlert)
+        } set {
+            UserDefaults.standard.set(newValue, forKey: UserDefaultsKeys.hideVerifyThisSessionAlert)
+        }
+    }
+    
+    var hideReviewSessionsAlert: Bool {
+        get {
+            return UserDefaults.standard.bool(forKey: UserDefaultsKeys.hideReviewSessionsAlert)
+        } set {
+            UserDefaults.standard.set(newValue, forKey: UserDefaultsKeys.hideReviewSessionsAlert)
         }
     }
 }

@@ -1,6 +1,7 @@
 /*
  Copyright 2015 OpenMarket Ltd
  Copyright 2017 Vector Creations Ltd
+ Copyright 2019 New Vector Ltd
  
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -21,8 +22,10 @@
 #import "Riot-Swift.h"
 
 #import "AuthInputsView.h"
+#import "ForgotPasswordInputsView.h"
+#import "AuthFallBackViewController.h"
 
-@interface AuthenticationViewController ()
+@interface AuthenticationViewController () <AuthFallBackViewControllerDelegate, KeyVerificationCoordinatorBridgePresenterDelegate>
 {
     /**
      Store the potential login error received by using a default homeserver different from matrix.org
@@ -41,6 +44,11 @@
     id kThemeServiceDidChangeThemeNotificationObserver;
     
     /**
+     Server discovery.
+     */
+    MXAutoDiscovery *autoDiscovery;
+    
+    /**
      Last used AuthInputClass. Used to show correct login when cancelling registration
      */
     Class lastUsedAuthInputClass;
@@ -49,8 +57,11 @@
      Custom homeserver so we can restore when coming back from regsitration
      */
     NSString *customHomeServer;
+    
+    AuthFallBackViewController *authFallBackViewController;
 }
 
+@property (nonatomic, strong) KeyVerificationCoordinatorBridgePresenter *keyVerificationCoordinatorBridgePresenter;
 @end
 
 @implementation AuthenticationViewController
@@ -88,11 +99,11 @@
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
-    self.mainNavigationItem.title = nil;
+    self.mainNavigationItem.title = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
     self.rightBarButtonItem.title = [defaults boolForKey:@"enableRegistration"] ? NSLocalizedStringFromTable(@"auth_register", @"Vector", nil) : nil;
     
-    self.defaultHomeServerUrl = [defaults stringForKey:@"homeserverurl"];
-    self.defaultIdentityServerUrl = [defaults stringForKey:@"identityserverurl"];
+    self.defaultHomeServerUrl = [defaults objectForKey:@"homeserverurl"];
+    self.defaultIdentityServerUrl = [defaults objectForKey:@"identityserverurl"];
     
     self.welcomeImageView.image = [UIImage imageNamed:@"Logo"];
     
@@ -110,16 +121,33 @@
     
     self.homeServerTextField.placeholder = NSLocalizedStringFromTable(@"auth_home_server_placeholder", @"Vector", nil);
     self.homeServerLabel.text = NSLocalizedStringFromTable(@"auth_home_server_label", @"Vector", nil);
+    
     // Show homeserver textfield if enabled
     self.homeServerContainer.hidden = ![defaults boolForKey:@"enableCustomHomeserver"];
+    
+    // Soft logout section
+    self.softLogoutClearDataButton.layer.cornerRadius = 5;
+    self.softLogoutClearDataButton.clipsToBounds = YES;
+    [self.softLogoutClearDataButton setTitle:NSLocalizedStringFromTable(@"auth_softlogout_clear_data_button", @"Vector", nil) forState:UIControlStateNormal];
+    [self.softLogoutClearDataButton setTitle:NSLocalizedStringFromTable(@"auth_softlogout_clear_data_button", @"Vector", nil) forState:UIControlStateHighlighted];
+    self.softLogoutClearDataButton.enabled = YES;
+    self.softLogoutClearDataContainer.hidden = YES;
     
     // The view controller dismiss itself on successful login.
     self.delegate = self;
     
+    self.homeServerTextField.placeholder = NSLocalizedStringFromTable(@"auth_home_server_placeholder", @"Vector", nil);
+    self.identityServerTextField.placeholder = NSLocalizedStringFromTable(@"auth_identity_server_placeholder", @"Vector", nil);
+    
+    // Custom used authInputsView
+    [self registerAuthInputsViewClass:AuthInputsView.class forAuthType:MXKAuthenticationTypeLogin];
+    [self registerAuthInputsViewClass:AuthInputsView.class forAuthType:MXKAuthenticationTypeRegister];
+    [self registerAuthInputsViewClass:ForgotPasswordInputsView.class forAuthType:MXKAuthenticationTypeForgotPassword];
+    
     // Initialize the auth inputs display
     
     // Show QR Reader if enabled
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"enableQRCodeLogin"])
+    if ([defaults boolForKey:@"enableQRCodeLogin"])
     {
         [self showQRAuthInput];
         
@@ -127,9 +155,6 @@
         self.alternativeLoginButton.hidden = NO;
         [self.alternativeLoginButton.layer setCornerRadius:5];
         self.alternativeLoginButton.clipsToBounds = YES;
-        
-        self.alternativeLoginButton.backgroundColor = ThemeService.shared.theme.baseColor;
-        [self.alternativeLoginButton setTitleColor:ThemeService.shared.theme.baseTextPrimaryColor forState:UIControlStateNormal];
         
         [self.alternativeLoginButton setTitle:NSLocalizedStringFromTable(@"auth_alternative_login", @"Vector", nil) forState:UIControlStateNormal];
         [self.alternativeLoginButton setTitle:NSLocalizedStringFromTable(@"auth_alternative_login", @"Vector", nil) forState:UIControlStateHighlighted];
@@ -146,6 +171,8 @@
         
     }];
     [self userInterfaceThemeDidChange];
+    
+    self.serverOptionsContainer.hidden = YES;
 }
 
 - (void)userInterfaceThemeDidChange
@@ -159,8 +186,9 @@
     // as the main view background color.
     // Hopefully, subviews define their own background color with `theme.backgroundColor`,
     // which makes all work together.
-    self.view.backgroundColor = self.navigationBar.barTintColor;
-
+    self.view.backgroundColor = ThemeService.shared.theme.baseColor;
+    self.navigationBackView.backgroundColor = self.view.backgroundColor;
+    
     self.authenticationScrollView.backgroundColor = ThemeService.shared.theme.backgroundColor;
 
     // Style the authentication fallback webview screen so that its header matches to navigation bar style
@@ -183,14 +211,39 @@
     self.submitButton.backgroundColor = ThemeService.shared.theme.baseColor;
     self.skipButton.backgroundColor = ThemeService.shared.theme.baseColor;
     
-    [self.submitButton setTitleColor:ThemeService.shared.theme.baseTextPrimaryColor forState:UIControlStateNormal];
-    [self.skipButton setTitleColor:ThemeService.shared.theme.baseTextPrimaryColor forState:UIControlStateNormal];
-    
-    self.homeServerTextField.textColor = ThemeService.shared.theme.textPrimaryColor;
+    self.alternativeLoginButton.backgroundColor = ThemeService.shared.theme.baseColor;
+    [self.alternativeLoginButton setTitleColor:ThemeService.shared.theme.baseTextPrimaryColor forState:UIControlStateNormal];
     
     self.noFlowLabel.textColor = ThemeService.shared.theme.warningColor;
     
+    NSMutableAttributedString *forgotPasswordTitle = [[NSMutableAttributedString alloc] initWithString:NSLocalizedStringFromTable(@"auth_forgot_password", @"Vector", nil)];
+    [forgotPasswordTitle addAttribute:NSUnderlineStyleAttributeName value:@(NSUnderlineStyleSingle) range:NSMakeRange(0, forgotPasswordTitle.length)];
+    [forgotPasswordTitle addAttribute:NSForegroundColorAttributeName value:ThemeService.shared.theme.tintColor range:NSMakeRange(0, forgotPasswordTitle.length)];
+    [self.forgotPasswordButton setAttributedTitle:forgotPasswordTitle forState:UIControlStateNormal];
+    [self.forgotPasswordButton setAttributedTitle:forgotPasswordTitle forState:UIControlStateHighlighted];
+    
+    NSMutableAttributedString *forgotPasswordTitleDisabled = [[NSMutableAttributedString alloc] initWithAttributedString:forgotPasswordTitle];
+    [forgotPasswordTitleDisabled addAttribute:NSForegroundColorAttributeName value:[ThemeService.shared.theme.tintColor colorWithAlphaComponent:0.3] range:NSMakeRange(0, forgotPasswordTitle.length)];
+    [self.forgotPasswordButton setAttributedTitle:forgotPasswordTitleDisabled forState:UIControlStateDisabled];
+    
+    [self updateForgotPwdButtonVisibility];
+    
+    NSAttributedString *serverOptionsTitle = [[NSAttributedString alloc] initWithString:NSLocalizedStringFromTable(@"auth_use_server_options", @"Vector", nil) attributes:@{NSForegroundColorAttributeName : ThemeService.shared.theme.textSecondaryColor, NSFontAttributeName: [UIFont systemFontOfSize:14]}];
+    [self.customServersTickButton setAttributedTitle:serverOptionsTitle forState:UIControlStateNormal];
+    [self.customServersTickButton setAttributedTitle:serverOptionsTitle forState:UIControlStateHighlighted];
+    
+    self.homeServerSeparator.backgroundColor = ThemeService.shared.theme.lineBreakColor;
+    self.homeServerTextField.textColor = ThemeService.shared.theme.textPrimaryColor;
+    self.homeServerLabel.textColor = ThemeService.shared.theme.textSecondaryColor;
+    
+    self.identityServerSeparator.backgroundColor = ThemeService.shared.theme.lineBreakColor;
+    self.identityServerTextField.textColor = ThemeService.shared.theme.textPrimaryColor;
+    self.identityServerLabel.textColor = ThemeService.shared.theme.textSecondaryColor;
+    
     self.activityIndicator.backgroundColor = ThemeService.shared.theme.overlayBackgroundColor;
+    
+    self.softLogoutClearDataLabel.textColor = ThemeService.shared.theme.textPrimaryColor;
+    self.softLogoutClearDataButton.backgroundColor = ThemeService.shared.theme.warningColor;
     
     [self.authInputsView customizeViewRendering];
     
@@ -213,7 +266,12 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-
+    
+    if (self.keyVerificationCoordinatorBridgePresenter)
+    {
+        return;
+    }
+    
     // Verify that the app does not show the authentification screean whereas
     // the user has already logged in.
     // This bug rarely happens (https://github.com/vector-im/riot-ios/issues/1643)
@@ -248,6 +306,14 @@
         [[NSNotificationCenter defaultCenter] removeObserver:kThemeServiceDidChangeThemeNotificationObserver];
         kThemeServiceDidChangeThemeNotificationObserver = nil;
     }
+    
+    autoDiscovery = nil;
+    _keyVerificationCoordinatorBridgePresenter = nil;
+}
+
+- (BOOL)isIdentityServerConfigured
+{
+    return self.identityServerTextField.text.length > 0;
 }
 
 - (void)setAuthType:(MXKAuthenticationType)authType
@@ -259,6 +325,15 @@
     }
     
     super.authType = authType;
+    
+    // Check a potential stored error.
+    if (loginError)
+    {
+        // Restore the default HS
+        NSLog(@"[AuthenticationVC] Switch back to default homeserver");
+        [self setHomeServerTextFieldText:nil];
+        loginError = nil;
+    }
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
     if (authType == MXKAuthenticationTypeLogin)
@@ -271,6 +346,10 @@
             [self setHomeServerTextFieldText:customHomeServer];
             customHomeServer = nil;
             self.homeServerTextField.enabled = YES;
+        }
+        if ([defaults boolForKey:@"enableQRCodeLogin"])
+        {
+            self.alternativeLoginButton.hidden = NO;
         }
     }
     else if (authType == MXKAuthenticationTypeRegister)
@@ -285,6 +364,10 @@
         [self setHomeServerTextFieldText:self.defaultHomeServerUrl];
         self.homeServerTextField.enabled = NO;
         [self.homeServerTextField resignFirstResponder];
+        if ([defaults boolForKey:@"enableQRCodeLogin"])
+        {
+            self.alternativeLoginButton.hidden = YES;
+        }
     }
     else if (authType == MXKAuthenticationTypeForgotPassword)
     {
@@ -299,6 +382,9 @@
             [self.submitButton setTitle:NSLocalizedStringFromTable(@"auth_send_reset_email", @"Vector", nil) forState:UIControlStateHighlighted];
         }
     }
+    
+    [self updateForgotPwdButtonVisibility];
+    [self updateSoftLogoutClearDataContainerVisibility];
 }
 
 - (void)setAuthInputsView:(MXKAuthInputsView *)authInputsView
@@ -315,7 +401,9 @@
 - (void)setUserInteractionEnabled:(BOOL)userInteractionEnabled
 {
     super.userInteractionEnabled = userInteractionEnabled;
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    // Reset
+    self.rightBarButtonItem.enabled = YES;
     
     // Show/Hide server options
     if (_optionsContainer.hidden == userInteractionEnabled)
@@ -330,7 +418,8 @@
     {
         // The right bar button is used to cancel the running request.
         self.rightBarButtonItem.title = NSLocalizedStringFromTable(@"cancel", @"Vector", nil);
-
+        self.rightBarButtonItem.enabled = YES;
+        
         // Remove the potential back button.
         self.mainNavigationItem.leftBarButtonItem = nil;
     }
@@ -341,6 +430,7 @@
         {
             authInputsview = (AuthInputsView*)self.authInputsView;
         }
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
         // The right bar button is used to switch the authentication type.
         if (self.authType == MXKAuthenticationTypeLogin && [defaults boolForKey:@"enableRegistration"])
@@ -369,8 +459,251 @@
     }
 }
 
+- (void)presentCompleteSecurityWithSession:(MXSession*)session
+{
+    KeyVerificationCoordinatorBridgePresenter *keyVerificationCoordinatorBridgePresenter = [[KeyVerificationCoordinatorBridgePresenter alloc] initWithSession:session];
+    keyVerificationCoordinatorBridgePresenter.delegate = self;
+    
+    if (self.navigationController)
+    {
+        [keyVerificationCoordinatorBridgePresenter pushCompleteSecurityFrom:self.navigationController isNewSignIn:YES animated:YES];
+    }
+    else
+    {
+        [keyVerificationCoordinatorBridgePresenter presentCompleteSecurityFrom:self isNewSignIn:YES animated:YES];
+    }
+    
+    self.keyVerificationCoordinatorBridgePresenter = keyVerificationCoordinatorBridgePresenter;
+}
+
+- (void)dismiss
+{
+    self.userInteractionEnabled = YES;
+    [self.authenticationActivityIndicator stopAnimating];
+    
+    // Remove auth view controller on successful login
+    if (self.navigationController)
+    {
+        // Pop the view controller
+        [self.navigationController popViewControllerAnimated:YES];
+    }
+    else
+    {
+        // Dismiss on successful login
+        [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+    }
+}
+
+#pragma mark - Fallback URL display
+
+- (void)showAuthenticationFallBackView:(NSString*)fallbackPage
+{
+    // Skip MatrixKit and use a VC instead
+    if (self.softLogoutCredentials)
+    {
+        // Add device_id as query param of the fallback
+        NSURLComponents *components = [[NSURLComponents alloc] initWithString:fallbackPage];
+        
+        NSMutableArray<NSURLQueryItem*> *queryItems = [components.queryItems mutableCopy];
+        if (!queryItems)
+        {
+            queryItems = [NSMutableArray array];
+        }
+        
+        [queryItems addObject:[NSURLQueryItem queryItemWithName:@"device_id"
+                                                          value:self.softLogoutCredentials.deviceId]];
+        
+        components.queryItems = queryItems;
+        
+        fallbackPage = components.URL.absoluteString;
+    }
+    
+    [self showAuthenticationFallBackViewController:fallbackPage];
+}
+
+- (void)showAuthenticationFallBackViewController:(NSString*)fallbackPage
+{
+    authFallBackViewController = [[AuthFallBackViewController alloc] initWithURL:fallbackPage];
+    authFallBackViewController.delegate = self;
+    
+    
+    authFallBackViewController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(dismissFallBackViewController:)];
+    
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:authFallBackViewController];
+    [self presentViewController:navigationController animated:YES completion:nil];
+}
+
+- (void)dismissFallBackViewController:(id)sender
+{
+    [authFallBackViewController dismissViewControllerAnimated:YES completion:nil];
+    authFallBackViewController = nil;
+}
+
+
+#pragma mark AuthFallBackViewControllerDelegate
+
+- (void)authFallBackViewController:(AuthFallBackViewController *)authFallBackViewController
+         didLoginWithLoginResponse:(MXLoginResponse *)loginResponse
+{
+    [authFallBackViewController dismissViewControllerAnimated:YES completion:^{
+        
+        MXCredentials *credentials = [[MXCredentials alloc] initWithLoginResponse:loginResponse andDefaultCredentials:nil];
+        [self onSuccessfulLogin:credentials];
+    }];
+    
+    authFallBackViewController = nil;
+}
+
+
+- (void)authFallBackViewControllerDidClose:(AuthFallBackViewController *)authFallBackViewController
+{
+    [self dismissFallBackViewController:nil];
+}
+
+
+- (void)setSoftLogoutCredentials:(MXCredentials *)softLogoutCredentials
+{
+    [super setSoftLogoutCredentials:softLogoutCredentials];
+    
+    // Customise the screen for soft logout
+    self.customServersTickButton.hidden = YES;
+    self.rightBarButtonItem.title = nil;
+    self.mainNavigationItem.title = NSLocalizedStringFromTable(@"auth_softlogout_signed_out", @"Vector", nil);
+    
+    [self showSoftLogoutClearDataContainer];
+}
+
+- (void)showSoftLogoutClearDataContainer
+{
+    NSMutableAttributedString *message = [[NSMutableAttributedString alloc] initWithString:NSLocalizedStringFromTable(@"auth_softlogout_clear_data", @"Vector", nil)
+                                                                                attributes:@{
+                                                                                             NSFontAttributeName: [UIFont boldSystemFontOfSize:14]
+                                                                                             }];
+    
+    [message appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n\n"]];
+    
+    NSString *string = [NSString stringWithFormat:@"%@\n\n%@",
+                        NSLocalizedStringFromTable(@"auth_softlogout_clear_data_message_1", @"Vector", nil),
+                        NSLocalizedStringFromTable(@"auth_softlogout_clear_data_message_2", @"Vector", nil)];
+    
+    [message appendAttributedString:[[NSAttributedString alloc] initWithString:string
+                                                                    attributes:@{
+                                                                                 NSFontAttributeName: [UIFont systemFontOfSize:14]
+                                                                                 }]];
+    self.softLogoutClearDataLabel.attributedText = message;
+    
+    self.softLogoutClearDataContainer.hidden = NO;
+    [self refreshContentViewHeightConstraint];
+}
+
+- (void)updateSoftLogoutClearDataContainerVisibility
+{
+    // Do not display it in case of forget password flow
+    if (self.softLogoutCredentials && self.authType == MXKAuthenticationTypeLogin)
+    {
+        self.softLogoutClearDataContainer.hidden = NO;
+    }
+    else
+    {
+        self.softLogoutClearDataContainer.hidden = YES;
+    }
+}
+
+- (void)showClearDataAfterSoftLogoutConfirmation
+{
+    // Request confirmation
+    if (alert)
+    {
+        [alert dismissViewControllerAnimated:NO completion:nil];
+    }
+    
+    alert = [UIAlertController alertControllerWithTitle:NSLocalizedStringFromTable(@"auth_softlogout_clear_data_sign_out_title", @"Vector", nil)
+                                                message:NSLocalizedStringFromTable(@"auth_softlogout_clear_data_sign_out_msg", @"Vector", nil)
+                                         preferredStyle:UIAlertControllerStyleAlert];
+    
+    
+    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"auth_softlogout_clear_data_sign_out", @"Vector", nil)                                              style:UIAlertActionStyleDestructive
+                                            handler:^(UIAlertAction * action)
+                      {
+                          [self clearDataAfterSoftLogout];
+                      }]];
+    
+    MXWeakify(self);
+    [alert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"cancel"]
+                                              style:UIAlertActionStyleDefault
+                                            handler:^(UIAlertAction * action)
+                      {
+                          MXStrongifyAndReturnIfNil(self);
+                          self->alert = nil;
+                      }]];
+    
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+- (void)clearDataAfterSoftLogout
+{
+    NSLog(@"[AuthenticationVC] clearDataAfterSoftLogout %@", self.softLogoutCredentials.userId);
+    
+    // Use AppDelegate so that we reset app settings and this auth screen
+    [[AppDelegate theDelegate] logoutSendingRequestServer:YES completion:^(BOOL isLoggedOut) {
+        NSLog(@"[AuthenticationVC] Complete. isLoggedOut: %@", @(isLoggedOut));
+    }];
+}
+
+/**
+ Filter and prioritise flows supported by the app.
+ 
+ @param authSession the auth session coming from the HS.
+ @return a new auth session
+ */
+- (MXAuthenticationSession*)handleSupportedFlowsInAuthenticationSession:(MXAuthenticationSession *)authSession
+{
+    MXLoginFlow *ssoFlow;
+    NSMutableArray *supportedFlows = [NSMutableArray array];
+    
+    for (MXLoginFlow *flow in authSession.flows)
+    {
+        // Remove known flows we do not support
+        if (![flow.type isEqualToString:kMXLoginFlowTypeToken])
+        {
+            NSLog(@"[AuthenticationVC] handleSupportedFlowsInAuthenticationSession: Filter out flow %@", flow.type);
+            [supportedFlows addObject:flow];
+        }
+        
+        // Prioritise SSO over other flows
+        if ([flow.type isEqualToString:kMXLoginFlowTypeSSO]
+            || [flow.type isEqualToString:kMXLoginFlowTypeCAS])
+        {
+            NSLog(@"[AuthenticationVC] handleSupportedFlowsInAuthenticationSession: Prioritise flow %@", flow.type);
+            ssoFlow = flow;
+            break;
+        }
+    }
+    
+    if (ssoFlow)
+    {
+        [supportedFlows removeAllObjects];
+        [supportedFlows addObject:ssoFlow];
+    }
+    
+    if (supportedFlows.count != authSession.flows.count)
+    {
+        MXAuthenticationSession *updatedAuthSession = [[MXAuthenticationSession alloc] init];
+        updatedAuthSession.session = authSession.session;
+        updatedAuthSession.params = authSession.params;
+        updatedAuthSession.flows = supportedFlows;
+        return updatedAuthSession;
+    }
+    else
+    {
+        return authSession;
+    }
+}
 - (void)handleAuthenticationSession:(MXAuthenticationSession *)authSession
 {
+    // Make some cleaning from the server response according to what the app supports
+    authSession = [self handleSupportedFlowsInAuthenticationSession:authSession];
+    
     [super handleAuthenticationSession:authSession];
     
     [self updateButtonVisibility];
@@ -435,7 +768,8 @@
     
     // Show homeserver textfield when showing login
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    if ([defaults boolForKey:@"enableCustomHomeserver"]) {
+    if ([defaults boolForKey:@"enableCustomHomeserver"])
+    {
         self.homeServerContainer.hidden = NO;
     }
 }
@@ -454,15 +788,34 @@
 
 - (IBAction)onButtonPressed:(id)sender
 {
-    if (sender == self.rightBarButtonItem)
+    if (sender == self.forgotPasswordButton)
+    {
+        if (!self.isIdentityServerConfigured)
+        {
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:[NSBundle mxk_localizedStringForKey:@"error"]
+                                                                           message:NSLocalizedStringFromTable(@"auth_forgot_password_error_no_configured_identity_server", @"Vector", nil)
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+            [alert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"ok"] style:UIAlertActionStyleDefault handler:nil]];
+            [self presentViewController:alert animated:YES completion:nil];
+            
+            return;
+        }
+        else
+        {
+            // Update UI to reset password
+            self.authType = MXKAuthenticationTypeForgotPassword;
+        }
+    }
+    else if (sender == self.rightBarButtonItem)
     {
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        
         // Check whether a request is in progress
         if (!self.userInteractionEnabled)
         {
             // Cancel the current operation
             [self cancel];
+            self.rightBarButtonItem.title = nil;
+            self.rightBarButtonItem.enabled = NO;
         }
         else if (self.authType == MXKAuthenticationTypeLogin && [defaults boolForKey:@"enableRegistration"])
         {
@@ -507,18 +860,6 @@
     }
     else if (sender == self.submitButton)
     {
-        // Check if the provided username for login contains the homeserver and use that instead of the default one
-        if (self.authType == MXKAuthenticationTypeLogin)
-        {
-            AuthInputsView *authInputsview = (AuthInputsView*)self.authInputsView;
-            if ([MXTools isMatrixUserIdentifier:authInputsview.userId])
-            {
-                NSString *homeserver = [[authInputsview.userId componentsSeparatedByString:@":"] objectAtIndex:1];
-                NSString *homeserverWithProtocol = [NSString stringWithFormat:@"https://%@", homeserver];
-                [self setHomeServerTextFieldText:homeserverWithProtocol];
-            }
-        }
-        
         // Handle here the second screen used to manage the 3rd party ids during the registration.
         // Except if there is an external set of parameters defined to perform a registration.
         if (self.authType == MXKAuthenticationTypeRegister && !self.externalRegistrationParameters)
@@ -587,67 +928,33 @@
         
         [super onButtonPressed:self.submitButton];
     }
-    else if (sender == ((AuthInputsView*)self.authInputsView).ssoButton)
+    else if ([self.authInputsView isKindOfClass:[AuthInputsView class]] && sender == ((AuthInputsView*)self.authInputsView).ssoButton)
     {
         // Do SSO using the fallback URL
         [self showAuthenticationFallBackView];
-
-        [ThemeService.shared.theme applyStyleOnNavigationBar:self.navigationController.navigationBar];
+    }
+    else if (sender == self.softLogoutClearDataButton)
+    {
+        [self showClearDataAfterSoftLogoutConfirmation];
     }
     else
     {
         [super onButtonPressed:sender];
     }
+    
+    [self updateSoftLogoutClearDataContainerVisibility];
 }
 
 - (void)onFailureDuringAuthRequest:(NSError *)error
 {
-    if (!loginError)
+    MXError *mxError = [[MXError alloc] initWithNSError:error];
+    if ([mxError.errcode isEqualToString:kMXErrCodeStringResourceLimitExceeded])
     {
-        MXError *mxError = [[MXError alloc] initWithNSError:error];
-        
-        if (self.authType == MXKAuthenticationTypeLogin)
-        {
-            if (mxError && [mxError.errcode isEqualToString:kMXErrCodeStringForbidden])
-            {
-                NSLog(@"[AuthenticationVC] Retry login");
-                
-                // Store the current error
-                loginError = error;
-                
-                // Trigger a new request
-                [self onButtonPressed:self.submitButton];
-                return;
-            }
-        }
-    }
-    
-    // Check whether we were trying to login again
-    if (loginError)
-    {
-        NSLog(@"[AuthenticationVC] Still no success");
-        
-        // Consider the original login error
-        [super onFailureDuringAuthRequest:loginError];
-        loginError = nil;
+        [self showResourceLimitExceededError:mxError.userInfo];
     }
     else
     {
-        MXError *mxError = [[MXError alloc] initWithNSError:error];
-        if ([mxError.errcode isEqualToString:kMXErrCodeStringResourceLimitExceeded])
-        {
-            [self showResourceLimitExceededError:mxError.userInfo];
-        }
-        else
-        {
-            [super onFailureDuringAuthRequest:error];
-        }
-    }
-    
-    if ([self.authInputsView isKindOfClass:QRReaderView.class])
-    {
-        QRReaderView *qrView = (QRReaderView *)self.authInputsView;
-        [qrView loginFailed];
+        [super onFailureDuringAuthRequest:error];
     }
 }
 
@@ -688,6 +995,28 @@
     [super onSuccessfulLogin:credentials];
 }
 
+- (void)updateForgotPwdButtonVisibility
+{
+    AuthInputsView *authInputsview;
+    if ([self.authInputsView isKindOfClass:AuthInputsView.class])
+    {
+        authInputsview = (AuthInputsView*)self.authInputsView;
+    }
+    
+    self.forgotPasswordButton.hidden = YES;
+    
+    // Adjust minimum leading constraint of the submit button
+    if (self.forgotPasswordButton.isHidden)
+    {
+        self.submitButtonMinLeadingConstraint.constant = 19;
+    }
+    else
+    {
+        CGRect frame = self.forgotPasswordButton.frame;
+        self.submitButtonMinLeadingConstraint.constant =  frame.origin.x + frame.size.width + 10;
+    }
+}
+
 #pragma mark -
 
 - (void)updateRegistrationScreenWithThirdPartyIdentifiersHidden:(BOOL)thirdPartyIdentifiersHidden
@@ -715,10 +1044,84 @@
 
 - (void)refreshContentViewHeightConstraint
 {
-    // Refresh content view height by considering the options container display.
+        // Refresh content view height by considering the options container display.
     CGFloat constant = self.optionsContainer.frame.origin.y + self.homeServerContainer.frame.size.height + 100;
     
     self.contentViewHeightConstraint.constant = constant;
+}
+
+- (void)hideCustomServers:(BOOL)hidden
+{
+    if (self.customServersContainer.isHidden == hidden)
+    {
+        return;
+    }
+    
+    if (hidden)
+    {
+        [self.homeServerTextField resignFirstResponder];
+        [self.identityServerTextField resignFirstResponder];
+        
+        // Report server url typed by the user as custom url.
+        NSString *homeServerURL = self.homeServerTextField.text;
+        if (homeServerURL.length && ![homeServerURL isEqualToString:self.defaultHomeServerUrl])
+        {
+            [[NSUserDefaults standardUserDefaults] setObject:homeServerURL forKey:@"customHomeServerURL"];
+        }
+        else
+        {
+            [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"customHomeServerURL"];
+        }
+        
+        NSString *identityServerURL = self.identityServerTextField.text;
+        if (identityServerURL.length && ![identityServerURL isEqualToString:self.defaultIdentityServerUrl])
+        {
+            [[NSUserDefaults standardUserDefaults] setObject:identityServerURL forKey:@"customIdentityServerURL"];
+        }
+        else
+        {
+            [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"customIdentityServerURL"];
+        }
+        
+        // Restore default configuration
+        [self setHomeServerTextFieldText:self.defaultHomeServerUrl];
+        [self setIdentityServerTextFieldText:self.defaultIdentityServerUrl];
+        
+        [self.customServersTickButton setImage:[UIImage imageNamed:@"selection_untick"] forState:UIControlStateNormal];
+        self.customServersContainer.hidden = YES;
+        
+        // Refresh content view height
+        self.contentViewHeightConstraint.constant -= self.customServersContainer.frame.size.height;
+    }
+    else
+    {
+        // Load custom configuration
+        NSString *customHomeServerURL = [[NSUserDefaults standardUserDefaults] objectForKey:@"customHomeServerURL"];
+        if (customHomeServerURL.length)
+        {
+            [self setHomeServerTextFieldText:customHomeServerURL];
+        }
+        else
+        {
+            [self checkIdentityServer];
+        }
+        NSString *customIdentityServerURL = [[NSUserDefaults standardUserDefaults] objectForKey:@"customIdentityServerURL"];
+        if (customIdentityServerURL.length)
+        {
+            [self setIdentityServerTextFieldText:customIdentityServerURL];
+        }
+        
+        [self.customServersTickButton setImage:[UIImage imageNamed:@"selection_tick"] forState:UIControlStateNormal];
+        self.customServersContainer.hidden = NO;
+        
+        // Refresh content view height
+        self.contentViewHeightConstraint.constant += self.customServersContainer.frame.size.height;
+        
+        // Scroll to display server options
+        CGPoint offset = self.authenticationScrollView.contentOffset;
+        offset.y += self.customServersContainer.frame.size.height;
+        self.authenticationScrollView.contentOffset = offset;
+    }
 }
 
 - (void)showResourceLimitExceededError:(NSDictionary *)errorDict
@@ -763,16 +1166,82 @@
 
 - (void)authenticationViewController:(MXKAuthenticationViewController *)authenticationViewController didLogWithUserId:(NSString *)userId
 {
-    // Remove auth view controller on successful login
-    if (self.navigationController)
+    self.userInteractionEnabled = NO;
+    [self.authenticationActivityIndicator startAnimating];
+    
+    // Hide the custom server details in order to save customized inputs
+    [self hideCustomServers:YES];
+    
+    MXKAccount *account = [[MXKAccountManager sharedManager] accountForUserId:userId];
+    MXSession *session = account.mxSession;
+    
+    // Create DM with Riot-bot on new account creation.
+    if (self.authType == MXKAuthenticationTypeRegister)
     {
-        // Pop the view controller
-        [self.navigationController popViewControllerAnimated:YES];
+        MXRoomCreationParameters *roomCreationParameters = [MXRoomCreationParameters parametersForDirectRoomWithUser:@"@riot-bot:matrix.org"];
+        [session createRoomWithParameters:roomCreationParameters success:nil failure:^(NSError *error) {
+            NSLog(@"[AuthenticationVC] Create chat with riot-bot failed");
+        }];
     }
-    else
+    
+    // Wait for session change to present complete security screen if needed
+    [self registerSessionStateChangeNotificationForSession:session];
+}
+
+- (void)registerSessionStateChangeNotificationForSession:(MXSession*)session
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sessionStateDidChangeNotification:) name:kMXSessionStateDidChangeNotification object:session];
+}
+
+- (void)unregisterSessionStateChangeNotification
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kMXSessionStateDidChangeNotification object:nil];
+}
+
+- (void)sessionStateDidChangeNotification:(NSNotification*)notification
+{
+    MXSession *session = (MXSession*)notification.object;
+    
+    if (session.state >= MXSessionStateStoreDataReady)
     {
-        // Dismiss on successful login
-        [self dismissViewControllerAnimated:YES completion:nil];
+        [self unregisterSessionStateChangeNotification];
+        
+        if (session.crypto.crossSigning)
+        {
+            // Do not make key share requests while the "Complete security" is not complete.
+            // If the device is self-verified, the SDK will restore the existing key backup.
+            // Then, it  will re-enable outgoing key share requests
+            [session.crypto setOutgoingKeyRequestsEnabled:NO onComplete:nil];
+            
+            [session.crypto.crossSigning refreshStateWithSuccess:^(BOOL stateUpdated) {
+                
+                if (session.crypto.crossSigning.state == MXCrossSigningStateCrossSigningExists)
+                {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        
+                        self.userInteractionEnabled = YES;
+                        [self.authenticationActivityIndicator stopAnimating];
+                        
+                        [self presentCompleteSecurityWithSession:session];
+                    });
+                }
+                else
+                {
+                    [session.crypto setOutgoingKeyRequestsEnabled:YES onComplete:nil];
+                    [self dismiss];
+                }
+                
+            } failure:^(NSError * _Nonnull error) {
+                NSLog(@"[AuthenticationVC] Fail to refresh crypto state with error: %@", error);
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self dismiss];
+                });
+            }];
+        }
+        else
+        {
+            [self dismiss];
+        }
     }
 }
 
@@ -787,6 +1256,137 @@
 - (void)authInputsViewDidCancelOperation:(MXKAuthInputsView *)authInputsView
 {
     [self cancel];
+}
+
+- (void)authInputsView:(MXKAuthInputsView *)authInputsView autoDiscoverServerWithDomain:(NSString *)domain
+{
+    [self tryServerDiscoveryOnDomain:domain];
+}
+
+#pragma mark - Server discovery
+
+- (void)tryServerDiscoveryOnDomain:(NSString *)domain
+{
+    autoDiscovery = [[MXAutoDiscovery alloc] initWithDomain:domain];
+    
+    MXWeakify(self);
+    [autoDiscovery findClientConfig:^(MXDiscoveredClientConfig * _Nonnull discoveredClientConfig) {
+        MXStrongifyAndReturnIfNil(self);
+        
+        self->autoDiscovery = nil;
+        
+        switch (discoveredClientConfig.action)
+        {
+            case MXDiscoveredClientConfigActionPrompt:
+                [self customiseServersWithWellKnown:discoveredClientConfig.wellKnown];
+                break;
+                
+            case MXDiscoveredClientConfigActionFailPrompt:
+            case MXDiscoveredClientConfigActionFailError:
+            {
+                // Alert user
+                if (self->alert)
+                {
+                    [self->alert dismissViewControllerAnimated:NO completion:nil];
+                }
+                
+                self->alert = [UIAlertController alertControllerWithTitle:NSLocalizedStringFromTable(@"auth_autodiscover_invalid_response", @"Vector", nil)
+                                                                  message:nil
+                                                           preferredStyle:UIAlertControllerStyleAlert];
+                
+                [self->alert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"ok"]
+                                                                style:UIAlertActionStyleDefault
+                                                              handler:^(UIAlertAction * action) {
+                                                                  
+                                                                  self->alert = nil;
+                                                              }]];
+                
+                [self presentViewController:self->alert animated:YES completion:nil];
+                
+                break;
+            }
+                
+            default:
+                // Fail silently
+                break;
+        }
+        
+    } failure:^(NSError * _Nonnull error) {
+        MXStrongifyAndReturnIfNil(self);
+        
+        self->autoDiscovery = nil;
+        
+        // Fail silently
+    }];
+}
+
+- (void)customiseServersWithWellKnown:(MXWellKnown*)wellKnown
+{
+    if (self.customServersContainer.hidden)
+    {
+        // Check wellKnown data with application default servers
+        // If different, use custom servers
+        if (![self.defaultHomeServerUrl isEqualToString:wellKnown.homeServer.baseUrl]
+            || ![self.defaultIdentityServerUrl isEqualToString:wellKnown.identityServer.baseUrl])
+        {
+            [self showCustomHomeserver:wellKnown.homeServer.baseUrl andIdentityServer:wellKnown.identityServer.baseUrl];
+        }
+    }
+    else
+    {
+        if ([self.defaultHomeServerUrl isEqualToString:wellKnown.homeServer.baseUrl]
+            && [self.defaultIdentityServerUrl isEqualToString:wellKnown.identityServer.baseUrl])
+        {
+            // wellKnown matches with application default servers
+            // Hide custom servers
+            [self hideCustomServers:YES];
+        }
+        else
+        {
+            NSString *customHomeServerURL = [[NSUserDefaults standardUserDefaults] objectForKey:@"customHomeServerURL"];
+            NSString *customIdentityServerURL = [[NSUserDefaults standardUserDefaults] objectForKey:@"customIdentityServerURL"];
+            
+            if (![customHomeServerURL isEqualToString:wellKnown.homeServer.baseUrl]
+                || ![customIdentityServerURL isEqualToString:wellKnown.identityServer.baseUrl])
+            {
+                // Update custom servers
+                [self showCustomHomeserver:wellKnown.homeServer.baseUrl andIdentityServer:wellKnown.identityServer.baseUrl];
+            }
+        }
+    }
+}
+
+- (void)showCustomHomeserver:(NSString*)homeserver andIdentityServer:(NSString*)identityServer
+{
+    // Store the wellknown data into NSUserDefaults before displaying them
+    [[NSUserDefaults standardUserDefaults] setObject:homeserver forKey:@"customHomeServerURL"];
+    
+    if (identityServer)
+    {
+        [[NSUserDefaults standardUserDefaults] setObject:identityServer forKey:@"customIdentityServerURL"];
+    }
+    else
+    {
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"customIdentityServerURL"];
+    }
+    
+    // And show custom servers
+    [self hideCustomServers:NO];
+}
+
+#pragma mark - KeyVerificationCoordinatorBridgePresenterDelegate
+
+- (void)keyVerificationCoordinatorBridgePresenterDelegateDidComplete:(KeyVerificationCoordinatorBridgePresenter * _Nonnull)coordinatorBridgePresenter otherUserId:(NSString * _Nonnull)otherUserId otherDeviceId:(NSString * _Nonnull)otherDeviceId
+{
+    [self dismiss];
+}
+
+- (void)keyVerificationCoordinatorBridgePresenterDelegateDidCancel:(KeyVerificationCoordinatorBridgePresenter * _Nonnull)coordinatorBridgePresenter
+{
+    // Set outgoing key requests back
+    [coordinatorBridgePresenter.session.crypto setOutgoingKeyRequestsEnabled:YES onComplete:nil];
+    
+    [self dismiss];
 }
 
 @end

@@ -194,33 +194,27 @@ static const CGFloat kDirectRoomBorderWidth = 3.0;
             }
             
             // Use bold font for the room title
-            if ([UIFont respondsToSelector:@selector(systemFontOfSize:weight:)])
-            {
-                self.roomTitle.font = [UIFont systemFontOfSize:17 weight:UIFontWeightBold];
-            }
-            else
-            {
-                self.roomTitle.font = [UIFont boldSystemFontOfSize:17];
-            }
+            self.roomTitle.font = [UIFont systemFontOfSize:17 weight:UIFontWeightBold];
         }
         else
         {
             self.lastEventDate.textColor = ThemeService.shared.theme.textSecondaryColor;
             
-            // The room title is not bold anymore
-            if ([UIFont respondsToSelector:@selector(systemFontOfSize:weight:)])
-            {
-                self.roomTitle.font = [UIFont systemFontOfSize:17 weight:UIFontWeightMedium];
-            }
-            else
-            {
-                self.roomTitle.font = [UIFont systemFontOfSize:17];
-            }
+            // The room title is not bold anymore            
+            self.roomTitle.font = [UIFont systemFontOfSize:17 weight:UIFontWeightMedium];
         }
         
         self.directRoomBorderView.hidden = !roomCellData.roomSummary.room.isDirect;
 
-        self.encryptedRoomIcon.hidden = !roomCellData.roomSummary.isEncrypted;
+        if (roomCellData.roomSummary.isEncrypted)
+        {
+            self.encryptedRoomIcon.hidden = NO;
+            self.encryptedRoomIcon.image = [self shieldImageForTrustLevel:roomCellData.roomSummary.roomEncryptionTrustLevel];
+        }
+        else
+        {
+            self.encryptedRoomIcon.hidden = YES;
+        }
 
         [roomCellData.roomSummary setRoomAvatarImageIn:self.roomAvatar];
     }
@@ -234,6 +228,34 @@ static const CGFloat kDirectRoomBorderWidth = 3.0;
 {
     // The height is fixed
     return 74;
+}
+
+- (UIImage*)shieldImageForTrustLevel:(RoomEncryptionTrustLevel)roomEncryptionTrustLevel
+{
+    UIImage *shieldImage;
+    
+    NSString *encryptionIconName;
+    switch (roomEncryptionTrustLevel)
+    {
+        case RoomEncryptionTrustLevelWarning:
+            encryptionIconName = @"encryption_warning";
+            break;
+        case RoomEncryptionTrustLevelNormal:
+            encryptionIconName = @"encryption_normal";
+            break;
+        case RoomEncryptionTrustLevelTrusted:
+            encryptionIconName = @"encryption_trusted";
+            break;
+        case RoomEncryptionTrustLevelUnknown:
+            encryptionIconName = @"encryption_normal";
+            break;
+    }
+    
+    if (encryptionIconName)
+    {
+        shieldImage = [UIImage imageNamed:encryptionIconName];
+    }
+    return shieldImage;
 }
 
 @end

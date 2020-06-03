@@ -24,6 +24,8 @@
 	<string>https://scalar.fp.vitos.amp.chat/scalar-web/</string>
 	<key>integrationsRestUrl</key>
 	<string>https://scalar.fp.vitos.amp.chat/scalar/api</string>
+	<key>jitsiServerURL</key>
+	<string></string>
 	<key>piwik</key>
 	<dict>
 		<key>url</key>

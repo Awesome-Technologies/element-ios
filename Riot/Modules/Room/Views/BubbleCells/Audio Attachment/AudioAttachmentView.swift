@@ -125,7 +125,7 @@ class AudioAttachmentView: UIView, AVAudioPlayerDelegate {
                     if let name = fileName {
                         self.audioFileURL = URL(fileURLWithPath: name)
                         DispatchQueue.main.async {
-                            self.prepateToPlay()
+                            self.prepareToPlay()
                         }
                     }
                 }, failure: { error in
@@ -137,9 +137,9 @@ class AudioAttachmentView: UIView, AVAudioPlayerDelegate {
                     }
                 })
             } else {
-                self.audioFileURL = URL(fileURLWithPath: attachment.cacheFilePath)
+                self.audioFileURL = URL(fileURLWithPath: attachment.cacheFilePath ?? "")
                 DispatchQueue.main.async {
-                    self.prepateToPlay()
+                    self.prepareToPlay()
                 }
             }
         }, failure: { error in
@@ -268,7 +268,7 @@ class AudioAttachmentView: UIView, AVAudioPlayerDelegate {
     
     // MARK: - Audio Playback
     
-    func prepateToPlay() {
+    func prepareToPlay() {
         do {
             audioPlayer = try AVAudioPlayer(contentsOf: audioFileURL)
             audioPlayer?.delegate = self

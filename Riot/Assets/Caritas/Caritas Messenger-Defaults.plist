@@ -24,7 +24,7 @@
 	<string>https://dimension.caritas.amp.care/riot</string>
 	<key>integrationsRestUrl</key>
 	<string>https://dimension.caritas.amp.care/api/v1/scalar</string>
-	<key>jitsiServerUrl</key>
+	<key>jitsiServerURL</key>
 	<string>https://jitsi.caritas.amp.chat/</string>
 	<key>piwik</key>
 	<dict>

@@ -22,10 +22,7 @@
 
 #import <MatrixKit/MatrixKit.h>
 
-#import <MediaPlayer/MediaPlayer.h>
-#import <MobileCoreServices/MobileCoreServices.h>
 #import <OLMKit/OLMKit.h>
-#import <Photos/Photos.h>
 
 #import "AppDelegate.h"
 #import "AvatarGenerator.h"
@@ -35,6 +32,7 @@
 #import "WebViewViewController.h"
 
 #import "DeactivateAccountViewController.h"
+#import "SecurityViewController.h"
 
 #import "RageShakeManager.h"
 #import "ThemeService.h"
@@ -47,13 +45,16 @@ NSString* const kSettingsViewControllerPhoneBookCountryCellId = @"kSettingsViewC
 
 enum
 {
+    SETTINGS_SECTION_DISCOVERY_INDEX = -1,
+    SETTINGS_SECTION_IDENTITY_SERVER_INDEX = -1,
+    SETTINGS_SECTION_IGNORED_USERS_INDEX = -1,
+    SETTINGS_SECTION_INTEGRATIONS_INDEX = -1,
     SETTINGS_SECTION_SIGN_OUT_INDEX = 0,
     SETTINGS_SECTION_USER_SETTINGS_INDEX,
+    SETTINGS_SECTION_SECURITY_INDEX,
     SETTINGS_SECTION_NOTIFICATIONS_SETTINGS_INDEX,
     SETTINGS_SECTION_USER_INTERFACE_INDEX,
-    SETTINGS_SECTION_IGNORED_USERS_INDEX,
     SETTINGS_SECTION_OTHER_INDEX,
-    SETTINGS_SECTION_KEYBACKUP_INDEX,
     SETTINGS_SECTION_DEACTIVATE_ACCOUNT_INDEX,
     SETTINGS_SECTION_COUNT
 };
@@ -74,6 +75,13 @@ enum
 
 enum
 {
+    IDENTITY_SERVER_INDEX,
+    IDENTITY_SERVER_DESCRIPTION_INDEX,
+    IDENTITY_SERVER_COUNT
+};
+
+enum
+{
     OTHER_VERSION_INDEX = 0,
     OTHER_OLM_VERSION_INDEX,
     OTHER_COPYRIGHT_INDEX,
@@ -89,17 +97,23 @@ enum
     OTHER_COUNT
 };
 
+enum
+{
+    SECURITY_BUTTON_INDEX = 0,
+    SECURITY_COUNT
+};
+
 #define SECTION_TITLE_PADDING_WHEN_HIDDEN 0.01f
 
 typedef void (^blockSettingsViewController_onReadyToDestroy)(void);
 
 
 @interface SettingsViewController () <DeactivateAccountViewControllerDelegate,
-SettingsKeyBackupTableViewSectionDelegate,
-MXKEncryptionInfoViewDelegate,
 KeyBackupSetupCoordinatorBridgePresenterDelegate,
-KeyBackupRecoverCoordinatorBridgePresenterDelegate,
-SignOutAlertPresenterDelegate>
+SignOutAlertPresenterDelegate,
+SingleImagePickerPresenterDelegate,
+SettingsDiscoveryTableViewSectionDelegate, SettingsDiscoveryViewModelCoordinatorDelegate,
+SettingsIdentityServerCoordinatorBridgePresenterDelegate>
 {
     // Current alert (if any).
     UIAlertController *currentAlert;
@@ -112,9 +126,6 @@ SignOutAlertPresenterDelegate>
     id notificationCenterWillUpdateObserver;
     id notificationCenterDidUpdateObserver;
     id notificationCenterDidFailObserver;
-    
-    // picker
-    MediaPickerViewController* mediaPicker;
     
     // profile updates
     // avatar
@@ -137,6 +148,7 @@ SignOutAlertPresenterDelegate>
     NSInteger userSettingsFirstNameIndex;
     NSInteger userSettingsSurnameIndex;
     NSInteger userSettingsChangePasswordIndex;
+    NSInteger userSettingsThreePidsInformation;
     NSInteger userSettingsNightModeSepIndex;
     NSInteger userSettingsNightModeIndex;
     
@@ -157,18 +169,30 @@ SignOutAlertPresenterDelegate>
     // The current pushed view controller
     UIViewController *pushedViewController;
 
-    SettingsKeyBackupTableViewSection *keyBackupSection;
     KeyBackupSetupCoordinatorBridgePresenter *keyBackupSetupCoordinatorBridgePresenter;
-    KeyBackupRecoverCoordinatorBridgePresenter *keyBackupRecoverCoordinatorBridgePresenter;
+
+    SettingsIdentityServerCoordinatorBridgePresenter *identityServerSettingsCoordinatorBridgePresenter;
 }
 
 @property (nonatomic, weak) DeactivateAccountViewController *deactivateAccountViewController;
 @property (nonatomic, strong) SignOutAlertPresenter *signOutAlertPresenter;
 @property (nonatomic, weak) UIButton *signOutButton;
+@property (nonatomic, strong) SingleImagePickerPresenter *imagePickerPresenter;
+
+@property (nonatomic, strong) SettingsDiscoveryViewModel *settingsDiscoveryViewModel;
+@property (nonatomic, strong) SettingsDiscoveryTableViewSection *settingsDiscoveryTableViewSection;
+@property (nonatomic, strong) SettingsDiscoveryThreePidDetailsCoordinatorBridgePresenter *discoveryThreePidDetailsPresenter;
 
 @end
 
 @implementation SettingsViewController
+
++ (instancetype)instantiate
+{
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
+    SettingsViewController *settingsViewController = [storyboard instantiateViewControllerWithIdentifier:@"SettingsViewController"];
+    return settingsViewController;
+}
 
 - (void)finalizeInit
 {
@@ -232,6 +256,8 @@ SignOutAlertPresenterDelegate>
         [self refreshSettings];
         
     }];
+
+    [self registerAccountDataDidChangeIdentityServerNotification];
     
     // Add each matrix session, to update the view controller appearance according to mx sessions state
     NSArray *sessions = [AppDelegate theDelegate].mxSessions;
@@ -239,18 +265,8 @@ SignOutAlertPresenterDelegate>
     {
         [self addMatrixSession:mxSession];
     }
-
-    if (self.mainSession.crypto.backup)
-    {
-        MXDeviceInfo *deviceInfo = [self.mainSession.crypto.deviceList storedDevice:self.mainSession.matrixRestClient.credentials.userId
-                                                                           deviceId:self.mainSession.matrixRestClient.credentials.deviceId];
-
-        if (deviceInfo)
-        {
-            keyBackupSection = [[SettingsKeyBackupTableViewSection alloc] initWithKeyBackup:self.mainSession.crypto.backup userDevice:deviceInfo];
-            keyBackupSection.delegate = self;
-        }
-    }
+    
+    [self setupDiscoverySection];
         
     // Observe user interface theme change.
     kThemeServiceDidChangeThemeNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kThemeServiceDidChangeThemeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notif) {
@@ -327,7 +343,7 @@ SignOutAlertPresenterDelegate>
     }
 
     keyBackupSetupCoordinatorBridgePresenter = nil;
-    keyBackupRecoverCoordinatorBridgePresenter = nil;
+    identityServerSettingsCoordinatorBridgePresenter = nil;
 }
 
 - (void)onMatrixSessionStateDidChange:(NSNotification *)notif
@@ -373,6 +389,13 @@ SignOutAlertPresenterDelegate>
     [saveButton setEnabled:NO];
     [AppDelegate theDelegate].masterTabBarController.navigationItem.rightBarButtonItem = saveButton;
     [AppDelegate theDelegate].masterTabBarController.navigationItem.rightBarButtonItem.accessibilityIdentifier=@"SettingsVCNavBarSaveButton";
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    [self.settingsDiscoveryTableViewSection reload];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -484,12 +507,128 @@ SignOutAlertPresenterDelegate>
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
     onReadyToDestroyHandler = nil;
+            [self.tableView beginUpdates];
+            
+            [self.tableView endUpdates];            
+            [self.tableView beginUpdates];
+            
+            [self.tableView endUpdates];
+
 }
 
 - (void)refreshSettings
 {
     // Trigger a full table reloadData
     [self.tableView reloadData];
+}
+
+- (void)setupDiscoverySection
+{
+    MXKAccount* account = [MXKAccountManager sharedManager].activeAccounts.firstObject;
+    
+    NSArray<MXThirdPartyIdentifier*> *thirdPartyIdentifiers = account.threePIDs ?: @[];
+    
+    SettingsDiscoveryViewModel *viewModel = [[SettingsDiscoveryViewModel alloc] initWithSession:self.mainSession thirdPartyIdentifiers:thirdPartyIdentifiers];
+    viewModel.coordinatorDelegate = self;
+    
+    SettingsDiscoveryTableViewSection *discoverySection = [[SettingsDiscoveryTableViewSection alloc] initWithViewModel:viewModel];
+    discoverySection.delegate = self;
+    
+    self.settingsDiscoveryViewModel = viewModel;
+    self.settingsDiscoveryTableViewSection = discoverySection;
+}
+
+#pragma mark - 3Pid Add
+
+-(void)checkAuthenticationFlowForAdding:(MX3PIDMedium)medium withSession:(MXSession*)session onComplete:(void (^)(NSString *password))onComplete
+{
+    [self startActivityIndicator];
+
+    [session.threePidAddManager authenticationFlowForAdd3PidWithSuccess:^(NSArray<MXLoginFlow *> * _Nullable flows) {
+        [self stopActivityIndicator];
+
+        if (flows)
+        {
+            // We support only "m.login.password"
+            BOOL hasPasswordFlow = NO;
+            for (MXLoginFlow *flow in flows)
+            {
+                if ([flow.stages containsObject:kMXLoginFlowTypePassword])
+                {
+                    hasPasswordFlow = YES;
+                    break;
+                }
+            }
+
+            if (hasPasswordFlow)
+            {
+                // Ask password to the user while we are here
+                NSString *title = NSLocalizedStringFromTable(@"settings_add_3pid_password_title_email", @"Vector", nil);
+                if ([medium isEqualToString:kMX3PIDMediumMSISDN])
+                {
+                    title = NSLocalizedStringFromTable(@"settings_add_3pid_password_title_msidsn", @"Vector", nil);
+                }
+
+                [self requestAccountPasswordWithTitle:title
+                                              message:NSLocalizedStringFromTable(@"settings_add_3pid_password_message", @"Vector", nil)
+                                           onComplete:onComplete];
+            }
+            else
+            {
+                // The user needs to use Riot-web
+                NSString *appName = [[NSBundle mainBundle] infoDictionary][@"CFBundleDisplayName"];
+                NSString *message = [NSString stringWithFormat:NSLocalizedStringFromTable(@"error_not_supported_on_mobile", @"Vector", nil), appName];
+                [[AppDelegate theDelegate] showAlertWithTitle:nil message:message];
+            }
+        }
+        else
+        {
+            // No auth
+            onComplete(nil);
+        }
+
+    } failure:^(NSError * _Nonnull error) {
+        [self stopActivityIndicator];
+        [[AppDelegate theDelegate] showErrorAsAlert:error];
+    }];
+}
+
+- (void)requestAccountPasswordWithTitle:(NSString*)title message:(NSString*)message onComplete:(void (^)(NSString *password))onComplete
+{
+    [currentAlert dismissViewControllerAnimated:NO completion:nil];
+
+    // Prompt the user before deleting the device.
+    currentAlert = [UIAlertController alertControllerWithTitle:title
+                                                       message:message
+                                                preferredStyle:UIAlertControllerStyleAlert];
+
+    [currentAlert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+        textField.secureTextEntry = YES;
+        textField.placeholder = nil;
+        textField.keyboardType = UIKeyboardTypeDefault;
+    }];
+
+    MXWeakify(self);
+    [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"cancel"]
+                                                     style:UIAlertActionStyleDefault
+                                                   handler:^(UIAlertAction * action)
+                             {
+                                 MXStrongifyAndReturnIfNil(self);
+                                 self->currentAlert = nil;
+                             }]];
+
+    [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"continue"]
+                                                     style:UIAlertActionStyleDefault
+                                                   handler:^(UIAlertAction * action) {
+                                                       MXStrongifyAndReturnIfNil(self);
+
+                                                       UITextField *textField = [self->currentAlert textFields].firstObject;
+                                                       self->currentAlert = nil;
+
+                                                       onComplete(textField.text);
+                                                   }]];
+
+    [self presentViewController:currentAlert animated:YES completion:nil];
 }
 
 #pragma mark - Segues
@@ -534,7 +673,7 @@ SignOutAlertPresenterDelegate>
             userSettingsDisplayNameIndex = -1;
             userSettingsChangePasswordIndex = -1;
         }
-
+        
         // Hide some unsupported account settings
         userSettingsFirstNameIndex = -1;
         userSettingsSurnameIndex = -1;
@@ -574,18 +713,15 @@ SignOutAlertPresenterDelegate>
         
         count = OTHER_COUNT - decrement;
     }
-    else if (section == SETTINGS_SECTION_KEYBACKUP_INDEX)
-    {
-        // Check whether this section is visible.
-        if (self.mainSession.crypto)
-        {
-            count = keyBackupSection.numberOfRows;
-        }
-    }
     else if (section == SETTINGS_SECTION_DEACTIVATE_ACCOUNT_INDEX)
     {
         count = 1;
     }
+    else if (section == SETTINGS_SECTION_SECURITY_INDEX)
+    {
+        count = SECURITY_COUNT;
+    }
+
     return count;
 }
 
@@ -593,7 +729,7 @@ SignOutAlertPresenterDelegate>
 {
     MXKTableViewCellWithLabelAndTextField *cell = [tableview dequeueReusableCellWithIdentifier:[MXKTableViewCellWithLabelAndTextField defaultReuseIdentifier] forIndexPath:indexPath];
     
-    cell.mxkLabelLeadingConstraint.constant = cell.separatorInset.left;
+    cell.mxkLabelLeadingConstraint.constant = cell.vc_separatorInset.left;
     cell.mxkTextFieldLeadingConstraint.constant = 16;
     cell.mxkTextFieldTrailingConstraint.constant = 15;
     
@@ -621,7 +757,7 @@ SignOutAlertPresenterDelegate>
 {
     MXKTableViewCellWithLabelAndSwitch *cell = [tableview dequeueReusableCellWithIdentifier:[MXKTableViewCellWithLabelAndSwitch defaultReuseIdentifier] forIndexPath:indexPath];
     
-    cell.mxkLabelLeadingConstraint.constant = cell.separatorInset.left;
+    cell.mxkLabelLeadingConstraint.constant = cell.vc_separatorInset.left;
     cell.mxkSwitchTrailingConstraint.constant = 15;
     cell.mxkLabel.textColor = ThemeService.shared.theme.textPrimaryColor;
     
@@ -650,6 +786,7 @@ SignOutAlertPresenterDelegate>
     cell.textLabel.accessibilityIdentifier = nil;
     cell.textLabel.font = [UIFont systemFontOfSize:17];
     cell.textLabel.textColor = ThemeService.shared.theme.textPrimaryColor;
+    cell.contentView.backgroundColor = UIColor.clearColor;
     
     return cell;
 }
@@ -661,8 +798,8 @@ SignOutAlertPresenterDelegate>
     textViewCell.mxkTextView.textColor = ThemeService.shared.theme.textPrimaryColor;
     textViewCell.mxkTextView.font = [UIFont systemFontOfSize:17];
     textViewCell.mxkTextView.backgroundColor = [UIColor clearColor];
-    textViewCell.mxkTextViewLeadingConstraint.constant = tableView.separatorInset.left;
-    textViewCell.mxkTextViewTrailingConstraint.constant = tableView.separatorInset.right;
+    textViewCell.mxkTextViewLeadingConstraint.constant = tableView.vc_separatorInset.left;
+    textViewCell.mxkTextViewTrailingConstraint.constant = tableView.vc_separatorInset.right;
     textViewCell.mxkTextView.accessibilityIdentifier = nil;
     
     return textViewCell;
@@ -721,7 +858,7 @@ SignOutAlertPresenterDelegate>
         {
             MXKTableViewCellWithLabelAndMXKImageView *profileCell = [tableView dequeueReusableCellWithIdentifier:[MXKTableViewCellWithLabelAndMXKImageView defaultReuseIdentifier] forIndexPath:indexPath];
             
-            profileCell.mxkLabelLeadingConstraint.constant = profileCell.separatorInset.left;
+            profileCell.mxkLabelLeadingConstraint.constant = profileCell.vc_separatorInset.left;
             profileCell.mxkImageViewTrailingConstraint.constant = 10;
             
             profileCell.mxkImageViewWidthConstraint.constant = profileCell.mxkImageViewHeightConstraint.constant = 30;
@@ -799,6 +936,21 @@ SignOutAlertPresenterDelegate>
             surnameCell.mxkTextField.userInteractionEnabled = NO;
             
             cell = surnameCell;
+        }
+        else if (row == userSettingsThreePidsInformation)
+        {
+            MXKTableViewCell *threePidsInformationCell = [self getDefaultTableViewCell:self.tableView];
+            
+            NSMutableAttributedString *attributedString =  [[NSMutableAttributedString alloc] initWithString:NSLocalizedStringFromTable(@"settings_three_pids_management_information_part1", @"Vector", nil) attributes:@{NSForegroundColorAttributeName: ThemeService.shared.theme.textPrimaryColor}];
+            [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:NSLocalizedStringFromTable(@"settings_three_pids_management_information_part2", @"Vector", nil) attributes:@{NSForegroundColorAttributeName: ThemeService.shared.theme.tintColor}]];
+            [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:NSLocalizedStringFromTable(@"settings_three_pids_management_information_part3", @"Vector", nil) attributes:@{NSForegroundColorAttributeName: ThemeService.shared.theme.textPrimaryColor}]];
+            
+            threePidsInformationCell.textLabel.attributedText = attributedString;
+            threePidsInformationCell.textLabel.numberOfLines = 0;
+            
+            threePidsInformationCell.selectionStyle = UITableViewCellSelectionStyleNone;
+            
+            cell = threePidsInformationCell;
         }
         else if (row == userSettingsChangePasswordIndex)
         {
@@ -1135,9 +1287,16 @@ SignOutAlertPresenterDelegate>
             cell = reportBugBtnCell;
         }
     }
-    else if (section == SETTINGS_SECTION_KEYBACKUP_INDEX)
+    else if (section == SETTINGS_SECTION_SECURITY_INDEX)
     {
-        cell = [keyBackupSection cellForRowAtRow:row];
+        switch (row)
+        {
+            case SECURITY_BUTTON_INDEX:
+                cell = [self getDefaultTableViewCell:tableView];
+                cell.textLabel.text = NSLocalizedStringFromTable(@"security_settings_title", @"Vector", nil);
+                cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                break;
+        }
     }
     else if (section == SETTINGS_SECTION_DEACTIVATE_ACCOUNT_INDEX)
     {
@@ -1179,6 +1338,18 @@ SignOutAlertPresenterDelegate>
     {
         return NSLocalizedStringFromTable(@"settings_notifications_settings", @"Vector", nil);
     }
+    else if (section == SETTINGS_SECTION_DISCOVERY_INDEX)
+    {
+        return NSLocalizedStringFromTable(@"settings_discovery_settings", @"Vector", nil);
+    }
+    else if (section == SETTINGS_SECTION_IDENTITY_SERVER_INDEX)
+    {
+        return NSLocalizedStringFromTable(@"settings_identity_server_settings", @"Vector", nil);
+    }
+    else if (section == SETTINGS_SECTION_INTEGRATIONS_INDEX)
+    {
+        return NSLocalizedStringFromTable(@"settings_integrations", @"Vector", nil);
+    }
     else if (section == SETTINGS_SECTION_USER_INTERFACE_INDEX)
     {
         return NSLocalizedStringFromTable(@"settings_user_interface", @"Vector", nil);
@@ -1199,19 +1370,15 @@ SignOutAlertPresenterDelegate>
     {
         return NSLocalizedStringFromTable(@"settings_other", @"Vector", nil);
     }
-    else if (section == SETTINGS_SECTION_KEYBACKUP_INDEX)
+    else if (section == SETTINGS_SECTION_SECURITY_INDEX)
     {
-        // Check whether this section is visible
-        if (self.mainSession.crypto)
-        {
-            return NSLocalizedStringFromTable(@"settings_key_backup", @"Vector", nil);
-        }
+        return NSLocalizedStringFromTable(@"settings_security", @"Vector", nil);
     }
     else if (section == SETTINGS_SECTION_DEACTIVATE_ACCOUNT_INDEX)
     {
         return NSLocalizedStringFromTable(@"settings_deactivate_my_account", @"Vector", nil);
     }
-    
+
     return nil;
 }
 
@@ -1465,6 +1632,19 @@ SignOutAlertPresenterDelegate>
                 [self displayPasswordAlert];
             }
         }
+        else if (section == SETTINGS_SECTION_SECURITY_INDEX)
+        {
+            switch (row)
+            {
+                case SECURITY_BUTTON_INDEX:
+                {
+                    SecurityViewController *securityViewController = [SecurityViewController instantiateWithMatrixSession:self.mainSession];
+                    
+                    [self pushViewController:securityViewController];
+                    break;
+                }
+            }
+        }
         
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
     }
@@ -1484,6 +1664,32 @@ SignOutAlertPresenterDelegate>
                                       from:self
                                 sourceView:self.signOutButton
                                   animated:YES];
+}
+
+- (void)toggleStunServerFallback:(id)sender
+{
+    UISwitch *switchButton = (UISwitch*)sender;
+    RiotSettings.shared.allowStunServerFallback = switchButton.isOn;
+
+    self.mainSession.callManager.fallbackSTUNServer = RiotSettings.shared.allowStunServerFallback ? RiotSettings.shared.stunServerFallback : nil;
+}
+
+- (void)toggleAllowIntegrations:(id)sender
+{
+    UISwitch *switchButton = (UISwitch*)sender;
+
+    MXSession *session = self.mainSession;
+    [self startActivityIndicator];
+
+    __block RiotSharedSettings *sharedSettings = [[RiotSharedSettings alloc] initWithSession:session];
+    [sharedSettings setIntegrationProvisioningWithEnabled:switchButton.on success:^{
+        sharedSettings = nil;
+        [self stopActivityIndicator];
+    } failure:^(NSError * _Nullable error) {
+        sharedSettings = nil;
+        [switchButton setOn:!switchButton.on animated:YES];
+        [self stopActivityIndicator];
+    }];
 }
 
 - (void)toggleSendCrashReport:(id)sender
@@ -1703,27 +1909,27 @@ SignOutAlertPresenterDelegate>
     else if (uploadedAvatarURL)
     {
         [account setUserAvatarUrl:uploadedAvatarURL
-                          success:^{
-                              
-                              if (weakSelf)
-                              {
-                                  typeof(self) self = weakSelf;
-                                  self->uploadedAvatarURL = nil;
-                                  [self onSave:nil];
-                              }
-                              
-                          }
-                          failure:^(NSError *error) {
-                              
-                              NSLog(@"[SettingsViewController] Failed to set avatar url");
-                              
-                              if (weakSelf)
-                              {
-                                  typeof(self) self = weakSelf;
-                                  [self handleErrorDuringProfileChangeSaving:error];
-                              }
-                              
-                          }];
+                             success:^{
+                                 
+                                 if (weakSelf)
+                                 {
+                                     typeof(self) self = weakSelf;
+                                     self->uploadedAvatarURL = nil;
+                                     [self onSave:nil];
+                                 }
+                                 
+                             }
+                             failure:^(NSError *error) {
+                                 
+                                 NSLog(@"[SettingsViewController] Failed to set avatar url");
+                                
+                                 if (weakSelf)
+                                 {
+                                     typeof(self) self = weakSelf;
+                                     [self handleErrorDuringProfileChangeSaving:error];
+                                 }
+                                 
+                             }];
         
         return;
     }
@@ -1765,7 +1971,7 @@ SignOutAlertPresenterDelegate>
         
         currentAlert = [UIAlertController alertControllerWithTitle:title message:msg preferredStyle:UIAlertControllerStyleAlert];
         
-        [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"abort"]
+        [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"cancel"]
                                                          style:UIAlertActionStyleDefault
                                                        handler:^(UIAlertAction * action) {
                                                            
@@ -1836,13 +2042,18 @@ SignOutAlertPresenterDelegate>
 
 - (void)onProfileAvatarTap:(UITapGestureRecognizer *)recognizer
 {
-    mediaPicker = [MediaPickerViewController mediaPickerViewController];
-    mediaPicker.mediaTypes = @[(NSString *)kUTTypeImage];
-    mediaPicker.delegate = self;
-    UINavigationController *navigationController = [UINavigationController new];
-    [navigationController pushViewController:mediaPicker animated:NO];
+    SingleImagePickerPresenter *singleImagePickerPresenter = [[SingleImagePickerPresenter alloc] initWithSession:self.mainSession];
+    singleImagePickerPresenter.delegate = self;
     
-    [self presentViewController:navigationController animated:YES completion:nil];
+    
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:userSettingsProfilePictureIndex inSection:SETTINGS_SECTION_USER_SETTINGS_INDEX];
+    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+    
+    UIView *sourceView = cell;
+    
+    [singleImagePickerPresenter presentFrom:self sourceView:sourceView sourceRect:sourceView.bounds animated:YES];
+    
+    self.imagePickerPresenter = singleImagePickerPresenter;
 }
 
 - (void)showLanguagePicker
@@ -1908,6 +2119,7 @@ SignOutAlertPresenterDelegate>
     [languagePicker addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"cancel"]
                                                     style:UIAlertActionStyleCancel
                                                   handler:nil]];
+    
     
     UIView *fromCell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:USER_INTERFACE_LANGUAGE_INDEX inSection:SETTINGS_SECTION_USER_INTERFACE_INDEX]];
     [languagePicker popoverPresentationController].sourceView = fromCell;
@@ -2005,7 +2217,7 @@ SignOutAlertPresenterDelegate>
 {
     DeactivateAccountViewController *deactivateAccountViewController = [DeactivateAccountViewController instantiateWithMatrixSession:self.mainSession];
     
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:deactivateAccountViewController];
+    UINavigationController *navigationController = [[RiotNavigationController alloc] initWithRootViewController:deactivateAccountViewController];
     navigationController.modalPresentationStyle = UIModalPresentationFormSheet;
     
     [self presentViewController:navigationController animated:YES completion:nil];
@@ -2013,32 +2225,6 @@ SignOutAlertPresenterDelegate>
     deactivateAccountViewController.delegate = self;
     
     self.deactivateAccountViewController = deactivateAccountViewController;
-}
-
-#pragma mark - MediaPickerViewController Delegate
-
-- (void)dismissMediaPicker
-{
-    if (mediaPicker)
-    {
-        [mediaPicker withdrawViewControllerAnimated:YES completion:nil];
-        mediaPicker = nil;
-    }
-}
-
-- (void)mediaPickerController:(MediaPickerViewController *)mediaPickerController didSelectImage:(NSData*)imageData withMimeType:(NSString *)mimetype isPhotoLibraryAsset:(BOOL)isPhotoLibraryAsset
-{
-    [self dismissMediaPicker];
-    
-    newAvatarImage = [UIImage imageWithData:imageData];
-    
-    [self.tableView reloadData];
-}
-
-- (void)mediaPickerController:(MediaPickerViewController *)mediaPickerController didSelectVideo:(NSURL*)videoURL
-{
-    // this method should not be called
-    [self dismissMediaPicker];
 }
 
 #pragma mark - TextField listener
@@ -2306,160 +2492,8 @@ SignOutAlertPresenterDelegate>
     [deactivateAccountViewController dismissViewControllerAnimated:YES completion:nil];
 }
 
-#pragma mark - SettingsKeyBackupTableViewSectionDelegate
 
-- (void)settingsKeyBackupTableViewSectionDidUpdate:(SettingsKeyBackupTableViewSection *)settingsKeyBackupTableViewSection
-{
-    [self.tableView beginUpdates];
-    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:SETTINGS_SECTION_KEYBACKUP_INDEX]
-                  withRowAnimation:UITableViewRowAnimationAutomatic];
-    [self.tableView endUpdates];
-}
-
-- (MXKTableViewCellWithTextView *)settingsKeyBackupTableViewSection:(SettingsKeyBackupTableViewSection *)settingsKeyBackupTableViewSection textCellForRow:(NSInteger)textCellForRow
-{
-    return [self textViewCellForTableView:self.tableView atIndexPath:[NSIndexPath indexPathForRow:textCellForRow inSection:SETTINGS_SECTION_KEYBACKUP_INDEX]];
-}
-
-- (MXKTableViewCellWithButton *)settingsKeyBackupTableViewSection:(SettingsKeyBackupTableViewSection *)settingsKeyBackupTableViewSection buttonCellForRow:(NSInteger)buttonCellForRow
-{
-    MXKTableViewCellWithButton *cell = [self.tableView dequeueReusableCellWithIdentifier:[MXKTableViewCellWithButton defaultReuseIdentifier]];
-
-    if (!cell)
-    {
-        cell = [[MXKTableViewCellWithButton alloc] init];
-    }
-    else
-    {
-        // Fix https://github.com/vector-im/riot-ios/issues/1354
-        cell.mxkButton.titleLabel.text = nil;
-    }
-
-    cell.mxkButton.titleLabel.font = [UIFont systemFontOfSize:17];
-
-    return cell;
-}
-
-- (void)settingsKeyBackupTableViewSectionShowKeyBackupSetup:(SettingsKeyBackupTableViewSection *)settingsKeyBackupTableViewSection
-{
-    [self showKeyBackupSetupFromSignOutFlow:NO];
-}
-
-- (void)settingsKeyBackup:(SettingsKeyBackupTableViewSection *)settingsKeyBackupTableViewSection showKeyBackupRecover:(MXKeyBackupVersion *)keyBackupVersion
-{
-    [self showKeyBackupRecover:keyBackupVersion];
-}
-
-- (void)settingsKeyBackup:(SettingsKeyBackupTableViewSection *)settingsKeyBackupTableViewSection showKeyBackupDeleteConfirm:(MXKeyBackupVersion *)keyBackupVersion
-{
-    MXWeakify(self);
-    [currentAlert dismissViewControllerAnimated:NO completion:nil];
-
-    currentAlert =
-    [UIAlertController alertControllerWithTitle:NSLocalizedStringFromTable(@"settings_key_backup_delete_confirmation_prompt_title", @"Vector", nil)
-                                        message:NSLocalizedStringFromTable(@"settings_key_backup_delete_confirmation_prompt_msg", @"Vector", nil)
-                                 preferredStyle:UIAlertControllerStyleAlert];
-
-    [currentAlert addAction:[UIAlertAction actionWithTitle:[NSBundle mxk_localizedStringForKey:@"cancel"]
-                                                     style:UIAlertActionStyleCancel
-                                                   handler:^(UIAlertAction * action) {
-                                                       MXStrongifyAndReturnIfNil(self);
-                                                       self->currentAlert = nil;
-                                                   }]];
-
-    [currentAlert addAction:[UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"settings_key_backup_button_delete", @"Vector", nil)
-                                                     style:UIAlertActionStyleDefault
-                                                   handler:^(UIAlertAction * action) {
-                                                       MXStrongifyAndReturnIfNil(self);
-                                                       self->currentAlert = nil;
-
-                                                       [self->keyBackupSection deleteWithKeyBackupVersion:keyBackupVersion];
-                                                   }]];
-
-    [currentAlert mxk_setAccessibilityIdentifier: @"SettingsVCDeleteKeyBackup"];
-    [self presentViewController:currentAlert animated:YES completion:nil];
-}
-
-- (void)settingsKeyBackup:(SettingsKeyBackupTableViewSection *)settingsKeyBackupTableViewSection showActivityIndicator:(BOOL)show
-{
-    if (show)
-    {
-        [self startActivityIndicator];
-    }
-    else
-    {
-        [self stopActivityIndicator];
-    }
-}
-
-- (void)settingsKeyBackup:(SettingsKeyBackupTableViewSection *)settingsKeyBackupTableViewSection showError:(NSError *)error
-{
-    [[AppDelegate theDelegate] showErrorAsAlert:error];
-}
-
-#pragma mark - MXKEncryptionInfoView
-
-- (void)showDeviceInfo:(MXDeviceInfo*)deviceInfo
-{
-    // Show it modally on the root view controller
-    // TODO: Improve it
-    UIViewController *rootViewController = [AppDelegate theDelegate].window.rootViewController;
-    if (rootViewController)
-    {
-        EncryptionInfoView *encryptionInfoView = [[EncryptionInfoView alloc] initWithDeviceInfo:deviceInfo andMatrixSession:self.mainSession];
-        [encryptionInfoView onButtonPressed:encryptionInfoView.verifyButton];
-
-        encryptionInfoView.delegate = self;
-
-        // Add shadow on added view
-        encryptionInfoView.layer.cornerRadius = 5;
-        encryptionInfoView.layer.shadowOffset = CGSizeMake(0, 1);
-        encryptionInfoView.layer.shadowOpacity = 0.5f;
-
-        // Add the view and define edge constraints
-        [rootViewController.view addSubview:encryptionInfoView];
-
-        [rootViewController.view addConstraint:[NSLayoutConstraint constraintWithItem:encryptionInfoView
-                                                                            attribute:NSLayoutAttributeTop
-                                                                            relatedBy:NSLayoutRelationEqual
-                                                                               toItem:rootViewController.topLayoutGuide
-                                                                            attribute:NSLayoutAttributeBottom
-                                                                           multiplier:1.0f
-                                                                             constant:10.0f]];
-
-        [rootViewController.view addConstraint:[NSLayoutConstraint constraintWithItem:encryptionInfoView
-                                                                            attribute:NSLayoutAttributeBottom
-                                                                            relatedBy:NSLayoutRelationEqual
-                                                                               toItem:rootViewController.bottomLayoutGuide
-                                                                            attribute:NSLayoutAttributeTop
-                                                                           multiplier:1.0f
-                                                                             constant:-10.0f]];
-
-        [rootViewController.view addConstraint:[NSLayoutConstraint constraintWithItem:rootViewController.view
-                                                                            attribute:NSLayoutAttributeLeading
-                                                                            relatedBy:NSLayoutRelationEqual
-                                                                               toItem:encryptionInfoView
-                                                                            attribute:NSLayoutAttributeLeading
-                                                                           multiplier:1.0f
-                                                                             constant:-10.0f]];
-
-        [rootViewController.view addConstraint:[NSLayoutConstraint constraintWithItem:rootViewController.view
-                                                                            attribute:NSLayoutAttributeTrailing
-                                                                            relatedBy:NSLayoutRelationEqual
-                                                                               toItem:encryptionInfoView
-                                                                            attribute:NSLayoutAttributeTrailing
-                                                                           multiplier:1.0f
-                                                                             constant:10.0f]];
-        [rootViewController.view setNeedsUpdateConstraints];
-    }
-}
-
-- (void)encryptionInfoView:(MXKEncryptionInfoView*)encryptionInfoView didDeviceInfoVerifiedChange:(MXDeviceInfo*)deviceInfo
-{
-    [keyBackupSection reload];
-}
-
-#pragma mark - KeyBackupRecoverCoordinatorBridgePresenter
+#pragma mark - KeyBackupSetupCoordinatorBridgePresenter
 
 - (void)showKeyBackupSetupFromSignOutFlow:(BOOL)showFromSignOutFlow
 {
@@ -2480,28 +2514,6 @@ SignOutAlertPresenterDelegate>
 - (void)keyBackupSetupCoordinatorBridgePresenterDelegateDidSetupRecoveryKey:(KeyBackupSetupCoordinatorBridgePresenter *)bridgePresenter {
     [keyBackupSetupCoordinatorBridgePresenter dismissWithAnimated:true];
     keyBackupSetupCoordinatorBridgePresenter = nil;
-
-    [keyBackupSection reload];
-}
-
-#pragma mark - KeyBackupRecoverCoordinatorBridgePresenter
-
-- (void)showKeyBackupRecover:(MXKeyBackupVersion*)keyBackupVersion
-{
-    keyBackupRecoverCoordinatorBridgePresenter = [[KeyBackupRecoverCoordinatorBridgePresenter alloc] initWithSession:self.mainSession keyBackupVersion:keyBackupVersion];
-
-    [keyBackupRecoverCoordinatorBridgePresenter presentFrom:self animated:true];
-    keyBackupRecoverCoordinatorBridgePresenter.delegate = self;
-}
-
-- (void)keyBackupRecoverCoordinatorBridgePresenterDidCancel:(KeyBackupRecoverCoordinatorBridgePresenter *)bridgePresenter {
-    [keyBackupRecoverCoordinatorBridgePresenter dismissWithAnimated:true];
-    keyBackupRecoverCoordinatorBridgePresenter = nil;
-}
-
-- (void)keyBackupRecoverCoordinatorBridgePresenterDidRecover:(KeyBackupRecoverCoordinatorBridgePresenter *)bridgePresenter {
-    [keyBackupRecoverCoordinatorBridgePresenter dismissWithAnimated:true];
-    keyBackupRecoverCoordinatorBridgePresenter = nil;
 }
 
 #pragma mark - SignOutAlertPresenterDelegate
@@ -2530,6 +2542,118 @@ SignOutAlertPresenterDelegate>
         self.view.userInteractionEnabled = YES;
         self.signOutButton.enabled = YES;
     }];
+}
+
+#pragma mark - SingleImagePickerPresenterDelegate
+
+- (void)singleImagePickerPresenterDidCancel:(SingleImagePickerPresenter *)presenter
+{
+    [presenter dismissWithAnimated:YES completion:nil];
+    self.imagePickerPresenter = nil;
+}
+
+- (void)singleImagePickerPresenter:(SingleImagePickerPresenter *)presenter didSelectImageData:(NSData *)imageData withUTI:(MXKUTI *)uti
+{
+    [presenter dismissWithAnimated:YES completion:nil];
+    self.imagePickerPresenter = nil;
+    
+    newAvatarImage = [UIImage imageWithData:imageData];
+    
+    [self.tableView reloadData];
+}
+
+
+#pragma mark - Identity Server updates
+
+- (void)registerAccountDataDidChangeIdentityServerNotification
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleAccountDataDidChangeIdentityServerNotification:) name:kMXSessionAccountDataDidChangeIdentityServerNotification object:nil];
+}
+
+- (void)handleAccountDataDidChangeIdentityServerNotification:(NSNotification*)notification
+{
+    [self refreshSettings];
+}
+
+#pragma mark - SettingsDiscoveryTableViewSectionDelegate
+
+- (void)settingsDiscoveryTableViewSectionDidUpdate:(SettingsDiscoveryTableViewSection *)settingsDiscoveryTableViewSection
+{
+    [self.tableView reloadData];
+}
+
+- (MXKTableViewCell *)settingsDiscoveryTableViewSection:(SettingsDiscoveryTableViewSection *)settingsDiscoveryTableViewSection tableViewCellClass:(Class)tableViewCellClass forRow:(NSInteger)forRow
+{
+    MXKTableViewCell *tableViewCell;
+    
+    if ([tableViewCellClass isEqual:[MXKTableViewCell class]])
+    {
+        tableViewCell = [self getDefaultTableViewCell:self.tableView];
+    }
+    else if ([tableViewCellClass isEqual:[MXKTableViewCellWithTextView class]])
+    {
+        tableViewCell = [self textViewCellForTableView:self.tableView atIndexPath:[NSIndexPath indexPathForRow:forRow inSection:SETTINGS_SECTION_DISCOVERY_INDEX]];
+    }
+    else if ([tableViewCellClass isEqual:[MXKTableViewCellWithButton class]])
+    {
+        MXKTableViewCellWithButton *cell = [self.tableView dequeueReusableCellWithIdentifier:[MXKTableViewCellWithButton defaultReuseIdentifier]];
+        
+        if (!cell)
+        {
+            cell = [[MXKTableViewCellWithButton alloc] init];
+        }
+        else
+        {
+            // Fix https://github.com/vector-im/riot-ios/issues/1354
+            cell.mxkButton.titleLabel.text = nil;
+        }
+        
+        cell.mxkButton.titleLabel.font = [UIFont systemFontOfSize:17];
+        [cell.mxkButton setTintColor:ThemeService.shared.theme.tintColor];
+        
+        tableViewCell = cell;
+    }
+    else if ([tableViewCellClass isEqual:[MXKTableViewCellWithLabelAndSwitch class]])
+    {
+        tableViewCell = [self getLabelAndSwitchCell:self.tableView forIndexPath:[NSIndexPath indexPathForRow:forRow inSection:SETTINGS_SECTION_DISCOVERY_INDEX]];
+    }
+    
+    return tableViewCell;
+}
+
+#pragma mark - SettingsDiscoveryViewModelCoordinatorDelegate
+
+- (void)settingsDiscoveryViewModel:(SettingsDiscoveryViewModel *)viewModel didSelectThreePidWith:(NSString *)medium and:(NSString *)address
+{
+    SettingsDiscoveryThreePidDetailsCoordinatorBridgePresenter *discoveryThreePidDetailsPresenter = [[SettingsDiscoveryThreePidDetailsCoordinatorBridgePresenter alloc] initWithSession:self.mainSession medium:medium adress:address];
+    
+    MXWeakify(self);
+    
+    [discoveryThreePidDetailsPresenter pushFrom:self.navigationController animated:YES popCompletion:^{
+        MXStrongifyAndReturnIfNil(self);
+        
+        self.discoveryThreePidDetailsPresenter = nil;
+    }];
+    
+    self.discoveryThreePidDetailsPresenter = discoveryThreePidDetailsPresenter;
+}
+
+#pragma mark - Identity Server
+
+- (void)showIdentityServerSettingsScreen
+{
+    identityServerSettingsCoordinatorBridgePresenter = [[SettingsIdentityServerCoordinatorBridgePresenter alloc] initWithSession:self.mainSession];
+
+    [identityServerSettingsCoordinatorBridgePresenter pushFrom:self.navigationController animated:YES popCompletion:nil];
+    identityServerSettingsCoordinatorBridgePresenter.delegate = self;
+}
+
+#pragma mark - SettingsIdentityServerCoordinatorBridgePresenterDelegate
+
+- (void)settingsIdentityServerCoordinatorBridgePresenterDelegateDidComplete:(SettingsIdentityServerCoordinatorBridgePresenter *)coordinatorBridgePresenter
+{
+    identityServerSettingsCoordinatorBridgePresenter = nil;
+    [self refreshSettings];
 }
 
 @end

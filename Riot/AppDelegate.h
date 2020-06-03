@@ -17,6 +17,7 @@
 
 #import <UIKit/UIKit.h>
 #import <MatrixKit/MatrixKit.h>
+#import <UserNotifications/UserNotifications.h>
 
 #import "MasterTabBarController.h"
 #import "JitsiViewController.h"
@@ -25,6 +26,7 @@
 #import "Analytics.h"
 
 #import "ThemeService.h"
+#import "UniversalLink.h"
 
 #pragma mark - Notifications
 /**
@@ -37,7 +39,16 @@ extern NSString *const kAppDelegateDidTapStatusBarNotification;
  */
 extern NSString *const kAppDelegateNetworkStatusDidChangeNotification;
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate, MXKCallViewControllerDelegate, UISplitViewControllerDelegate, UINavigationControllerDelegate, JitsiViewControllerDelegate>
+extern NSString *const AppDelegateDidValidateEmailNotification;
+extern NSString *const AppDelegateDidValidateEmailNotificationSIDKey;
+extern NSString *const AppDelegateDidValidateEmailNotificationClientSecretKey;
+
+/**
+ Posted when the property 'lastHandledUniversalLink' has changed. Notification object and userInfo will be nil.
+ */
+extern NSString *const AppDelegateUniversalLinkDidChangeNotification;
+
+@interface AppDelegate : UIResponder <UIApplicationDelegate, MXKCallViewControllerDelegate, UISplitViewControllerDelegate, UINavigationControllerDelegate, JitsiViewControllerDelegate, UNUserNotificationCenterDelegate>
 {
     BOOL isPushRegistered;
     
@@ -60,6 +71,13 @@ extern NSString *const kAppDelegateNetworkStatusDidChangeNotification;
 @property (nonatomic) BOOL isAppForeground;
 @property (nonatomic) BOOL isOffline;
 
+
+/**
+ Let the AppDelegate handle and display self verification requests.
+ Default is YES;
+ */
+@property (nonatomic) BOOL handleSelfVerificationRequest;
+
 /**
  The navigation controller of the master view controller of the main split view controller.
  */
@@ -74,6 +92,11 @@ extern NSString *const kAppDelegateNetworkStatusDidChangeNotification;
 
 // Current selected room id. nil if no room is presently visible.
 @property (strong, nonatomic) NSString *visibleRoomId;
+
+/**
+ Last handled universal link (url will be formatted for several hash keys).
+ */
+@property (nonatomic, readonly) UniversalLink *lastHandledUniversalLink;
 
 // New message sound id.
 @property (nonatomic, readonly) SystemSoundID messageSound;
@@ -119,12 +142,25 @@ extern NSString *const kAppDelegateNetworkStatusDidChangeNotification;
  Log out all the accounts without confirmation.
  Show the authentication screen on successful logout.
  
- @param sendLogoutRequest Indicate whether send logout request to home server.
+ @param sendLogoutRequest Indicate whether send logout request to homeserver.
  @param completion the block to execute at the end of the operation.
  */
 - (void)logoutSendingRequestServer:(BOOL)sendLogoutServerRequest
                         completion:(void (^)(BOOL isLoggedOut))completion;
 
+/**
+ Present incoming key verification request to accept.
+
+ @param incomingKeyVerificationRequest The incoming key verification request.
+ @param The matrix session.
+ @return Indicate NO if the key verification screen could not be presented.
+ */
+- (BOOL)presentIncomingKeyVerificationRequest:(MXKeyVerificationRequest*)incomingKeyVerificationRequest
+                                    inSession:(MXSession*)session;
+
+- (BOOL)presentUserVerificationForRoomMember:(MXRoomMember*)roomMember session:(MXSession*)mxSession;
+
+- (BOOL)presentCompleteSecurityForSession:(MXSession*)mxSession;
 
 #pragma mark - Matrix Accounts handling
 
@@ -142,6 +178,11 @@ extern NSString *const kAppDelegateNetworkStatusDidChangeNotification;
 - (void)registerForRemoteNotificationsWithCompletion:(void (^)(NSError *))completion;
 
 #pragma mark - Matrix Room handling
+
+// Show a room and jump to the given event if event id is not nil otherwise go to last messages.
+- (void)showRoom:(NSString*)roomId andEventId:(NSString*)eventId withMatrixSession:(MXSession*)mxSession restoreInitialDisplay:(BOOL)restoreInitialDisplay completion:(void (^)(void))completion;
+
+- (void)showRoom:(NSString*)roomId andEventId:(NSString*)eventId withMatrixSession:(MXSession*)mxSession restoreInitialDisplay:(BOOL)restoreInitialDisplay;
 
 - (void)showRoom:(NSString*)roomId andEventId:(NSString*)eventId withMatrixSession:(MXSession*)mxSession;
 

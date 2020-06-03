@@ -17,7 +17,7 @@
 import UIKit
 
 protocol KeyBackupRecoverSuccessViewControllerDelegate: class {
-    func KeyBackupRecoverSuccessViewControllerDidTapDone(_ keyBackupRecoverSuccessViewController: KeyBackupRecoverSuccessViewController)
+    func keyBackupRecoverSuccessViewControllerDidTapDone(_ keyBackupRecoverSuccessViewController: KeyBackupRecoverSuccessViewController)
 }
 
 final class KeyBackupRecoverSuccessViewController: UIViewController {
@@ -100,6 +100,7 @@ final class KeyBackupRecoverSuccessViewController: UIViewController {
         
         self.informationLabel.textColor = theme.textPrimaryColor
         
+        self.doneButtonBackgroundView.backgroundColor = theme.backgroundColor
         theme.applyStyle(onButton: self.doneButton)
     }
     
@@ -114,6 +115,6 @@ final class KeyBackupRecoverSuccessViewController: UIViewController {
     }
     
     @IBAction private func doneButtonAction(_ sender: Any) {
-        self.delegate?.KeyBackupRecoverSuccessViewControllerDidTapDone(self)
+        self.delegate?.keyBackupRecoverSuccessViewControllerDidTapDone(self)
     }
 }

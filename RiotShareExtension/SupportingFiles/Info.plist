@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>APP_GROUP</key>
+	<string>$(APP_GROUP)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -17,7 +19,7 @@
 	<key>CFBundlePackageType</key>
 	<string>XPC!</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2020.04</string>
+	<string>2020.06</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>NSExtension</key>
@@ -28,6 +30,8 @@
 			<dict>
 				<key>NSExtensionActivationDictionaryVersion</key>
 				<integer>2</integer>
+				<key>NSExtensionActivationSupportsFileWithMaxCount</key>
+				<integer>5</integer>
 				<key>NSExtensionActivationSupportsText</key>
 				<true/>
 				<key>NSExtensionActivationSupportsWebURLWithMaxCount</key>
@@ -39,7 +43,5 @@
 		<key>NSExtensionPrincipalClass</key>
 		<string>SharePresentingViewController</string>
 	</dict>
-	<key>APP_GROUP</key>
-	<string>$(APP_GROUP)</string>
 </dict>
 </plist>

@@ -84,17 +84,18 @@ static CGFloat const kTextFontSize = 15.0;
     // Do any additional setup after loading the view.
     
     self.title = NSLocalizedStringFromTable(@"deactivate_account_title", @"Vector", nil);
+
+    [self setupViews];
     
     self.errorPresentation = [[MXKErrorAlertPresentation alloc] init];
-    [self setupStringAttributes];
-    [self setupViews];
-    [self userInterfaceThemeDidChange];
     [self registerThemeNotification];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+
+    [self userInterfaceThemeDidChange];
     
     // Screen tracking
     [[Analytics sharedInstance] trackScreen:@"DeactivateAccount"];
@@ -130,9 +131,16 @@ static CGFloat const kTextFontSize = 15.0;
 
     self.activityIndicator.backgroundColor = ThemeService.shared.theme.overlayBackgroundColor;
     self.forgetMessageButton.imageView.tintColor = ThemeService.shared.theme.textPrimaryColor;
+    self.view.backgroundColor = ThemeService.shared.theme.backgroundColor;
+
+    [self updateStringAttributes];
+    [self updateNavigationBar];
+    [self updateDeactivateAcccountButton];
+    [self updateDeactivateAccountInfosLabel];
+    [self updateForgetMessagesInfoLabel];
 }
 
-- (void)setupStringAttributes
+- (void)updateStringAttributes
 {
     self.normalStringAttributes = @{
                                     NSFontAttributeName: [UIFont systemFontOfSize:kTextFontSize],
@@ -148,34 +156,32 @@ static CGFloat const kTextFontSize = 15.0;
 
 - (void)setupViews
 {
-    [self setupNavigationBar];
-    [self setupDeactivateAcccountButton];
-    [self setupDeactivateAccountInfosLabel];
-    [self setupForgetMessagesInfoLabel];
-}
-
-- (void)setupNavigationBar
-{
-    self.navigationController.navigationBar.titleTextAttributes = @{ NSForegroundColorAttributeName: ThemeService.shared.theme.warningColor };
-    
+    // Cancel bar button
     UIBarButtonItem *cancelBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedStringFromTable(@"cancel", @"Vector", nil) style:UIBarButtonItemStylePlain target:self action:@selector(cancelButtonAction:)];
     self.navigationItem.rightBarButtonItem = cancelBarButtonItem;
-}
 
-- (void)setupDeactivateAcccountButton
-{
+    // Deactivate button
     // Adjust button font size for small devices
     self.deactivateAcccountButton.titleLabel.adjustsFontSizeToFitWidth = YES;
     self.deactivateAcccountButton.titleLabel.minimumScaleFactor = 0.5;
     self.deactivateAcccountButton.titleLabel.baselineAdjustment = UIBaselineAdjustmentAlignCenters;
-    
     self.deactivateAcccountButton.layer.masksToBounds = YES;
     self.deactivateAcccountButton.backgroundColor = ThemeService.shared.theme.baseColor;
     [self.deactivateAcccountButton setTitle:NSLocalizedStringFromTable(@"deactivate_account_validate_action", @"Vector", nil) forState:UIControlStateNormal];
     [self.deactivateAcccountButton setTitleColor:ThemeService.shared.theme.baseTextPrimaryColor forState:UIControlStateNormal];
 }
 
-- (void)setupDeactivateAccountInfosLabel
+- (void)updateNavigationBar
+{
+    self.navigationController.navigationBar.titleTextAttributes = @{ NSForegroundColorAttributeName: ThemeService.shared.theme.warningColor };
+}
+
+- (void)updateDeactivateAcccountButton
+{
+    self.deactivateAcccountButton.backgroundColor = ThemeService.shared.theme.tintColor;
+}
+
+- (void)updateDeactivateAccountInfosLabel
 {
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] init];
     
@@ -192,7 +198,7 @@ static CGFloat const kTextFontSize = 15.0;
     [self.deactivateAccountInfosLabel setAttributedText:attributedString];
 }
 
-- (void)setupForgetMessagesInfoLabel
+- (void)updateForgetMessagesInfoLabel
 {
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] init];
     

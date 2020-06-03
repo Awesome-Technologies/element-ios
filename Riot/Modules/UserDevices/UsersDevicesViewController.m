@@ -20,12 +20,14 @@
 #import "AppDelegate.h"
 #import "Riot-Swift.h"
 
-@interface UsersDevicesViewController ()
+@interface UsersDevicesViewController () <KeyVerificationCoordinatorBridgePresenterDelegate>
 {
     MXUsersDevicesMap<MXDeviceInfo*> *usersDevices;
     MXSession *mxSession;
 
     void (^onCompleteBlock)(BOOL doneButtonPressed);
+
+    KeyVerificationCoordinatorBridgePresenter *keyVerificationCoordinatorBridgePresenter;
     
     // Observe kThemeServiceDidChangeThemeNotification to handle user interface theme change.
     id kThemeServiceDidChangeThemeNotificationObserver;
@@ -214,51 +216,10 @@
     if (verificationStatus == MXDeviceVerified)
     {
         // Prompt the user before marking as verified the device.
-        EncryptionInfoView *encryptionInfoView = [[EncryptionInfoView alloc] initWithDeviceInfo:deviceTableViewCell.deviceInfo andMatrixSession:mxSession];
-        [encryptionInfoView onButtonPressed:encryptionInfoView.verifyButton];
+        keyVerificationCoordinatorBridgePresenter = [[KeyVerificationCoordinatorBridgePresenter alloc] initWithSession:mxSession];
+        keyVerificationCoordinatorBridgePresenter.delegate = self;
 
-        encryptionInfoView.delegate = self;
-
-        // Add shadow on added view
-        encryptionInfoView.layer.cornerRadius = 5;
-        encryptionInfoView.layer.shadowOffset = CGSizeMake(0, 1);
-        encryptionInfoView.layer.shadowOpacity = 0.5f;
-
-        // Add the view and define edge constraints
-        [self.view addSubview:encryptionInfoView];
-
-        [self.view addConstraint:[NSLayoutConstraint constraintWithItem:encryptionInfoView
-                                                              attribute:NSLayoutAttributeTop
-                                                              relatedBy:NSLayoutRelationEqual
-                                                                 toItem:self.topLayoutGuide
-                                                              attribute:NSLayoutAttributeBottom
-                                                             multiplier:1.0f
-                                                               constant:10.0f]];
-
-        [self.view addConstraint:[NSLayoutConstraint constraintWithItem:encryptionInfoView
-                                                              attribute:NSLayoutAttributeBottom
-                                                              relatedBy:NSLayoutRelationEqual
-                                                                 toItem:self.bottomLayoutGuide
-                                                              attribute:NSLayoutAttributeTop
-                                                             multiplier:1.0f
-                                                               constant:-10.0f]];
-
-        [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.view
-                                                              attribute:NSLayoutAttributeLeading
-                                                              relatedBy:NSLayoutRelationEqual
-                                                                 toItem:encryptionInfoView
-                                                              attribute:NSLayoutAttributeLeading
-                                                             multiplier:1.0f
-                                                               constant:-10.0f]];
-
-        [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.view
-                                                              attribute:NSLayoutAttributeTrailing
-                                                              relatedBy:NSLayoutRelationEqual
-                                                                 toItem:encryptionInfoView
-                                                              attribute:NSLayoutAttributeTrailing
-                                                             multiplier:1.0f
-                                                               constant:10.0f]];
-        [self.view setNeedsUpdateConstraints];
+        [keyVerificationCoordinatorBridgePresenter presentFrom:self otherUserId:deviceTableViewCell.deviceInfo.userId otherDeviceId:deviceTableViewCell.deviceInfo.deviceId animated:YES];
     }
     else
     {
@@ -266,24 +227,48 @@
                                       forDevice:deviceTableViewCell.deviceInfo.deviceId
                                          ofUser:deviceTableViewCell.deviceInfo.userId
                                         success:^{
-
-                                            deviceTableViewCell.deviceInfo.verified = verificationStatus;
-                                            [self.tableView reloadData];
-
+                                            [self reloadDataforUser:deviceTableViewCell.deviceInfo.userId andDevice:deviceTableViewCell.deviceInfo.deviceId];
                                         } failure:nil];
     }
 }
 
-#pragma mark - MXKEncryptionInfoViewDelegate
-
-- (void)encryptionInfoView:(MXKEncryptionInfoView *)encryptionInfoView didDeviceInfoVerifiedChange:(MXDeviceInfo *)deviceInfo
+- (void)reloadDataforUser:(NSString *)userId andDevice:(NSString *)deviceId
 {
-    // Update our map
-    MXDeviceInfo *device = [usersDevices objectForDevice:deviceInfo.deviceId forUser:deviceInfo.userId];
-    device.verified = deviceInfo.verified;
+    // Refresh data
+    MXDeviceInfo *device = [mxSession.crypto deviceWithDeviceId:deviceId ofUser:userId];
+    [usersDevices setObject:device forUser:userId andDevice:deviceId];
 
+    // and reload
     [self.tableView reloadData];
 }
+
+#pragma mark - DeviceVerificationCoordinatorBridgePresenterDelegate
+
+- (void)keyVerificationCoordinatorBridgePresenterDelegateDidComplete:(KeyVerificationCoordinatorBridgePresenter *)coordinatorBridgePresenter otherUserId:(NSString * _Nonnull)otherUserId otherDeviceId:(NSString * _Nonnull)otherDeviceId
+{
+    // Update our map
+    [mxSession.crypto downloadKeys:@[otherUserId] forceDownload:NO success:^(MXUsersDevicesMap<MXDeviceInfo *> *usersDevicesInfoMap, NSDictionary<NSString *,MXCrossSigningInfo *> *crossSigningKeysMap) {
+        
+        [self reloadDataforUser:otherUserId andDevice:otherDeviceId];
+        
+    } failure:^(NSError *error) {
+        // Should not happen (the device is in the crypto db)
+    }];
+    
+    [self dismissKeyVerificationCoordinatorBridgePresenter];
+}
+
+- (void)keyVerificationCoordinatorBridgePresenterDelegateDidCancel:(KeyVerificationCoordinatorBridgePresenter * _Nonnull)coordinatorBridgePresenter
+{
+    [self dismissKeyVerificationCoordinatorBridgePresenter];
+}
+
+- (void)dismissKeyVerificationCoordinatorBridgePresenter
+{
+    [keyVerificationCoordinatorBridgePresenter dismissWithAnimated:YES completion:nil];
+    keyVerificationCoordinatorBridgePresenter = nil;
+}
+
 
 #pragma mark - User actions
 

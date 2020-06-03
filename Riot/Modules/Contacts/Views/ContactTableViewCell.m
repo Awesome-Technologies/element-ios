@@ -24,6 +24,7 @@
 
 #import "AvatarGenerator.h"
 #import "Tools.h"
+#import "MXRoom+Riot.h"
 
 #import "NBPhoneNumberUtil.h"
 
@@ -55,6 +56,7 @@
     // apply the vector colours
     self.contactDisplayNameLabel.textColor = ThemeService.shared.theme.textPrimaryColor;
     self.contactInformationLabel.textColor = ThemeService.shared.theme.textSecondaryColor;
+    self.powerLevelLabel.textColor = ThemeService.shared.theme.textSecondaryColor;
     
     // Clear the default background color of a MXKImageView instance
     self.thumbnailView.defaultBackgroundColor = [UIColor clearColor];
@@ -133,8 +135,6 @@
         mxPresenceObserver = nil;
     }
     
-    self.thumbnailBadgeView.hidden = YES;
-    
     // Sanity check: accept only object of MXKContact classes or sub-classes
     NSParameterAssert([cellData isKindOfClass:[MXKContact class]]);
     contact = (MXKContact*)cellData;
@@ -146,6 +146,7 @@
         self.thumbnailView.image = nil;
         self.contactDisplayNameLabel.text = nil;
         self.contactInformationLabel.text = nil;
+        self.powerLevelLabel.text = nil;
         
         return;
     }
@@ -171,6 +172,7 @@
         }];
         
         [self refreshContactPresence];
+        [self refreshContactBadgeImage];
     }
 }
 
@@ -228,6 +230,21 @@
     }
     
     self.thumbnailView.image = image;
+}
+
+- (void)refreshContactBadgeImage
+{
+    NSString *matrixId = [self firstMatrixId];
+    if (matrixId)
+    {
+        [self.mxRoom encryptionTrustLevelForUserId:matrixId onComplete:^(UserEncryptionTrustLevel userEncryptionTrustLevel) {
+            self.avatarBadgeImageView.image = [EncryptionTrustLevelBadgeImageHelper userBadgeImageFor:userEncryptionTrustLevel];
+        }];
+    }
+    else
+    {
+        self.avatarBadgeImageView.image = [EncryptionTrustLevelBadgeImageHelper userBadgeImageFor:UserEncryptionTrustLevelUnknown];
+    }
 }
 
 - (void)refreshContactDisplayName

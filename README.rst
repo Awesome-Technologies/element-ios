@@ -23,10 +23,11 @@ Before opening the Riot Xcode workspace, you need to build it with the
 CocoaPods command::
 
         $ cd Riot
-        $ pod install
+        $ bundle install
+        $ bundle exec pod install
 
-This will load all dependencies for the Riot source code, including MatrixKit
-and MatrixSDK.  You will need a recent and updated (``pod update``) install of
+This will load all dependencies for the Riot source code, including MatrixKit 
+and MatrixSDK.  You will need an recent and updated (``pod setup``) install of
 CocoaPods.
 
 Then, open ``Riot.xcworkspace`` with Xcode
@@ -41,12 +42,12 @@ Main development happens on the Caritas branch. You can edit the podfile to adju
 You may need to change the bundle identifier and app group identifier to be unique to get Xcode to build the app. Make sure to change the application group identifier everywhere by running a search for ``group.care.amp.messenger.caritas`` and changing every spot that identifier is used to your new identifier.
 
 Copyright & License
-===================
+==================
 
 Copyright (c) 2014-2017 OpenMarket Ltd
 Copyright (c) 2017 Vector Creations Ltd
 Copyright (c) 2017-2019 New Vector Ltd
-Copyright (c) 2018 Awesome Technologies Innovationslabor GmbH
+Copyright (c) 2018-2020 Awesome Technologies Innovationslabor GmbH
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this work except in compliance with the License. You may obtain a copy of the License in the LICENSE file, or at:
 

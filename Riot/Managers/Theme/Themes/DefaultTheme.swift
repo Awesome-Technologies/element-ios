@@ -40,6 +40,7 @@ class DefaultTheme: NSObject, Theme {
     var textSecondaryColor: UIColor = UIColor(rgb: 0x9E9E9E)
 
     var tintColor: UIColor = UIColor(rgb: 0xFFFFFF)
+    var tintBackgroundColor: UIColor = UIColor(rgb: 0xe9fff9)
     var textTintColor: UIColor = UIColor(rgb: 0xCC1E1C)
     var unreadRoomIndentColor: UIColor = UIColor(rgb: 0x2E3648)
     var lineBreakColor: UIColor = UIColor.black.withAlphaComponent(0.15)
@@ -96,6 +97,10 @@ class DefaultTheme: NSObject, Theme {
         searchBar.barStyle = .default
         searchBar.tintColor = self.searchPlaceholderColor
         searchBar.barTintColor = self.searchBackgroundColor
+        
+        if let searchBarTextField = searchBar.vc_searchTextField {
+            searchBarTextField.textColor = searchBar.tintColor
+        }
     }
     
     func applyStyle(onTextField texField: UITextField) {

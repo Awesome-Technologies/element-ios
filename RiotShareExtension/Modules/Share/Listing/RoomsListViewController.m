@@ -175,6 +175,9 @@
             MXStrongifyAndReturnIfNil(session);
 
             MXRoom *selectedRoom = [MXRoom loadRoomFromStore:[ShareExtensionManager sharedManager].fileStore withRoomId:recentCellData.roomSummary.roomId matrixSession:session];
+            
+            // Do not warn for unknown devices. We have cross-signing now
+            session.crypto.warnOnUnknowDevices = NO;
 
             [self sendMessagesToRoom:selectedRoom];
 

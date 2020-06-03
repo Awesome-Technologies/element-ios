@@ -18,6 +18,8 @@
 #import "RecentsDataSource.h"
 
 #import "RecentCellData.h"
+#import "SectionHeaderView.h"
+#import "DirectorySectionHeaderContainerView.h"
 
 #import "ThemeService.h"
 
@@ -51,7 +53,7 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
     
     NSInteger shrinkedSectionsBitMask;
 
-    UIView *directorySectionContainer;
+    DirectorySectionHeaderContainerView *directorySectionContainer;
     UILabel *networkLabel;
     UILabel *directoryServerLabel;
 
@@ -240,6 +242,7 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
             break;
     }
     
+    [self updateKeyBackupBanner];
     [self forceRefresh];
 }
 
@@ -617,23 +620,10 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
         
         [missedNotifAndUnreadBadgeBgView addSubview:missedNotifAndUnreadBadgeLabel];
         missedNotifAndUnreadBadgeLabel.center = missedNotifAndUnreadBadgeBgView.center;
-        NSLayoutConstraint *centerXConstraint = [NSLayoutConstraint constraintWithItem:missedNotifAndUnreadBadgeLabel
-                                                                             attribute:NSLayoutAttributeCenterX
-                                                                             relatedBy:NSLayoutRelationEqual
-                                                                                toItem:missedNotifAndUnreadBadgeBgView
-                                                                             attribute:NSLayoutAttributeCenterX
-                                                                            multiplier:1
-                                                                              constant:0.0f];
-        NSLayoutConstraint *centerYConstraint = [NSLayoutConstraint constraintWithItem:missedNotifAndUnreadBadgeLabel
-                                                                             attribute:NSLayoutAttributeCenterY
-                                                                             relatedBy:NSLayoutRelationEqual
-                                                                                toItem:missedNotifAndUnreadBadgeBgView
-                                                                             attribute:NSLayoutAttributeCenterY
-                                                                            multiplier:1
-                                                                              constant:0.0f];
-        
-        [NSLayoutConstraint activateConstraints:@[centerXConstraint, centerYConstraint]];
-        
+        [missedNotifAndUnreadBadgeLabel.centerXAnchor constraintEqualToAnchor:missedNotifAndUnreadBadgeBgView.centerXAnchor
+                                                                     constant:0].active = YES;
+        [missedNotifAndUnreadBadgeLabel.centerYAnchor constraintEqualToAnchor:missedNotifAndUnreadBadgeBgView.centerYAnchor
+                                                                     constant:0].active = YES;
     }
     
     return missedNotifAndUnreadBadgeBgView;
@@ -647,12 +637,11 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
         return nil;
     }
     
-    UIView *sectionHeader = [[UIView alloc] initWithFrame:frame];
+    SectionHeaderView *sectionHeader = [[SectionHeaderView alloc] initWithFrame:frame];
     sectionHeader.backgroundColor = ThemeService.shared.theme.headerBackgroundColor;
+    sectionHeader.topViewHeight = RECENTSDATASOURCE_DEFAULT_SECTION_HEADER_HEIGHT;
     NSInteger sectionBitwise = 0;
-    UIImageView *chevronView;
-    UIView *accessoryView;
-    
+
     if (_areSectionsShrinkable)
     {
         if (section == favoritesSection)
@@ -689,12 +678,11 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
     {
         // Add shrink button
         UIButton *shrinkButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        frame.origin.x = frame.origin.y = 0;
-        shrinkButton.frame = frame;
         shrinkButton.backgroundColor = [UIColor clearColor];
         [shrinkButton addTarget:self action:@selector(onButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         shrinkButton.tag = sectionBitwise;
         [sectionHeader addSubview:shrinkButton];
+        sectionHeader.topSpanningView = shrinkButton;
         sectionHeader.userInteractionEnabled = YES;
         
         // Add shrink icon
@@ -707,43 +695,30 @@ NSString *const kRecentsDataSourceTapOnDirectoryServerChange = @"kRecentsDataSou
         {
             chevron = [UIImage imageNamed:@"shrink_icon"];
         }
-        chevronView = [[UIImageView alloc] initWithImage:chevron];
+        UIImageView *chevronView = [[UIImageView alloc] initWithImage:chevron];
         chevronView.contentMode = UIViewContentModeCenter;
-        frame = chevronView.frame;
-        frame.origin.x = sectionHeader.frame.size.width - frame.size.width - 16;
-        frame.origin.y = (sectionHeader.frame.size.height - frame.size.height) / 2;
-        chevronView.frame = frame;
         [sectionHeader addSubview:chevronView];
-        chevronView.autoresizingMask = (UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin);
-        
-        accessoryView = chevronView;
+        sectionHeader.accessoryView = chevronView;
     }
     else if (_recentsDataSourceMode == RecentsDataSourceModeHome)
     {
         // Add a badge to display the total of missed notifications by section.
-        accessoryView = [self badgeViewForHeaderTitleInHomeSection:section];
+        UIView *badgeView = [self badgeViewForHeaderTitleInHomeSection:section];
         
-        if (accessoryView)
+        if (badgeView)
         {
-            frame = accessoryView.frame;
-            frame.origin.x = sectionHeader.frame.size.width - frame.size.width - 16;
-            frame.origin.y = (sectionHeader.frame.size.height - frame.size.height) / 2;
-            accessoryView.frame = frame;
-            [sectionHeader addSubview:accessoryView];
-            accessoryView.autoresizingMask = (UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin);
+            [sectionHeader addSubview:badgeView];
+            sectionHeader.accessoryView = badgeView;
         }
     }
     
     // Add label
-    frame = sectionHeader.frame;
-    frame.origin.x = 20;
-    frame.origin.y = 5;
-    frame.size.width = accessoryView ? accessoryView.frame.origin.x - 10 : sectionHeader.frame.size.width - 10;
     frame.size.height = RECENTSDATASOURCE_DEFAULT_SECTION_HEADER_HEIGHT - 10;
     UILabel *headerLabel = [[UILabel alloc] initWithFrame:frame];
     headerLabel.backgroundColor = [UIColor clearColor];
     headerLabel.attributedText = [self attributedStringForHeaderTitleInSection:section];
     [sectionHeader addSubview:headerLabel];
+    sectionHeader.headerLabel = headerLabel;
     
     return sectionHeader;
 }

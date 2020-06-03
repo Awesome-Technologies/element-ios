@@ -15,13 +15,20 @@
  */
 
 #import "JitsiViewController.h"
+#import "JitsiWidgetData.h"
 
-@interface JitsiViewController ()
-{
-    NSString *jitsiUrl;
+@import JitsiMeet;
 
-    BOOL video;
-}
+static const NSString *kJitsiDataErrorKey = @"error";
+
+@interface JitsiViewController () <JitsiMeetViewDelegate>
+
+// The jitsi-meet SDK view
+@property (nonatomic, weak) IBOutlet JitsiMeetView *jitsiMeetView;
+
+@property (nonatomic, strong) NSString *conferenceId;
+@property (nonatomic, strong) NSURL *serverUrl;
+@property (nonatomic) BOOL startWithVideo;
 
 @end
 
@@ -42,45 +49,52 @@
     return jitsiViewController;
 }
 
+#pragma mark - Life cycle
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    
+    self.jitsiMeetView.delegate = self;
+    
+    [self joinConference];
+}
+
+- (BOOL)prefersStatusBarHidden
+{    
+    return YES;
+}
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+}
+
+#pragma mark - Public
+
 - (void)openWidget:(Widget*)widget withVideo:(BOOL)aVideo
            success:(void (^)(void))success
            failure:(void (^)(NSError *error))failure
 {
-    video = aVideo;
+    self.startWithVideo = aVideo;
     _widget = widget;
+    
+    MXWeakify(self);
 
     [_widget widgetUrl:^(NSString * _Nonnull widgetUrl) {
-
-        // Extract the jitsi conference id from the widget url
-        NSString *confId;
-        NSURL *url = [NSURL URLWithString:widgetUrl];
-        if (url)
+        
+        MXStrongifyAndReturnIfNil(self);
+        
+        // Use widget data from Matrix Widget API v2 first
+        [self extractWidgetDataFromWidget:widget];
+        
+        if (!self.conferenceId)
         {
-            NSURLComponents *components = [[NSURLComponents new] initWithURL:url resolvingAgainstBaseURL:NO];
-            NSArray *queryItems = [components queryItems];
-
-            for (NSURLQueryItem *item in queryItems)
-            {
-                if ([item.name isEqualToString:@"confId"])
-                {
-                    confId = item.value;
-                    break;
-                }
-            }
-
-            // And build from it the url to use in jitsi-meet sdk
-            if (confId)
-            {
-                NSString *jitsiServerUrl = [[NSUserDefaults standardUserDefaults] stringForKey:@"jitsiServerUrl"];
-                if (!jitsiServerUrl)
-                {
-                    jitsiServerUrl = @"https://jitsi.riot.im/";
-                }
-                jitsiUrl = [NSString stringWithFormat:@"%@%@", jitsiServerUrl, confId];
-            }
+            // Else try v1
+            [self extractWidgetDataFromUrlString:widgetUrl];
         }
-
-        if (jitsiUrl)
+        
+        if (self.conferenceId)
         {
             if (success)
             {
@@ -110,71 +124,130 @@
 
 - (void)hangup
 {
-    jitsiUrl = nil;
+    [self.jitsiMeetView leave];
+}
 
-    // It would have been nicer to ask JitsiMeetView but there is no api.
-    // Dismissing the view controller and releasing it does the job for the moment
-    if (_delegate)
+#pragma mark - Private
+
+// Extract data based on Matrix Widget V2 widget data
+- (void)extractWidgetDataFromWidget:(Widget*)widget
+{
+    JitsiWidgetData *jitsiWidgetData = [JitsiWidgetData modelFromJSON:widget.data];
+    if (jitsiWidgetData)
     {
-        [_delegate jitsiViewController:self dismissViewJitsiController:nil];
+        self.conferenceId = jitsiWidgetData.conferenceId;
+        if (jitsiWidgetData.domain)
+        {
+            NSString *serverUrlString = [NSString stringWithFormat:@"https://%@", jitsiWidgetData.domain];
+            self.serverUrl = [NSURL URLWithString:serverUrlString];
+        }
+        self.startWithVideo = !jitsiWidgetData.isAudioOnly;
     }
 }
 
-- (void)viewDidLoad
+// Extract data based on Matrix Widget V1 URL
+- (void)extractWidgetDataFromUrlString:(NSString*)widgetUrlString
 {
-    [super viewDidLoad];
-
-    self.jitsiMeetView.delegate = self;
-
-    // Pass the URL to jitsi-meet sdk
-    [self.jitsiMeetView loadURLObject: @{
-                                         @"url": jitsiUrl,
-                                         @"configOverwrite": @{
-                                                 @"startWithVideoMuted": @(!video)
-                                                 }
-                                         }];
-
-    // TODO: Set up user info but it is not yet available in the jitsi-meet iOS SDK
-    // See https://github.com/jitsi/jitsi-meet/issues/1880
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-}
-
-#pragma mark - Actions
-
-- (IBAction)onBackToAppButtonPressed:(id)sender
-{
-    if (_delegate)
+    // Extract the jitsi conference id from the widget url
+    NSString *confId;
+    NSURL *url = [NSURL URLWithString:widgetUrlString];
+    if (url)
     {
-        [_delegate jitsiViewController:self goBackToApp:nil];
+        NSURLComponents *components = [[NSURLComponents new] initWithURL:url resolvingAgainstBaseURL:NO];
+        NSArray *queryItems = [components queryItems];
+        
+        for (NSURLQueryItem *item in queryItems)
+        {
+            if ([item.name isEqualToString:@"confId"])
+            {
+                confId = item.value;
+                break;
+            }
+        }
+    }
+    
+    self.conferenceId = confId;
+}
+
+- (void)joinConference
+{
+    [self joinConferenceWithId:self.conferenceId andServerUrl:self.serverUrl];
+}
+
+- (void)joinConferenceWithId:(NSString*)conferenceId andServerUrl:(NSURL*)serverUrl
+{
+    if (conferenceId)
+    {
+        // Get info about the room and our user
+        MXSession *session = self.widget.mxSession;
+        MXRoomSummary *roomSummary = [session roomSummaryWithRoomId:self.widget.roomId];
+
+        MXRoom *room = [session roomWithRoomId:self.widget.roomId];
+        MXRoomMember *roomMember = [room.dangerousSyncState.members memberWithUserId:session.myUser.userId];
+
+        NSString *userDisplayName = roomMember.displayname;
+        NSString *avatar = [session.mediaManager urlOfContent:roomMember.avatarUrl];
+        NSURL *avatarUrl = [NSURL URLWithString:avatar];
+
+        JitsiMeetConferenceOptions *jitsiMeetConferenceOptions = [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder * _Nonnull builder) {
+
+            if (serverUrl)
+            {
+                builder.serverURL = serverUrl;
+            }
+            builder.room = conferenceId;
+            builder.videoMuted = !self.startWithVideo;
+
+            builder.subject = roomSummary.displayname;
+            builder.userInfo = [[JitsiMeetUserInfo alloc] initWithDisplayName:userDisplayName
+                                                                     andEmail:nil
+                                                                    andAvatar:avatarUrl];
+        }];
+        
+        [self.jitsiMeetView join:jitsiMeetConferenceOptions];
     }
 }
 
 #pragma mark - JitsiMeetViewDelegate
 
-- (void)conferenceFailed:(NSDictionary *)data
+- (void)conferenceWillJoin:(NSDictionary *)data
 {
-    NSLog(@"[JitsiViewController] conferenceFailed - data: %@", data);
 }
 
-- (void)conferenceLeft:(NSDictionary *)data
+- (void)conferenceJoined:(NSDictionary *)data
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        
-        // The conference is over. Let the delegate close this view controller.
-        if (_delegate)
-        {
-            [_delegate jitsiViewController:self dismissViewJitsiController:nil];
-        }
-        else
-        {
-            // Do it ourself
-            [self dismissViewControllerAnimated:YES completion:nil];
-        }
-    });
+}
+
+- (void)conferenceTerminated:(NSDictionary *)data
+{
+    if (data[kJitsiDataErrorKey] != nil)
+    {
+        NSLog(@"[JitsiViewController] conferenceTerminated - data: %@", data);
+    }
+    else
+    {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            // The conference is over. Let the delegate close this view controller.
+            if (self.delegate)
+            {
+                [self.delegate jitsiViewController:self dismissViewJitsiController:nil];
+            }
+            else
+            {
+                // Do it ourself
+                [self dismissViewControllerAnimated:YES completion:nil];
+            }
+        });
+    }
+}
+
+- (void)enterPictureInPicture:(NSDictionary *)data
+{
+    if (self.delegate)
+    {
+        [self.delegate jitsiViewController:self goBackToApp:nil];
+    }
 }
 
 @end

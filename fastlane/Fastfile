@@ -19,7 +19,7 @@ platform :ios do
 
     before_all do
         # Ensure used Xcode version
-        xcversion(version: "~> 10.1.0")
+        xcversion(version: "~> 10.3.0")
     end
 
     #### Public ####
@@ -130,7 +130,8 @@ platform :ios do
                     ENV["MAIN_BUNDLE_ID"] => main_provisioning_profile,
                     ENV["SHARE_EXTENSION_BUNDLE_ID"] => share_extension_provisioning_profile,
                     ENV["SIRI_INTENTS_EXTENSION_BUNDLE_ID"] => siri_intents_provisioning_profile
-                }
+                },
+                iCloudContainerEnvironment: 'Production'
             }
         )
     end
@@ -231,7 +232,7 @@ platform :ios do
         build_number = options[:build_number]
 
         if !git_branch_name.to_s.empty?
-            preprocessor_definitions["GIT_BRANCH"] = git_branch_name.sub("origin/", "")
+            preprocessor_definitions["GIT_BRANCH"] = git_branch_name.sub("origin/", "").sub("heads/", "")
         end
 
         if !build_number.to_s.empty?

@@ -40,6 +40,7 @@ import UIKit
 
     var tintColor: UIColor { get }
     var textTintColor: UIColor { get }
+    var tintBackgroundColor: UIColor { get }
 
     var unreadRoomIndentColor: UIColor { get }
 
